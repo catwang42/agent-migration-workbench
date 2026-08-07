@@ -23,7 +23,10 @@ papermill>=2.6
 
 # --- providers (live/hybrid only) ---
 google-genai>=1.0
-anthropic[vertex]>=0.40
+# >=0.120 is a floor, not a preference: `output_config` (structured outputs)
+# and the current `thinking` shapes do not exist at 0.40, so a lower pin can be
+# satisfied by an SDK that 400s on every structured-output call.
+anthropic[vertex]>=0.120
 
 # --- tests ---
 pytest>=8.0

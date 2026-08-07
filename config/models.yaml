@@ -13,7 +13,11 @@
 # + region. Unset means "not yet confirmed against the live catalogue" — the
 # smoke check (cli.py smoke) will surface an unknown ID loudly rather than
 # silently substituting one.
-ids_verified_on: null
+# Verified by an executed round trip against every ID below, not by reading a
+# docs page: project vital-octagon-19612, Claude in region `global`, Gemini in
+# us-central1 (see CLAUDE_REGION in .env.example for why the two differ).
+# All four returned status: ok.
+ids_verified_on: 2026-08-07
 
 # Logical role -> model key. Swapping a model for the whole workbench is a
 # one-line change here.

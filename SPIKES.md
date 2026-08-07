@@ -107,6 +107,40 @@ The clean fix is a quota increase for `anthropic-claude-sonnet-5` in
 `us-central1`. **Worth requesting before the workshop**; until then the split
 stands and gets disclosed.
 
+### Second caveat, found 2026-08-07: partner-model structured outputs are blocked
+
+Discovered while verifying the frozen schemas in `amw/agents/schemas.py` against
+both providers. Claude on Vertex with `output_config.format` returns:
+
+```
+400 FAILED_PRECONDITION — Organization Policy constraint
+constraints/vertexai.allowedPartnerModelFeatures violated for
+`projects/440790012685` attempting to use a disallowed feature
+structured_outputs for Partner model claude-sonnet-5
+```
+
+This is an **org policy**, not a quota — retries, backoff, and region changes do
+not clear it, which makes it a different failure class from the 429 above.
+
+Probed live in the same session: Gemini + `response_schema` works for all three
+subagent schemas; Claude/Vertex **tool use** works and its tool calls validated
+against the frozen schemas on the first attempt. So the Claude baseline emits
+through a per-subagent tool (`emit_query_plan` / `emit_summary` /
+`emit_features`), and Gemini's A0 rung uses the same tool so the Claude-vs-A0
+delta is not partly a mechanism delta. Gemini's tuned rungs use
+`response_schema`, since "strict schema" is already an explicit rung on the
+ablation ladder.
+
+**Nothing on the P0 demo path depends on the blocked feature.** The exception
+request is with the repo owner; **cutoff is Monday 2026-08-10 EOD** — if it
+lands later it is post-workshop only, because nothing new enters the build on
+rehearsal or freeze day.
+
+Full detail, verbatim identifiers, and the wording rules for any customer-facing
+mention: `notes/org_policy_structured_outputs.md`. Short version of those rules
+— scope it to *this org's policy configuration*, never generalise it into a
+claim about partner models or about Claude on Vertex.
+
 ---
 
 ## S2 — Vertex AI GenAI Evaluation Service → **GREEN**
@@ -245,3 +279,9 @@ Answer Drafter → VAIPO rung → caching live demo → HTML scorecard.
 * **`config/pricing.yaml` is still 13 × `VERIFY`.** No spike touched it and
   nothing may print a price or a savings % until
   `scripts/refresh_pricing.py` has been run (ground rule 3).
+* **Partner-model structured outputs exception** — filed by the repo owner
+  against `constraints/vertexai.allowedPartnerModelFeatures`. **Cutoff Monday
+  2026-08-10 EOD.** Landing before the cutoff makes it an optional bonus arm
+  (added only if the full suite and `e2e --mode replay` still pass); landing
+  after makes it post-workshop. Either way the P0 path is unaffected — see
+  `notes/org_policy_structured_outputs.md`.

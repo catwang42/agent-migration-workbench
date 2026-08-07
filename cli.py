@@ -19,12 +19,22 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import tempfile
+from pathlib import Path
 
 # Importing the adapter package must not need credentials or provider SDKs —
 # the lanes' tests assert that — so MODES/CLAUDE_PATHS are taken from the one
 # place that defines them rather than restated here.
 from amw.adapters import CLAUDE_PATHS, MODES
+from amw.agents.prompt_packs import VARIANTS
+from amw.agents.schemas import SUBAGENTS
 from amw.config import ConfigError, load_all
+
+#: The e2e corpus is a *committed fixture*, not a freshly generated dataset.
+#: Replay is keyed on the exact request bytes, so a corpus regenerated on the
+#: fly would miss every recorded call. It is generated with `naturalise=False`
+#: (templates only, no model calls) precisely so it is byte-stable offline.
+E2E_DATASET_DIR = Path(__file__).resolve().parent / "tests" / "fixtures" / "e2e" / "datasets"
 
 # subcommand -> (help text, task that implements it)
 COMMANDS: dict[str, tuple[str, str]] = {
@@ -57,8 +67,51 @@ def build_parser() -> argparse.ArgumentParser:
         )
         sub.set_defaults(task=task)
 
-    subparsers.choices["gen"].add_argument("-n", type=int, default=None)
-    subparsers.choices["phase2"].add_argument("-n", type=int, default=None)
+    gen = subparsers.choices["gen"]
+    gen.add_argument("-n", type=int, default=None)
+    gen.add_argument(
+        "--out-dir",
+        default=None,
+        help="where the JSONL corpus is written (default: datasets/)",
+    )
+    gen.add_argument(
+        "--no-naturalise",
+        action="store_true",
+        help="skip the Gemini surface-realism pass; templates only, no model calls",
+    )
+
+    phase2 = subparsers.choices["phase2"]
+    phase2.add_argument("-n", type=int, default=None)
+    phase2.add_argument(
+        "--subagent",
+        action="append",
+        choices=SUBAGENTS,
+        default=None,
+        help="restrict to one subagent (repeatable; default: all three)",
+    )
+    phase2.add_argument(
+        "--variant",
+        action="append",
+        choices=VARIANTS,
+        default=None,
+        help="restrict to one arm (repeatable; default: all three)",
+    )
+    phase2.add_argument(
+        "--no-judge",
+        action="store_true",
+        help="deterministic metrics only; skip the rubric judge",
+    )
+    phase2.add_argument(
+        "--dataset-dir",
+        default=None,
+        help="where to read the corpus from (default: datasets/)",
+    )
+    phase2.add_argument(
+        "--out",
+        default=None,
+        help="results path (default: artifacts/results/phase2.json)",
+    )
+
     subparsers.choices["ablate"].add_argument("--subagent", default=None)
 
     smoke = subparsers.choices["smoke"]
@@ -114,7 +167,211 @@ def region_warnings(cfg, mode: str) -> list[str]:
     return warnings
 
 
+def cmd_gen(args, cfg) -> int:
+    from amw.datasets import generate
+
+    result = generate(
+        config=cfg,
+        n=args.n,
+        mode=args.mode,
+        out_dir=args.out_dir,
+        naturalise=not args.no_naturalise,
+    )
+    print(result.describe())
+    return 0
+
+
+def _format_value(name: str, point, estimate, n: int, excluded=None) -> str:
+    """One metric line. Never prints a number that was not measured.
+
+    Three distinct states, kept distinct on purpose (ground rule 1): nothing
+    measurable, a bare mean with no interval (n=1), and a mean with a CI.
+    """
+    if point is None:
+        reason = ", ".join(f"{k}={v}" for k, v in sorted((excluded or {}).items()))
+        return f"    {name:28s} not measured ({reason or 'no items'})"
+    if estimate is None:
+        return f"    {name:28s} {point:.3f}  no CI (n={n})"
+    return (
+        f"    {name:28s} {estimate.point:.3f}  95% CI "
+        f"[{estimate.lo:.3f}, {estimate.hi:.3f}]  n={estimate.n}"
+    )
+
+
+def _print_arm(arm) -> None:
+    head = f"{arm.subagent:20s} {arm.variant:18s} {arm.model:14s}"
+    calls = f"{arm.calls_ok}/{arm.items} ok"
+    if arm.calls_error:
+        calls += f", {arm.calls_error} error"
+    print(f"{head} {calls}")
+    for name, report in arm.metrics.items():
+        print(_format_value(name, report.point, report.estimate, report.n, report.excluded))
+    if arm.judge is not None:
+        print(
+            _format_value(
+                "judge_score",
+                arm.judge.point,
+                arm.judge.estimate,
+                arm.judge.items_scored,
+                {"no_repeat_completed": arm.judge.failed_repeats},
+            )
+        )
+
+
+def cmd_phase2(args, cfg) -> int:
+    from amw.eval.runner import run_phase2
+
+    result = run_phase2(
+        config=cfg,
+        mode=args.mode,
+        n=args.n,
+        subagents=args.subagent,
+        variants=args.variant,
+        run_judge=not args.no_judge,
+        dataset_dir=args.dataset_dir,
+        out_path=args.out,
+    )
+    for arm in result.arms:
+        _print_arm(arm)
+    for note in result.notes:
+        print(f"note: {note}", file=sys.stderr)
+    print(
+        f"\nprovenance={result.provenance} seed={result.dataset_seed} "
+        f"mode={result.mode} region={result.region}"
+    )
+    return 0
+
+
+def cmd_e2e(args, cfg) -> int:
+    """The offline CI gate: a tiny committed corpus through the whole path.
+
+    Deliberately runs the *same* code as `phase2`, not a parallel imitation of
+    it — a smoke test that exercises a different path proves nothing about the
+    path a customer will use. It is small (a fixture corpus, no judge by
+    default) so it stays fast enough to run before every commit.
+    """
+    from amw.eval.runner import run_phase2
+
+    fixture_dir = E2E_DATASET_DIR
+    if not fixture_dir.exists():
+        print(
+            f"e2e fixture corpus missing at {fixture_dir}. It is committed to the "
+            f"repo; restore it rather than regenerating, so the replay keys match.",
+            file=sys.stderr,
+        )
+        return 4
+
+    with tempfile.TemporaryDirectory() as tmp:
+        result = run_phase2(
+            config=cfg,
+            mode=args.mode,
+            dataset_dir=fixture_dir,
+            out_path=Path(tmp) / "phase2.json",
+            run_judge=False,
+        )
+
+    measured = sum(
+        1
+        for arm in result.arms
+        for report in arm.metrics.values()
+        if report.point is not None
+    )
+    errors = sum(arm.calls_error for arm in result.arms)
+    print(f"e2e: {len(result.arms)} arms, {measured} metrics measured, {errors} call errors")
+    if not result.arms:
+        print("e2e: no arm ran — the fixture corpus is empty", file=sys.stderr)
+        return 4
+    if errors:
+        # In replay a call error means the corpus does not cover this request.
+        # That is a broken CI gate, not a passing one: the whole point is that
+        # the offline path works with zero credentials.
+        print(
+            f"e2e: {errors} call(s) did not resolve. In replay this means the "
+            f"recorded corpus does not cover them — re-record with "
+            f"`python cli.py e2e --mode live`.",
+            file=sys.stderr,
+        )
+        for arm in result.arms:
+            for kind, count in arm.error_kinds.items():
+                print(f"  {arm.subagent}/{arm.variant}: {kind} x{count}", file=sys.stderr)
+        return 5
+    return 0
+
+
+#: Which prompt-pack variant exercises which backend. Smoke checks a backend by
+#: sending the real thing — same pack, same tool, same schema — because a
+#: bespoke "hello" probe can pass while the actual request shape 400s.
+SMOKE_VARIANT = {"claude": "claude_baseline", "gemini": "gemini_naive"}
+
+
+def cmd_smoke(args, cfg) -> int:
+    """Pre-demo health check: can each backend still take a real request?
+
+    Not an eval. It scores nothing and writes no results — it answers one
+    question, "will the demo run", and says which backend broke if not.
+    """
+    from amw.adapters import AdapterRouter
+    from amw.agents.prompt_packs import build_request
+    from amw.datasets.schema import read_items
+    from amw.eval.runner import prompt_view
+
+    if args.claude_path:
+        os.environ["CLAUDE_PATH"] = args.claude_path
+
+    backends = [args.backend] if args.backend else sorted(SMOKE_VARIANT)
+    router = AdapterRouter(mode=args.mode, models=cfg.models)
+    failures = 0
+
+    for backend in backends:
+        variant = SMOKE_VARIANT[backend]
+        for subagent in SUBAGENTS:
+            path = E2E_DATASET_DIR / f"{subagent}.jsonl"
+            items = list(read_items(path))[: args.n]
+            requests = [
+                build_request(subagent, variant, prompt_view(i), item_id=i.item_id)
+                for i in items
+            ]
+            traces = router.complete_many(requests)
+            ok = sum(1 for t in traces if t.status == "ok")
+            failures += len(traces) - ok
+            line = f"{backend:8s} {subagent:20s} {ok}/{len(traces)} ok"
+            if ok < len(traces):
+                first = next(t.error for t in traces if t.status != "ok")
+                line += f"  — {first[:160]}"
+            print(line)
+
+    if failures:
+        print(
+            f"\nsmoke FAILED: {failures} call(s). Per WORKSHOP_RUNBOOK, fall back to "
+            f"`--mode replay` and say on screen that the numbers are the recorded run.",
+            file=sys.stderr,
+        )
+        return 5
+    print("\nsmoke OK")
+    return 0
+
+
+HANDLERS = {"gen": cmd_gen, "phase2": cmd_phase2, "e2e": cmd_e2e, "smoke": cmd_smoke}
+
+
+def load_env() -> None:
+    """Read `.env` into the environment, without overriding what is already set.
+
+    CLAUDE.md's setup step is `cp .env.example .env`, so the CLI has to honour
+    that file or the documented setup does not work. Real environment variables
+    win over the file, so `REGION=... python cli.py ...` still overrides for a
+    one-off run. Missing file and missing dotenv are both fine — replay mode
+    needs neither.
+    """
+    try:
+        from dotenv import load_dotenv
+    except ImportError:  # pragma: no cover - dotenv ships in requirements.txt
+        return
+    load_dotenv(Path(__file__).resolve().parent / ".env", override=False)
+
+
 def main(argv: list[str] | None = None) -> int:
+    load_env()
     parser = build_parser()
     args = parser.parse_args(argv)
 
@@ -131,12 +388,20 @@ def main(argv: list[str] | None = None) -> int:
     for warning in region_warnings(cfg, args.mode):
         print(f"warning: {warning}", file=sys.stderr)
 
-    print(
-        f"`{args.command}` is not implemented yet — it lands in {args.task}. "
-        "Nothing was run.",
-        file=sys.stderr,
-    )
-    return 3
+    handler = HANDLERS.get(args.command)
+    if handler is None:
+        print(
+            f"`{args.command}` is not implemented yet — it lands in {args.task}. "
+            "Nothing was run.",
+            file=sys.stderr,
+        )
+        return 3
+
+    try:
+        return handler(args, cfg)
+    except (ConfigError, FileNotFoundError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

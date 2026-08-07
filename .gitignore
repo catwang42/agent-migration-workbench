@@ -5,8 +5,16 @@ __pycache__/
 .ipynb_checkpoints/
 .pytest_cache/
 
-# Run outputs are regenerated. artifacts/replay/ is the exception: it is the
-# recorded trace corpus that `cli.py e2e --mode replay` runs against, so it is
-# committed.
+# Run outputs are regenerated, with two exceptions that are not.
+#
+#   artifacts/replay/  the recorded trace corpus `cli.py e2e --mode replay`
+#                      runs against. A corpus that exists on one laptop is not
+#                      demo insurance, so it lives on the remote.
+#   artifacts/results/ the phase/scorecard numbers a customer was shown. These
+#                      are evidence of what was measured on a given date; a
+#                      regenerated file is a different measurement.
+#
+# artifacts/samples/ stays ignored — review scratch, superseded by the corpus.
 artifacts/*
 !artifacts/replay/
+!artifacts/results/

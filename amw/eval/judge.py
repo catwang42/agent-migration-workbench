@@ -99,6 +99,22 @@ _PROMPTS_ROOT = Path(__file__).resolve().parent / "judge_prompts"
 MIN_CRITERIA = 3
 MAX_CRITERIA = 5
 
+#: Tags marking criteria the *eval layer* appended, not the generator.
+#:
+#: The 3–5 bound above exists to catch a generator that emitted a malformed
+#: rubric, so it has to keep counting exactly what the generator produced.
+#: Criteria added downstream are a different thing and are excluded from the
+#: count — otherwise the check would fire on a correct rubric that the eval
+#: layer legitimately extended. Added 2026-08-07 when ``technical_field`` and
+#: ``novelty_statement`` moved off exact match and had to be scored here
+#: instead (``amw/eval/metrics.py``, ``FE_JUDGED_FIELDS``).
+EVAL_ADDED_TAGS: frozenset[str] = frozenset({"fe_field_label"})
+
+#: Hard ceiling on the whole rubric however it was assembled. A judge asked to
+#: return a long verdict list gets less reliable per criterion, so the eval
+#: layer does not get to grow one without bound either.
+MAX_TOTAL_CRITERIA = 8
+
 
 class _Base(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -126,10 +142,11 @@ class RubricCriterion(_Base):
 
 
 class Rubric(_Base):
-    """The 3–5 criteria for one dataset item.
+    """The criteria for one dataset item: 3–5 from the generator, plus any the
+    eval layer appended (tagged, see :data:`EVAL_ADDED_TAGS`).
 
-    Produced by T06's generator alongside the gold output; consumed here as the
-    judge's entire scoring frame. Nothing outside these criteria is scored.
+    Consumed here as the judge's entire scoring frame. Nothing outside these
+    criteria is scored.
     """
 
     item_id: str
@@ -138,10 +155,18 @@ class Rubric(_Base):
 
     @model_validator(mode="after")
     def _shape(self) -> "Rubric":
-        if not MIN_CRITERIA <= len(self.criteria) <= MAX_CRITERIA:
+        authored = [c for c in self.criteria if c.tag not in EVAL_ADDED_TAGS]
+        if not MIN_CRITERIA <= len(authored) <= MAX_CRITERIA:
+            raise ValueError(
+                f"rubric for item {self.item_id!r} has {len(authored)} "
+                f"generator-authored criteria; expected {MIN_CRITERIA}-"
+                f"{MAX_CRITERIA} (plus {len(self.criteria) - len(authored)} "
+                f"added by the eval layer)"
+            )
+        if len(self.criteria) > MAX_TOTAL_CRITERIA:
             raise ValueError(
                 f"rubric for item {self.item_id!r} has {len(self.criteria)} "
-                f"criteria; expected {MIN_CRITERIA}-{MAX_CRITERIA}"
+                f"criteria in total; the judge is capped at {MAX_TOTAL_CRITERIA}"
             )
         ids = [c.id for c in self.criteria]
         if len(set(ids)) != len(ids):

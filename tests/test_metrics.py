@@ -312,63 +312,89 @@ def test_citation_coverage_errors_on_an_unscoreable_structure():
 
 
 def test_extraction_field_verdicts_golden():
-    """GOLDEN, field by field, over the 8 fields of PatentFeatures.
+    """GOLDEN, field by field, over the 6 exact-matched fields.
 
     title       'Solid-state battery' vs 'solid-state  battery'
                 -> correct (whitespace collapsed, case folded)
     assignee    'Toyota Motor Corp.' vs 'Panasonic Corp.'   -> wrong
     filing_date '2021-03-04' vs null                        -> omission
-    jurisdiction 'US' vs 'us'   -> correct (code normalisation)
+    jurisdiction null vs null                    -> correct_abstention
     cpc_codes   ['H01M10/052'] vs ['h01m 10/052'] -> correct (set + code norm)
-    technical_field 'solid-state electrolytes' vs null      -> omission
-    independent_claim_count 2 vs 3                          -> wrong
-    novelty_statement null vs 'A novel sulfide separator...' -> hallucination
+    independent_claim_count null vs 3                  -> hallucination
+
+    technical_field and novelty_statement are absent: they are scored by the
+    rubric judge, not here. See FE_JUDGED_FIELDS.
     """
     case = CASES["fe_mixed"]
     assert M.extraction_field_verdicts(case["gold"], case["predicted"]) == {
         "title": "correct",
         "assignee": "wrong",
         "filing_date": "omission",
-        "jurisdiction": "correct",
-        "technical_field": "omission",
-        "independent_claim_count": "wrong",
-        "novelty_statement": "hallucination",
+        "jurisdiction": "correct_abstention",
+        "independent_claim_count": "hallucination",
         "cpc_codes": "correct",
     }
+
+
+def test_open_text_fields_are_not_exact_matched():
+    """The 2026-08-07 reroute, stated as behaviour rather than as a constant.
+
+    The fixture's technical_field is a correct label in different words, and
+    its novelty_statement asserts a value the gold leaves null. Under exact
+    match those scored 'wrong' and 'hallucination' respectively — the second
+    being the damaging one, since it filed a paraphrase beside a fabrication in
+    the one metric that exists to tell them apart.
+    """
+    case = CASES["fe_mixed"]
+    verdicts = M.extraction_field_verdicts(case["gold"], case["predicted"])
+    assert "technical_field" not in verdicts
+    assert "novelty_statement" not in verdicts
+
+    # they are still part of the schema, just scored elsewhere
+    assert set(M.FE_JUDGED_FIELDS) == {"technical_field", "novelty_statement"}
+    assert set(M.FE_FIELDS).isdisjoint(M.FE_JUDGED_FIELDS)
+    assert set(M.FE_ALL_FIELDS) == set(M.FE_FIELDS) | set(M.FE_JUDGED_FIELDS)
+
+    # and asking for them explicitly still works — the reroute changed the
+    # default, not the capability
+    explicit = M.extraction_field_verdicts(
+        case["gold"], case["predicted"], fields=M.FE_JUDGED_FIELDS
+    )
+    assert explicit == {"technical_field": "wrong", "novelty_statement": "hallucination"}
 
 
 def test_extraction_metrics_golden():
     """GOLDEN, from the verdict tally above.
 
-    correct = 3, correct_abstention = 0, wrong = 2, hallucination = 1,
-    omission = 2, unscoreable = 0
+    correct = 2, correct_abstention = 1, wrong = 1, hallucination = 1,
+    omission = 1, unscoreable = 0
 
-    scoreable   = 3+0+2+1+2 = 8
-    gold_null   = correct_abstention + hallucination = 0 + 1 = 1
-    gold_stated = correct + wrong + omission        = 3 + 2 + 2 = 7
-    answered    = correct + wrong + hallucination   = 3 + 2 + 1 = 6
+    scoreable   = 2+1+1+1+1 = 6
+    gold_null   = correct_abstention + hallucination = 1 + 1 = 2
+    gold_stated = correct + wrong + omission        = 2 + 1 + 1 = 4
+    answered    = correct + wrong + hallucination   = 2 + 1 + 1 = 4
 
-    extraction_accuracy = (3 + 0) / 8 = 3/8  = 0.375
-    answered_precision  = 3 / 6      = 1/2  = 0.5
-    hallucination_rate  = 1 / 1      = 1.0
-    omission_rate       = 2 / 7
+    extraction_accuracy = (2 + 1) / 6 = 1/2
+    answered_precision  = 2 / 4       = 1/2
+    hallucination_rate  = 1 / 2
+    omission_rate       = 1 / 4
     """
     case = CASES["fe_mixed"]
     out = M.extraction_metrics(case["gold"], case["predicted"])
 
     counts = out["extraction_accuracy"].counts
-    assert counts["correct"] == 3
-    assert counts["correct_abstention"] == 0
-    assert counts["wrong"] == 2
+    assert counts["correct"] == 2
+    assert counts["correct_abstention"] == 1
+    assert counts["wrong"] == 1
     assert counts["hallucination"] == 1
-    assert counts["omission"] == 2
+    assert counts["omission"] == 1
     assert (counts["scoreable"], counts["gold_null"], counts["gold_stated"],
-            counts["answered"]) == (8, 1, 7, 6)
+            counts["answered"]) == (6, 2, 4, 4)
 
-    assert frac(out["extraction_accuracy"]) == Fraction(3, 8)
+    assert frac(out["extraction_accuracy"]) == Fraction(1, 2)
     assert frac(out["answered_precision"]) == Fraction(1, 2)
-    assert frac(out["hallucination_rate"]) == Fraction(1, 1)
-    assert frac(out["omission_rate"]) == Fraction(2, 7)
+    assert frac(out["hallucination_rate"]) == Fraction(1, 2)
+    assert frac(out["omission_rate"]) == Fraction(1, 4)
 
 
 def test_abstaining_and_fabricating_are_told_apart_at_equal_accuracy():
@@ -550,7 +576,7 @@ def test_deterministic_metrics_picks_the_right_family_per_subagent():
         gold=CASES["fe_mixed"]["gold"],
         source=CASES["fe_mixed"]["predicted"],
     )
-    assert frac(fe["extraction_accuracy"]) == Fraction(3, 8)
+    assert frac(fe["extraction_accuracy"]) == Fraction(1, 2)
 
 
 def test_deterministic_metrics_rejects_an_unknown_subagent():

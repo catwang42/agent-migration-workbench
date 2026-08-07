@@ -70,6 +70,8 @@ __all__ = [
     "FE_SCALAR_FIELDS",
     "FE_LIST_FIELDS",
     "FE_FIELDS",
+    "FE_JUDGED_FIELDS",
+    "FE_ALL_FIELDS",
 ]
 
 MetricStatus = Literal["ok", "not_applicable", "error"]
@@ -705,8 +707,46 @@ FIELD_VERDICTS: tuple[str, ...] = (
     "unscoreable",
 )
 
-#: Nullable scalars on :class:`~amw.agents.schemas.PatentFeatures`.
+#: Free-text fields scored by the rubric judge, not by exact match.
+#:
+#: **Changed 2026-08-07, before any baseline number was produced.**
+#: ``technical_field`` and ``novelty_statement`` are open-vocabulary
+#: characterisations — the schema asks for "one short phrase" and "one
+#: sentence, quoted or closely paraphrased". Exact match cannot score those.
+#: In the review sample a gold ``technical_field`` of
+#: ``"millimetre-wave hybrid beamforming"`` would mark a model answering
+#: ``"beam management in wireless networks"`` *wrong*, though both are correct
+#: labels for the same document. Across the sample, 20 of 80 scoreable fields
+#: (25%) were open text, so a quarter of ``extraction_accuracy`` was measuring
+#: phrasing agreement rather than extraction.
+#:
+#: Worse for ground rule 1: a correct in-source paraphrase was being tallied as
+#: a ``hallucination``, filing it beside genuine fabrication. That is the one
+#: distinction ``hallucination_rate`` exists to make, so the two had to be
+#: separated. The judge scores these fields 0/1 — right meaning in different
+#: words is right, wrong or unsupported-by-the-source is 0 — which keeps the
+#: fabrication check without pretending phrasing is a measurement.
+#:
+#: The change is symmetric across arms, so it moves no delta; it was made
+#: pre-baseline so no reported comparison was ever computed the old way.
+FE_JUDGED_FIELDS: tuple[str, ...] = ("technical_field", "novelty_statement")
+
+#: Nullable scalars on :class:`~amw.agents.schemas.PatentFeatures` whose value
+#: is closed-vocabulary or verbatim, and so is exact-matchable.
 FE_SCALAR_FIELDS: tuple[str, ...] = (
+    "title",
+    "assignee",
+    "filing_date",
+    "jurisdiction",
+    "independent_claim_count",
+)
+#: List fields, where "empty" plays the role ``null`` plays for a scalar.
+FE_LIST_FIELDS: tuple[str, ...] = ("cpc_codes",)
+#: What :func:`extraction_metrics` scores by default.
+FE_FIELDS: tuple[str, ...] = FE_SCALAR_FIELDS + FE_LIST_FIELDS
+#: Every field on the schema, in schema order. For callers that need the whole
+#: surface — a coverage check, a report table — rather than the scored subset.
+FE_ALL_FIELDS: tuple[str, ...] = (
     "title",
     "assignee",
     "filing_date",
@@ -714,10 +754,8 @@ FE_SCALAR_FIELDS: tuple[str, ...] = (
     "technical_field",
     "independent_claim_count",
     "novelty_statement",
+    "cpc_codes",
 )
-#: List fields, where "empty" plays the role ``null`` plays for a scalar.
-FE_LIST_FIELDS: tuple[str, ...] = ("cpc_codes",)
-FE_FIELDS: tuple[str, ...] = FE_SCALAR_FIELDS + FE_LIST_FIELDS
 
 
 def _is_abstention(value: Any) -> bool:

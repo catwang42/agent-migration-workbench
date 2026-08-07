@@ -58,7 +58,13 @@ from amw.config import AppConfig, load_all
 from amw.datasets.schema import DatasetItem, read_items
 from amw.eval.judge import Judge, JudgeRequest, JudgeVerdict, Rubric, RubricCriterion
 from amw.eval.judge import cluster_failures, verdicts_to_repeat_scores
-from amw.eval.metrics import MetricOutcome, MetricSample, aggregate, deterministic_metrics
+from amw.eval.metrics import (
+    FE_JUDGED_FIELDS,
+    MetricOutcome,
+    MetricSample,
+    aggregate,
+    deterministic_metrics,
+)
 from amw.eval.stats import Estimate, aggregate_repeats, bootstrap_ci
 from amw.traces.schema import Trace
 
@@ -114,24 +120,73 @@ def prompt_view(item: DatasetItem) -> dict[str, Any]:
     }
 
 
+#: Field -> how to ask a judge whether an open-text label is right.
+#:
+#: These are the fields :data:`~amw.eval.metrics.FE_JUDGED_FIELDS` took out of
+#: exact match. The wording carries the whole point of the change: a different
+#: form of words for the same thing is *correct*. Both questions also keep the
+#: fabrication check the deterministic metric used to provide — an answer the
+#: source does not support scores 0.
+_FE_LABEL_CRITERIA: dict[str, str] = {
+    "technical_field": (
+        "Does technical_field name the subject matter of this document "
+        "correctly? The reference label is {gold!r}. A different wording for "
+        "the same field is CORRECT — judge the meaning, not the phrasing. "
+        "Answer no if it names a different field, is too broad or too narrow "
+        "to identify the subject matter, or is not supported by the source."
+    ),
+    "novelty_statement": (
+        "Does novelty_statement state what this document presents as new, "
+        "accurately and in one sentence? The reference statement is {gold!r}. "
+        "A paraphrase that preserves the substance — including any numeric "
+        "limits — is CORRECT. Answer no if it changes or invents a value, "
+        "describes something other than the disclosed advance, or asserts "
+        "anything the source does not state."
+    ),
+}
+
+
 def rubric_of(item: DatasetItem) -> Rubric:
-    """The item's rubric in the judge's shape.
+    """The item's rubric in the judge's shape, plus the rerouted FE fields.
 
     The dataset calls the assertion ``criterion`` and the judge calls it
-    ``text``; that is the whole difference. ``tag`` is left unset because the
-    generator's ``id`` values are already semantic slugs that recur across items
-    (``filing_not_priority`` appears on every item whose source states a
-    priority date), and the judge clusters on ``tag`` or falls back to ``id``.
-    Setting ``tag = id`` would add a column that says nothing.
+    ``text``; that is the whole difference for the generator's own criteria.
+    ``tag`` is left unset on those because the generator's ``id`` values are
+    already semantic slugs that recur across items (``filing_not_priority``
+    appears on every item whose source states a priority date), and the judge
+    clusters on ``tag`` or falls back to ``id``. Setting ``tag = id`` would add
+    a column that says nothing.
+
+    Feature Extractor items additionally get one 0/1 criterion per field in
+    :data:`~amw.eval.metrics.FE_JUDGED_FIELDS` that the gold actually states.
+    Those fields left the exact-match metric on 2026-08-07 because open text
+    cannot be exact-matched; the scoring has to land *somewhere* or a real
+    fabrication would go uncaught, so it lands here. They are tagged
+    ``fe_field_label`` so triage can separate "labelled it differently" from
+    the dataset's own substantive criteria.
     """
-    return Rubric(
-        item_id=item.item_id,
-        subagent=item.subagent,
-        criteria=[
-            RubricCriterion(id=criterion.id, text=criterion.criterion)
-            for criterion in item.rubric
-        ],
-    )
+    criteria = [
+        RubricCriterion(id=criterion.id, text=criterion.criterion)
+        for criterion in item.rubric
+    ]
+    if item.subagent == "feature_extractor":
+        for field in FE_JUDGED_FIELDS:
+            gold = item.gold.get(field)
+            # A null gold means "the source does not state this". There is no
+            # label to be right about, and the deterministic metric still scores
+            # that case: the field is absent from FE_FIELDS, but asserting a
+            # value the source never gave is what the item's own rubric and the
+            # other fields' hallucination check cover. Nothing to ask here.
+            if gold is None:
+                continue
+            criteria.append(
+                RubricCriterion(
+                    id=f"{field}_correct",
+                    text=_FE_LABEL_CRITERIA[field].format(gold=gold),
+                    tag="fe_field_label",
+                )
+            )
+    return Rubric(item_id=item.item_id, subagent=item.subagent, criteria=criteria)
 
 
 # --------------------------------------------------------------------------

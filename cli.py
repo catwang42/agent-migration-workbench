@@ -178,6 +178,11 @@ def cmd_gen(args, cfg) -> int:
         naturalise=not args.no_naturalise,
     )
     print(result.describe())
+    # Why the realism pass declined a passage matters: a rejection means the
+    # guard kept the template prose rather than let a rewrite touch the answer
+    # key. A silent count invites the reading that those items are damaged.
+    for reason in result.rewrite.reasons:
+        print(f"  realism pass: {reason}", file=sys.stderr)
     return 0
 
 

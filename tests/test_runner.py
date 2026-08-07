@@ -106,6 +106,35 @@ def test_rubric_of_renames_criterion_to_text_and_keeps_ids(items):
     assert rubric.item_id == item.item_id
     assert [c.id for c in rubric.criteria] == [c.id for c in item.rubric]
     assert [c.text for c in rubric.criteria] == [c.criterion for c in item.rubric]
+    assert all(c.tag is None for c in rubric.criteria)
+
+
+def test_rerouted_fe_fields_get_a_judge_criterion(items):
+    """technical_field and novelty_statement left exact match on 2026-08-07.
+    They have to be scored somewhere or a fabricated one goes uncaught."""
+    from amw.eval.metrics import FE_JUDGED_FIELDS
+
+    saw = set()
+    for item in items["feature_extractor"]:
+        criteria = {c.id: c for c in rubric_of(item).criteria}
+        for field in FE_JUDGED_FIELDS:
+            key = f"{field}_correct"
+            if item.gold.get(field) is None:
+                assert key not in criteria, "nothing to be right about"
+                continue
+            saw.add(field)
+            assert criteria[key].tag == "fe_field_label"
+            # the reference has to reach the judge, and the judge has to be
+            # told that different words for the same thing are correct
+            assert str(item.gold[field]) in criteria[key].text
+            assert "CORRECT" in criteria[key].text
+    assert saw == set(FE_JUDGED_FIELDS), "the corpus never exercised both fields"
+
+
+def test_other_subagents_get_no_fe_criteria(items):
+    for subagent in ("query_rewriter", "chunk_summarizer"):
+        for item in items[subagent]:
+            assert all(c.tag != "fe_field_label" for c in rubric_of(item).criteria)
 
 
 # --------------------------------------------------------------------------

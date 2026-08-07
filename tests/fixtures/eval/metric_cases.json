@@ -1,0 +1,187 @@
+{
+  "_comment": [
+    "Hand-built inputs for the T08 golden metric tests. Every expected value is",
+    "written out with its arithmetic in tests/test_metrics.py — the goldens are",
+    "derived on paper from these payloads, never captured from a run of the code",
+    "under test.",
+    "",
+    "provenance: synthetic (CLAUDE.md ground rule 2). These are fixtures, not",
+    "measurements: nothing here is ever shown to a customer, and nothing here is",
+    "written into artifacts/.",
+    "",
+    "Shapes follow amw/agents/schemas.py exactly. If that frozen contract moves,",
+    "these move with it."
+  ],
+  "provenance": "synthetic",
+  "seed": 20260812,
+
+  "qr_mixed": {
+    "_note": "6 gold assertions vs 7 predicted; 4 overlap. Exercises whitespace, case, and CPC-code normalisation.",
+    "gold": {
+      "query": "solid-state battery electrolyte",
+      "filters": {
+        "date_from": "2021-01-01",
+        "date_to": null,
+        "assignees": ["Toyota", "Panasonic"],
+        "jurisdictions": ["JP", "US"],
+        "cpc_codes": ["H01M10/052"]
+      },
+      "intent": "prior_art"
+    },
+    "predicted": {
+      "query": "solid state battery electrolyte",
+      "filters": {
+        "date_from": "2021-01-01",
+        "date_to": "2024-12-31",
+        "assignees": ["  toyota ", "LG Energy Solution"],
+        "jurisdictions": ["jp"],
+        "cpc_codes": ["h01m 10/052", "H01M4/62"]
+      },
+      "intent": "landscape"
+    }
+  },
+
+  "qr_no_predicted_filters": {
+    "_note": "Precision is 0/0 -> undefined. Recall is a real 0/1.",
+    "gold": {
+      "query": "battery separator",
+      "filters": {"assignees": ["Toyota"]},
+      "intent": "prior_art"
+    },
+    "predicted": {
+      "query": "battery separator",
+      "filters": {
+        "date_from": null,
+        "date_to": null,
+        "assignees": [],
+        "jurisdictions": [],
+        "cpc_codes": []
+      },
+      "intent": "prior_art"
+    }
+  },
+
+  "qr_no_gold_filters": {
+    "_note": "Recall is 0/0 -> undefined. Precision is a real 0/1: the model invented a filter.",
+    "gold": {
+      "query": "battery separator",
+      "filters": {
+        "date_from": null,
+        "date_to": null,
+        "assignees": [],
+        "jurisdictions": [],
+        "cpc_codes": []
+      },
+      "intent": "landscape"
+    },
+    "predicted": {
+      "query": "battery separator",
+      "filters": {"assignees": ["Sony"]},
+      "intent": "landscape"
+    }
+  },
+
+  "qr_both_empty": {
+    "_note": "Nothing asserted on either side: precision, recall and F1 are all undefined. Not 1.0.",
+    "gold": {"query": "battery separator", "filters": {}, "intent": "landscape"},
+    "predicted": {"query": "battery separator", "filters": {}, "intent": "landscape"}
+  },
+
+  "qr_schema_valid": {
+    "query": "solid-state battery electrolyte",
+    "filters": {
+      "date_from": "2021-01-01",
+      "date_to": null,
+      "assignees": ["Toyota"],
+      "jurisdictions": ["JP"],
+      "cpc_codes": []
+    },
+    "intent": "prior_art"
+  },
+  "qr_schema_extra_key": {
+    "query": "solid-state battery electrolyte",
+    "filters": {},
+    "intent": "prior_art",
+    "confidence": 0.9
+  },
+  "qr_schema_missing_intent": {
+    "query": "solid-state battery electrolyte",
+    "filters": {}
+  },
+  "qr_schema_bad_intent": {
+    "query": "solid-state battery electrolyte",
+    "filters": {},
+    "intent": "shopping"
+  },
+
+  "cs_mixed": {
+    "_note": "5 key points over 3 supplied chunks: 2 grounded, 1 uncited, 2 citing an id that was never supplied.",
+    "provided_chunk_ids": ["c1", "c2", "c3"],
+    "payload": {
+      "summary": "The cell uses a sulfide electrolyte and survives long cycling.",
+      "key_points": [
+        {"text": "The cell uses a sulfide electrolyte.", "chunk_ids": ["c1"]},
+        {"text": "Cycle life exceeded 1000 cycles.", "chunk_ids": ["c2", "c3"]},
+        {"text": "The separator is 20 microns thick.", "chunk_ids": []},
+        {"text": "The cathode is NMC811.", "chunk_ids": ["c9"]},
+        {"text": "Energy density is 400 Wh/kg.", "chunk_ids": ["c1", "c9"]}
+      ]
+    }
+  },
+
+  "cs_empty_points": {
+    "_note": "A summary with no claims. Coverage is 0/0 -> undefined; scoring it 1.0 would make a degenerate response the best in the run.",
+    "provided_chunk_ids": ["c1", "c2"],
+    "payload": {"summary": "The chunks describe a battery.", "key_points": []}
+  },
+
+  "fe_mixed": {
+    "_note": "8 fields: 3 correct, 2 wrong, 2 omitted, 1 hallucinated. gold_null = 1 (novelty_statement).",
+    "gold": {
+      "title": "Solid-state battery",
+      "assignee": "Toyota Motor Corp.",
+      "filing_date": "2021-03-04",
+      "jurisdiction": "US",
+      "cpc_codes": ["H01M10/052"],
+      "technical_field": "solid-state electrolytes",
+      "independent_claim_count": 2,
+      "novelty_statement": null
+    },
+    "predicted": {
+      "title": "solid-state  battery",
+      "assignee": "Panasonic Corp.",
+      "filing_date": null,
+      "jurisdiction": "us",
+      "cpc_codes": ["h01m 10/052"],
+      "technical_field": null,
+      "independent_claim_count": 3,
+      "novelty_statement": "A novel sulfide separator improves conductivity."
+    }
+  },
+
+  "fe_abstainer_vs_fabricator": {
+    "_note": [
+      "The point of the null convention. Both models land on extraction_accuracy",
+      "0.5 over the same gold; only hallucination_rate and answered_precision",
+      "tell them apart."
+    ],
+    "gold": {
+      "title": "Solid-state battery",
+      "assignee": "Toyota Motor Corp.",
+      "filing_date": null,
+      "jurisdiction": null
+    },
+    "abstainer": {
+      "title": null,
+      "assignee": null,
+      "filing_date": null,
+      "jurisdiction": null
+    },
+    "fabricator": {
+      "title": "Solid-state battery",
+      "assignee": "Toyota Motor Corp.",
+      "filing_date": "2020-01-01",
+      "jurisdiction": "US"
+    }
+  }
+}

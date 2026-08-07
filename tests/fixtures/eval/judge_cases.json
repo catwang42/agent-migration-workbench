@@ -1,0 +1,137 @@
+{
+  "_comment": [
+    "Judge fixture definitions for T08. Each case points at a REAL recorded",
+    "subagent call in artifacts/replay/ (recorded live on 2026-08-07 by the",
+    "T03/T04 lanes) and pairs it with a hand-written rubric standing in for",
+    "T06's generator until that lane lands.",
+    "",
+    "The judge responses themselves are NOT hand-written: they were produced by",
+    "real gemini-pro calls and recorded to tests/fixtures/eval/replay/ by",
+    "tests/fixtures/eval/record_judge_fixtures.py. Rerun that script (live, with",
+    "credentials) if this file or amw/eval/judge_prompts/ changes, because both",
+    "feed the replay key."
+  ],
+  "cases": [
+    {
+      "item_id": "qr-fx-001",
+      "subagent": "query_rewriter",
+      "source_trace_id": "query_rewriter-b7fa429564c1",
+      "arm": "gemini_naive",
+      "repeats": 1,
+      "rubric": [
+        {
+          "id": "c1",
+          "tag": "query_core",
+          "text": "The `query` field contains the core technical subject matter of the question (solid-state battery electrolyte) and does not restate filter constraints such as the assignee, the country, or the date."
+        },
+        {
+          "id": "c2",
+          "tag": "filter_assignee",
+          "text": "`filters.assignees` names Toyota and names no organisation the question did not mention."
+        },
+        {
+          "id": "c3",
+          "tag": "filter_jurisdiction",
+          "text": "`filters.jurisdictions` is exactly the two-letter code for Japan."
+        },
+        {
+          "id": "c4",
+          "tag": "filter_dates",
+          "text": "`filters.date_from` encodes 'filed after 2020', and `filters.date_to` is left null because the question states no upper bound."
+        },
+        {
+          "id": "c5",
+          "tag": "intent",
+          "text": "`intent` is a plausible reading of a request to find existing patents matching a technical and ownership constraint."
+        }
+      ]
+    },
+    {
+      "item_id": "cs-fx-001",
+      "subagent": "chunk_summarizer",
+      "source_trace_id": "chunk_summarizer-edc23bac5d4c",
+      "arm": "claude_baseline",
+      "repeats": 1,
+      "rubric": [
+        {
+          "id": "c1",
+          "tag": "grounding",
+          "text": "Every entry in `key_points` cites at least one chunk id, and every id cited was actually supplied in the context chunks."
+        },
+        {
+          "id": "c2",
+          "tag": "coverage_electrolyte",
+          "text": "The summary states that the cell uses a sulfide electrolyte."
+        },
+        {
+          "id": "c3",
+          "tag": "coverage_cycle_life",
+          "text": "The summary states that cycle life exceeded 1000 cycles."
+        },
+        {
+          "id": "c4",
+          "tag": "no_fabrication",
+          "text": "The summary and the key points introduce no fact that is absent from the supplied chunks."
+        }
+      ]
+    },
+    {
+      "item_id": "fe-fx-001",
+      "subagent": "feature_extractor",
+      "source_trace_id": "feature_extractor-a27f61af5277",
+      "arm": "gemini_naive",
+      "repeats": 1,
+      "rubric": [
+        {
+          "id": "c1",
+          "tag": "field_assignee",
+          "text": "`assignee` is Toyota Motor Corp., as stated in the source."
+        },
+        {
+          "id": "c2",
+          "tag": "field_filing_date",
+          "text": "`filing_date` is 2021-03-04, as stated in the source."
+        },
+        {
+          "id": "c3",
+          "tag": "field_claims",
+          "text": "`independent_claim_count` is 2, as stated in the source."
+        },
+        {
+          "id": "c4",
+          "tag": "abstention",
+          "text": "`novelty_statement` is null, because the source does not state a novelty claim. Abstaining here is correct, not a shortfall."
+        },
+        {
+          "id": "c5",
+          "tag": "no_fabrication",
+          "text": "No field asserts a value that the source text does not state."
+        }
+      ]
+    },
+    {
+      "item_id": "qr-fx-002",
+      "subagent": "query_rewriter",
+      "source_trace_id": "query_rewriter-df69ff37d6ce",
+      "arm": "gemini_naive",
+      "repeats": 2,
+      "rubric": [
+        {
+          "id": "c1",
+          "tag": "query_core",
+          "text": "The `query` field contains the core technical subject matter of the question and does not restate filter constraints."
+        },
+        {
+          "id": "c2",
+          "tag": "filter_assignee",
+          "text": "`filters.assignees` names Toyota and names no organisation the question did not mention."
+        },
+        {
+          "id": "c3",
+          "tag": "filter_dates",
+          "text": "`filters.date_from` encodes 'filed after 2020'."
+        }
+      ]
+    }
+  ]
+}

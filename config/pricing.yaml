@@ -1,0 +1,33 @@
+# THE ONLY PLACE PRICES LIVE (CLAUDE.md ground rule 3).
+# Never hardcode a price or a savings % anywhere else in this repo.
+#
+# Every value ships as the literal string VERIFY. amw.config.Price.resolve()
+# raises on an unverified price, so no cost figure can reach a customer report
+# until a human has run:
+#
+#     python scripts/refresh_pricing.py
+#
+# which fills in the numbers and stamps verified_on + verified_by + sources.
+#
+# Units: USD per 1,000,000 tokens.
+
+verified_on: null
+verified_by: null
+
+sources:
+  - https://cloud.google.com/vertex-ai/generative-ai/pricing
+  # Claude on Vertex AI is a partner-operated offering priced separately from
+  # the first-party Anthropic API. Use the partner page for CLAUDE_PATH=vertex.
+  - https://cloud.google.com/vertex-ai/generative-ai/pricing#claude-models
+  - https://claude.com/pricing
+
+models:
+  gemini-flash:  {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
+  gemini-pro:    {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
+  claude-sonnet: {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
+  claude-opus:   {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
+
+# Context-caching storage rent, USD per 1M cached tokens per hour.
+# Feeds the caching breakeven calculator.
+cache_storage:
+  per_1m_token_hour: VERIFY

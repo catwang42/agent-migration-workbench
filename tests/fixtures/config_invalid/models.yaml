@@ -1,0 +1,15 @@
+# Valid YAML, invalid config: roles.judge points at a model that is not
+# declared under `models`. load_all() must reject this too — a config that
+# parses but does not hang together is just as dangerous as one that does not
+# parse, because it fails later, mid-run.
+ids_verified_on: null
+roles:
+  judge: gemini-ultra-does-not-exist
+models:
+  gemini-pro:
+    provider: google
+    display_name: Gemini 2.5 Pro
+    ids: {vertex: gemini-2.5-pro}
+    context_window: 1048576
+    supports_json_schema: true
+    supports_tools: true

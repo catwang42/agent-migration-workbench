@@ -1,0 +1,58 @@
+# Migration gates. THE ONLY PLACE THRESHOLDS LIVE (CLAUDE.md conventions).
+# Thresholds are pre-agreed with the customer BEFORE the run, and the scorecard
+# footer prints this file's version hash so a reader can tell they were not
+# moved after seeing the numbers.
+#
+# Every gate is checked against the 95% CI LOWER BOUND (upper bound for `max`
+# gates), never the point estimate. That is what licenses the phrase
+# "quality parity within measurement under pre-agreed gates" — and it is why
+# the reports never say "zero quality drop" (CLAUDE.md ground rule 7).
+
+version: 1
+
+subagent_gates:
+  quality_delta_pp:
+    min: -2.0
+    basis: "95% CI lower bound of (Gemini - Claude) judged score, percentage points"
+
+  json_schema_validity:
+    min: 0.99
+    basis: "95% CI lower bound of the fraction of responses parsing against the subagent response_schema"
+
+  groundedness_delta_pp:
+    min: -1.0
+    basis: "95% CI lower bound of (Gemini - Claude) citation-supported-claim rate, percentage points"
+
+  shadow_agreement:
+    min: 0.90
+    alt: "on disagreements, judge-adjudicated wins >= losses"
+    basis: "95% CI lower bound of task-level agreement between Claude and Gemini on shadow traffic"
+
+  cost_savings_pct:
+    min: 30
+    basis: "customer volumes from the profile, uncached list prices; caching upside reported separately"
+
+  latency_p95:
+    max: claude_baseline_p95
+    basis: "same region, same load profile; sentinel resolves to the measured Claude p95 for this subagent"
+
+# Which gates drive which verdict. A gate not named in `blocking` or `quality`
+# still has to pass for MIGRATE, it just does not by itself force HOLD.
+verdicts:
+  MIGRATE:
+    rule: all_pass
+    description: "All gates pass on their CI bound. Recommend migrating this subagent."
+  TUNE_FIRST:
+    rule: only_quality_gates_fail
+    quality: [quality_delta_pp, groundedness_delta_pp]
+    description: "Schema and agreement hold; quality is short. Prompt/tuning work, then re-run."
+  HOLD:
+    rule: any_blocking_gate_fails
+    blocking: [json_schema_validity, shadow_agreement]
+    description: "Structural failure. Do not migrate this subagent on the current prompt pack."
+
+# Values a `min`/`max` may take instead of a number. Resolved at scorecard time
+# against measured baseline statistics; an unresolved sentinel is a hard error,
+# never a skipped gate.
+sentinels:
+  - claude_baseline_p95

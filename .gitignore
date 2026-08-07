@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 .env
 .ipynb_checkpoints/
+.pytest_cache/
+
+# Run outputs are regenerated. artifacts/replay/ is the exception: it is the
+# recorded trace corpus that `cli.py e2e --mode replay` runs against, so it is
+# committed.
+artifacts/*
+!artifacts/replay/

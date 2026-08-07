@@ -1,0 +1,14 @@
+# Deliberately broken YAML. load_all() must fail loudly on this, naming the
+# file — it must never fall back to defaults or skip the file.
+# (The unclosed flow mapping below is the syntax error.)
+ids_verified_on: null
+roles:
+  judge: gemini-pro
+models:
+  gemini-pro:
+    provider: google
+    display_name: Gemini 2.5 Pro
+    ids: {vertex: gemini-2.5-pro
+    context_window: 1048576
+    supports_json_schema: true
+    supports_tools: true

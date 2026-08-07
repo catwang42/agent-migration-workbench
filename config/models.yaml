@@ -1,0 +1,72 @@
+# Model registry. The ONLY place model IDs appear (CLAUDE.md conventions).
+# Code refers to the logical keys below (`claude-sonnet`, `gemini-flash`, ...),
+# never to a raw provider ID.
+#
+# `ids` is keyed by access path:
+#   anthropic : direct Anthropic API model ID
+#   vertex    : Vertex AI Model Garden ID. Current-generation Claude models use
+#               the BARE first-party ID (e.g. "claude-sonnet-5"); only dated
+#               snapshots take an "@YYYYMMDD" suffix. There is no vendor prefix
+#               on Vertex (that is Bedrock's convention).
+#
+# ids_verified_on: set this after listing available models in the target project
+# + region. Unset means "not yet confirmed against the live catalogue" — the
+# smoke check (cli.py smoke) will surface an unknown ID loudly rather than
+# silently substituting one.
+ids_verified_on: null
+
+# Logical role -> model key. Swapping a model for the whole workbench is a
+# one-line change here.
+roles:
+  claude_baseline: claude-sonnet      # the incumbent the migration is measured against
+  gemini_candidate: gemini-flash      # high-volume subagent candidate
+  gemini_candidate_alt: gemini-pro    # escalation rung when Flash misses a gate
+  judge: gemini-pro                   # local rubric-anchored judge (the guaranteed lane)
+  judge_crosscheck: claude-sonnet     # P1 dual-judge cross-check, 20% sample
+
+models:
+  claude-sonnet:
+    provider: anthropic
+    display_name: Claude Sonnet 5
+    ids:
+      anthropic: claude-sonnet-5
+      vertex: claude-sonnet-5
+    context_window: 1000000
+    supports_json_schema: true
+    supports_tools: true
+    notes: >-
+      Baseline for the three evaluated subagents. On Vertex, auth is GCP ADC
+      (no Anthropic API key) via AnthropicVertex(project_id=..., region=...).
+
+  claude-opus:
+    provider: anthropic
+    display_name: Claude Opus 5
+    ids:
+      anthropic: claude-opus-5
+      vertex: claude-opus-5
+    context_window: 1000000
+    supports_json_schema: true
+    supports_tools: true
+    notes: >-
+      Not on the Act 1 demo path. Present so a customer running Opus subagents
+      can be priced without a code change.
+
+  gemini-flash:
+    provider: google
+    display_name: Gemini 2.5 Flash
+    ids:
+      vertex: gemini-2.5-flash
+    context_window: 1048576
+    supports_json_schema: true
+    supports_tools: true
+    notes: Migration candidate for high-volume subagents.
+
+  gemini-pro:
+    provider: google
+    display_name: Gemini 2.5 Pro
+    ids:
+      vertex: gemini-2.5-pro
+    context_window: 1048576
+    supports_json_schema: true
+    supports_tools: true
+    notes: Local judge, and the escalation rung for subagents Flash cannot carry.

@@ -1,0 +1,33 @@
+# Agent Migration Workbench — Act 1
+# Python 3.11. Install with: pip install -r requirements.txt
+#
+# Everything below is needed for the offline (replay) path except the two
+# provider SDKs, which are only exercised in --mode live|hybrid.
+
+# --- core ---
+pydantic>=2.7,<3
+PyYAML>=6.0
+python-dotenv>=1.0
+
+# --- stats / data ---
+numpy>=1.26
+pandas>=2.2
+
+# --- CLI + reporting ---
+rich>=13.7
+matplotlib>=3.8
+
+# --- notebooks (thin: they import from amw/) ---
+jupyter>=1.0
+papermill>=2.6
+
+# --- providers (live/hybrid only) ---
+google-genai>=1.0
+anthropic[vertex]>=0.40
+
+# --- tests ---
+pytest>=8.0
+
+# NOTE: google-adk is deliberately absent. Act 1 ships the root orchestrator as
+# a code stub + diagram only (act1_build_plan.md §2); a runnable ADK orchestrator
+# is P1/P2. Adding the dep before it is used is scope creep.

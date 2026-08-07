@@ -1,0 +1,68 @@
+# Demo customer profile — patents-domain RAG.
+#
+# This is the synthetic workshop profile. Every dataset item generated from it
+# carries provenance: synthetic and this seed (CLAUDE.md ground rule 2).
+
+customer: demo_patents
+display_name: "Demo — Patents RAG"
+domain: patents
+provenance: synthetic
+seed: 20260812
+
+# PLACEHOLDER — set from .env / the engagement before any live run.
+region: us-central1
+
+dataset:
+  cases_per_subagent: 70      # full deterministic pass
+  judged_core_set: 28         # 25-30 per act1_build_plan.md §5
+  judge_repeats: 2            # k=2
+
+# --- Volume profile ------------------------------------------------------
+# ILLUSTRATIVE, NOT CUSTOMER-CONFIRMED. These drive the cost model, so the
+# scorecard footer prints "volumes: illustrative" until volumes_confirmed is
+# true. Combined with the VERIFY prices in pricing.yaml, no dollar figure can
+# be produced from this file today — both gates must be cleared by a human.
+volumes_confirmed: false
+confirmed_with: null
+confirmed_on: null
+
+subagents:
+  query_rewriter:
+    enabled: true
+    evaluated: true
+    calls_per_day: 250000
+    avg_input_tokens: 800
+    avg_output_tokens: 200
+
+  chunk_summarizer:
+    enabled: true
+    evaluated: true
+    calls_per_day: 1200000
+    avg_input_tokens: 2400
+    avg_output_tokens: 320
+
+  feature_extractor:
+    enabled: true
+    evaluated: true
+    calls_per_day: 400000
+    avg_input_tokens: 1800
+    avg_output_tokens: 260
+
+  # P1 — the deliberate TUNE_FIRST scorecard row. Off until its tier is
+  # green-lit (CLAUDE.md ground rule 6).
+  answer_drafter:
+    enabled: false
+    evaluated: false
+    tier: P1
+    calls_per_day: 90000
+    avg_input_tokens: 6000
+    avg_output_tokens: 700
+
+  # Code stub + diagram only. Never evaluated in Act 1.
+  root_orchestrator:
+    enabled: false
+    evaluated: false
+    tier: stub
+    calls_per_day: 250000
+    avg_input_tokens: 1500
+    avg_output_tokens: 150

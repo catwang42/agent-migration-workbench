@@ -115,6 +115,13 @@ Today's live run is tomorrow's offline demo. Error traces are recorded too — a
 dropped failure silently shrinks an eval's denominator and flatters whichever
 model failed.
 
+**Commit the corpus.** `artifacts/replay/` is tracked in git on purpose —
+`.gitignore` excludes `artifacts/*` and then re-includes it. It is the demo's
+insurance policy: if the network, a quota, or a region fails mid-workshop, the
+replay corpus is what keeps the session running. Insurance that exists on one
+laptop is not insurance. After any live run, check `git status` and commit what
+landed.
+
 ### Claude access paths
 
 `CLAUDE_PATH` in `.env` selects one of three:

@@ -30,9 +30,15 @@ replayed back byte-identical.
 
 **Path exercised:** `CLAUDE_PATH=vertex` (Vertex AI Model Garden), auth by GCP
 ADC, no Anthropic API key. This is the documented demo default —
-`act1_build_plan.md` §1 wants traffic staying inside GCP. The direct Anthropic
-path is implemented and unit-tested but was **not** exercised live; if a demo
-ever needs it, that is a separate round trip to run.
+`act1_build_plan.md` §1 wants traffic staying inside GCP.
+
+> **Standing decision (2026-08-07): the demo path is `CLAUDE_PATH=vertex` only.**
+> The direct Anthropic path is implemented and unit-tested but has **never been
+> exercised live**. It stays out of every demo flow unless it earns its own live
+> round trip during **Tuesday's rehearsal**. It is never first-run on Wednesday
+> — a path whose first real call happens in front of the customer is not a
+> fallback, it is a second thing that can fail. Unit tests prove the translation
+> logic, not that the account, key, and model access exist.
 
 **Evidence** — `resolve("claude-sonnet", "live").complete(...)`, recorded to
 `artifacts/replay/spike_s1.jsonl`:
@@ -226,9 +232,16 @@ Answer Drafter → VAIPO rung → caching live demo → HTML scorecard.
   `anthropic-claude-sonnet-5`. Until then the run is cross-region and the
   latency gate is disclosed as such.
 * **`google-cloud-aiplatform[evaluation]`** is installed here and used by the
-  S2 probe, but is deliberately **not** in `requirements.txt`. It becomes a
-  dependency if and when the S2 P1 item is greenlit; adding it now would make
-  every P0 install carry a package the demo path does not use.
+  S2 probe, but is deliberately **not** in `requirements.txt`. Adding it now
+  would make every P0 install carry a package the demo path does not use.
+
+  > **Standing decision (2026-08-07):** if the S2 P1 item is greenlit, adding
+  > this dependency to `requirements.txt` is **part of that task's definition of
+  > done**, not a follow-up. The task is not done until a clean-environment
+  > `pip install -r requirements.txt` followed by `pytest tests/` and
+  > `python cli.py e2e --mode replay` passes. A feature that works only on the
+  > machine it was written on is the same failure as a feature that works only
+  > live (ground rule 4).
 * **`config/pricing.yaml` is still 13 × `VERIFY`.** No spike touched it and
   nothing may print a price or a savings % until
   `scripts/refresh_pricing.py` has been run (ground rule 3).

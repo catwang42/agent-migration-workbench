@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter, defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -549,8 +550,22 @@ def run_phase2(
         bootstrap_seed=seed,
         judge_repeats=repeats,
         adapters=router.describe(),
-        judge_model=judge.describe().get("model") if judge else None,
-        judge_prompt_version=judge.describe().get("prompt_version") if judge else None,
+        # Judge.describe() prefixes every key with "judge_" so the scorecard
+        # footer can splat it without collisions. Reading "model" here silently
+        # produced None on the first real run — the footer would have printed a
+        # blank where ground rule 2 requires the judge's identity.
+        judge_model=judge.describe().get("judge_model") if judge else None,
+        judge_prompt_version=(
+            judge.describe().get("judge_prompt_version") if judge else None
+        ),
+        # Ground rule 2: the footer prints the run date. Replay leaves this None
+        # on purpose — no wall-clock run happened, and the recordings carry
+        # their own dates.
+        run_started=(
+            datetime.now(timezone.utc).isoformat(timespec="seconds")
+            if mode != "replay"
+            else None
+        ),
         notes=notes,
     )
 

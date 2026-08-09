@@ -102,6 +102,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="deterministic metrics only; skip the rubric judge",
     )
     phase2.add_argument(
+        "--judge-all",
+        action="append",
+        choices=SUBAGENTS,
+        default=None,
+        metavar="SUBAGENT",
+        help=(
+            "judge this subagent on the full corpus instead of the core split "
+            "(repeatable). Costs ~70/28 the judge calls for that subagent and "
+            "is recorded in the results notes as a deviation from registered "
+            "sizing."
+        ),
+    )
+    phase2.add_argument(
         "--dataset-dir",
         default=None,
         help="where to read the corpus from (default: datasets/)",
@@ -212,9 +225,12 @@ def _print_arm(arm) -> None:
     for name, report in arm.metrics.items():
         print(_format_value(name, report.point, report.estimate, report.n, report.excluded))
     if arm.judge is not None:
+        # Name the split on screen. Two judge scores with different n are not
+        # directly comparable, and the number alone does not say so.
+        label = "judge_score" if arm.judge.split == "core" else "judge_score[all]"
         print(
             _format_value(
-                "judge_score",
+                label,
                 arm.judge.point,
                 arm.judge.estimate,
                 arm.judge.items_scored,
@@ -233,6 +249,7 @@ def cmd_phase2(args, cfg) -> int:
         subagents=args.subagent,
         variants=args.variant,
         run_judge=not args.no_judge,
+        judge_all=args.judge_all or (),
         dataset_dir=args.dataset_dir,
         out_path=args.out,
     )

@@ -328,6 +328,118 @@ def test_smoke_runs_offline(capsys):
     assert "smoke OK" in capsys.readouterr().out
 
 
+# --------------------------------------------------------------------------
+# judging a subagent on the full corpus instead of the core split
+# --------------------------------------------------------------------------
+
+
+def test_judge_split_defaults_to_core_and_says_so(cfg, tmp_path):
+    result = run_phase2(
+        config=cfg,
+        mode="replay",
+        dataset_dir=cli.E2E_DATASET_DIR,
+        out_path=tmp_path / "p.json",
+        run_judge=False,
+    )
+    assert not any("FULL corpus" in note for note in result.notes)
+
+
+def test_judge_all_rejects_a_subagent_that_is_not_being_run(cfg, tmp_path):
+    """A typo here would silently judge nothing on the full set and read as if
+    the widening had happened."""
+    with pytest.raises(ValueError, match="not being run"):
+        run_phase2(
+            config=cfg,
+            mode="replay",
+            dataset_dir=cli.E2E_DATASET_DIR,
+            out_path=tmp_path / "p.json",
+            run_judge=False,
+            subagents=["query_rewriter"],
+            judge_all=["feature_extractor"],
+        )
+
+
+def test_run_arm_rejects_an_unknown_split():
+    from amw.eval.runner import run_arm
+
+    with pytest.raises(ValueError, match="judge_split"):
+        run_arm("query_rewriter", "claude_baseline", [], router=None, judge_split="most")
+
+
+def test_judge_all_widens_the_judged_set(items, monkeypatch):
+    """The FE exception for the n=70 baseline, exercised without live calls.
+
+    The e2e fixture corpus is entirely core, so the two splits are only
+    distinguishable over a corpus that has non-core items. Built here rather
+    than replayed: a replay miss raises, and no recording exists for the
+    non-core tail of the real corpus until the n=70 baseline lands.
+    """
+    from amw.eval import runner as runner_mod
+    from amw.eval.runner import run_arm
+
+    corpus = list(items["feature_extractor"])
+    assert all(i.core for i in corpus), "fixture assumption changed"
+    corpus[1] = corpus[1].model_copy(update={"core": False})
+    n_core = sum(1 for i in corpus if i.core)
+
+    class StubRouter:
+        def complete_many(self, requests):
+            return [make_trace("feature_extractor", {"title": "x"}) for _ in requests]
+
+    def fake_judge_arm(subagent, judged, *, judge, repeats, bootstrap_seed, arm, split="core"):
+        return runner_mod.JudgeReport(
+            split=split, items_scored=len(judged), expected_repeats=repeats, failed_repeats=0
+        )
+
+    monkeypatch.setattr(runner_mod, "_judge_arm", fake_judge_arm)
+
+    wide, _ = run_arm(
+        "feature_extractor", "claude_baseline", corpus,
+        router=StubRouter(), judge=object(), judge_split="all",
+    )
+    narrow, _ = run_arm(
+        "feature_extractor", "claude_baseline", corpus,
+        router=StubRouter(), judge=object(), judge_split="core",
+    )
+    assert wide.judge.split == "all" and wide.judge.items_scored == len(corpus)
+    assert narrow.judge.split == "core" and narrow.judge.items_scored == n_core
+    assert wide.judge.items_scored > narrow.judge.items_scored
+
+
+def test_judge_all_records_the_deviation_in_the_results_notes(cfg, monkeypatch):
+    """An artifact whose subagents were judged on different sample sizes has
+    to say so, or the obvious cross-subagent comparison is a wrong one."""
+    from amw.eval import runner as runner_mod
+
+    monkeypatch.setattr(
+        runner_mod,
+        "_judge_arm",
+        lambda subagent, judged, *, judge, repeats, bootstrap_seed, arm, split="core": (
+            runner_mod.JudgeReport(
+                split=split, items_scored=len(judged), expected_repeats=repeats, failed_repeats=0
+            )
+        ),
+    )
+    class StubJudge:
+        def describe(self):
+            return {"judge_model": "stub", "judge_prompt_version": "stub"}
+
+    result = run_phase2(
+        config=cfg,
+        mode="replay",
+        dataset_dir=cli.E2E_DATASET_DIR,
+        write=False,
+        judge=StubJudge(),  # scoring never reached; _judge_arm is stubbed
+        judge_all=["feature_extractor"],
+    )
+    assert any("FULL corpus" in note and "feature_extractor" in note for note in result.notes)
+    fe = [a for a in result.arms if a.subagent == "feature_extractor"]
+    others = [a for a in result.arms if a.subagent != "feature_extractor"]
+    assert fe and others
+    assert all(a.judge.split == "all" for a in fe)
+    assert all(a.judge.split == "core" for a in others)
+
+
 def test_default_dataset_dir_is_not_the_fixture_dir():
     """A real run must never silently score the 4-item e2e corpus."""
     assert default_dataset_dir() != cli.E2E_DATASET_DIR

@@ -273,10 +273,15 @@ class MetricReport(_Strict):
 
 
 class JudgeReport(_Strict):
-    """Rubric-judged quality for one arm, over the core split at k repeats."""
+    """Rubric-judged quality for one arm, over some split at k repeats."""
 
     point: float | None = None
     estimate: Estimate | None = None
+    #: Which items the judge saw: "core" (the registered default) or "all".
+    #: Recorded per arm because judged n differs by split, and a reader
+    #: comparing two subagents' judge scores has to be able to see that the
+    #: samples are not the same size without going back to the run log.
+    split: str = "core"
     items_scored: int
     expected_repeats: int
     failed_repeats: int
@@ -353,12 +358,19 @@ def run_arm(
     judge: Judge | None = None,
     repeats: int = 2,
     bootstrap_seed: int = 20260812,
+    judge_split: str = "core",
 ) -> tuple[ArmResult, list[Trace]]:
     """Execute one arm over ``items`` and score it.
 
     Returns the scored result and the raw traces, so a caller can record or
     inspect them without re-running anything.
+
+    ``judge_split`` is "core" (T08's registered sizing) or "all". Widening it
+    multiplies judge calls by roughly 70/28, so it is opt-in per subagent and
+    the choice is written into the arm's ``JudgeReport.split``.
     """
+    if judge_split not in ("core", "all"):
+        raise ValueError(f"judge_split must be 'core' or 'all', not {judge_split!r}")
     pack = load_pack(subagent, variant)
     requests = [build_request(subagent, variant, prompt_view(item), item_id=item.item_id)
                 for item in items]
@@ -403,27 +415,33 @@ def run_arm(
     )
 
     if judge is not None:
-        core = [(item, trace) for item, trace in zip(items, traces) if item.core]
-        if core:
+        judged = [
+            (item, trace)
+            for item, trace in zip(items, traces)
+            if judge_split == "all" or item.core
+        ]
+        if judged:
             result.judge = _judge_arm(
                 subagent,
-                core,
+                judged,
                 judge=judge,
                 repeats=repeats,
                 bootstrap_seed=bootstrap_seed,
                 arm=variant,
+                split=judge_split,
             )
     return result, list(traces)
 
 
 def _judge_arm(
     subagent: str,
-    core: Sequence[tuple[DatasetItem, Trace]],
+    judged: Sequence[tuple[DatasetItem, Trace]],
     *,
     judge: Judge,
     repeats: int,
     bootstrap_seed: int,
     arm: str,
+    split: str = "core",
 ) -> JudgeReport:
     requests = [
         JudgeRequest(
@@ -438,7 +456,7 @@ def _judge_arm(
             repeats=repeats,
             arm=arm,
         )
-        for item, trace in core
+        for item, trace in judged
         for repeat in range(1, repeats + 1)
     ]
     verdicts = judge.score_many(requests)
@@ -451,6 +469,7 @@ def _judge_arm(
     # Same n < 2 rule as MetricReport.of: a mean is reportable from one item,
     # an interval is not.
     return JudgeReport(
+        split=split,
         point=(sum(sample.values) / sample.n) if sample.n else None,
         estimate=(
             bootstrap_ci(sample, metric="judge_score", seed=bootstrap_seed)
@@ -507,8 +526,16 @@ def run_phase2(
     run_judge: bool = True,
     router: AdapterRouter | None = None,
     bootstrap_seed: int | None = None,
+    judge_all: Sequence[str] = (),
 ) -> Phase2Result:
-    """Run every arm and write ``artifacts/results/phase2.json``."""
+    """Run every arm and write ``artifacts/results/phase2.json``.
+
+    ``judge_all`` names subagents to judge on the full corpus instead of the
+    core split. T08 registered core-split judging as the sizing for this
+    build, so any widening is a deviation and is written into ``notes`` as
+    one — an artifact that quietly judged different subagents on different
+    sample sizes would invite exactly the wrong comparison.
+    """
     cfg = config or load_all(customer=customer)
     subagents = tuple(subagents or SUBAGENTS)
     variants = tuple(variants or VARIANTS)
@@ -519,6 +546,11 @@ def run_phase2(
     router = router or AdapterRouter(mode=mode, models=cfg.models)
     if run_judge and judge is None:
         judge = Judge(mode=mode, models=cfg.models)
+
+    judge_all = tuple(judge_all)
+    unknown = set(judge_all) - set(subagents)
+    if unknown:
+        raise ValueError(f"judge_all names subagents that are not being run: {sorted(unknown)}")
 
     datasets = {
         subagent: _load_dataset(subagent, dataset_dir=dataset_dir, limit=n)
@@ -538,6 +570,13 @@ def run_phase2(
         notes.append(
             f"generator versions disagree ({sorted(versions)}) — regenerate before "
             f"showing these numbers to a customer."
+        )
+    if judge_all:
+        notes.append(
+            f"judged on the FULL corpus, not the registered core split: "
+            f"{', '.join(sorted(judge_all))}. Every other subagent is judged on "
+            f"core only, so judged n differs across subagents — see each arm's "
+            f"judge.split and judge.items_scored before comparing judge scores."
         )
 
     result = Phase2Result(
@@ -583,6 +622,7 @@ def run_phase2(
                 judge=judge,
                 repeats=repeats,
                 bootstrap_seed=seed,
+                judge_split="all" if subagent in judge_all else "core",
             )
             result.arms.append(arm)
 

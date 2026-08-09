@@ -189,6 +189,34 @@ def rubric_of(item: DatasetItem) -> Rubric:
     return Rubric(item_id=item.item_id, subagent=item.subagent, criteria=criteria)
 
 
+def judge_candidate(trace: Trace) -> Any:
+    """What the judge is shown as the arm's answer for one item.
+
+    A :class:`~amw.traces.schema.TraceOutput` is a container, not an answer:
+    it holds a structured payload, a text body, or neither. The judge renders
+    whatever it is handed, so it has to be handed the answer itself.
+
+    Prefer the structured payload, and fall back to the text. The fallback is
+    the point: a model that ignored the tool and replied in prose *did* answer,
+    and showing the judge "produced no output" for it would grade a
+    wrong-format answer as a non-answer. That distinction belongs to
+    ``json_schema_validity``, which already measures it separately.
+
+    Returns ``None`` only when there is genuinely nothing — an errored call, or
+    an empty response — which :func:`~amw.eval.judge._render_payload` turns
+    into an explicit absence marker rather than a blank.
+
+    Note this is deliberately laxer than
+    :func:`~amw.eval.metrics.extract_payload`, which returns ``None`` for a
+    JSON array because it has no fields to score. The judge has a rubric, not
+    a field list, and can read an array fine.
+    """
+    if trace.output.json_ is not None:
+        return trace.output.json_
+    text = trace.output.text
+    return text if text and text.strip() else None
+
+
 # --------------------------------------------------------------------------
 # result shapes
 # --------------------------------------------------------------------------
@@ -401,7 +429,7 @@ def _judge_arm(
             item_id=item.item_id,
             subagent=subagent,
             rubric=rubric_of(item),
-            candidate=trace.output,
+            candidate=judge_candidate(trace),
             task_input=list(item.input.messages),
             context_chunks=item.input.context_chunks(),
             reference=item.gold,

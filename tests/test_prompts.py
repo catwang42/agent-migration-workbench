@@ -25,6 +25,7 @@ import re
 import pytest
 
 from amw.adapters.base import ModelRequest
+from amw.adapters.claude_anthropic import _to_json_schema
 from amw.agents import prompt_packs as pp
 from amw.agents.schemas import SUBAGENTS, json_schema, tool_name
 
@@ -398,7 +399,13 @@ def test_baseline_request_builds_claude_kwargs_with_the_prompt_verbatim(models, 
     assert kwargs["system"] == pack.system  # pass-through is load-bearing
     (tool,) = kwargs["tools"]
     assert tool["name"] == tool_name(subagent)
-    assert tool["input_schema"] == json_schema(subagent)
+    # Same schema, in Claude's dialect. `json_schema()` emits OpenAPI 3.0 for
+    # Gemini's response_schema; `nullable` is not a JSON Schema keyword, so the
+    # adapter rewrites it to a type union on the way out. This assertion used
+    # to compare against the untranslated schema and so pinned the bug in
+    # place — see amw.adapters.claude_anthropic._to_json_schema.
+    assert tool["input_schema"] == _to_json_schema(json_schema(subagent))
+    assert "nullable" not in json.dumps(tool["input_schema"])
     # Structured outputs are blocked for partner models in this org; the tool
     # is the emission mechanism. See notes/org_policy_structured_outputs.md.
     assert "output_config" not in kwargs

@@ -74,6 +74,45 @@ DEFAULT_MAX_OUTPUT_TOKENS = 4096
 _FIRST_CONTENT_EVENTS = frozenset({"content_block_start", "content_block_delta"})
 
 
+def _to_json_schema(node: Any) -> Any:
+    """Rewrite OpenAPI ``nullable: true`` into JSON Schema's type union.
+
+    ``amw.agents.schemas.json_schema`` emits the OpenAPI 3.0 dialect, because
+    that is what Gemini's ``response_schema`` requires: it rejects the
+    ``anyOf: [X, {"type": "null"}]`` union that pydantic produces, and wants
+    ``{"type": "string", "nullable": true}`` instead.
+
+    Claude's ``input_schema`` is plain JSON Schema, where ``nullable`` is not a
+    keyword. An unknown keyword is ignored rather than rejected, so the field
+    silently reads as a non-nullable ``string``/``integer`` — and the model,
+    with no way to express "the source does not state this", writes the
+    *string* ``"null"``. Measured on the 2026-08-09 phase-2 run: 4 of 10
+    Feature Extractor items, which scored as invalid JSON and as fabrication,
+    making a schema-dialect bug in this repo look like a Claude quality
+    finding.
+
+    Both providers therefore get the same schema, each in its own dialect. The
+    translation is mechanical and lossless, so the two arms are still being
+    asked for the same thing — which is the property the baseline depends on.
+    """
+    if isinstance(node, list):
+        return [_to_json_schema(item) for item in node]
+    if not isinstance(node, dict):
+        return node
+
+    out = {k: _to_json_schema(v) for k, v in node.items() if k != "nullable"}
+    if node.get("nullable") is True:
+        declared = out.get("type")
+        if isinstance(declared, str):
+            out["type"] = [declared, "null"]
+        elif isinstance(declared, list):
+            if "null" not in declared:
+                out["type"] = [*declared, "null"]
+        # A `nullable` with no sibling `type` constrains nothing; dropping the
+        # keyword is the whole translation.
+    return out
+
+
 def _ms_since(start: float) -> int:
     return int((time.perf_counter() - start) * 1000)
 
@@ -185,7 +224,7 @@ class _ClaudeMessagesAdapter(ModelAdapter):
                 {
                     "name": tool.name,
                     "description": tool.description,
-                    "input_schema": tool.parameters
+                    "input_schema": _to_json_schema(tool.parameters)
                     or {"type": "object", "properties": {}},
                 }
                 for tool in request.tools
@@ -201,7 +240,10 @@ class _ClaudeMessagesAdapter(ModelAdapter):
             # or change the replay key. output_config leaves `tools` alone, so
             # a request may carry real tools and a response schema at once.
             kwargs["output_config"] = {
-                "format": {"type": "json_schema", "schema": request.response_schema}
+                "format": {
+                    "type": "json_schema",
+                    "schema": _to_json_schema(request.response_schema),
+                }
             }
 
         return kwargs

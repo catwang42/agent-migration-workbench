@@ -24,6 +24,13 @@ from amw.eval.runner import (
     rubric_of,
     run_phase2,
 )
+from amw.traces.schema import Trace
+from tests.test_metrics import make_trace
+
+
+def _trace(*, json_=None, text=None) -> Trace:
+    """A minimal ok trace. Only `output` matters to the tests that use it."""
+    return make_trace("feature_extractor", json_, text=text)
 
 
 @pytest.fixture(scope="module")
@@ -129,6 +136,51 @@ def test_rerouted_fe_fields_get_a_judge_criterion(items):
             assert str(item.gold[field]) in criteria[key].text
             assert "CORRECT" in criteria[key].text
     assert saw == set(FE_JUDGED_FIELDS), "the corpus never exercised both fields"
+
+
+def test_judge_candidate_unwraps_the_trace_container():
+    """`TraceOutput` is a container; the judge renders what it is handed.
+
+    Handing it the container raised `TypeError: Object of type TraceOutput is
+    not JSON serializable` on the first judge call of the first live run. The
+    e2e gate missed it because that gate runs with `run_judge=False`.
+    """
+    from amw.eval.runner import judge_candidate
+
+    assert judge_candidate(_trace(json_={"rewritten": "x"})) == {"rewritten": "x"}
+    assert judge_candidate(_trace(json_=[1, 2])) == [1, 2]
+    # prose where a tool call was demanded is a wrong-format *answer*, not a
+    # non-answer — json_schema_validity is what scores the format
+    assert judge_candidate(_trace(text="a prose answer")) == "a prose answer"
+    # structured payload wins when both are present
+    assert judge_candidate(_trace(json_={"a": 1}, text="chatter")) == {"a": 1}
+    # nothing at all stays None so the judge prints its absence marker
+    assert judge_candidate(_trace()) is None
+    assert judge_candidate(_trace(text="   ")) is None
+
+
+def test_a_judge_request_built_from_a_real_trace_renders(items, cfg):
+    """The end of the bridge that actually broke: request -> rendered prompt."""
+    from amw.eval.judge import Judge, JudgeRequest
+    from amw.eval.runner import judge_candidate
+
+    item = items["feature_extractor"][0]
+    trace = _trace(json_={"title": "A Widget", "assignee": None})
+    request = JudgeRequest(
+        item_id=item.item_id,
+        subagent=item.subagent,
+        rubric=rubric_of(item),
+        candidate=judge_candidate(trace),
+        task_input=list(item.input.messages),
+        context_chunks=item.input.context_chunks(),
+        reference=item.gold,
+        repeat=1,
+        repeats=2,
+        arm="claude_baseline",
+    )
+    judge = Judge(mode="replay", models=cfg.models)
+    rendered = judge.build_request(request)  # must not raise
+    assert "A Widget" in json.dumps(rendered.model_dump(mode="json"))
 
 
 def test_other_subagents_get_no_fe_criteria(items):

@@ -262,8 +262,14 @@ def _inline(node: Any, defs: dict[str, Any]) -> Any:
             out[key] = {name: _inline(sub, defs) for name, sub in value.items()}
             continue
         # anyOf: [X, {"type": "null"}] is how pydantic spells `X | None`.
-        # Both providers accept nullable via the collapsed branch; keeping the
-        # union intact makes Gemini reject the schema outright.
+        # Collapsed to the OpenAPI 3.0 spelling because Gemini rejects the
+        # union outright. `nullable` is *not* a JSON Schema keyword, so this
+        # output is the OpenAPI dialect, not a provider-portable schema — the
+        # Claude adapter translates it back (see
+        # amw.adapters.claude_anthropic._to_json_schema). Corrected 2026-08-09:
+        # this comment previously claimed both providers accept `nullable`.
+        # They do not, and Claude silently ignoring it cost 4 of 10 Feature
+        # Extractor items on the first phase-2 run.
         if key == "anyOf" and isinstance(value, list):
             non_null = [b for b in value if b.get("type") != "null"]
             if len(non_null) == 1:
@@ -275,10 +281,17 @@ def _inline(node: Any, defs: dict[str, Any]) -> Any:
 
 
 def json_schema(subagent: str) -> dict[str, Any]:
-    """Provider-portable JSON Schema for a subagent's output.
+    """A subagent's output schema in the **OpenAPI 3.0 dialect**.
 
-    Fully inlined: no ``$ref``, no ``$defs``. Safe to hand to Gemini's
-    ``response_schema`` and to Claude's ``output_config.format.schema``.
+    Fully inlined: no ``$ref``, no ``$defs``. Ready to hand to Gemini's
+    ``response_schema`` as-is.
+
+    Not portable, despite what this docstring said before 2026-08-09: nullable
+    fields come out as ``{"type": "string", "nullable": true}``, and
+    ``nullable`` is an OpenAPI keyword that JSON Schema does not define. Claude
+    consumes JSON Schema, so the Claude adapter translates this on the way out
+    (``amw.adapters.claude_anthropic._to_json_schema``). Any *new* consumer
+    must decide which dialect it wants rather than assume this one.
     """
     raw = schema_model(subagent).model_json_schema()
     defs = raw.get("$defs", {})

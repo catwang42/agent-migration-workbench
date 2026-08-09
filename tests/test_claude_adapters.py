@@ -325,6 +325,45 @@ def test_tools_are_translated_to_input_schema(models):
     ]
 
 
+def test_openapi_nullable_becomes_a_json_schema_type_union(models):
+    """`nullable` is OpenAPI, not JSON Schema. Claude ignores unknown keywords,
+    so an untranslated schema leaves the model no way to say "not stated" — it
+    writes the *string* "null", which scores as invalid JSON and as fabrication.
+    That cost 4 of 10 Feature Extractor items on the 2026-08-09 phase-2 run.
+    """
+    from amw.agents.schemas import json_schema
+
+    client = FakeClient([fake_message([text_block("ok")])])
+    request = make_request(
+        tools=[
+            ToolSpec(
+                name="emit_features",
+                description="d",
+                parameters=json_schema("feature_extractor"),
+            )
+        ]
+    )
+    vertex(models, client).complete(request)
+
+    sent = client.messages.calls[0]["tools"][0]["input_schema"]
+    assert "nullable" not in json.dumps(sent)
+    props = sent["properties"]
+    assert props["independent_claim_count"]["type"] == ["integer", "null"]
+    assert props["title"]["type"] == ["string", "null"]
+    # a non-nullable field is left exactly as it was
+    assert props["cpc_codes"] == {"items": {"type": "string"}, "type": "array"}
+    # descriptions and every other keyword survive the rewrite
+    assert props["filing_date"]["description"] == "YYYY-MM-DD if stated."
+
+
+def test_nullable_translation_leaves_a_plain_schema_untouched(models):
+    client = FakeClient([fake_message([text_block("ok")])])
+    schema = {"type": "object", "properties": {"q": {"type": "string"}}}
+    request = make_request(tools=[ToolSpec(name="t", description="d", parameters=schema)])
+    vertex(models, client).complete(request)
+    assert client.messages.calls[0]["tools"][0]["input_schema"] == schema
+
+
 def test_no_tools_key_when_no_tools_offered(models):
     client = FakeClient([fake_message([text_block("ok")])])
     vertex(models, client).complete(make_request())

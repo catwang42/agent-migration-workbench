@@ -7,6 +7,12 @@ reproduce a file that is already complete and valid.
 
 Per-subagent seeds are derived as _rng(seed, subagent, ...), so generating a
 subset yields byte-identical items to generating all three.
+
+Kept as the provenance record for datasets/: the committed corpus was made in
+two passes, and this file is the second one. Do not run it to make a new
+corpus — the subagent list below is frozen to what was outstanding on
+2026-08-09 and would leave query_rewriter stale. `cli.py gen` is the supported
+entry point.
 """
 
 from __future__ import annotations

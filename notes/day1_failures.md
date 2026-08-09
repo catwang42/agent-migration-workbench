@@ -200,3 +200,120 @@ Not zero, and worth stating plainly so the baseline is not read as a ceiling:
    recovers one.
 3. QR `publication_number_kept` — a baseline prompt gap that improves both arms.
 4. Re-check fe-0006 on the full n=70 run.
+
+---
+
+# Tuning targets — Monday
+
+**Added 2026-08-09**, from the clusters above. Ruled by the project owner as
+the setup for Fan-out 3. These are directions for the ablation ladder, not
+results; nothing below has been measured.
+
+## (a) A new FE rung aimed at `novelty_statement`
+
+A1–A3 move FE by **0.001** (0.782 → 0.783). Whatever those rungs change, they
+do not touch the behaviour that accounts for the entire FE gap. So this is a
+**new rung driven by the failure cluster**, not a re-tune of the existing
+ones — the ladder has no rung that addresses it and adding effort to A1–A3
+would be tuning against something that is already saturated.
+
+### The diagnosis
+
+The tuned pack's abstention rule reads:
+
+> `null` means "this document does not state it". It is a correct, expected
+> answer and is scored as such. Never infer a value from the subject matter,
+> the company, the technology, or anything you happen to know about this
+> patent family. A plausible fabrication is the worst output you can produce.
+
+That rule is right, and it is the reason `hallucination_rate` is 0.000 across
+all three arms. It is also the cause of the biggest cluster in the run, because
+the field table pairs it with "return null when **the document states no point
+of novelty**" — and Gemini reads that literally as *no prose passage
+discussing novelty*.
+
+**fe-0003 is the clean worked example.** The document is a JPO translation with
+no discussion section at all — bibliographic header, then claims:
+
+> Claims:
+> 1. An all-solid-state lithium secondary battery, comprising a solid
+>    electrolyte layer comprising an argyrodite-type Li6PS5Cl having a median
+>    particle diameter D50 of 0.8 um to 2.5 um.
+
+The gold `novelty_statement` is that claim, near-verbatim. Claude returned it.
+Gemini returned `null`.
+
+Gemini is not being careless — it is applying the abstention rule correctly to
+a document that never uses the word "novel". What it is missing is a **domain
+convention the prompt never states: in a patent, independent claim 1 *is* the
+point of novelty.** Claude supplies that convention from prior knowledge. A
+migration cannot rely on the target model happening to share it.
+
+### What the rung must do
+
+Two requirements, from the two observed failure modes:
+
+1. **Never `null` when the source states an advance.** Name the fallback
+   order explicitly — a prose novelty/summary passage if present, otherwise
+   independent claim 1. Reserve `null` for a document with neither.
+2. **Preserve the numeric limits.** fe-0017 is the other mode: Gemini named
+   what the disclosure *addresses* ("poor endosomal escape limiting the
+   delivered dose of intact mRNA") and dropped every quantity, where the gold
+   keeps "apparent pKa of 6.2 to 6.7" and "45 mol% to 50 mol%". A novelty
+   statement without its limits is not a weaker answer, it is a different and
+   wrong kind of answer — it describes the problem, not the invention.
+
+### What it must not do
+
+It must not weaken the abstention rule in general. `hallucination_rate` is
+0.000 on every arm and that is the property the whole FE evaluation exists to
+protect (ground rule 1). The rung narrows *where* abstention applies for one
+field; it does not license inference anywhere. **Watch `hallucination_rate`
+and `answered_precision` as the guard metrics on this rung** — if either moves
+off 0.000/1.000, the rung has bought judge score with fabrication and must be
+rejected regardless of what the judge says.
+
+## (b) The VAIPO rung optimises against the judged metric
+
+When the VAIPO rung runs, its objective is the **judged** FE score, not
+`extraction_accuracy`.
+
+This is not a preference. Deterministic FE accuracy is already **1.000 for
+both Gemini arms** — there is no headroom, and an optimiser pointed at it
+would be optimising a saturated metric while the actual defect sits in the two
+fields that metric does not cover. It would report success and change nothing.
+`technical_field` and `novelty_statement` left exact match on 2026-08-07 and
+are judge-only; they are also the two fields carrying the analytical value.
+
+Cost note: judged objectives mean judge calls inside the optimisation loop, so
+this rung is materially more expensive per iteration than a rung scored
+deterministically. Size it before launching it.
+
+## (c) Dual-judge cross-check on FE runs FIRST
+
+**Before the FE judged gap is treated as real, and therefore before (a) or (b)
+is tuned against it.**
+
+The reason is in this run's own numbers. FE `full_agreement_rate` is **0.8 for
+both Gemini arms and 0.9 for Claude**, against **1.0 on every QR and CS arm**.
+The FE judge disagrees with itself between its two repeats on a fifth of
+Gemini items — it is by a wide margin the noisiest measurement here. One
+sampled item (fe-0002, Gemini) reads as a correct novelty statement and was
+still marked failed.
+
+So the 0.879-vs-0.782 gap is currently resting on the least reliable
+instrument in the workbench, and every downstream decision — which rung to
+build, whether the counterfactual in
+[counterfactual_scorecard.md](counterfactual_scorecard.md) holds, whether FE
+gets a MIGRATE verdict — inherits that. Confirming the gap with a second judge
+is cheaper than tuning against an artifact of the first one.
+
+The n=70 baseline judges FE on all 70 items rather than the 28-item core
+split, specifically so this question has enough data to settle; QR and CS stay
+on the registered core split. That widening is recorded in the results file's
+`notes` and in each arm's `judge.split`.
+
+**If the two judges disagree on the direction of the FE gap, that is the
+finding**, and it is a more important one than any tuning result — it would
+mean the workbench cannot yet measure the thing the whole FE analysis turns
+on. Say so plainly rather than picking the judge that agrees with the story.

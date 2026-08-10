@@ -331,6 +331,12 @@ class Phase2Result(_Strict):
     judge_repeats: int
     #: None in replay: no wall-clock run happened, the corpus carries its dates.
     run_started: str | None = None
+    #: Earliest and latest timestamp of the recordings this run replayed, as
+    #: ISO-8601. Ground rule 1: a replayed number has to carry the date its
+    #: call was actually made, or a reader has no way to tell it from a fresh
+    #: one. None in live mode, where `run_started` is the date that matters.
+    recorded_from: str | None = None
+    recorded_to: str | None = None
     adapters: dict[str, str] = Field(default_factory=dict)
     judge_model: str | None = None
     judge_prompt_version: str | None = None
@@ -607,6 +613,16 @@ def run_phase2(
         ),
         notes=notes,
     )
+    if mode == "replay":
+        window = router.recording_window()
+        if window is not None:
+            result.recorded_from = window[0].isoformat(timespec="seconds")
+            result.recorded_to = window[1].isoformat(timespec="seconds")
+        else:
+            notes.append(
+                "replay mode with no recordings in the store — every call below "
+                "is a miss, and no number here is a measurement."
+            )
 
     for subagent in subagents:
         items = datasets[subagent]

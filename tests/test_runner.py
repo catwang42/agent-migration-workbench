@@ -289,6 +289,36 @@ def test_phase2_result_carries_the_provenance_the_footer_needs(cfg, tmp_path):
     assert result.bootstrap_seed
 
 
+def test_replay_result_carries_the_recording_dates(cfg, tmp_path):
+    """Ground rule 1: a replayed number has to say when its call was made.
+
+    Without this the only date on the artifact is `run_started`, which replay
+    correctly leaves None — so a replay-assembled result would carry no date
+    at all and read as undated rather than as recorded.
+    """
+    result = run_phase2(
+        config=cfg,
+        mode="replay",
+        dataset_dir=cli.E2E_DATASET_DIR,
+        out_path=tmp_path / "p.json",
+        run_judge=False,
+    )
+    assert result.run_started is None
+    assert result.recorded_from and result.recorded_to
+    assert result.recorded_from <= result.recorded_to
+
+
+def test_cli_labels_a_replayed_number_with_its_recording_date(capsys):
+    assert cli.main(["e2e", "--mode", "replay"]) == 0
+    # e2e prints its own summary; phase2 is the customer-facing path
+    capsys.readouterr()
+    assert cli.main(["phase2", "--mode", "replay", "--dataset-dir",
+                     str(cli.E2E_DATASET_DIR), "--no-judge",
+                     "--out", "/dev/null"]) == 0
+    out = capsys.readouterr().out
+    assert "REPLAY" in out and "recorded" in out
+
+
 def test_every_arm_reports_its_prompt_sha(cfg, tmp_path):
     """Two arms differing only in prompt must be distinguishable after the fact."""
     result = run_phase2(

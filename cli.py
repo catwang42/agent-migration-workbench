@@ -261,6 +261,14 @@ def cmd_phase2(args, cfg) -> int:
         f"\nprovenance={result.provenance} seed={result.dataset_seed} "
         f"mode={result.mode} region={result.region}"
     )
+    # Ground rule 1: replayed numbers say on screen when the calls were made.
+    if result.recorded_from:
+        print(
+            f"REPLAY — every number above comes from calls recorded "
+            f"{result.recorded_from} to {result.recorded_to}, not from a run just now."
+        )
+    elif result.run_started:
+        print(f"run_started={result.run_started}")
     return 0
 
 

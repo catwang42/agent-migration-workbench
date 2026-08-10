@@ -52,7 +52,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from amw.adapters import AdapterRouter
+from amw.adapters import AdapterRouter, merge_windows
 from amw.agents.prompt_packs import VARIANTS, build_request, load_pack
 from amw.agents.schemas import SUBAGENTS
 from amw.config import AppConfig, load_all
@@ -613,15 +613,28 @@ def run_phase2(
         ),
         notes=notes,
     )
-    if mode == "replay":
-        window = router.recording_window()
+    # Populated after the arms run: the window has to describe the calls this
+    # run actually replayed, not everything sitting in the store. The store
+    # holds spike traces from 08-07 and superseded recordings from earlier
+    # runs; dating an artifact by those would make fresh numbers look stale.
+    def _stamp_replay_window() -> None:
+        if mode == "live":
+            return
+        window = merge_windows(
+            [
+                router.served_window(),
+                getattr(
+                    getattr(judge, "adapter", None), "served_window", lambda: None
+                )(),
+            ]
+        )
         if window is not None:
             result.recorded_from = window[0].isoformat(timespec="seconds")
             result.recorded_to = window[1].isoformat(timespec="seconds")
-        else:
+        elif mode == "replay":
             notes.append(
-                "replay mode with no recordings in the store — every call below "
-                "is a miss, and no number here is a measurement."
+                "replay mode served no recordings — no number here is a "
+                "measurement."
             )
 
     for subagent in subagents:
@@ -641,6 +654,8 @@ def run_phase2(
                 judge_split="all" if subagent in judge_all else "core",
             )
             result.arms.append(arm)
+
+    _stamp_replay_window()
 
     if write:
         path = Path(out_path) if out_path else default_results_path()

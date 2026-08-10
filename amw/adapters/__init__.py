@@ -82,8 +82,19 @@ __all__ = [
     "ToolSpec",
     "build_trace",
     "error_trace",
+    "merge_windows",
     "resolve",
 ]
+
+
+def merge_windows(
+    windows: Iterable[tuple[datetime, datetime] | None],
+) -> tuple[datetime, datetime] | None:
+    """Union of ``(earliest, latest)`` spans, ignoring None. None if all None."""
+    present = [w for w in windows if w is not None]
+    if not present:
+        return None
+    return (min(w[0] for w in present), max(w[1] for w in present))
 
 MODES: tuple[str, ...] = ("live", "replay", "hybrid")
 CLAUDE_PATHS: tuple[str, ...] = ("vertex", "anthropic", "replay")
@@ -327,6 +338,17 @@ class AdapterRouter:
     ) -> tuple[datetime, datetime] | None:
         """Recording span of the corpus, for the on-screen replay label."""
         return self.store.recording_window(subagent)
+
+    def served_window(self) -> tuple[datetime, datetime] | None:
+        """Span of the traces this router actually replayed, across models.
+
+        In `hybrid` only some adapters replay, so this covers the replayed
+        half and the live half is dated by the run itself.
+        """
+        return merge_windows(
+            getattr(adapter, "served_window", lambda: None)()
+            for adapter in self._adapters.values()
+        )
 
     def describe(self) -> dict[str, str]:
         """``{model_key: "live via gemini" | "replay"}`` for report footers.

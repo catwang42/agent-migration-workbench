@@ -33,6 +33,11 @@ class ReplayAdapter(ModelAdapter):
 
     def __init__(self, store: ReplayStore | None = None) -> None:
         self.store = store if store is not None else ReplayStore()
+        #: Span of the traces this adapter has actually served. Distinct from
+        #: :meth:`recording_window`, which describes the whole corpus on disk:
+        #: a run that replays yesterday's calls out of a store that also holds
+        #: last week's must date itself by what it used, not by what is there.
+        self._served: tuple[datetime, datetime] | None = None
 
     def complete(self, request: ModelRequest) -> Trace:
         """Return the recorded trace for this request.
@@ -43,6 +48,8 @@ class ReplayAdapter(ModelAdapter):
             about a call that was never made would corrupt the eval.
         """
         recorded = self.store.get(*request.replay_key)
+        lo, hi = self._served or (recorded.ts, recorded.ts)
+        self._served = (min(lo, recorded.ts), max(hi, recorded.ts))
         # Deep copy: the store hands out its own index entries, and a caller
         # mutating one would quietly rewrite the corpus for the rest of the run.
         return recorded.model_copy(deep=True)
@@ -52,6 +59,10 @@ class ReplayAdapter(ModelAdapter):
     ) -> tuple[datetime, datetime] | None:
         """``(earliest, latest)`` recording timestamp, for the on-screen label."""
         return self.store.recording_window(subagent)
+
+    def served_window(self) -> tuple[datetime, datetime] | None:
+        """``(earliest, latest)`` timestamp of the traces actually replayed."""
+        return self._served
 
     def __repr__(self) -> str:  # pragma: no cover - debugging aid
         return f"<ReplayAdapter root={self.store.root}>"

@@ -2,12 +2,12 @@
 
 **Delivery:** Thu Aug 13, 2026 · **Content freeze:** Wed Aug 12
 **Default mode:** `hybrid` (Claude replayed, Gemini live) · **Fallback:** `replay`
-**Version:** 2026-08-11 — reconcile against the frozen corpus on Wed AM before delivery.
+**Version:** 2026-08-11b — T10/T11/T12/T13 merged; every flag below is reconciled against
+the shipped CLI. Reconcile again against the frozen corpus on Wed AM before delivery.
 
-> Flags marked **[lane]** are being built in the T10/T11/T12 lanes as this is written and
-> are reconciled at merge. If a flag below does not exist when you rehearse, that is the
-> merge reconciliation failing, not the runbook being wrong — fix the wiring, don't edit
-> the narration.
+> Every command in this runbook has been run. If one of them does not exist or does not
+> behave as narrated when you rehearse, that is the wiring having regressed, not the
+> runbook being wrong — fix the wiring, don't edit the narration.
 
 ---
 
@@ -28,8 +28,20 @@ pytest tests/ -q
 **`CLAUDE_PATH=vertex` only.** The direct Anthropic path has never had a live round trip
 and is locked out of every demo flow. Do not first-run it on delivery day.
 
-Open both notebooks and execute them top-to-bottom once, in the mode you intend to use.
-Export HTML backups to `artifacts/backup/` — they are the last-resort visuals.
+Execute both notebooks headless once, in the mode you intend to use, then export HTML —
+those files are the last-resort visuals if the kernel dies on stage.
+
+```bash
+mkdir -p artifacts/notebooks artifacts/backup
+papermill notebooks/01_baseline_and_tuning.ipynb \
+    artifacts/notebooks/01.out.ipynb -p MODE hybrid          # ~10 min live; use replay to rehearse
+papermill notebooks/02_shadow_scorecard.ipynb \
+    artifacts/notebooks/02.out.ipynb -p SHADOW_METRIC structured
+jupyter nbconvert --to html --output-dir artifacts/backup artifacts/notebooks/*.out.ipynb
+```
+
+Both notebooks default to `MODE = "replay"` in their parameters cell, so opening one costs
+nothing. Notebook 02 also takes `SHADOW_METRIC` — see §2:05 below before you change it.
 
 ---
 
@@ -39,10 +51,10 @@ Export HTML backups to `artifacts/backup/` — they are the last-resort visuals.
 |---|---|---|---|
 | 0:00–0:20 | Decision framework + **gates sign-off** | `docs/migration_decision_framework.md`, `config/gates.yaml` | discussion |
 | 0:20–0:35 | **Methodology beat**: matching instrument to autonomy level | `docs/what_we_measure.md` taxonomy table | discussion |
-| 0:35–0:55 | Architecture mapping + cost calculator at *their* volumes | notebook 01, `--volumes` **[lane T12]** | live, cheap |
+| 0:35–0:55 | Architecture mapping + cost calculator at *their* volumes | `cli.py scorecard --volume` | live, cheap |
 | 0:55–1:15 | Reference system walkthrough — same agent code, both backends | `amw/agents/`, `cli.py` | live hybrid, 2–3 queries |
 | 1:15–2:05 | Baseline eval: full n=70 pre-run + **live 10-case subset**; loss clusters; the naive-swap failure; the ablation ladder | notebook 01 | full set pre-run, subset live |
-| 2:05–2:35 | Shadow scorecard + disagreement triage + ROI | notebook 02, `cli.py shadow --live-slice 5` **[lane T11]** | pre-run + one live slice |
+| 2:05–2:35 | Shadow scorecard + disagreement triage + ROI | notebook 02, `cli.py shadow --live-slice 5` | pre-run + one live slice |
 | 2:35–2:55 | Verdicts vs gates → **the ask** | `docs/data_request_onepager.md` | discussion |
 | 2:55–3:00 | Wrap | | |
 
@@ -105,14 +117,24 @@ thing?"**
 ### 0:35 — Economics at their volumes
 
 ```bash
-# illustrative volumes (rehearsal default)
-python cli.py scorecard --mode replay                      # [lane T12]
-# customer volumes entered live, in the room
-python cli.py scorecard --mode replay --volumes-from-customer ...   # [lane T12]
+# illustrative volumes (rehearsal default) — footer reads `volumes: illustrative`
+python cli.py scorecard --mode replay \
+    --shadow artifacts/results/shadow.json
+
+# customer volumes entered live, in the room. --volumes-confirmed-by is not
+# optional: the tool exits 2 rather than record an unattributed customer claim.
+python cli.py scorecard --mode replay \
+    --shadow artifacts/results/shadow.json \
+    --volume query_rewriter:250000 \
+    --volume chunk_summarizer:1200000 \
+    --volume feature_extractor:400000 \
+    --volumes-confirmed-by "<their name, said out loud>"
 ```
 
 - Type their real call volumes in live. The footer flips from
   **`volumes: illustrative`** to **`volumes: customer-provided`** on screen.
+- The three numbers above are the profile's **illustrative** figures. Overwrite them with
+  what the customer says; do not present them as anyone's real traffic.
 - **If pricing is still unverified, every dollar cell renders `—`.** Say this out loud
   rather than letting them notice: "I won't show you a savings percentage I can't source.
   The prices come from one file with a `verified_on` date and source URLs in the footer."
@@ -148,8 +170,8 @@ Four beats, in this order:
 ### 2:05 — Shadow + triage
 
 ```bash
-python cli.py shadow --mode replay              # [lane T11] agreement + triage, from recordings
-python cli.py shadow --live-slice 5             # [lane T11] ~30 calls, the live head-to-head
+python cli.py shadow --mode replay                     # agreement + triage, from recordings
+python cli.py shadow --mode hybrid --live-slice 5      # ~30 calls, the live head-to-head
 ```
 
 - The full shadow comparison is computed from the recorded corpus — no re-run, no new spend.
@@ -157,6 +179,23 @@ python cli.py shadow --live-slice 5             # [lane T11] ~30 calls, the live
   front of them. ~30 calls, not 630.
 - Browse the triage table. Land on a disagreement where the judge sided with Claude — the
   point is that the pipeline is capable of saying no.
+
+**Know which agreement figure is on screen before you say the word "agreement".** There
+are two, they are not interchangeable, and on this corpus they differ by up to 8x:
+
+```bash
+python cli.py scorecard --mode replay --shadow artifacts/results/shadow.json \
+    --shadow-metric structured     # fields with a defined right answer (default)
+python cli.py scorecard --mode replay --shadow artifacts/results/shadow.json \
+    --shadow-metric item           # every field must match; prose via a token-overlap proxy
+```
+
+The rendered card names the figure it used in each subagent's notes. Under `structured`,
+Chunk Summarizer and Feature Extractor pass the agreement gate and Query Rewriter fails
+it; under `item` all three fail. If a customer asks why you chose one: the item-level
+figure moves with the proxy's threshold — 0.6 → 0.4 takes Query Rewriter from 0.143 to
+0.357 — so a gate checked on it is substantially measuring the instrument. Say that
+rather than defending the number.
 
 ### 2:35 — The ask
 
@@ -185,9 +224,9 @@ The narration does not change between modes. That is the design: replay serves
 
 ### The one-flag drill — rehearse this Wednesday, once, mid-notebook
 
-1. Start notebook 01 in `hybrid`. Run to the live subset cell.
-2. Mid-run, change the mode parameter to `replay`.
-3. Re-run the cell. Confirm the on-screen banner switches to
+1. Start notebook 01 with `MODE = "hybrid"`. Run to the live subset cell (§4 of the notebook).
+2. Mid-run, change `MODE` to `"replay"` in the parameters cell at the top and re-run that cell.
+3. Re-run the live cell. Confirm the on-screen banner switches to
    `REPLAY — every number above comes from calls recorded <from> to <to>`.
 4. Time it. It must be under 30 seconds including narration.
 
@@ -210,6 +249,9 @@ honesty guarantee; without it, replay mode looks like a live run.
 5. **Never quote a dollar figure while `pricing.yaml` is unverified.** Em-dashes are the
    correct output.
 6. **Label the data as synthetic every time it comes up.** It is on every artifact anyway.
+7. **Never say "agreement" without saying which one.** Structured-fields-only and
+   whole-item are different measurements of different things. The card names the figure it
+   used; name it out loud too.
 
 ---
 

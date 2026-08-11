@@ -13,6 +13,11 @@ Three modules, in the order the data flows:
   rendered without it.
 
 ``cmd_scorecard`` is the entry point ``cli.py scorecard`` calls.
+
+:mod:`amw.reporting.notebook` is the fourth module and is deliberately *not*
+re-exported here: it pulls in pandas and matplotlib, and ``cli.py`` imports this
+package on every invocation. Notebooks reach it directly with
+``from amw.reporting import notebook as nb``.
 """
 
 from amw.reporting.cells import (

@@ -213,6 +213,13 @@ class RungSpec(BaseModel):
 FEW_SHOT_ITEM_IDS: dict[str, tuple[str, ...]] = {
     "gemini_novelty_v1_tool": (),
     "gemini_novelty_v1_schema": (),
+    # A4-targeted inherits A1-A3's two examples unchanged — changing them
+    # would confound the three-rule delta with an example swap — and its three
+    # new rules are illustrated with freshly authored material (a peristaltic
+    # pump patent number, a rotary vane pump assignee, a 2014-2017 date range),
+    # none of which appears anywhere in the corpus. Same discipline as the
+    # fe-0003 swap: an illustration must not be one of the answer keys.
+    "gemini_targeted_v1": (),
 }
 
 #: Every subagent runs these, in this order.
@@ -240,6 +247,10 @@ COMMON_RUNGS: tuple[RungSpec, ...] = (
 
 #: Extra rungs a single subagent has. Feature Extractor's four cells (A0 is in
 #: COMMON_RUNGS and serves as the fourth) unbundle prompt from output mode.
+#: Query Rewriter's single extra rung does the opposite — it deliberately
+#: bundles three rules, because it answers "did targeted tuning fix the three
+#: clusters the adjudication found" rather than "which rule earned what".
+#: See ``notes/qr_targeted_rung.md``.
 SUBAGENT_RUNGS: dict[str, tuple[RungSpec, ...]] = {
     "feature_extractor": (
         RungSpec(
@@ -264,6 +275,20 @@ SUBAGENT_RUNGS: dict[str, tuple[RungSpec, ...]] = {
             variant="gemini_novelty_v1_schema",
             branches_from="A4-novelty-tool",
             few_shot_item_ids=FEW_SHOT_ITEM_IDS["gemini_novelty_v1_schema"],
+        ),
+    ),
+    "query_rewriter": (
+        RungSpec(
+            rung="A4-targeted",
+            label=(
+                "A1-A3 plus three bundled rules for the three measured loss "
+                "clusters: publication numbers verbatim in query, explicit "
+                "date_to copied not expanded, landscape vs ownership by which "
+                "side of the question is unknown (per-rule credit not isolated)"
+            ),
+            variant="gemini_targeted_v1",
+            branches_from="A1-A3",
+            few_shot_item_ids=FEW_SHOT_ITEM_IDS["gemini_targeted_v1"],
         ),
     ),
 }
@@ -536,11 +561,25 @@ def run_ladder(
                 f"number is reported."
             )
 
-        window = merge_windows(
-            [
-                getattr(rung_router, "served_window", lambda: None)(),
-                _judge_window(rung_judge),
-            ]
+        # An unmeasured rung is dated by nothing, because it served nothing a
+        # number was computed from. It can still have *partially* replayed: the
+        # store is keyed on (subagent, model, input_sha), so a rung can hit
+        # recordings for the first few items and then miss, and the miss is
+        # what decides the row. Stamping the window it got that far on would
+        # put a recording date next to a row that reports no measurement —
+        # exactly the "looks like a measurement, isn't one" shape ground rule 1
+        # exists to prevent. (Caught 2026-08-11: the e2e fixture's fe-0000 is
+        # byte-identical to the real corpus fe-0000, so widening the FE ladder
+        # to n=70 gave the fixture's unmeasured rungs a same-day date.)
+        window = (
+            merge_windows(
+                [
+                    getattr(rung_router, "served_window", lambda: None)(),
+                    _judge_window(rung_judge),
+                ]
+            )
+            if status == "measured"
+            else None
         )
         provenance = RungProvenance(
             customer=cfg.customer.customer,

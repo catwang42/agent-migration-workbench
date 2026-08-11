@@ -77,10 +77,26 @@ def test_subagent_specific_variants_stay_out_of_the_universal_ladder():
     assert set(pp.VARIANTS) <= set(pp.ALL_VARIANTS)
     for variant in set(pp.ALL_VARIANTS) - set(pp.VARIANTS):
         assert pp.VARIANT_SPECS[variant].subagents is not None
-    assert pp.variants_for("feature_extractor") == pp.ALL_VARIANTS
-    assert pp.variants_for("query_rewriter") == pp.VARIANTS
+
+    # Every subagent gets the universal three plus exactly the restricted
+    # variants that name it — no more, and never fewer. Stated this way rather
+    # than as "FE has all of them", which stopped being true the moment a
+    # second subagent got a restricted variant of its own (A4-targeted, QR).
+    for subagent in SUBAGENTS:
+        expected = tuple(
+            name
+            for name, spec in pp.VARIANT_SPECS.items()
+            if spec.subagents is None or subagent in spec.subagents
+        )
+        assert pp.variants_for(subagent) == expected
+        assert set(pp.VARIANTS) <= set(expected)
+
+    # A restricted variant is not merely absent from the list; asking for it
+    # by name on the wrong subagent has to fail loudly.
     with pytest.raises(pp.PromptPackError, match="feature_extractor"):
         pp.load_pack("query_rewriter", "gemini_novelty_v1_tool")
+    with pytest.raises(pp.PromptPackError, match="query_rewriter"):
+        pp.load_pack("feature_extractor", "gemini_targeted_v1")
 
 
 @pytest.mark.parametrize(("subagent", "variant"), EVERY_PACK, ids=EVERY_IDS)

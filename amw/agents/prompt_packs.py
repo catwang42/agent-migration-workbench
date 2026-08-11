@@ -224,6 +224,24 @@ VARIANT_SPECS: dict[str, VariantSpec] = {
             "changes at once — the cell the other three are read against."
         ),
     ),
+    # -- Query Rewriter only: the targeted rung (Tuesday plan item 3b) ------
+    "gemini_targeted_v1": VariantSpec(
+        output_mode="response_schema",
+        model_role="gemini_candidate",
+        rung="A4-targeted",
+        subagents=("query_rewriter",),
+        description=(
+            "A1-A3 plus three rules aimed at the three loss clusters the n=70 "
+            "adjudication found: publication numbers survive verbatim in "
+            "query; date_to is copied when the analyst names an explicit end "
+            "date and expanded only for a bare period; landscape and "
+            "ownership are separated by which side of the question is "
+            "unknown. Bundled by the owner's ruling — the rung answers "
+            "'does targeted tuning fix the identified failures', not 'which "
+            "rule earned what'. Same output mode as A1-A3, so the delta is "
+            "prompt only."
+        ),
+    ),
 }
 
 #: The variants every subagent has. This is the default arm list for phase2 and

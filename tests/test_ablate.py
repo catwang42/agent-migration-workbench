@@ -106,11 +106,17 @@ def test_rung_ids_are_unique_within_a_ladder():
         assert len(ids) == len(set(ids))
 
 
-def test_only_feature_extractor_carries_extra_rungs():
-    assert set(SUBAGENT_RUNGS) == {"feature_extractor"}
+def test_extra_rungs_exist_only_where_a_measurement_asked_for_them():
+    """Two subagents carry extra rungs, for two different reasons, and the
+    third carries none. Chunk Summarizer is the control: nothing was added to
+    it, so its ladder must still be exactly the common three."""
+    assert set(SUBAGENT_RUNGS) == {"feature_extractor", "query_rewriter"}
+    assert ladder_for("chunk_summarizer") == COMMON_RUNGS
+    # Every extra rung is an extension of the common three, never a
+    # replacement: a subagent-specific ladder still has to start with the
+    # incumbent, A0 and A1-A3 or its rungs are not comparable to the others'.
     for subagent in SUBAGENTS:
-        if subagent != "feature_extractor":
-            assert ladder_for(subagent) == COMMON_RUNGS
+        assert ladder_for(subagent)[: len(COMMON_RUNGS)] == COMMON_RUNGS
 
 
 def test_the_novelty_rungs_branch_from_naive_not_from_the_tuned_bundle():
@@ -297,10 +303,15 @@ def test_the_novelty_rungs_quote_no_scored_corpus_item():
     specs = {spec.rung: spec for spec in ladder_for("feature_extractor")}
     assert specs["A4-novelty-tool"].few_shot_item_ids == ()
     assert specs["A4-novelty-schema"].few_shot_item_ids == ()
+    # Every hand-written rung declares its quoting, including the ones that
+    # quote nothing. A rung missing from this mapping has no check at all,
+    # which is indistinguishable in the artifact from a rung that passed one.
     assert set(FEW_SHOT_ITEM_IDS) == {
         "gemini_novelty_v1_tool",
         "gemini_novelty_v1_schema",
+        "gemini_targeted_v1",
     }
+    assert all(ids == () for ids in FEW_SHOT_ITEM_IDS.values())
 
 
 def test_the_replacement_worked_example_is_not_drawn_from_the_corpus():
@@ -594,12 +605,18 @@ def _run_to(cfg, tmp_path: Path, **kwargs) -> Path:
     return out
 
 
+#: How many rungs ``_run_to`` writes. Derived, not a literal: these tests are
+#: about append-vs-replace, and hardcoding the count makes every one of them
+#: fail the day a rung is added — which says nothing about appending.
+_QR_RUNGS = len(ladder_for("query_rewriter"))
+
+
 def test_the_artifact_round_trips_through_its_model(cfg, tmp_path):
     out = _run_to(cfg, tmp_path)
     parsed = AblationResult.model_validate_json(out.read_text(encoding="utf-8"))
     assert parsed.ablation_version == ABLATION_VERSION
     assert parsed.subagent == "query_rewriter"
-    assert len(parsed.rungs) == len(COMMON_RUNGS)
+    assert len(parsed.rungs) == _QR_RUNGS
 
 
 def test_records_append_across_runs_rather_than_replacing(cfg, tmp_path):
@@ -608,14 +625,14 @@ def test_records_append_across_runs_rather_than_replacing(cfg, tmp_path):
     out = _run_to(cfg, tmp_path)
     _run_to(cfg, tmp_path)
     parsed = AblationResult.model_validate_json(out.read_text(encoding="utf-8"))
-    assert len(parsed.rungs) == 2 * len(COMMON_RUNGS)
+    assert len(parsed.rungs) == 2 * _QR_RUNGS
 
 
 def test_append_can_be_turned_off(cfg, tmp_path):
     out = _run_to(cfg, tmp_path)
     _run_to(cfg, tmp_path, append=False)
     parsed = AblationResult.model_validate_json(out.read_text(encoding="utf-8"))
-    assert len(parsed.rungs) == len(COMMON_RUNGS)
+    assert len(parsed.rungs) == _QR_RUNGS
 
 
 def test_appending_to_another_subagents_artifact_is_refused(cfg, tmp_path):

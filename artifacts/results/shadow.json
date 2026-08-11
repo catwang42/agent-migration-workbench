@@ -1,0 +1,3244 @@
+{
+  "shadow_version": "1",
+  "customer": "demo_patents",
+  "mode": "replay",
+  "judge_mode": "replay",
+  "region": "us-central1",
+  "provenance": "synthetic",
+  "dataset_seed": 20260812,
+  "generator_version": "t06.1",
+  "bootstrap_seed": 20260812,
+  "judge_repeats": 2,
+  "baseline_arm": "claude_baseline",
+  "candidate_arm": "gemini_tuned_v1",
+  "similarity_metric": "token_jaccard_lexical_proxy",
+  "prose_threshold": 0.6,
+  "live_slice": 0,
+  "run_started": null,
+  "recorded_from": "2026-08-09T16:07:15+00:00",
+  "recorded_to": "2026-08-10T02:45:25+00:00",
+  "adapters": {
+    "claude-opus": "replay via replay",
+    "claude-sonnet": "replay via replay",
+    "gemini-flash": "replay via replay",
+    "gemini-pro": "replay via replay"
+  },
+  "judge_model": "Gemini 2.5 Pro",
+  "judge_prompt_version": "v1",
+  "subagents": [
+    {
+      "subagent": "query_rewriter",
+      "items": 70,
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "claude_baseline",
+          "model": "claude-sonnet",
+          "region": "global",
+          "region_source": "env:CLAUDE_REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 1030.5,
+          "ttft_p95_ms": 2313.2999999999997,
+          "total_p50_ms": 2245.0,
+          "total_p95_ms": 5967.65,
+          "disclosure": "CROSS-REGION: claude-sonnet ran in global, gemini-flash in us-central1. Latency here compares two regions and is not a like-for-like p95; the gates.yaml basis for latency_p95 asks for same region, same load profile. Regions are read from configuration — traces carry no region field."
+        }
+      },
+      "candidate": {
+        "arm": "gemini_tuned_v1",
+        "model": "gemini-flash",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "gemini_tuned_v1",
+          "model": "gemini-flash",
+          "region": "us-central1",
+          "region_source": "env:REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 2198.0,
+          "ttft_p95_ms": 8151.449999999994,
+          "total_p50_ms": 2478.0,
+          "total_p95_ms": 8306.199999999995,
+          "disclosure": "CROSS-REGION: claude-sonnet ran in global, gemini-flash in us-central1. Latency here compares two regions and is not a like-for-like p95; the gates.yaml basis for latency_p95 asks for same region, same load profile. Regions are read from configuration — traces carry no region field."
+        }
+      },
+      "agreement": {
+        "subagent": "query_rewriter",
+        "baseline_arm": "claude_baseline",
+        "candidate_arm": "gemini_tuned_v1",
+        "n_items": 70,
+        "n_compared": 70,
+        "n_agreed": 10,
+        "excluded": {},
+        "n_one_arm_empty": 0,
+        "agreement": {
+          "metric": "shadow_agreement",
+          "point": 0.14285714285714285,
+          "lo": 0.07142857142857142,
+          "hi": 0.22857142857142856,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "point": 0.14285714285714285,
+        "structured_agreement": {
+          "metric": "shadow_agreement_structured",
+          "point": 0.5571428571428572,
+          "lo": 0.44285714285714284,
+          "hi": 0.6714285714285714,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "structured_point": 0.5571428571428572,
+        "field_rates": [
+          {
+            "field": "query",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 17,
+            "rate": 0.24285714285714285,
+            "mean_similarity": 0.43239476808357125
+          },
+          {
+            "field": "intent",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 48,
+            "rate": 0.6857142857142857,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.date_from",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 59,
+            "rate": 0.8428571428571429,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.date_to",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 62,
+            "rate": 0.8857142857142857,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.assignees",
+            "kind": "scalar_set",
+            "n": 70,
+            "n_agreed": 57,
+            "rate": 0.8142857142857143,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.jurisdictions",
+            "kind": "code_set",
+            "n": 70,
+            "n_agreed": 64,
+            "rate": 0.9142857142857143,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.cpc_codes",
+            "kind": "code_set",
+            "n": 70,
+            "n_agreed": 63,
+            "rate": 0.9,
+            "mean_similarity": null
+          }
+        ],
+        "similarity_metric": "token_jaccard_lexical_proxy",
+        "prose_threshold": 0.6,
+        "no_interval_reason": null
+      },
+      "triage": [
+        {
+          "item_id": "qr-0000",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0001",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [intent_landscape]: The candidate output sets the intent to 'ownership' when the rubric specifies it should be 'landscape'.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0002",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [intent_landscape]: The candidate output sets `intent` to \"prior_art\" instead of \"landscape\".",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0003",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts the single CPC code, leaves the date filters null, and identifies the intent as 'landscape', fully satisf…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0004",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0005",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0006",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.date_from",
+            "filters.date_to"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0008",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0009",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [publication_number_kept]: The candidate output's query field does not contain the publication number 'US10869083B2' from the user's request.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0010",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly identifies the jurisdiction as the European Patent Office, sets the intent to 'landscape' for a broad search, and …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0011",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0012",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts all filterable entities from the search brief into the correct fields and does not include them in the qu…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0013",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0014",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [publication_number_kept]: The candidate's query string does not include the publication number 'US11769691B2', which is essential for a citation lookup.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0015",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0016",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0017",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0018",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0019",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0021",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_landscape]: The candidate output sets the intent to \"prior_art\" when the user's request to survey a company's activity implies a \"landscape\" intent.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0022",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0023",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0024",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0026",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0027",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0028",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0029",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.jurisdictions"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [jurisdiction_only]: The candidate output does not contain a filters object, and therefore fails to set filters.jurisdictions to ['EP'] as requested by the…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0032",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0033",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly identified the user's intent, the single CPC code requested, and the absence of any date filters, passing all crit…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0034",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.date_to"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [date_range_exact]: The `filters.date_to` is '2022-11-01' instead of the required '2022-10-31'.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0035",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0036",
+          "subagent": "query_rewriter",
+          "fields": [
+            "intent"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [intent_landscape]: The candidate sets the intent to \"ownership\" when the user is surveying a company's activity, which corresponds to a 'landscape' intent.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0038",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [intent_landscape]: The candidate output sets `intent` to `\"ownership\"` instead of the expected `\"landscape\"`.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0039",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [publication_number_kept]: The candidate's query string does not contain the publication number 'US10351052B2', which was the anchor of the user's request.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0040",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly identifies the intent and date filter from the user's request, does not invent any filters, and expands the query …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0041",
+          "subagent": "query_rewriter",
+          "fields": [
+            "intent"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [intent_landscape]: The candidate output sets the intent to \"ownership\" when the rubric specifies that it should be \"landscape\".",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0042",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0043",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0045",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_to"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0046",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [date_range_exact]: The `filters.date_to` is \"2022-11-01\", but the task input specified \"2022-10-31\".",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0047",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate correctly extracts the assignee and date filters and creates a technical query, but it fails by misclassifying the user's intent as…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0049",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0050",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0051",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [inventor_preserved]: The candidate output's query string does not contain the inventor's name 'Wei-Chen Liu', which was a key constraint in the user's req…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0052",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees",
+            "filters.jurisdictions"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0053",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.date_to"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0054",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0055",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0056",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly updates the assignee as requested while carrying over the classification, subject, and intent from the previous tu…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0057",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0058",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.date_from"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate correctly identified the assignee and attempted to capture recency, but it failed by inventing a specific start date and by misclas…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0059",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0060",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0062",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.date_from",
+            "filters.assignees",
+            "filters.jurisdictions"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [assignee_from_turn_1]: The candidate output does not contain a `filters` field, and therefore does not include 'The Broad Institute, Inc.' in `filters.ass…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0063",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_to"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0064",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0066",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly identifies the intent and date filter, does not invent any filters, and provides a well-expanded query with releva…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0067",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.assignees",
+            "filters.cpc_codes"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [cpc_carried_forward]: The candidate output is missing the `filters.cpc_codes` field entirely.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "qr-0068",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "qr-0069",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read"
+        }
+      ],
+      "triage_summary": {
+        "subagent": "query_rewriter",
+        "disagreements": 60,
+        "wins": 4,
+        "losses": 11,
+        "ties": 9,
+        "not_adjudicated": 36,
+        "not_adjudicated_reasons": {
+          "outside judged split": 36
+        }
+      },
+      "judged_split": "core",
+      "judged_items": 28
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "items": 70,
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "claude_baseline",
+          "model": "claude-sonnet",
+          "region": "global",
+          "region_source": "env:CLAUDE_REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 1152.5,
+          "ttft_p95_ms": 2220.0999999999995,
+          "total_p50_ms": 4727.0,
+          "total_p95_ms": 7867.549999999998,
+          "disclosure": "CROSS-REGION: claude-sonnet ran in global, gemini-flash in us-central1. Latency here compares two regions and is not a like-for-like p95; the gates.yaml basis for latency_p95 asks for same region, same load profile. Regions are read from configuration — traces carry no region field."
+        }
+      },
+      "candidate": {
+        "arm": "gemini_tuned_v1",
+        "model": "gemini-flash",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "gemini_tuned_v1",
+          "model": "gemini-flash",
+          "region": "us-central1",
+          "region_source": "env:REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 2017.0,
+          "ttft_p95_ms": 5338.549999999999,
+          "total_p50_ms": 3407.5,
+          "total_p95_ms": 6984.349999999998,
+          "disclosure": "CROSS-REGION: claude-sonnet ran in global, gemini-flash in us-central1. Latency here compares two regions and is not a like-for-like p95; the gates.yaml basis for latency_p95 asks for same region, same load profile. Regions are read from configuration — traces carry no region field."
+        }
+      },
+      "agreement": {
+        "subagent": "chunk_summarizer",
+        "baseline_arm": "claude_baseline",
+        "candidate_arm": "gemini_tuned_v1",
+        "n_items": 70,
+        "n_compared": 70,
+        "n_agreed": 9,
+        "excluded": {},
+        "n_one_arm_empty": 0,
+        "agreement": {
+          "metric": "shadow_agreement",
+          "point": 0.12857142857142856,
+          "lo": 0.05714285714285714,
+          "hi": 0.21428571428571427,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "point": 0.12857142857142856,
+        "structured_agreement": {
+          "metric": "shadow_agreement_structured",
+          "point": 0.9571428571428572,
+          "lo": 0.9,
+          "hi": 1.0,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "structured_point": 0.9571428571428572,
+        "field_rates": [
+          {
+            "field": "summary",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 9,
+            "rate": 0.12857142857142856,
+            "mean_similarity": 0.4640129700354923
+          },
+          {
+            "field": "key_points.text",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 58,
+            "rate": 0.8285714285714286,
+            "mean_similarity": 0.7092737180386836
+          },
+          {
+            "field": "key_points.chunk_ids",
+            "kind": "scalar_set",
+            "n": 70,
+            "n_agreed": 67,
+            "rate": 0.9571428571428572,
+            "mean_similarity": null
+          }
+        ],
+        "similarity_metric": "token_jaccard_lexical_proxy",
+        "prose_threshold": 0.6,
+        "no_interval_reason": null
+      },
+      "triage": [
+        {
+          "item_id": "cs-0000",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0001",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts both figures, attributes them to their sources, notes the conflict, and includes the caveat about the uns…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0002",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0003",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0004",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly identifies that the source passages do not answer the question, states this clearly, and avoids fabricating any in…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0006",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0007",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all key information, correctly attributes it to the source chunks, and preserves important nuances fro…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0008",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0009",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all requested values, their units, and the context of the measurements, correctly citing the source fo…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0010",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate successfully extracts and reports individual facts from the source passages, using the exact wording for key figures and hedging wh…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0011",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully passes all criteria by accurately reproducing specific details from the source, preserving the original hedging…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0012",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0013",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0014",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate correctly summarises and attributes the individual claims, but it fails to create a key point that explicitly describes the differe…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0016",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracted all three numerical values and the important caveat about how they were derived, with all information…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0017",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [conflict_flagged]: The candidate output presents the two different figures but does not explicitly state that they differ.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0018",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text",
+            "key_points.chunk_ids"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0019",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all requested values, reproduces them verbatim, attributes them to the correct source chunks, and incl…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0020",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0021",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all key information from the three provided passages, cites them correctly, and synthesizes them into …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0022",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0023",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0024",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0025",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all requested values verbatim, correctly attributes them to their sources, and includes the important …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0026",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0029",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0030",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0032",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0034",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0035",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0036",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0037",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0038",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0039",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0040",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate fails because it does not create a single key point that synthesizes the comparison between the two examples, which requires citing…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0041",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0042",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0043",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0044",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0045",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0046",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully passed all criteria by correctly citing its sources, covering all three passages, reporting the numerical value…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0047",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The output correctly separates and attributes the claims from the two sources and avoids making unsupported judgments about novelty. However, it …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0049",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is excellent, correctly extracting all key information, citing it properly, and summarizing it without adding any unsupporte…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0050",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts and correctly attributes all key information from the source passages, including the specific details …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0051",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text",
+            "key_points.chunk_ids"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [relative_claim_hedged]: The candidate output does not mention the figure for Comparative Example C1 at all, so it does not describe it as 'approximately h…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.25,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0052",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0053",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0054",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0055",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [applicant_cited_correctly]: The key point mentioning 'Novastrand Therapeutics, Inc.' is cited to both 'US10936972B2::claims::p0001' and 'US10936972B2::des…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.875,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0056",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0057",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0058",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts all the individual facts from the source passages, but it fails to synthesize the comparison between the …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0059",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0061",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly attributes the claims and other statements to the respective applications and avoids making unsupported judgments …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0062",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text",
+            "key_points.chunk_ids"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [distractor_not_cited]: The third key point includes `chunk_ids: [\"US11509884B2::desc::p0027\"]`, which is the distractor passage.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0063",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully passes all criteria by accurately extracting and citing the key information from the source chunks, including p…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0064",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0066",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts and summarizes the key information from the context, correctly citing the source for each point and pr…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0067",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output passes all criteria, as it correctly extracts and cites key information from all three passages and synthesizes it into an a…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "cs-0068",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        },
+        {
+          "item_id": "cs-0069",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged chunk_summarizer on the core split, which does not include this item, so there is no recorded verdict to read"
+        }
+      ],
+      "triage_summary": {
+        "subagent": "chunk_summarizer",
+        "disagreements": 61,
+        "wins": 2,
+        "losses": 2,
+        "ties": 21,
+        "not_adjudicated": 36,
+        "not_adjudicated_reasons": {
+          "outside judged split": 36
+        }
+      },
+      "judged_split": "core",
+      "judged_items": 28
+    },
+    {
+      "subagent": "feature_extractor",
+      "items": 70,
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "claude_baseline",
+          "model": "claude-sonnet",
+          "region": "global",
+          "region_source": "env:CLAUDE_REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 1236.0,
+          "ttft_p95_ms": 2462.8999999999996,
+          "total_p50_ms": 4488.0,
+          "total_p95_ms": 6896.65,
+          "disclosure": "CROSS-REGION: claude-sonnet ran in global, gemini-flash in us-central1. Latency here compares two regions and is not a like-for-like p95; the gates.yaml basis for latency_p95 asks for same region, same load profile. Regions are read from configuration — traces carry no region field."
+        }
+      },
+      "candidate": {
+        "arm": "gemini_tuned_v1",
+        "model": "gemini-flash",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "gemini_tuned_v1",
+          "model": "gemini-flash",
+          "region": "us-central1",
+          "region_source": "env:REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 2769.5,
+          "ttft_p95_ms": 3943.5999999999995,
+          "total_p50_ms": 3252.5,
+          "total_p95_ms": 4378.15,
+          "disclosure": "CROSS-REGION: claude-sonnet ran in global, gemini-flash in us-central1. Latency here compares two regions and is not a like-for-like p95; the gates.yaml basis for latency_p95 asks for same region, same load profile. Regions are read from configuration — traces carry no region field."
+        }
+      },
+      "agreement": {
+        "subagent": "feature_extractor",
+        "baseline_arm": "claude_baseline",
+        "candidate_arm": "gemini_tuned_v1",
+        "n_items": 70,
+        "n_compared": 70,
+        "n_agreed": 14,
+        "excluded": {},
+        "n_one_arm_empty": 0,
+        "agreement": {
+          "metric": "shadow_agreement",
+          "point": 0.2,
+          "lo": 0.11428571428571428,
+          "hi": 0.3,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "point": 0.2,
+        "structured_agreement": {
+          "metric": "shadow_agreement_structured",
+          "point": 0.9714285714285714,
+          "lo": 0.9285714285714286,
+          "hi": 1.0,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "structured_point": 0.9714285714285714,
+        "field_rates": [
+          {
+            "field": "title",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "assignee",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "filing_date",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "jurisdiction",
+            "kind": "code",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "cpc_codes",
+            "kind": "code_set",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "independent_claim_count",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "technical_field",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 34,
+            "rate": 0.4857142857142857,
+            "mean_similarity": 0.5348072562358277
+          },
+          {
+            "field": "novelty_statement",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 35,
+            "rate": 0.5,
+            "mean_similarity": 0.552203177921349
+          }
+        ],
+        "similarity_metric": "token_jaccard_lexical_proxy",
+        "prose_threshold": 0.6,
+        "no_interval_reason": null
+      },
+      "triage": [
+        {
+          "item_id": "fe-0000",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` is null, failing to extract the substance of the independent claim which is present in the source.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0001",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_inferred]: The candidate output's technical_field is null, not a phrase equivalent to 'CRISPR base editing'.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0002",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline failed [technical_field_correct]: The candidate's value for technical_field, 'machine-learning model training', is too broad and omits the key privacy-preserving a…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7142857142857143,
+          "candidate_score": 0.7857142857142857,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0003",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate output for `novelty_statement` is null, failing to extract the novelty which is clearly stated in Claim 1 of the…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0004",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline failed [technical_field_correct]: The candidate output for `technical_field` is null, but the source text clearly indicates the technical field is related to posit…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7142857142857143,
+          "candidate_score": 0.7857142857142857,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0005",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 scored lower; judge said: The candidate output correctly extracts all the requested information from the source text, including the applicant, filing date, jurisdi…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.9166666666666667,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0006",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate output provides a null value for novelty_statement, failing to extract the novelty which is clearly stated in cl…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8333333333333333,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0007",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts most fields, including the CPC codes, filing date, assignee, jurisdiction, and claim count. However, it f…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0008",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` omits the core of the invention (the process itself) and only states the problem it addresses, unlike …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0009",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is mostly correct, but fails on one criterion because the `technical_field` is too broad; the source specifies a particular …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0010",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate's `technical_field` of 'control system for a quantum processor' is too broad, as it is just a restatement of the t…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.7142857142857143,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0011",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate correctly extracted most fields, including the null assignee and the filing date. However, it failed to extract the novelty stateme…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8333333333333334,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0012",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` describes the advantage of the invention (\"addresses flammability charge limits\") rather than the nove…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0013",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate's `technical_field` is \"coherent optical ranging system\", which is too broad; the source specifies the system is f…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 0.6666666666666666,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0015",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is mostly correct, but it fails on one criterion by providing a `technical_field` that is too broad and omits the specific t…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8333333333333334,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0017",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate's novelty_statement describes the problem the invention solves ('addresses poor endosomal escape'), not the nove…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0018",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` omits the core details of the process, such as the use of a sterically hindered amine and a piperazine…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0019",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_from_fragment]: The `novelty_statement` describes the advantage of the embodiment ('addresses the cost and reliability penalties') rather than the…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.6666666666666666,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0021",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate's value for technical_field, 'control system for a quantum processor', is too broad as it is just the title of the…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 0.7142857142857143,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0022",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` omits the core of the invention (the specific argyrodite-type material and its particle diameter) and …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0024",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` omits the key components of the fusion protein (Cas9 nickase, TadA-8e, linker) and only describes its …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0025",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` omits the key limitation from claim 1 that the micro light-emitting diodes have 'a lateral…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0026",
+          "subagent": "feature_extractor",
+          "fields": [
+            "title",
+            "assignee",
+            "filing_date",
+            "jurisdiction",
+            "cpc_codes",
+            "independent_claim_count",
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is mostly correct, but fails on one criterion by providing a `technical_field` that is too broad to properly identify the sp…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7857142857142857,
+          "candidate_score": 0.7857142857142857,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0027",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is mostly correct, but it fails on one criterion because the novelty statement is incomplete, describing only the problem be…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8333333333333334,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0028",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is mostly correct, but it fails on one criterion because the `technical_field` is too broad and does not capture the specifi…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0030",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracted all required fields from the source document, including the technical field, novelty statement, and meta…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0031",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` is null, failing to extract the novelty which is clearly stated in claim 1 of the source d…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.6666666666666666,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0032",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` is null, failing to extract the substance of Claim 1 which describes the novel invention.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.7857142857142857,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0033",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate output's `technical_field` is null, failing to name the subject matter which is inferable from the title, claims, …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9,
+          "candidate_score": 0.8,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0034",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` fails because it omits the key numeric limit from claim 1 that the diodes have \"a lateral dimension of…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0035",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts all required fields from the source document, including setting the assignee to null and accurately captu…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 0.9166666666666667,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0036",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` asserts that the method \"resolves the accuracy cost of noise addition\", which is an unsupported claim …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0037",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` describes an advantage of the fusion protein (\"reduce off-target deamination\") rather than…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0038",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate output returned null for the novelty_statement, but the content of Claim 1 was available in the source to constr…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.7857142857142857,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0039",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is mostly correct, but it fails on the novelty statement by extracting the problem solved from the abstract instead of the d…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0040",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate's `technical_field` of 'water electrolysis' is too broad, as the source text describes a specific 'membrane electr…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.6666666666666666,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0041",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_inferred]: The candidate's `technical_field` of \"coherent optical ranging systems\" is a broader category and not equivalent to 'frequency-…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0042",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate's `technical_field` of 'water electrolysis' is too broad; the source specifies the more precise field of 'proton-e…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.6666666666666666,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0044",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate's technical_field, 'removing carbon dioxide from a flue gas', is too broad and is just a restatement of the title,…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 0.7857142857142857,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0045",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts all requested fields from the source text, including setting fields to null where no information was avai…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0046",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The novelty_statement omits the key components of the disclosed fusion protein (Cas9 nickase, 32-amino-acid linker, TadA-8e ad…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0047",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate's novelty_statement describes an advantage of the invention ('suppress lithium dendrite penetration') rather tha…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.7857142857142857,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0048",
+          "subagent": "feature_extractor",
+          "fields": [
+            "title",
+            "assignee",
+            "filing_date",
+            "jurisdiction",
+            "cpc_codes",
+            "independent_claim_count",
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 failed [technical_field_inferred]: The candidate's `technical_field` of 'training machine-learning models across client devices' is not equivalent to 'privacy-pres…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5833333333333333,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0052",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate's novelty_statement describes the problem the invention solves ('addresses poor endosomal escape') rather than t…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8571428571428571,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0053",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The candidate output provides a null value for `novelty_statement`, failing to extract the novelty which is clearly stated in …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.6666666666666666,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0054",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate output sets `technical_field` to `null`, failing to identify the subject matter which can be inferred from the tit…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0055",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` omits the key features of the invention (charge less than 150g, volume less than 0.4L) and only states…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0056",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 scored lower; judge said: The candidate output is excellent, correctly extracting all fields from the source document. The novelty statement is a well-formed summa…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.9166666666666667,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0058",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_inferred]: The candidate's technical_field 'carbon dioxide removal from flue gas' is not equivalent to 'amine-based post-combustion carbon…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0059",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [novelty_statement_correct]: The `novelty_statement` makes the unsupported claim that the invention 'resolves capacity fade', whereas the source only state…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0063",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate's technical_field, 'training machine-learning models across client devices', is too broad and misses the key priva…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 0.7142857142857143,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0064",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_correct]: The candidate's `technical_field` of \"beam management in a wireless network\" is too broad, as the source specifies the method is…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0065",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [technical_field_inferred]: The candidate's `technical_field` of \"monolithic tandem photovoltaic devices\" is not equivalent to 'perovskite-silicon tandem p…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5833333333333333,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0066",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracted all fields from the source text, accurately paraphrasing the novelty statement and technical field, and …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0067",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The `novelty_statement` omits key elements of the invention defined in claim 1, such as the 'control system' itself and its im…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        },
+        {
+          "item_id": "fe-0068",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline scored lower; judge said: The candidate output passed all criteria, correctly extracting all available information while correctly abstaining on fields for which n…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null
+        }
+      ],
+      "triage_summary": {
+        "subagent": "feature_extractor",
+        "disagreements": 56,
+        "wins": 5,
+        "losses": 39,
+        "ties": 12,
+        "not_adjudicated": 0,
+        "not_adjudicated_reasons": {}
+      },
+      "judged_split": "all",
+      "judged_items": 70
+    }
+  ],
+  "notes": [
+    "item-level agreement counts an item as agreeing only if EVERY field matches, and prose fields are matched with token_jaccard_lexical_proxy >= 0.6 — a lexical proxy, not an embedding cosine and not a semantic judgement. Two faithful paraphrases score as a disagreement. Read `structured_agreement` (prose fields dropped) as the proxy-free sensitivity, and the judge-adjudicated triage as the authoritative verdict on prose."
+  ]
+}

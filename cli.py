@@ -29,6 +29,7 @@ from amw.adapters import CLAUDE_PATHS, MODES
 from amw.agents.prompt_packs import VARIANTS
 from amw.agents.schemas import SUBAGENTS
 from amw.config import ConfigError, load_all
+from amw.shadow import cmd_shadow
 from amw.tuning import cmd_ablate
 
 #: The e2e corpus is a *committed fixture*, not a freshly generated dataset.
@@ -163,6 +164,71 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-append",
         action="store_true",
         help="overwrite the artifact instead of appending this run's rungs",
+    )
+
+    shadow = subparsers.choices["shadow"]
+    shadow.add_argument(
+        "-n",
+        type=int,
+        default=None,
+        help="compare only the first N items per subagent (core split first)",
+    )
+    shadow.add_argument(
+        "--subagent",
+        choices=SUBAGENTS,
+        default=None,
+        help="restrict to one subagent (default: all three)",
+    )
+    shadow.add_argument(
+        "--baseline-arm",
+        choices=VARIANTS,
+        default="claude_baseline",
+        help="incumbent arm (default: claude_baseline)",
+    )
+    shadow.add_argument(
+        "--candidate-arm",
+        choices=VARIANTS,
+        default="gemini_tuned_v1",
+        help="migration candidate (default: gemini_tuned_v1)",
+    )
+    shadow.add_argument(
+        "--live-slice",
+        type=int,
+        default=0,
+        metavar="N",
+        help=(
+            "opt in to a genuinely live head-to-head on the first N items per "
+            "subagent (max 10; use with --mode live|hybrid). Default 0 = compare "
+            "the whole recorded corpus in replay"
+        ),
+    )
+    shadow.add_argument(
+        "--dataset-dir",
+        default=None,
+        help="where to read the corpus from (default: datasets/)",
+    )
+    shadow.add_argument(
+        "--out",
+        default=None,
+        help="results path (default: artifacts/results/shadow.json)",
+    )
+    shadow.add_argument(
+        "--triage-out",
+        default=None,
+        help="markdown triage table (default: artifacts/results/shadow_triage.md)",
+    )
+    shadow.add_argument(
+        "--no-judge",
+        action="store_true",
+        help="skip adjudication; every disagreement is labelled not_adjudicated",
+    )
+    shadow.add_argument(
+        "--phase2",
+        default=None,
+        help=(
+            "phase-2 artifact to read each subagent's judged split from "
+            "(default: newest of artifacts/results/phase2_n70.json, phase2.json)"
+        ),
     )
 
     smoke = subparsers.choices["smoke"]
@@ -423,6 +489,7 @@ HANDLERS = {
     "gen": cmd_gen,
     "phase2": cmd_phase2,
     "ablate": cmd_ablate,
+    "shadow": cmd_shadow,
     "e2e": cmd_e2e,
     "smoke": cmd_smoke,
 }

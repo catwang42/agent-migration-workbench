@@ -109,7 +109,7 @@ them are mine.
 
 ---
 
-## The four from this build
+## The five from this build
 
 ### 6. "You measured Claude with tool-use JSON and Gemini with a native enforced schema. That's rigged."
 
@@ -200,6 +200,38 @@ to issue verdicts where the instrument doesn't reach.
   confident wrong one."
 - The follow-on scope is the rows without verdicts. That's a real engagement, not a
   consolation prize.
+
+### 10. "You also ran Google's own managed evaluation service. Which set of numbers is real?"
+
+**Short answer:** Both are real; only one is gated. The internal harness is the instrument
+the gates are checked against, registered before results. The Vertex Gen AI Evaluation
+Service is a second opinion reported *beside* it.
+
+**Evidence:**
+- The managed service re-scored the **same recorded outputs** — generations are replayed,
+  only the scoring is live — so the two instruments are talking about the same answers, not
+  two different runs.
+- It was pointed at *our* rubrics (uploaded as rubric group `amw_dataset_rubric` from
+  `amw.eval.runner.rubric_of`), so its autorater scored the same criteria ours did.
+- The two are never averaged and never substituted. That's enforced in the type system, not
+  by convention: managed and internal figures are different frozen classes with a `Literal`
+  source, and the record that holds them owns no numeric field — there is nowhere in the
+  schema for a blended number to live. The side-by-side table is long-format, one row per
+  instrument, so no two columns invite subtraction.
+- `cli.py vertex-eval --mode replay` re-renders the committed artifact with no credentials.
+
+**What's honest to concede — say both of these first:**
+- **The managed autorater's model is chosen by the service.** It is the one model in this
+  pipeline whose ID is *not* pinned in `config/models.yaml`. Everything else in the
+  workbench resolves its model from that file; this doesn't, and can't.
+- **Its loss clustering returned no clusters, on every arm.** The call completes without
+  error and returns nothing — reproduced with 26 failing rubric verdicts across 28 cases and
+  under three different taxonomy settings. The table says `no_clusters_returned` with the
+  failing-verdict count beside it. That is a statement about the tool, not a clean bill of
+  health, and the loss clusters a customer actually gets are the internal harness's.
+
+**Don't say:** "Google's own service confirms our numbers." It scored the same outputs with
+a different instrument and mostly agreed. That is worth something and it is not confirmation.
 
 ---
 

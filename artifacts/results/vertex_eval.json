@@ -1,0 +1,737 @@
+{
+  "vertex_eval_version": "1",
+  "separation_rule": "The internal harness is the gated instrument: config/gates.yaml is checked against phase2.json and nothing here changes it. The Vertex Gen AI Evaluation Service is a managed second instrument reported beside it. The two are never averaged, never blended, and one is never substituted for the other — every figure below is labelled with the instrument that produced it.",
+  "customer": "demo_patents",
+  "status": "completed",
+  "skip_reason": null,
+  "provenance": "synthetic",
+  "project": "vital-octagon-19612",
+  "eval_region": "us-central1",
+  "loss_analysis_region": "global",
+  "sdk_version": "1.163.0",
+  "quality_metric": "general_quality_v1",
+  "tool_use_metric": "tool_use_quality_v1",
+  "rubric_group": "amw_dataset_rubric",
+  "sample_size": 8,
+  "sample_seed": 20260812,
+  "scope": {
+    "query_rewriter": "8 items, stratified by difficulty (seed 20260812), drawn from the 28 items in the internal judge's core split of a 70-item corpus",
+    "chunk_summarizer": "8 items, stratified by difficulty (seed 20260812), drawn from the 28 items in the internal judge's core split of a 70-item corpus",
+    "feature_extractor": "8 items, stratified by difficulty (seed 20260812), drawn from the 70 items in the internal judge's all split of a 70-item corpus"
+  },
+  "internal_artifact": "artifacts/results/phase2_n70.json",
+  "gates_version_hash": "92f9d018432f",
+  "run_started": "2026-08-11T05:30:51+00:00",
+  "recorded_from": "2026-08-09T16:07:41+00:00",
+  "recorded_to": "2026-08-10T02:10:28+00:00",
+  "arms": [
+    {
+      "subagent": "query_rewriter",
+      "arm": "claude_baseline",
+      "model": "claude-sonnet",
+      "output_mode": "tool",
+      "items_submitted": 8,
+      "item_ids": [
+        "qr-0009",
+        "qr-0012",
+        "qr-0031",
+        "qr-0040",
+        "qr-0051",
+        "qr-0056",
+        "qr-0062",
+        "qr-0066"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.9375,
+          "stdev_score": 0.1767766952966369,
+          "pass_rate": 0.875,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        },
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "tool_use_quality_v1",
+          "instrument": "tool_use_quality",
+          "rubric_source": null,
+          "mean_score": 0.9375,
+          "stdev_score": 0.1767766952966369,
+          "pass_rate": 0.875,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.9107142857142857,
+          "ci_lo": 0.8392857142857143,
+          "ci_hi": 0.9642857142857143,
+          "n": 28,
+          "split": "core",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 0.8142857142857143,
+          "ci_lo": 0.7142857142857143,
+          "ci_hi": 0.9,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "claude_baseline",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 2 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 2,
+        "clusters": []
+      },
+      "notes": []
+    },
+    {
+      "subagent": "query_rewriter",
+      "arm": "gemini_naive",
+      "model": "gemini-flash",
+      "output_mode": "tool",
+      "items_submitted": 8,
+      "item_ids": [
+        "qr-0009",
+        "qr-0012",
+        "qr-0031",
+        "qr-0040",
+        "qr-0051",
+        "qr-0056",
+        "qr-0062",
+        "qr-0066"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.88125,
+          "stdev_score": 0.12799972098183876,
+          "pass_rate": 0.5,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        },
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "tool_use_quality_v1",
+          "instrument": "tool_use_quality",
+          "rubric_source": null,
+          "mean_score": 0.88125,
+          "stdev_score": 0.12799972098183876,
+          "pass_rate": 0.5,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.8357142857142857,
+          "ci_lo": 0.7874999999999999,
+          "ci_hi": 0.8857142857142858,
+          "n": 28,
+          "split": "core",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 0.9714285714285714,
+          "ci_lo": 0.9285714285714286,
+          "ci_hi": 1.0,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "gemini_naive",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 4 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 4,
+        "clusters": []
+      },
+      "notes": []
+    },
+    {
+      "subagent": "query_rewriter",
+      "arm": "gemini_tuned_v1",
+      "model": "gemini-flash",
+      "output_mode": "response_schema",
+      "items_submitted": 8,
+      "item_ids": [
+        "qr-0009",
+        "qr-0012",
+        "qr-0031",
+        "qr-0040",
+        "qr-0051",
+        "qr-0056",
+        "qr-0062",
+        "qr-0066"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.9375,
+          "stdev_score": 0.11572751247156893,
+          "pass_rate": 0.75,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.8517857142857144,
+          "ci_lo": 0.7964285714285715,
+          "ci_hi": 0.9053571428571429,
+          "n": 28,
+          "split": "core",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 1.0,
+          "ci_lo": 1.0,
+          "ci_hi": 1.0,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "gemini_tuned_v1",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 2 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 2,
+        "clusters": []
+      },
+      "notes": [
+        "tool_use_quality_v1 was not run on this arm: it emits via response_schema and issues no tool call, so there is no tool-calling behaviour to score. Not a zero — an absence."
+      ]
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "arm": "claude_baseline",
+      "model": "claude-sonnet",
+      "output_mode": "tool",
+      "items_submitted": 8,
+      "item_ids": [
+        "cs-0009",
+        "cs-0016",
+        "cs-0017",
+        "cs-0046",
+        "cs-0050",
+        "cs-0051",
+        "cs-0058",
+        "cs-0067"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.9642857142857143,
+          "stdev_score": 0.09449111825230681,
+          "pass_rate": 0.8571428571428571,
+          "cases_total": 8,
+          "cases_valid": 7,
+          "cases_error": 1,
+          "excluded": {}
+        },
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "tool_use_quality_v1",
+          "instrument": "tool_use_quality",
+          "rubric_source": null,
+          "mean_score": 0.875,
+          "stdev_score": 0.2672612419124244,
+          "pass_rate": 0.75,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.9017857142857143,
+          "ci_lo": 0.8303571428571429,
+          "ci_hi": 0.9555803571428539,
+          "n": 28,
+          "split": "core",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 0.9714285714285714,
+          "ci_lo": 0.9285714285714286,
+          "ci_hi": 1.0,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "claude_baseline",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 1 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 1,
+        "clusters": []
+      },
+      "notes": []
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "arm": "gemini_naive",
+      "model": "gemini-flash",
+      "output_mode": "tool",
+      "items_submitted": 8,
+      "item_ids": [
+        "cs-0009",
+        "cs-0016",
+        "cs-0017",
+        "cs-0046",
+        "cs-0050",
+        "cs-0051",
+        "cs-0058",
+        "cs-0067"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.9375,
+          "stdev_score": 0.11572751247156893,
+          "pass_rate": 0.75,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        },
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "tool_use_quality_v1",
+          "instrument": "tool_use_quality",
+          "rubric_source": null,
+          "mean_score": 0.9375,
+          "stdev_score": 0.11572751247156893,
+          "pass_rate": 0.75,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.8973214285714286,
+          "ci_lo": 0.8303571428571429,
+          "ci_hi": 0.9553571428571429,
+          "n": 28,
+          "split": "core",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 0.9428571428571428,
+          "ci_lo": 0.8857142857142857,
+          "ci_hi": 0.9857142857142858,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "gemini_naive",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 2 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 2,
+        "clusters": []
+      },
+      "notes": []
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "arm": "gemini_tuned_v1",
+      "model": "gemini-flash",
+      "output_mode": "response_schema",
+      "items_submitted": 8,
+      "item_ids": [
+        "cs-0009",
+        "cs-0016",
+        "cs-0017",
+        "cs-0046",
+        "cs-0050",
+        "cs-0051",
+        "cs-0058",
+        "cs-0067"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.90625,
+          "stdev_score": 0.12938729237669142,
+          "pass_rate": 0.625,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.9151785714285714,
+          "ci_lo": 0.8705357142857143,
+          "ci_hi": 0.9553571428571429,
+          "n": 28,
+          "split": "core",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 1.0,
+          "ci_lo": 1.0,
+          "ci_hi": 1.0,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "gemini_tuned_v1",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 3 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 3,
+        "clusters": []
+      },
+      "notes": [
+        "tool_use_quality_v1 was not run on this arm: it emits via response_schema and issues no tool call, so there is no tool-calling behaviour to score. Not a zero — an absence."
+      ]
+    },
+    {
+      "subagent": "feature_extractor",
+      "arm": "claude_baseline",
+      "model": "claude-sonnet",
+      "output_mode": "tool",
+      "items_submitted": 8,
+      "item_ids": [
+        "fe-0001",
+        "fe-0027",
+        "fe-0034",
+        "fe-0059",
+        "fe-0061",
+        "fe-0063",
+        "fe-0068",
+        "fe-0069"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.9642857175,
+          "stdev_score": 0.06613000117491018,
+          "pass_rate": 0.75,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        },
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "tool_use_quality_v1",
+          "instrument": "tool_use_quality",
+          "rubric_source": null,
+          "mean_score": 0.9255952375000001,
+          "stdev_score": 0.11053767496127317,
+          "pass_rate": 0.625,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.8996258503401358,
+          "ci_lo": 0.867890306122449,
+          "ci_hi": 0.9287074829931973,
+          "n": 70,
+          "split": "all",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 0.9571428571428572,
+          "ci_lo": 0.9,
+          "ci_hi": 1.0,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "claude_baseline",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 2 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 2,
+        "clusters": []
+      },
+      "notes": []
+    },
+    {
+      "subagent": "feature_extractor",
+      "arm": "gemini_naive",
+      "model": "gemini-flash",
+      "output_mode": "tool",
+      "items_submitted": 8,
+      "item_ids": [
+        "fe-0001",
+        "fe-0027",
+        "fe-0034",
+        "fe-0059",
+        "fe-0061",
+        "fe-0063",
+        "fe-0068",
+        "fe-0069"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.8839285625,
+          "stdev_score": 0.1052843371295143,
+          "pass_rate": 0.375,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        },
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "tool_use_quality_v1",
+          "instrument": "tool_use_quality",
+          "rubric_source": null,
+          "mean_score": 0.8422619,
+          "stdev_score": 0.17260438494610808,
+          "pass_rate": 0.375,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.8212925170068026,
+          "ci_lo": 0.787108843537415,
+          "ci_hi": 0.8535714285714284,
+          "n": 70,
+          "split": "all",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 1.0,
+          "ci_lo": 1.0,
+          "ci_hi": 1.0,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "gemini_naive",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 6 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 6,
+        "clusters": []
+      },
+      "notes": []
+    },
+    {
+      "subagent": "feature_extractor",
+      "arm": "gemini_tuned_v1",
+      "model": "gemini-flash",
+      "output_mode": "response_schema",
+      "items_submitted": 8,
+      "item_ids": [
+        "fe-0001",
+        "fe-0027",
+        "fe-0034",
+        "fe-0059",
+        "fe-0061",
+        "fe-0063",
+        "fe-0068",
+        "fe-0069"
+      ],
+      "managed": [
+        {
+          "source": "vertex_gen_ai_evaluation_service",
+          "metric": "general_quality_v1",
+          "instrument": "rubric_based_quality",
+          "rubric_source": "amw dataset rubric (amw.eval.runner.rubric_of) — the same criteria the internal judge scored",
+          "mean_score": 0.84226190125,
+          "stdev_score": 0.154794607775766,
+          "pass_rate": 0.25,
+          "cases_total": 8,
+          "cases_valid": 8,
+          "cases_error": 0,
+          "excluded": {}
+        }
+      ],
+      "internal": [
+        {
+          "source": "internal_harness",
+          "metric": "judge_score",
+          "instrument": "rubric_judged_quality",
+          "point": 0.7952721088435373,
+          "ci_lo": 0.7603715986394557,
+          "ci_hi": 0.8276547619047618,
+          "n": 70,
+          "split": "all",
+          "read_from": "artifacts/results/phase2_n70.json"
+        },
+        {
+          "source": "internal_harness",
+          "metric": "json_schema_validity",
+          "instrument": "deterministic_output_contract",
+          "point": 1.0,
+          "ci_lo": 1.0,
+          "ci_hi": 1.0,
+          "n": 70,
+          "split": null,
+          "read_from": "artifacts/results/phase2_n70.json"
+        }
+      ],
+      "loss_clusters": {
+        "source": "vertex_gen_ai_evaluation_service",
+        "metric": "general_quality_v1",
+        "candidate": "gemini_tuned_v1",
+        "region": "global",
+        "status": "no_clusters_returned",
+        "reason": "the loss-analysis operation completed with no error and no response over 8 case(s) carrying 8 failing rubric verdict(s). This is not a claim that nothing failed: the failures are listed in the rubric verdicts above, the service simply returned no clusters for them.",
+        "analysis_time": null,
+        "cases_analysed": 8,
+        "failing_verdicts": 8,
+        "clusters": []
+      },
+      "notes": [
+        "tool_use_quality_v1 was not run on this arm: it emits via response_schema and issues no tool call, so there is no tool-calling behaviour to score. Not a zero — an absence."
+      ]
+    }
+  ],
+  "notes": [
+    "The internal harness is the gated instrument: config/gates.yaml is checked against phase2.json and nothing here changes it. The Vertex Gen AI Evaluation Service is a managed second instrument reported beside it. The two are never averaged, never blended, and one is never substituted for the other — every figure below is labelled with the instrument that produced it."
+  ]
+}

@@ -36,6 +36,7 @@ from amw.economics.cache_demo import (
     cmd_cache_demo,
 )
 from amw.eval.crosscheck import INSUFFICIENT, SAMPLE_FRACTION, UNRELIABLE, VALIDATED
+from amw.eval.vertex_eval import DEFAULT_QPS, DEFAULT_SAMPLE_SIZE
 from amw.reporting import DEFAULT_SHADOW_METRIC, SHADOW_METRICS, cmd_scorecard
 from amw.shadow import cmd_shadow
 from amw.tuning import cmd_ablate
@@ -55,6 +56,7 @@ COMMANDS: dict[str, tuple[str, str]] = {
     "optimize": ("VAIPO rung A4-optimizer (live only)", "P1/S3"),
     "shadow": ("shadow run + disagreement triage", "T11"),
     "crosscheck": ("second-judge cross-check of the judged metric", "P1/S1"),
+    "vertex-eval": ("managed Vertex Gen AI Evaluation Service, beside our harness", "P1/S2"),
     "scorecard": ("gates -> verdicts -> markdown report", "T12"),
     "cache-demo": ("live context-caching demo: real cached-token counts", "P1"),
     "e2e": ("full offline pipeline (CI gate)", "T09"),
@@ -302,6 +304,70 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "render from the existing --out artifact instead of running the "
             "judges again; needs no credentials"
+        ),
+    )
+
+    vertex_eval = subparsers.choices["vertex-eval"]
+    vertex_eval.add_argument(
+        "--results",
+        default=None,
+        help=(
+            "phase-2 artifact the managed numbers are reported beside; its "
+            "judged split is the eligible pool (default: newest of "
+            "phase2_n70.json, phase2.json)"
+        ),
+    )
+    vertex_eval.add_argument(
+        "--subagent",
+        action="append",
+        choices=SUBAGENTS,
+        default=None,
+        help="restrict to one subagent (repeatable; default: all three)",
+    )
+    vertex_eval.add_argument(
+        "--variant",
+        action="append",
+        choices=VARIANTS,
+        default=None,
+        help="restrict to one arm (repeatable; default: all three)",
+    )
+    vertex_eval.add_argument(
+        "--sample-size",
+        type=int,
+        default=DEFAULT_SAMPLE_SIZE,
+        help=(
+            f"items per subagent, stratified by difficulty (default: "
+            f"{DEFAULT_SAMPLE_SIZE}). This is a showcase, not a gated "
+            f"measurement, and it shares autorater quota with runs that are."
+        ),
+    )
+    vertex_eval.add_argument(
+        "--qps",
+        type=float,
+        default=DEFAULT_QPS,
+        help=f"requests per second asked of the managed service (default: {DEFAULT_QPS})",
+    )
+    vertex_eval.add_argument(
+        "--no-loss-clusters",
+        action="store_true",
+        help="skip the loss-analysis step (it is a separate long-running call)",
+    )
+    vertex_eval.add_argument(
+        "--out",
+        default=None,
+        help="where vertex_eval.json is written (default: artifacts/results/)",
+    )
+    vertex_eval.add_argument(
+        "--report",
+        default=None,
+        help="also write the side-by-side tables and loss clusters as markdown",
+    )
+    vertex_eval.add_argument(
+        "--reuse",
+        action="store_true",
+        help=(
+            "render the existing --out artifact instead of calling the managed "
+            "service; needs no credentials (implied by --mode replay)"
         ),
     )
 
@@ -755,6 +821,106 @@ def _fmt(value: float | None) -> str:
     return "n/a" if value is None else f"{value:.4f}"
 
 
+def cmd_vertex_eval(args, cfg) -> int:
+    """Re-score recorded outputs with the Vertex Gen AI Evaluation Service.
+
+    A managed second instrument, reported *beside* the internal harness and
+    never merged with it: the gates are checked against phase2.json and nothing
+    here touches them.
+
+    The generations are always replayed — this re-scores the same outputs the
+    scorecard reports on, so re-running them would mean the two instruments
+    were talking about different answers. Only the scoring is live, which is
+    why `--mode replay` means "render the committed artifact, call nothing".
+    """
+    from amw.eval.vertex_eval import (
+        COMPLETED,
+        VertexEvalResult,
+        default_vertex_eval_path,
+        managed_banner,
+        render_markdown,
+        run_vertex_eval,
+    )
+    from amw.reporting.scorecard import _default_results_path
+
+    artifact = Path(args.out) if args.out else default_vertex_eval_path()
+
+    if args.reuse or args.mode == "replay":
+        if not artifact.is_file():
+            print(
+                f"no managed-evaluation artifact at {artifact}. The Vertex Gen AI "
+                "Evaluation Service is a live managed instrument; in replay mode "
+                "there is nothing to show, and nothing has been substituted for "
+                "it. Run `python cli.py vertex-eval --mode live` to produce one."
+            )
+            return 0
+        result = VertexEvalResult.model_validate_json(artifact.read_text())
+    else:
+        results_path = Path(args.results) if args.results else _default_results_path()
+        if not results_path.is_file():
+            print(
+                f"error: no phase-2 artifact at {results_path}. The managed "
+                "evaluation reports beside an internal run; run `python cli.py "
+                "phase2` first.",
+                file=sys.stderr,
+            )
+            return 2
+        result = run_vertex_eval(
+            config=cfg,
+            results_path=results_path,
+            subagents=args.subagent,
+            variants=args.variant,
+            sample_size=args.sample_size,
+            loss_clusters=not args.no_loss_clusters,
+            qps=args.qps,
+            out_path=artifact,
+        )
+
+    if args.report:
+        report_path = Path(args.report)
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(render_markdown(result), encoding="utf-8")
+        print(f"wrote {report_path}\n")
+
+    print(f"{managed_banner(result)}\n")
+    if result.status != COMPLETED:
+        # An unreachable managed service is a stated gap, not a failed run: the
+        # internal harness is the gated instrument and it is untouched.
+        return 0
+
+    for entry in result.arms:
+        for figure in entry.managed:
+            value = (
+                "not measured"
+                if figure.mean_score is None
+                else f"{figure.mean_score:.4f}"
+            )
+            print(
+                f"{entry.subagent:<18} {entry.arm:<16} {figure.source:<32} "
+                f"{figure.metric:<21} {value:>12}  (n={figure.cases_valid}, "
+                f"errors={figure.cases_error})"
+            )
+        for figure in entry.internal:
+            value = "not measured" if figure.point is None else f"{figure.point:.4f}"
+            print(
+                f"{entry.subagent:<18} {entry.arm:<16} {figure.source:<32} "
+                f"{figure.metric:<21} {value:>12}  (n={figure.n})"
+            )
+        loss = entry.loss_clusters
+        if loss is not None:
+            print(
+                f"{'':<18} {'':<16} loss clusters: {loss.status} — "
+                f"{len(loss.clusters)} cluster(s) over {loss.failing_verdicts} "
+                f"failing rubric verdict(s) in {loss.cases_analysed} case(s)"
+            )
+        for note in entry.notes:
+            print(f"{'':<18} {'':<16} note: {note}")
+
+    print(f"\nartifact: {artifact}")
+    print(f"\n{result.separation_rule}")
+    return 0
+
+
 def cmd_e2e(args, cfg) -> int:
     """The offline CI gate: a tiny committed corpus through the whole path.
 
@@ -902,6 +1068,7 @@ HANDLERS = {
     "optimize": cmd_optimize,
     "shadow": cmd_shadow,
     "crosscheck": cmd_crosscheck,
+    "vertex-eval": cmd_vertex_eval,
     "scorecard": cmd_scorecard,
     "cache-demo": cmd_cache_demo,
     "e2e": cmd_e2e,

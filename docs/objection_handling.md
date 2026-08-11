@@ -252,12 +252,21 @@ a different instrument and mostly agreed. That is worth something and it is not 
 
 ## Two you should raise before they do
 
-**Judged-n differs across subagents.** QR and CS judge scores come from the 28-item core
-split; FE's come from the full 70. That's a registered deviation made because FE is the
-contested row. Every judge score on screen carries its n and split. Two judge scores at
-different n are not directly comparable — say it first.
+**The gated metrics are full-70; the ablation ladder is core-28.** All three subagents'
+gated judge scores now come from the full 70 — QR and CS were widened on 2026-08-11 as
+registered sizing deviation #2, decided before the widened results were seen. The ablation
+ladder is a separate, smaller instrument: every rung, old and new, is judged on the 28-item
+core split, which is what makes the rungs comparable *to each other*. So the FE ladder's
+incumbent reads 0.903 (core-28) while the scorecard's FE baseline reads 0.900 (full 70).
+Those are two measurements that happen to agree to 0.3 pp, not one number. Every judge score
+on screen carries its n and split. Quote a ladder number against a ladder number and a gated
+number against a gated number — never one against the other.
 
-**A1–A3 is one bundled rung.** In this run the prompt change and the output-mode change moved
-together, so the ladder currently can't attribute the A0→A1 delta between them. The mode
-diagnostic that separates them runs the same prompt under both output modes. Until it lands,
-the rung is reported as one step, not three.
+**A1–A3 was one bundled rung; it no longer is.** The prompt change and the output-mode change
+originally moved together, so the ladder could not attribute the A0→A1 delta between them.
+The mode diagnostic has now run: A0 (tool) 0.837 [0.791, 0.882] against A0-schema
+(`response_schema`, same prompt bytes) 0.826 [0.773, 0.875] — −1.1 pp with CIs almost fully
+overlapping. **An enforced `response_schema`, isolated from any prompt change, does not move
+the FE judge score.** So the drop to A1–A3's 0.807 is the prompt restructure and the
+recalibrated few-shots, not the output mode. Say the direction honestly: the mode is not
+exonerated by a null result, it is simply not the explanation for this delta.

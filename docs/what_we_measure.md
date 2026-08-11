@@ -63,7 +63,7 @@ Turns a natural-language question into a structured retrieval plan (intent + fil
 | `exact_match_intent` | Deterministic, vs gold | Intent drives the whole retrieval path. Wrong intent = wrong corpus slice, regardless of how good the filters are. |
 | `filter_precision` / `filter_recall` / `filter_f1` | Deterministic set comparison, normalised codes | Precision and recall fail *differently* — a missed assignee filter over-retrieves, an invented one silently drops relevant docs. Averaging them would hide which. |
 | `json_schema_validity` | Deterministic parse against the frozen schema | A plan that doesn't parse is a hard outage, not a quality dip. This is a **blocking** gate. |
-| `judge_score` | Rubric-anchored LLM judge, k=2, 28-item core split | Catches "structurally valid but semantically wrong" — the class exact-match scores into noise. |
+| `judge_score` | Rubric-anchored LLM judge, k=2, **full 70** (widened 2026-08-11, sizing deviation #2) | Catches "structurally valid but semantically wrong" — the class exact-match scores into noise. |
 
 **Measured (n=70):** Claude `exact_match_intent` 0.729 [0.629, 0.829] vs Gemini tuned
 0.814 [0.714, 0.900]. Heavy CI overlap — parity within measurement, not "better".
@@ -82,7 +82,7 @@ Compresses retrieved chunks into a cited summary.
 | `fabricated_citation_rate` | Deterministic: cited id must exist in the provided set | Citing a chunk that was never supplied is the worst failure in this tier — it looks *more* trustworthy while being less so. |
 | `uncited_claim_rate` | Deterministic | The other half of groundedness: claims with no citation at all. |
 | `json_schema_validity` | Deterministic | Blocking gate, as above. |
-| `judge_score` | Rubric judge, k=2, 28-item core | Fluency and faithfulness, which no deterministic metric here covers. |
+| `judge_score` | Rubric judge, k=2, **full 70** (widened 2026-08-11, sizing deviation #2) | Fluency and faithfulness, which no deterministic metric here covers. |
 
 **Measured (n=70):** `fabricated_citation_rate` and `uncited_claim_rate` are **0.000 on
 all three arms**. `citation_coverage` 1.000 (Claude), 0.940 (Gemini naive), 1.000 (Gemini
@@ -102,7 +102,7 @@ Pulls structured patent features out of a document.
 | `omission_rate` | Deterministic | Declining too often is a real failure even when precision is perfect. |
 | `hallucination_rate` | Deterministic: non-null answer where gold is null | The abstention discipline. |
 | `json_schema_validity` | Deterministic | Blocking gate. |
-| `judge_score` | Rubric judge, k=2, **full 70**, not the core split | Registered deviation. This is where the contested finding lives, so it gets the larger sample. |
+| `judge_score` | Rubric judge, k=2, **full 70** | Registered from the start — this is where the contested finding lives. QR and CS were widened to match on 2026-08-11. |
 
 **Measured (n=70):** deterministic accuracy is **saturated** — Gemini scores 1.000 on
 `extraction_accuracy`, 1.000 `json_schema_validity`, 0.000 `omission_rate`, 0.000
@@ -135,6 +135,19 @@ gates"* — and why nothing here says "zero quality drop."
 **3. It carries its sample size and split.** Judge scores are labelled with judged n and
 whether they came from the 28-item core split or the full 70. Two judge scores at
 different n are not directly comparable, and the number alone doesn't say so.
+
+As of 2026-08-11 every **gated** judge score is full-70: QR and CS were widened to the whole
+corpus to complete the triage adjudication and narrow the delta CIs, registered as sizing
+deviation #2 and decided before the widened results were seen. The **ablation ladder** is a
+different instrument and stays at core-28, so its rungs stay comparable to each other. That
+is why the FE ladder's incumbent reads 0.903 and the scorecard's FE baseline reads 0.900 —
+two measurements on two splits, not one number rounded twice. Never quote one against the
+other.
+
+Widening is not free of risk and did not flatter us here: CS `quality_delta_pp` moved from a
+core-28 `ci_lower` of −2.679 to a full-70 −2.32 pp [−5.00, +0.36]. The interval got *wider*
+at the larger n, because the 42 added items carry more spread than the core did. The gate
+fails on the widened data, and that is the number that ships.
 
 ---
 

@@ -1,0 +1,145 @@
+# Second-judge cross-check
+
+**Gated instrument:** Gemini 2.5 Pro (prompt `v1`, `response_schema`)
+
+**Validating instrument:** Claude Sonnet 5 (prompt `v1_crosscheck`, `tool`)
+
+The Gemini 2.5 Pro judge is the gated instrument and was registered before results were seen. The Claude cross-check judge validates it. The two are never averaged and one is never substituted for the other.
+
+## Agreement
+
+| Subagent | Arm | Criterion agreement | Cohen's kappa | Gated mean | Cross-check mean | Criterion pairs | Unusable |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| query_rewriter | claude_baseline | 100.0% | 1.000 | 0.929 | 0.929 | 114 | 0 |
+| query_rewriter | gemini_naive | 99.1% | 0.966 | 0.846 | 0.837 | 110 | 1 |
+| query_rewriter | gemini_tuned_v1 | 97.1% | 0.826 | 0.890 | 0.920 | 102 | 3 |
+| **query_rewriter** | **all arms** | **98.8%** | **0.936** | 0.889 | 0.895 | 326 | 4 |
+| chunk_summarizer | claude_baseline | 99.0% | 0.954 | 0.880 | 0.870 | 100 | 3 |
+| chunk_summarizer | gemini_naive | 98.9% | 0.946 | 0.875 | 0.886 | 88 | 6 |
+| chunk_summarizer | gemini_tuned_v1 | 99.0% | 0.942 | 0.900 | 0.910 | 100 | 3 |
+| **chunk_summarizer** | **all arms** | **99.0%** | **0.948** | 0.885 | 0.889 | 288 | 12 |
+| feature_extractor | claude_baseline | 93.0% | 0.678 | 0.897 | 0.857 | 853 | 6 |
+| feature_extractor | gemini_naive | 92.6% | 0.763 | 0.823 | 0.791 | 856 | 6 |
+| feature_extractor | gemini_tuned_v1 | 93.0% | 0.797 | 0.795 | 0.763 | 873 | 3 |
+| **feature_extractor** | **all arms** | **92.9%** | **0.758** | 0.838 | 0.803 | 2582 | 15 |
+
+## Verdicts
+
+- **query_rewriter: VALIDATED** at a 85% threshold — 20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split.
+  - chance agreement on this sample is already 0.808 (pass rates 0.890 and 0.896), so kappa is heavily prevalence-deflated: it can read low beside a high raw agreement. Read the two together, not kappa alone.
+- **chunk_summarizer: VALIDATED** at a 85% threshold — 20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split.
+- **feature_extractor: VALIDATED** at a 85% threshold — full gated split (all), all arms.
+
+## Largest per-item disagreements — query_rewriter
+
+### 1. `qr-0040` (gemini_naive, pass 2) — gated 1.000 vs cross-check 0.750 (gap 0.250)
+
+- **`query_expanded`** — gated **PASS**, cross-check **FAIL**
+  - gated: The candidate query expands on the subject matter with related field-standard terms such as "mRNA gene therapy drug delivery".
+  - cross-check: The query largely repeats the original phrase 'ionisable lipid nanoparticle delivery' and appends generic application terms ('mRNA', 'gene therapy', 'drug delivery') rather than field-standard technical synonyms like 'cationic lipid', 'PEG-lipid', or 'apparent pKa' that characterize the core subject matter.
+### 2. `qr-0062` (gemini_tuned_v1, pass 1) — gated 0.750 vs cross-check 1.000 (gap 0.250)
+
+- **`subject_from_turn_2`** — gated **FAIL**, cross-check **PASS**
+  - gated: The query incorrectly includes 'gene therapy', a term from the previous turn's subject matter, when the instruction was to replace the subject.
+  - cross-check: The query focuses on 'mRNA messenger RNA lipid nanoparticle LNP formulation drug delivery' with no mention of base editors, though it appends 'gene therapy' as a trailing term which is a minor carryover but does not make the query about base editors.
+### 3. `qr-0062` (gemini_tuned_v1, pass 2) — gated 0.750 vs cross-check 1.000 (gap 0.250)
+
+- **`subject_from_turn_2`** — gated **FAIL**, cross-check **PASS**
+  - gated: The candidate query incorrectly includes 'gene therapy', a term from the previous turn's topic, when the instruction was to replace the subject matter entirely.
+  - cross-check: The query text 'mRNA messenger RNA lipid nanoparticle LNP formulation drug delivery gene therapy' focuses on mRNA LNP formulation terms and contains no 'base editor' or 'gene editing' terminology, so the old subject was correctly replaced rather than appended alongside base-editor terms.
+### 4. `qr-0067` (gemini_tuned_v1, pass 2) — gated 0.750 vs cross-check 1.000 (gap 0.250)
+
+- **`assignee_replaced`** — gated **FAIL**, cross-check **PASS**
+  - gated: The candidate output includes a trailing period in the assignee name, `Contemporary Amperex Technology Co., Limited.`, which does not exactly match the required name.
+  - cross-check: The assignee list contains only 'Contemporary Amperex Technology Co., Limited.' (with a trailing period as a minor formatting variant) and 'LG Energy Solution, Ltd.' is correctly dropped.
+
+## Largest per-item disagreements — chunk_summarizer
+
+### 1. `cs-0051` (claude_baseline, pass 2) — gated 0.250 vs cross-check 0.000 (gap 0.250)
+
+- **`attribution_supported`** — gated **PASS**, cross-check **FAIL**
+  - gated: The summary attributes the performance improvements to the specified feature, which is a supported synthesis of the provided passages.
+  - cross-check: The summary claims the feature 'yields high critical current density' but p0043 only reports a single CCD value for Example 3 without comparing it to any baseline, so calling it 'high' is an unsupported added characterization.
+### 2. `cs-0046` (gemini_naive, pass 2) — gated 0.750 vs cross-check 1.000 (gap 0.250)
+
+- **`no_added_facts`** — gated **FAIL**, cross-check **PASS**
+  - gated: The summary describes the transfer yield as 'high', which is a qualitative judgment not stated in the source passages.
+  - cross-check: The summary restates only content present in the three passages (challenge, method details, yield) without introducing new comparisons or advantages, aside from the mild descriptor 'high' which is a reasonable paraphrase of a 99.994% yield rather than an invented fact.
+### 3. `cs-0055` (gemini_tuned_v1, pass 1) — gated 0.750 vs cross-check 1.000 (gap 0.250)
+
+- **`applicant_cited_correctly`** — gated **FAIL**, cross-check **PASS**
+  - gated: The key point mentioning 'Novastrand Therapeutics, Inc.' is cited to both 'US10936972B2::claims::p0001' and 'US10936972B2::desc::p0057', but the former passage does not contain the applicant's name.
+  - cross-check: The applicant statement's chunk_ids list includes 'US10936972B2::desc::p0057', the passage that names Novastrand Therapeutics, Inc.
+
+## Largest per-item disagreements — feature_extractor
+
+### 1. `fe-0013` (claude_baseline, pass 2) — gated 1.000 vs cross-check 0.667 (gap 0.333)
+
+- **`novelty_statement_correct`** — gated **PASS**, cross-check **FAIL**
+  - gated: The `novelty_statement` correctly paraphrases the key innovation from the source, which is the use of a silicon-photonic optical phased array to steer a beam without moving parts.
+  - cross-check: The novelty statement omits the 'balanced photodetector pair for coherent detection' component explicitly listed in the source as part of the system, making the description of the disclosed advance incomplete.
+- **`technical_field_correct`** — gated **PASS**, cross-check **FAIL**
+  - gated: The candidate's `technical_field` of "coherent optical ranging (LiDAR)" is a correct description of the subject matter, as stated in the source text.
+  - cross-check: The candidate's 'coherent optical ranging (LiDAR)' is broader than and omits the specific 'frequency-modulated continuous-wave' modulation scheme explicitly named in the source abstract, so it does not precisely identify the subject matter.
+### 2. `fe-0041` (claude_baseline, pass 2) — gated 1.000 vs cross-check 0.667 (gap 0.333)
+
+- **`technical_field_correct`** — gated **PASS**, cross-check **FAIL**
+  - gated: The candidate's 'technical_field' of 'coherent optical ranging (LIDAR)' is a correct description of the subject matter, which is also known as frequency-modulated continuous-wave LiDAR.
+  - cross-check: 'coherent optical ranging (LIDAR)' is broader than the actual disclosed technique (frequency-chirped/FMCW ranging with chirp-nonlinearity correction), so it fails to precisely identify the subject matter.
+- **`technical_field_inferred`** — gated **PASS**, cross-check **FAIL**
+  - gated: The candidate's 'technical_field' of 'coherent optical ranging (LIDAR)' is a correct inference from the claim subject matter describing a 'coherent optical ranging system' with a 'frequency-chirped beam'.
+  - cross-check: The candidate's field 'coherent optical ranging (LIDAR)' merely restates the title and omits the frequency-chirp/FMCW specificity that the claims (frequency-chirped beam, chirp non-linearity correction) point to, so it is not a properly derived equivalent of 'frequency-modulated continuous-wave LiDAR'.
+### 3. `fe-0048` (claude_baseline, pass 1) — gated 0.500 vs cross-check 0.833 (gap 0.333)
+
+- **`novelty_statement_correct`** — gated **FAIL**, cross-check **PASS**
+  - gated: The `novelty_statement` incorrectly includes a detail from dependent claim 3 ('achieving only a 1.9 percentage point accuracy drop') which is not part of the core novelty defined in independent claim 1.
+  - cross-check: The statement preserves the core substance of claim 1 (per-client gradient clipping to a fixed L2 norm before adding calibrated Gaussian noise) and adds the accuracy-drop figure that is explicitly and identically stated in claim 3, so no value is invented or distorted.
+- **`technical_field_inferred`** — gated **FAIL**, cross-check **PASS**
+  - gated: The candidate's `technical_field` of 'federated machine learning' is not equivalent to 'privacy-preserving federated learning' because it omits the privacy aspect, which is explicitly mentioned in the claims.
+  - cross-check: technical_field is a short, non-verbatim phrase ('federated machine learning') plausibly derived from the claim language about training across client devices, rather than a copy of boilerplate text.
+### 4. `fe-0036` (gemini_naive, pass 1) — gated 0.500 vs cross-check 0.833 (gap 0.333)
+
+- **`novelty_is_the_application`** — gated **FAIL**, cross-check **PASS**
+  - gated: The novelty_statement describes what is 'needed', which is the problem the application solves, not the solution the application itself provides.
+  - cross-check: The novelty_statement describes the per-client gradient clipping/Gaussian noise method that fulfills the identified need, not the QUALCOMM prior-art approach, so it is oriented toward the present application's solution rather than the cited document.
+- **`novelty_statement_correct`** — gated **FAIL**, cross-check **PASS**
+  - gated: The novelty_statement describes the need for a method ('A method...is needed') rather than stating that the application provides this method as its novel contribution.
+  - cross-check: The statement accurately preserves the substance of the disclosed advance—per-client gradient clipping to a fixed L2 norm before adding Gaussian noise calibrated to a per-round privacy budget—without inventing or altering any values.
+### 5. `fe-0029` (gemini_tuned_v1, pass 2) — gated 1.000 vs cross-check 0.667 (gap 0.333)
+
+- **`novelty_statement_correct`** — gated **PASS**, cross-check **FAIL**
+  - gated: The `novelty_statement` accurately paraphrases the source text, including the method of selecting a beam from a codebook for "at least four candidate beams" and the problem it solves.
+  - cross-check: The candidate appends 'which resolves the pilot overhead and latency of exhaustive beam sweeping in large antenna arrays' as a stated outcome of the invention, but the source only states that the *conventional* approach fails to resolve this issue and never explicitly asserts that the present application's method resolves it, so this is an unsupported added claim.
+- **`technical_field_correct`** — gated **PASS**, cross-check **FAIL**
+  - gated: The `technical_field` "beam management in wireless networks" is directly supported by the document's title, "Method of beam management in a wireless network".
+  - cross-check: The technical_field 'beam management in wireless networks' merely restates the generic title language and omits the specific analog/hierarchical-codebook, large-antenna-array (mmWave hybrid beamforming) context that distinguishes the disclosed subject matter, making it too broad to identify the field.
+### 6. `fe-0041` (gemini_tuned_v1, pass 2) — gated 0.500 vs cross-check 0.833 (gap 0.333)
+
+- **`technical_field_correct`** — gated **FAIL**, cross-check **PASS**
+  - gated: The candidate's `technical_field` of "coherent optical ranging systems" is too broad to identify the subject matter, which is more specifically frequency-modulated continuous-wave LiDAR based on the claim's mention of a "frequency-chirped beam".
+  - cross-check: 'coherent optical ranging systems' captures the same core technology (coherent detection of a chirped optical signal for ranging) as 'frequency-modulated continuous-wave LiDAR', just with different wording.
+- **`technical_field_inferred`** — gated **FAIL**, cross-check **PASS**
+  - gated: The candidate's `technical_field` of "coherent optical ranging systems" is a direct quote from the title and not an inferred field equivalent to 'frequency-modulated continuous-wave LiDAR'.
+  - cross-check: The phrase 'coherent optical ranging systems' is a short field label derived from the claim language about a coherent, frequency-chirped optical ranging system, conceptually overlapping with FMCW LiDAR.
+### 7. `fe-0033` (claude_baseline, pass 1) — gated 1.000 vs cross-check 0.800 (gap 0.200)
+
+- **`technical_field_correct`** — gated **PASS**, cross-check **FAIL**
+  - gated: The candidate's `technical_field` of "tandem photovoltaic devices" is directly supported by the document's title.
+  - cross-check: The candidate's 'tandem photovoltaic devices' omits the specific perovskite material system explicitly referenced in the claims (e.g., 'perovskite absorber'), making it too broad to identify the actual subject matter compared to the reference's 'perovskite-silicon tandem photovoltaics'.
+### 8. `fe-0033` (gemini_naive, pass 2) — gated 1.000 vs cross-check 0.800 (gap 0.200)
+
+- **`technical_field_correct`** — gated **PASS**, cross-check **FAIL**
+  - gated: The candidate's `technical_field` of 'monolithic tandem photovoltaic devices' is taken directly from the title and is a correct description of the subject matter.
+  - cross-check: technical_field is 'monolithic tandem photovoltaic devices', which merely restates the title and omits the perovskite-specific nature evident from the claims (perovskite absorber, SAM hole-selective contact), making it too broad to identify the actual subject matter captured by the reference's 'perovskite-silicon tandem photovoltaics'.
+### 9. `fe-0054` (gemini_naive, pass 1) — gated 0.800 vs cross-check 1.000 (gap 0.200)
+
+- **`technical_field_correct`** — gated **FAIL**, cross-check **PASS**
+  - gated: The value for `technical_field`, "negative electrode for a lithium secondary battery", is too broad to properly identify the subject matter, which, based on the CPC code, is more specifically related to silicon-based anodes.
+  - cross-check: 'negative electrode for a lithium secondary battery' accurately reflects the document's stated subject matter (title and claim text reference a porous carbon scaffold electrode for lithium batteries) without introducing an unsupported 'silicon-composite' detail not present in the excerpt.
+### 10. `fe-0054` (gemini_tuned_v1, pass 2) — gated 1.000 vs cross-check 0.800 (gap 0.200)
+
+- **`technical_field_correct`** — gated **PASS**, cross-check **FAIL**
+  - gated: The candidate's `technical_field` value "lithium secondary battery negative electrodes" is a correct description of the subject matter, directly supported by the document's title.
+  - cross-check: 'lithium secondary battery negative electrodes' merely restates the generic title-level category rather than identifying the specific porous-carbon-scaffold/silicon-composite anode subject matter, making it too broad per the rubric's explicit failure condition.
+
+Recording window for the outputs re-scored: 2026-08-09T16:07:18+00:00 to 2026-08-10T02:45:59+00:00. Cross-check judge run: 2026-08-11T03:52:19+00:00.

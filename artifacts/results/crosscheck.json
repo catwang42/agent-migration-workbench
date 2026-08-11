@@ -1,0 +1,772 @@
+{
+  "crosscheck_version": "1",
+  "customer": "demo_patents",
+  "mode": "live",
+  "combination_rule": "The Gemini 2.5 Pro judge is the gated instrument and was registered before results were seen. The Claude cross-check judge validates it. The two are never averaged and one is never substituted for the other.",
+  "gated_judge": {
+    "judge_model_key": "gemini-pro",
+    "judge_model": "Gemini 2.5 Pro",
+    "judge_mode": "replay",
+    "judge_prompt_version": "v1",
+    "judge_prompt_sha": "4852af91812f",
+    "judge_output_mode": "response_schema"
+  },
+  "check_judge": {
+    "judge_model_key": "claude-sonnet",
+    "judge_model": "Claude Sonnet 5",
+    "judge_mode": "live",
+    "judge_prompt_version": "v1_crosscheck",
+    "judge_prompt_sha": "0fe1617557b4",
+    "judge_output_mode": "tool"
+  },
+  "sample_seed": 20260812,
+  "sample_fraction": 0.2,
+  "judge_repeats": 2,
+  "scored_artifact": "artifacts/results/phase2_n70.json",
+  "run_started": "2026-08-11T03:52:19+00:00",
+  "recorded_from": "2026-08-09T16:07:18+00:00",
+  "recorded_to": "2026-08-10T02:45:59+00:00",
+  "subagents": [
+    {
+      "subagent": "query_rewriter",
+      "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+      "item_ids": [
+        "qr-0001",
+        "qr-0009",
+        "qr-0010",
+        "qr-0012",
+        "qr-0014",
+        "qr-0030",
+        "qr-0031",
+        "qr-0040",
+        "qr-0041",
+        "qr-0051",
+        "qr-0056",
+        "qr-0062",
+        "qr-0066",
+        "qr-0067"
+      ],
+      "sampled_from": 28,
+      "corpus_size": 70,
+      "per_arm": [
+        {
+          "subagent": "query_rewriter",
+          "arm": "claude_baseline",
+          "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+          "items": 14,
+          "paired_cells": 28,
+          "criterion_pairs": 114,
+          "criterion_agreement": 1.0,
+          "cohens_kappa": 1.0,
+          "kappa_note": "chance agreement on this sample is already 0.869 (pass rates 0.930 and 0.930), so kappa is heavily prevalence-deflated: it can read low beside a high raw agreement. Read the two together, not kappa alone.",
+          "gated_pass_rate": 0.9298245614035088,
+          "check_pass_rate": 0.9298245614035088,
+          "item_score_agreement": 1.0,
+          "mean_abs_score_gap": 0.0,
+          "gated_mean_score": 0.9285714285714286,
+          "check_mean_score": 0.9285714285714286,
+          "unusable": 0,
+          "unusable_reasons": {}
+        },
+        {
+          "subagent": "query_rewriter",
+          "arm": "gemini_naive",
+          "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+          "items": 14,
+          "paired_cells": 27,
+          "criterion_pairs": 110,
+          "criterion_agreement": 0.990909090909091,
+          "cohens_kappa": 0.9660284126003708,
+          "kappa_note": null,
+          "gated_pass_rate": 0.8454545454545455,
+          "check_pass_rate": 0.8363636363636363,
+          "item_score_agreement": 0.9629629629629629,
+          "mean_abs_score_gap": 0.009259259259259259,
+          "gated_mean_score": 0.8462962962962963,
+          "check_mean_score": 0.8370370370370371,
+          "unusable": 1,
+          "unusable_reasons": {
+            "cross-check judge call failed": 1
+          }
+        },
+        {
+          "subagent": "query_rewriter",
+          "arm": "gemini_tuned_v1",
+          "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+          "items": 13,
+          "paired_cells": 25,
+          "criterion_pairs": 102,
+          "criterion_agreement": 0.9705882352941176,
+          "cohens_kappa": 0.82633371169126,
+          "kappa_note": "chance agreement on this sample is already 0.831 (pass rates 0.892 and 0.922), so kappa is heavily prevalence-deflated: it can read low beside a high raw agreement. Read the two together, not kappa alone.",
+          "gated_pass_rate": 0.8921568627450981,
+          "check_pass_rate": 0.9215686274509803,
+          "item_score_agreement": 0.88,
+          "mean_abs_score_gap": 0.03,
+          "gated_mean_score": 0.89,
+          "check_mean_score": 0.92,
+          "unusable": 3,
+          "unusable_reasons": {
+            "cross-check judge call failed": 3
+          }
+        }
+      ],
+      "overall": {
+        "subagent": "query_rewriter",
+        "arm": null,
+        "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+        "items": 14,
+        "paired_cells": 80,
+        "criterion_pairs": 326,
+        "criterion_agreement": 0.9877300613496932,
+        "cohens_kappa": 0.9359905752994304,
+        "kappa_note": "chance agreement on this sample is already 0.808 (pass rates 0.890 and 0.896), so kappa is heavily prevalence-deflated: it can read low beside a high raw agreement. Read the two together, not kappa alone.",
+        "gated_pass_rate": 0.8895705521472392,
+        "check_pass_rate": 0.8957055214723927,
+        "item_score_agreement": 0.95,
+        "mean_abs_score_gap": 0.0125,
+        "gated_mean_score": 0.8887499999999999,
+        "check_mean_score": 0.8949999999999999,
+        "unusable": 4,
+        "unusable_reasons": {
+          "cross-check judge call failed": 4
+        }
+      },
+      "verdict": "VALIDATED",
+      "threshold": 0.85,
+      "disagreements": [
+        {
+          "subagent": "query_rewriter",
+          "arm": "gemini_naive",
+          "item_id": "qr-0040",
+          "repeat": 2,
+          "gated_score": 1.0,
+          "check_score": 0.75,
+          "score_gap": 0.25,
+          "criteria": [
+            {
+              "criterion_id": "query_expanded",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The candidate query expands on the subject matter with related field-standard terms such as \"mRNA gene therapy drug delivery\".",
+              "check_rationale": "The query largely repeats the original phrase 'ionisable lipid nanoparticle delivery' and appends generic application terms ('mRNA', 'gene therapy', 'drug delivery') rather than field-standard technical synonyms like 'cationic lipid', 'PEG-lipid', or 'apparent pKa' that characterize the core subject matter."
+            }
+          ]
+        },
+        {
+          "subagent": "query_rewriter",
+          "arm": "gemini_tuned_v1",
+          "item_id": "qr-0062",
+          "repeat": 1,
+          "gated_score": 0.75,
+          "check_score": 1.0,
+          "score_gap": 0.25,
+          "criteria": [
+            {
+              "criterion_id": "subject_from_turn_2",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The query incorrectly includes 'gene therapy', a term from the previous turn's subject matter, when the instruction was to replace the subject.",
+              "check_rationale": "The query focuses on 'mRNA messenger RNA lipid nanoparticle LNP formulation drug delivery' with no mention of base editors, though it appends 'gene therapy' as a trailing term which is a minor carryover but does not make the query about base editors."
+            }
+          ]
+        },
+        {
+          "subagent": "query_rewriter",
+          "arm": "gemini_tuned_v1",
+          "item_id": "qr-0062",
+          "repeat": 2,
+          "gated_score": 0.75,
+          "check_score": 1.0,
+          "score_gap": 0.25,
+          "criteria": [
+            {
+              "criterion_id": "subject_from_turn_2",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The candidate query incorrectly includes 'gene therapy', a term from the previous turn's topic, when the instruction was to replace the subject matter entirely.",
+              "check_rationale": "The query text 'mRNA messenger RNA lipid nanoparticle LNP formulation drug delivery gene therapy' focuses on mRNA LNP formulation terms and contains no 'base editor' or 'gene editing' terminology, so the old subject was correctly replaced rather than appended alongside base-editor terms."
+            }
+          ]
+        },
+        {
+          "subagent": "query_rewriter",
+          "arm": "gemini_tuned_v1",
+          "item_id": "qr-0067",
+          "repeat": 2,
+          "gated_score": 0.75,
+          "check_score": 1.0,
+          "score_gap": 0.25,
+          "criteria": [
+            {
+              "criterion_id": "assignee_replaced",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The candidate output includes a trailing period in the assignee name, `Contemporary Amperex Technology Co., Limited.`, which does not exactly match the required name.",
+              "check_rationale": "The assignee list contains only 'Contemporary Amperex Technology Co., Limited.' (with a trailing period as a minor formatting variant) and 'LG Energy Solution, Ltd.' is correctly dropped."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+      "item_ids": [
+        "cs-0004",
+        "cs-0007",
+        "cs-0009",
+        "cs-0016",
+        "cs-0017",
+        "cs-0019",
+        "cs-0040",
+        "cs-0046",
+        "cs-0050",
+        "cs-0051",
+        "cs-0055",
+        "cs-0058",
+        "cs-0061",
+        "cs-0067"
+      ],
+      "sampled_from": 28,
+      "corpus_size": 70,
+      "per_arm": [
+        {
+          "subagent": "chunk_summarizer",
+          "arm": "claude_baseline",
+          "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+          "items": 14,
+          "paired_cells": 25,
+          "criterion_pairs": 100,
+          "criterion_agreement": 0.99,
+          "cohens_kappa": 0.9542961608775137,
+          "kappa_note": null,
+          "gated_pass_rate": 0.88,
+          "check_pass_rate": 0.87,
+          "item_score_agreement": 0.96,
+          "mean_abs_score_gap": 0.01,
+          "gated_mean_score": 0.88,
+          "check_mean_score": 0.87,
+          "unusable": 3,
+          "unusable_reasons": {
+            "cross-check judge call failed": 3
+          }
+        },
+        {
+          "subagent": "chunk_summarizer",
+          "arm": "gemini_naive",
+          "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+          "items": 13,
+          "paired_cells": 22,
+          "criterion_pairs": 88,
+          "criterion_agreement": 0.9886363636363636,
+          "cohens_kappa": 0.945945945945946,
+          "kappa_note": null,
+          "gated_pass_rate": 0.875,
+          "check_pass_rate": 0.8863636363636364,
+          "item_score_agreement": 0.9545454545454546,
+          "mean_abs_score_gap": 0.011363636363636364,
+          "gated_mean_score": 0.875,
+          "check_mean_score": 0.8863636363636364,
+          "unusable": 6,
+          "unusable_reasons": {
+            "cross-check judge call failed": 6
+          }
+        },
+        {
+          "subagent": "chunk_summarizer",
+          "arm": "gemini_tuned_v1",
+          "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+          "items": 14,
+          "paired_cells": 25,
+          "criterion_pairs": 100,
+          "criterion_agreement": 0.99,
+          "cohens_kappa": 0.941860465116279,
+          "kappa_note": "chance agreement on this sample is already 0.828 (pass rates 0.900 and 0.910), so kappa is heavily prevalence-deflated: it can read low beside a high raw agreement. Read the two together, not kappa alone.",
+          "gated_pass_rate": 0.9,
+          "check_pass_rate": 0.91,
+          "item_score_agreement": 0.96,
+          "mean_abs_score_gap": 0.01,
+          "gated_mean_score": 0.9,
+          "check_mean_score": 0.91,
+          "unusable": 3,
+          "unusable_reasons": {
+            "cross-check judge call failed": 3
+          }
+        }
+      ],
+      "overall": {
+        "subagent": "chunk_summarizer",
+        "arm": null,
+        "scope": "20% stratified sample of the 70-item corpus (14 items), drawn from the 28 items in the gated judge's core split",
+        "items": 14,
+        "paired_cells": 72,
+        "criterion_pairs": 288,
+        "criterion_agreement": 0.9895833333333334,
+        "cohens_kappa": 0.947976878612717,
+        "kappa_note": null,
+        "gated_pass_rate": 0.8854166666666666,
+        "check_pass_rate": 0.8888888888888888,
+        "item_score_agreement": 0.9583333333333334,
+        "mean_abs_score_gap": 0.010416666666666666,
+        "gated_mean_score": 0.8854166666666666,
+        "check_mean_score": 0.8888888888888888,
+        "unusable": 12,
+        "unusable_reasons": {
+          "cross-check judge call failed": 12
+        }
+      },
+      "verdict": "VALIDATED",
+      "threshold": 0.85,
+      "disagreements": [
+        {
+          "subagent": "chunk_summarizer",
+          "arm": "claude_baseline",
+          "item_id": "cs-0051",
+          "repeat": 2,
+          "gated_score": 0.25,
+          "check_score": 0.0,
+          "score_gap": 0.25,
+          "criteria": [
+            {
+              "criterion_id": "attribution_supported",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The summary attributes the performance improvements to the specified feature, which is a supported synthesis of the provided passages.",
+              "check_rationale": "The summary claims the feature 'yields high critical current density' but p0043 only reports a single CCD value for Example 3 without comparing it to any baseline, so calling it 'high' is an unsupported added characterization."
+            }
+          ]
+        },
+        {
+          "subagent": "chunk_summarizer",
+          "arm": "gemini_naive",
+          "item_id": "cs-0046",
+          "repeat": 2,
+          "gated_score": 0.75,
+          "check_score": 1.0,
+          "score_gap": 0.25,
+          "criteria": [
+            {
+              "criterion_id": "no_added_facts",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The summary describes the transfer yield as 'high', which is a qualitative judgment not stated in the source passages.",
+              "check_rationale": "The summary restates only content present in the three passages (challenge, method details, yield) without introducing new comparisons or advantages, aside from the mild descriptor 'high' which is a reasonable paraphrase of a 99.994% yield rather than an invented fact."
+            }
+          ]
+        },
+        {
+          "subagent": "chunk_summarizer",
+          "arm": "gemini_tuned_v1",
+          "item_id": "cs-0055",
+          "repeat": 1,
+          "gated_score": 0.75,
+          "check_score": 1.0,
+          "score_gap": 0.25,
+          "criteria": [
+            {
+              "criterion_id": "applicant_cited_correctly",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The key point mentioning 'Novastrand Therapeutics, Inc.' is cited to both 'US10936972B2::claims::p0001' and 'US10936972B2::desc::p0057', but the former passage does not contain the applicant's name.",
+              "check_rationale": "The applicant statement's chunk_ids list includes 'US10936972B2::desc::p0057', the passage that names Novastrand Therapeutics, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subagent": "feature_extractor",
+      "scope": "full gated split (all), all arms",
+      "item_ids": [
+        "fe-0000",
+        "fe-0001",
+        "fe-0002",
+        "fe-0003",
+        "fe-0004",
+        "fe-0005",
+        "fe-0006",
+        "fe-0007",
+        "fe-0008",
+        "fe-0009",
+        "fe-0010",
+        "fe-0011",
+        "fe-0012",
+        "fe-0013",
+        "fe-0014",
+        "fe-0015",
+        "fe-0016",
+        "fe-0017",
+        "fe-0018",
+        "fe-0019",
+        "fe-0020",
+        "fe-0021",
+        "fe-0022",
+        "fe-0023",
+        "fe-0024",
+        "fe-0025",
+        "fe-0026",
+        "fe-0027",
+        "fe-0028",
+        "fe-0029",
+        "fe-0030",
+        "fe-0031",
+        "fe-0032",
+        "fe-0033",
+        "fe-0034",
+        "fe-0035",
+        "fe-0036",
+        "fe-0037",
+        "fe-0038",
+        "fe-0039",
+        "fe-0040",
+        "fe-0041",
+        "fe-0042",
+        "fe-0043",
+        "fe-0044",
+        "fe-0045",
+        "fe-0046",
+        "fe-0047",
+        "fe-0048",
+        "fe-0049",
+        "fe-0050",
+        "fe-0051",
+        "fe-0052",
+        "fe-0053",
+        "fe-0054",
+        "fe-0055",
+        "fe-0056",
+        "fe-0057",
+        "fe-0058",
+        "fe-0059",
+        "fe-0060",
+        "fe-0061",
+        "fe-0062",
+        "fe-0063",
+        "fe-0064",
+        "fe-0065",
+        "fe-0066",
+        "fe-0067",
+        "fe-0068",
+        "fe-0069"
+      ],
+      "sampled_from": 70,
+      "corpus_size": 70,
+      "per_arm": [
+        {
+          "subagent": "feature_extractor",
+          "arm": "claude_baseline",
+          "scope": "full gated split (all), all arms",
+          "items": 70,
+          "paired_cells": 134,
+          "criterion_pairs": 853,
+          "criterion_agreement": 0.9296600234466589,
+          "cohens_kappa": 0.6779957468762192,
+          "kappa_note": null,
+          "gated_pass_rate": 0.895662368112544,
+          "check_pass_rate": 0.8558030480656507,
+          "item_score_agreement": 0.6791044776119403,
+          "mean_abs_score_gap": 0.05408670931058993,
+          "gated_mean_score": 0.8972636815920401,
+          "check_mean_score": 0.857391613361762,
+          "unusable": 6,
+          "unusable_reasons": {
+            "cross-check judge call failed": 6
+          }
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "gemini_naive",
+          "scope": "full gated split (all), all arms",
+          "items": 70,
+          "paired_cells": 134,
+          "criterion_pairs": 856,
+          "criterion_agreement": 0.9264018691588785,
+          "cohens_kappa": 0.7633948158157982,
+          "kappa_note": null,
+          "gated_pass_rate": 0.8247663551401869,
+          "check_pass_rate": 0.7908878504672897,
+          "item_score_agreement": 0.5970149253731343,
+          "mean_abs_score_gap": 0.0642857142857143,
+          "gated_mean_score": 0.8230632551528074,
+          "check_mean_score": 0.7905472636815919,
+          "unusable": 6,
+          "unusable_reasons": {
+            "cross-check judge call failed": 6
+          }
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "gemini_tuned_v1",
+          "scope": "full gated split (all), all arms",
+          "items": 70,
+          "paired_cells": 137,
+          "criterion_pairs": 873,
+          "criterion_agreement": 0.9301260022909508,
+          "cohens_kappa": 0.7970641698391467,
+          "kappa_note": null,
+          "gated_pass_rate": 0.7961053837342497,
+          "check_pass_rate": 0.7628865979381443,
+          "item_score_agreement": 0.5985401459854015,
+          "mean_abs_score_gap": 0.06558915537017726,
+          "gated_mean_score": 0.7954814042405277,
+          "check_mean_score": 0.7629127563434125,
+          "unusable": 3,
+          "unusable_reasons": {
+            "cross-check judge call failed": 3
+          }
+        }
+      ],
+      "overall": {
+        "subagent": "feature_extractor",
+        "arm": null,
+        "scope": "full gated split (all), all arms",
+        "items": 70,
+        "paired_cells": 405,
+        "criterion_pairs": 2582,
+        "criterion_agreement": 0.9287374128582494,
+        "cohens_kappa": 0.7584002652527986,
+        "kappa_note": null,
+        "gated_pass_rate": 0.8384972889233152,
+        "check_pass_rate": 0.80286599535244,
+        "item_score_agreement": 0.6246913580246913,
+        "mean_abs_score_gap": 0.061352145796590235,
+        "gated_mean_score": 0.8382833627278066,
+        "check_mean_score": 0.80331569664903,
+        "unusable": 15,
+        "unusable_reasons": {
+          "cross-check judge call failed": 15
+        }
+      },
+      "verdict": "VALIDATED",
+      "threshold": 0.85,
+      "disagreements": [
+        {
+          "subagent": "feature_extractor",
+          "arm": "claude_baseline",
+          "item_id": "fe-0013",
+          "repeat": 2,
+          "gated_score": 1.0,
+          "check_score": 0.6666666666666666,
+          "score_gap": 0.33333333333333337,
+          "criteria": [
+            {
+              "criterion_id": "novelty_statement_correct",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The `novelty_statement` correctly paraphrases the key innovation from the source, which is the use of a silicon-photonic optical phased array to steer a beam without moving parts.",
+              "check_rationale": "The novelty statement omits the 'balanced photodetector pair for coherent detection' component explicitly listed in the source as part of the system, making the description of the disclosed advance incomplete."
+            },
+            {
+              "criterion_id": "technical_field_correct",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The candidate's `technical_field` of \"coherent optical ranging (LiDAR)\" is a correct description of the subject matter, as stated in the source text.",
+              "check_rationale": "The candidate's 'coherent optical ranging (LiDAR)' is broader than and omits the specific 'frequency-modulated continuous-wave' modulation scheme explicitly named in the source abstract, so it does not precisely identify the subject matter."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "claude_baseline",
+          "item_id": "fe-0041",
+          "repeat": 2,
+          "gated_score": 1.0,
+          "check_score": 0.6666666666666666,
+          "score_gap": 0.33333333333333337,
+          "criteria": [
+            {
+              "criterion_id": "technical_field_correct",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The candidate's 'technical_field' of 'coherent optical ranging (LIDAR)' is a correct description of the subject matter, which is also known as frequency-modulated continuous-wave LiDAR.",
+              "check_rationale": "'coherent optical ranging (LIDAR)' is broader than the actual disclosed technique (frequency-chirped/FMCW ranging with chirp-nonlinearity correction), so it fails to precisely identify the subject matter."
+            },
+            {
+              "criterion_id": "technical_field_inferred",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The candidate's 'technical_field' of 'coherent optical ranging (LIDAR)' is a correct inference from the claim subject matter describing a 'coherent optical ranging system' with a 'frequency-chirped beam'.",
+              "check_rationale": "The candidate's field 'coherent optical ranging (LIDAR)' merely restates the title and omits the frequency-chirp/FMCW specificity that the claims (frequency-chirped beam, chirp non-linearity correction) point to, so it is not a properly derived equivalent of 'frequency-modulated continuous-wave LiDAR'."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "claude_baseline",
+          "item_id": "fe-0048",
+          "repeat": 1,
+          "gated_score": 0.5,
+          "check_score": 0.8333333333333334,
+          "score_gap": 0.33333333333333337,
+          "criteria": [
+            {
+              "criterion_id": "novelty_statement_correct",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The `novelty_statement` incorrectly includes a detail from dependent claim 3 ('achieving only a 1.9 percentage point accuracy drop') which is not part of the core novelty defined in independent claim 1.",
+              "check_rationale": "The statement preserves the core substance of claim 1 (per-client gradient clipping to a fixed L2 norm before adding calibrated Gaussian noise) and adds the accuracy-drop figure that is explicitly and identically stated in claim 3, so no value is invented or distorted."
+            },
+            {
+              "criterion_id": "technical_field_inferred",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The candidate's `technical_field` of 'federated machine learning' is not equivalent to 'privacy-preserving federated learning' because it omits the privacy aspect, which is explicitly mentioned in the claims.",
+              "check_rationale": "technical_field is a short, non-verbatim phrase ('federated machine learning') plausibly derived from the claim language about training across client devices, rather than a copy of boilerplate text."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "gemini_naive",
+          "item_id": "fe-0036",
+          "repeat": 1,
+          "gated_score": 0.5,
+          "check_score": 0.8333333333333334,
+          "score_gap": 0.33333333333333337,
+          "criteria": [
+            {
+              "criterion_id": "novelty_is_the_application",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The novelty_statement describes what is 'needed', which is the problem the application solves, not the solution the application itself provides.",
+              "check_rationale": "The novelty_statement describes the per-client gradient clipping/Gaussian noise method that fulfills the identified need, not the QUALCOMM prior-art approach, so it is oriented toward the present application's solution rather than the cited document."
+            },
+            {
+              "criterion_id": "novelty_statement_correct",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The novelty_statement describes the need for a method ('A method...is needed') rather than stating that the application provides this method as its novel contribution.",
+              "check_rationale": "The statement accurately preserves the substance of the disclosed advance—per-client gradient clipping to a fixed L2 norm before adding Gaussian noise calibrated to a per-round privacy budget—without inventing or altering any values."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "gemini_tuned_v1",
+          "item_id": "fe-0029",
+          "repeat": 2,
+          "gated_score": 1.0,
+          "check_score": 0.6666666666666666,
+          "score_gap": 0.33333333333333337,
+          "criteria": [
+            {
+              "criterion_id": "novelty_statement_correct",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The `novelty_statement` accurately paraphrases the source text, including the method of selecting a beam from a codebook for \"at least four candidate beams\" and the problem it solves.",
+              "check_rationale": "The candidate appends 'which resolves the pilot overhead and latency of exhaustive beam sweeping in large antenna arrays' as a stated outcome of the invention, but the source only states that the *conventional* approach fails to resolve this issue and never explicitly asserts that the present application's method resolves it, so this is an unsupported added claim."
+            },
+            {
+              "criterion_id": "technical_field_correct",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The `technical_field` \"beam management in wireless networks\" is directly supported by the document's title, \"Method of beam management in a wireless network\".",
+              "check_rationale": "The technical_field 'beam management in wireless networks' merely restates the generic title language and omits the specific analog/hierarchical-codebook, large-antenna-array (mmWave hybrid beamforming) context that distinguishes the disclosed subject matter, making it too broad to identify the field."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "gemini_tuned_v1",
+          "item_id": "fe-0041",
+          "repeat": 2,
+          "gated_score": 0.5,
+          "check_score": 0.8333333333333334,
+          "score_gap": 0.33333333333333337,
+          "criteria": [
+            {
+              "criterion_id": "technical_field_correct",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The candidate's `technical_field` of \"coherent optical ranging systems\" is too broad to identify the subject matter, which is more specifically frequency-modulated continuous-wave LiDAR based on the claim's mention of a \"frequency-chirped beam\".",
+              "check_rationale": "'coherent optical ranging systems' captures the same core technology (coherent detection of a chirped optical signal for ranging) as 'frequency-modulated continuous-wave LiDAR', just with different wording."
+            },
+            {
+              "criterion_id": "technical_field_inferred",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The candidate's `technical_field` of \"coherent optical ranging systems\" is a direct quote from the title and not an inferred field equivalent to 'frequency-modulated continuous-wave LiDAR'.",
+              "check_rationale": "The phrase 'coherent optical ranging systems' is a short field label derived from the claim language about a coherent, frequency-chirped optical ranging system, conceptually overlapping with FMCW LiDAR."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "claude_baseline",
+          "item_id": "fe-0033",
+          "repeat": 1,
+          "gated_score": 1.0,
+          "check_score": 0.8,
+          "score_gap": 0.19999999999999996,
+          "criteria": [
+            {
+              "criterion_id": "technical_field_correct",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The candidate's `technical_field` of \"tandem photovoltaic devices\" is directly supported by the document's title.",
+              "check_rationale": "The candidate's 'tandem photovoltaic devices' omits the specific perovskite material system explicitly referenced in the claims (e.g., 'perovskite absorber'), making it too broad to identify the actual subject matter compared to the reference's 'perovskite-silicon tandem photovoltaics'."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "gemini_naive",
+          "item_id": "fe-0033",
+          "repeat": 2,
+          "gated_score": 1.0,
+          "check_score": 0.8,
+          "score_gap": 0.19999999999999996,
+          "criteria": [
+            {
+              "criterion_id": "technical_field_correct",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The candidate's `technical_field` of 'monolithic tandem photovoltaic devices' is taken directly from the title and is a correct description of the subject matter.",
+              "check_rationale": "technical_field is 'monolithic tandem photovoltaic devices', which merely restates the title and omits the perovskite-specific nature evident from the claims (perovskite absorber, SAM hole-selective contact), making it too broad to identify the actual subject matter captured by the reference's 'perovskite-silicon tandem photovoltaics'."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "gemini_naive",
+          "item_id": "fe-0054",
+          "repeat": 1,
+          "gated_score": 0.8,
+          "check_score": 1.0,
+          "score_gap": 0.19999999999999996,
+          "criteria": [
+            {
+              "criterion_id": "technical_field_correct",
+              "gated_passed": false,
+              "check_passed": true,
+              "gated_rationale": "The value for `technical_field`, \"negative electrode for a lithium secondary battery\", is too broad to properly identify the subject matter, which, based on the CPC code, is more specifically related to silicon-based anodes.",
+              "check_rationale": "'negative electrode for a lithium secondary battery' accurately reflects the document's stated subject matter (title and claim text reference a porous carbon scaffold electrode for lithium batteries) without introducing an unsupported 'silicon-composite' detail not present in the excerpt."
+            }
+          ]
+        },
+        {
+          "subagent": "feature_extractor",
+          "arm": "gemini_tuned_v1",
+          "item_id": "fe-0054",
+          "repeat": 2,
+          "gated_score": 1.0,
+          "check_score": 0.8,
+          "score_gap": 0.19999999999999996,
+          "criteria": [
+            {
+              "criterion_id": "technical_field_correct",
+              "gated_passed": true,
+              "check_passed": false,
+              "gated_rationale": "The candidate's `technical_field` value \"lithium secondary battery negative electrodes\" is a correct description of the subject matter, directly supported by the document's title.",
+              "check_rationale": "'lithium secondary battery negative electrodes' merely restates the generic title-level category rather than identifying the specific porous-carbon-scaffold/silicon-composite anode subject matter, making it too broad per the rubric's explicit failure condition."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "The Gemini 2.5 Pro judge is the gated instrument and was registered before results were seen. The Claude cross-check judge validates it. The two are never averaged and one is never substituted for the other."
+  ]
+}

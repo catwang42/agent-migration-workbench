@@ -48,11 +48,26 @@ scorecard. Here's what bounds it.
   A biased judge doesn't hand the contested row to the competitor.
 - The judge is also the *noisiest* instrument here, which is why no verdict rests on the
   judge alone — deterministic gates are the blocking ones.
+- **A Claude judge re-scored the same recorded outputs against the same rubrics** (run
+  2026-08-11; `cli.py crosscheck`, report in `artifacts/results/crosscheck.md`). Criterion
+  agreement: query_rewriter **98.8%**, chunk_summarizer **99.0%**, feature_extractor
+  **92.9%** on all three arms of the full 70. The two judges are never averaged — the Gemini
+  judge stays the gated instrument, registered before results.
+- The cross-check reproduces the finding that matters: on Feature Extractor the Claude judge
+  *also* ranks claude_baseline > gemini_naive > gemini_tuned_v1, so "our tuning made FE
+  worse" is not an artefact of one judge.
 
-**What's honest to concede:** a Claude-judge cross-check on a sample is designed
-(`judge_crosscheck`) and **has not been run**. Offer it as a follow-on deliverable.
+**What's honest to concede:** the Claude judge is systematically *stricter* on Feature
+Extractor — about 3–4 points lower on every arm (e.g. claude_baseline 0.857 vs the gated
+0.897). The ranking survives, the absolute level does not. Quote FE judge scores as a
+gated-instrument number with the cross-check beside it, never as "the" judged score. And
+Cohen's kappa reads lower than the raw agreement because pass rates are high — chance
+agreement on the QR/CS samples is already ~0.81 — so kappa is prevalence-deflated here;
+read the two together.
 
-**Don't say:** "The judge is unbiased."
+**Don't say:** "The judge is unbiased." Don't say "two judges agreed, so the number is
+right" either — they agreed on 92.9% of FE criteria and still differ by 4 points on the arm
+level.
 
 ### 3. "This is synthetic data. My traffic looks nothing like it."
 

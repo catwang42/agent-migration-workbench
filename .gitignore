@@ -5,7 +5,7 @@ __pycache__/
 .ipynb_checkpoints/
 .pytest_cache/
 
-# Run outputs are regenerated, with three exceptions that are not.
+# Run outputs are regenerated, with four exceptions that are not.
 #
 #   artifacts/replay/  the recorded trace corpus `cli.py e2e --mode replay`
 #                      runs against. A corpus that exists on one laptop is not
@@ -20,9 +20,17 @@ __pycache__/
 #                      the way out, so this is the only copy of the prompt
 #                      behind a published number. It is also the first thing a
 #                      customer asks to read. Same rule as the judge prompts.
+#   artifacts/reports/ the rendered deliverable — the final scorecard and the
+#                      notebook HTML exports. This is the thing the customer is
+#                      handed on Thu Aug 13, and until 2026-08-11 it was
+#                      ignored, which meant the deliverable existed on one
+#                      laptop. Same reasoning as artifacts/replay/: a
+#                      deliverable that is not on the remote is not a
+#                      deliverable, it is a local file.
 #
 # artifacts/samples/ stays ignored — review scratch, superseded by the corpus.
 artifacts/*
 !artifacts/replay/
 !artifacts/results/
 !artifacts/optimizer/
+!artifacts/reports/

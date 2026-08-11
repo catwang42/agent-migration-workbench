@@ -1,0 +1,1137 @@
+{
+  "optimizer_version": "1",
+  "subagent": "feature_extractor",
+  "selection": {
+    "verdict": "VALIDATED",
+    "target_key": "fe_novelty_judged",
+    "requires_owner_signoff": false,
+    "reason": "the cross-check returned VALIDATED on feature_extractor, so the judged FE gap is real enough to optimize against.",
+    "reframe": null
+  },
+  "run": {
+    "optimizer_version": "1",
+    "run_id": "20260811T060312Z",
+    "surface": "prompts.optimize",
+    "target_key": "fe_novelty_judged",
+    "status": "optimized",
+    "detail": "a candidate instruction came back in 90s and is about to be run as rung A4-optimizer beside A4-novelty-tool. Neither rung is dropped whichever wins.",
+    "instruction": "You are FeatureExtractor, the structured-data agent inside PatentIQ, the patent\nresearch assistant used by our analysts. You are given the text of a single\npatent document and you extract a fixed set of bibliographic and technical\nfields from it. The output goes straight into the analyst's spreadsheet, so a\nwrong value is far more damaging than a missing one.\n\n<instructions>\n1. Read the document inside the <document> tags.\n2. Extract each field listed in <fields> below, following the specific rules for each.\n3. For all fields EXCEPT `technical_field`, if the information is not explicitly present in the required format, return null for it (or an empty list for cpc_codes). Do not guess or infer information for these fields.\n4. Call the emit_features tool with the result.\n</instructions>\n\n<fields>\n- title: the invention title as printed. Do not reword or title-case it.\n- assignee: the organisation the patent is assigned to. Not the inventor. If\n  only inventors are named or the applicant is \"(none recorded)\", this is null.\n- filing_date: YYYY-MM-DD, the filing or application date (may be labeled \"International Filing Date\"). If only a priority\n  date or a publication date is given, this is null.\n- jurisdiction: the two-letter patent office code (US, EP, JP, CN, KR, WO).\n  Take it from the document number if it is printed there.\n- cpc_codes: every CPC symbol printed in the document, e.g. H01M10/052. Copy\n  them exactly, including the slash. Never derive a code from the subject\n  matter.\n- technical_field: A short, specific phrase (not a full sentence) naming the technical sub-field. Be more specific than the title by using your expert knowledge of the technology described in the document. For example, if the title is \"Positive electrode active material\" and the document discusses LiFePO4, a better field is \"lithium iron phosphate cathodes\". If the title is \"Control system for a quantum processor\" and the document discusses surface codes, a better field is \"surface-code quantum error correction\".\n- independent_claim_count: how many independent claims there are, but only if\n  the claims are actually present and countable in the document. If the claims\n  are truncated, omitted, or summarised, this is null.\n- novelty_statement: One sentence stating what the document claims as its novelty. Follow this strict order of preference for the source:\n  1. Primary Source: If the document contains claims, use the full text of the first independent claim (e.g., 'Claim 1.').\n  2. Secondary Source: If there are no claims, find or synthesize a single sentence from the abstract or background that best describes the invention itself (what it is or its method). This statement should focus on the composition or structure, not just the advantage it provides.\n  3. If novelty cannot be determined from either source, return null.\n</fields>\n\n<examples>\n<example>\n<document>\nUnited States Patent US 11,024,842 B2\nTitle: Sulfide solid electrolyte with lithium halide interlayer\nAssignee: Toyota Motor Corporation\nFiled: March 14, 2019\nCPC: H01M10/0562; H01M4/38\nThe present invention relates to solid-state lithium batteries. In contrast to\nprior sulfide electrolytes, the disclosed interlayer of lithium iodide\nsuppresses interfacial resistance growth at the anode.\nWhat is claimed is:\n1. A battery comprising ...\n2. The battery of claim 1, wherein ...\n3. A method of manufacturing a battery, comprising ...\n</document>\n<emit_features>\n{\n  \"title\": \"Sulfide solid electrolyte with lithium halide interlayer\",\n  \"assignee\": \"Toyota Motor Corporation\",\n  \"filing_date\": \"2019-03-14\",\n  \"jurisdiction\": \"US\",\n  \"cpc_codes\": [\"H01M10/0562\", \"H01M4/38\"],\n  \"technical_field\": \"solid-state lithium batteries\",\n  \"independent_claim_count\": 2,\n  \"novelty_statement\": \"A lithium iodide interlayer suppresses interfacial resistance growth at the anode compared with prior sulfide electrolytes.\"\n}\n</emit_features>\n</example>\n</examples>\n\n<output_format>\nYou must call the emit_features tool exactly once. Do not write any prose\nbefore or after the tool call. Include every field; use null for anything the\ndocument does not state.\n</output_format>\n\nIMPORTANT: A null is a correct answer. A plausible-looking value that is not in\nthe document is the single worst thing you can produce. Accuracy is paramount.",
+    "guidelines": [
+      "applicable_guideline='Target Discrepancy: Insufficient Specificity in `technical_field`' suggested_improvement=\"The original model extracted the `technical_field` literally from the title (e.g., 'positive electrode active material'), while the target responses consistently provided a more specific, expert-level classification (e.g., 'lithium iron phosphate cathodes'). The instruction has been updated to explicitly require this deeper analysis and to use expert knowledge to infer a more specific sub-field.\" text_before_change='- technical_field: one short phrase naming the field, e.g. \"solid-state\\n  electrolytes\". Not a sentence.' text_after_change='- technical_field: A short, specific phrase (not a full sentence) naming the technical sub-field. Be more specific than the title by using your expert knowledge of the technology described in the document. For example, if the title is \"Positive electrode active material\" and the document discusses LiFePO4, a better field is \"lithium iron phosphate cathodes\". If the title is \"Control system for a quantum processor\" and the document discusses surface codes, a better field is \"surface-code quantum error correction\".'",
+      "applicable_guideline='Target Discrepancy: Ambiguous Source for `novelty_statement`' suggested_improvement='The original model often returned `null` for `novelty_statement` when claims were present, whereas the target responses consistently used the text of the first independent claim. The instructions are updated to create a strict hierarchy: use Claim 1 if available, otherwise use the abstract. This makes the source for the novelty statement unambiguous.' text_before_change='- novelty_statement: one sentence stating what the document says is new,\\n  quoted or closely paraphrased from the document itself.' text_after_change=\"- novelty_statement: One sentence stating what the document claims as its novelty. Follow this strict order of preference for the source:\\n  1. Primary Source: If the document contains claims, use the full text of the first independent claim (e.g., 'Claim 1.').\\n  2. Secondary Source: If there are no claims, find or synthesize a single sentence from the abstract or background that best describes the invention itself (what it is or its method). This statement should focus on the composition or structure, not just the advantage it provides.\\n  3. If novelty cannot be determined from either source, return null.\"",
+      "applicable_guideline='Conflicting Instructions: Inference Rule' suggested_improvement=\"The new requirement for `technical_field` to be inferred by an expert contradicts the global 'Do not infer' rule. The general instructions are modified to create a specific exception for the `technical_field` while maintaining the strict extraction rule for all other fields, resolving the conflict.\" text_before_change='3. If the document does not state a field, return null for it (or an empty list\\n   for cpc_codes). Do not guess, do not infer, do not fill it in from what you\\n   know about the technology or the company.' text_after_change='3. For all fields EXCEPT `technical_field`, if the information is not explicitly present in the required format, return null for it (or an empty list for cpc_codes). Do not guess or infer information for these fields.'"
+    ],
+    "optimization_type": "target_response_optimization_with_target_response",
+    "training": {
+      "subagent": "feature_extractor",
+      "base_variant": "gemini_naive",
+      "seed": 20260811,
+      "requested": 12,
+      "examples": [
+        {
+          "item_id": "fe-0004",
+          "prompt": "United States Patent Application Publication\nPublication No.: US 2024/165753 A1\nTitle: Positive electrode active material and method of manufacture thereof\nApplicant: Cathodica Materials, Inc.\nInventors: Liu, Wei-Chen; Okonkwo, Chidi; Menon, Rajesh\nFiling Date: 20 September 2023\nPriority: 10 December 2022 (provisional)\nCPC: H01M4/5825; H01M4/136; C01B25/45\nField of Search: H01M4/5825, H01M4/136\n\nClaims:\n1. A positive electrode active material, comprising carbon-coated LiFe(1-x)MnxPO4 particles wherein 0.15 <= x <= 0.45 and the carbon coating has a thickness of 2 nm to 6 nm.\n2. The material according to claim 1, wherein the particles have a tap density of at least 1.4 g/cm3.\n3. The material according to claim 1, wherein the discharge capacity is 158 mAh/g at 1C and 25 degrees C.\n4. The material according to claim 1, wherein the tap density is 1.52 g/cm3.",
+          "model_response": "{\n  \"assignee\": \"Cathodica Materials, Inc.\",\n  \"cpc_codes\": [\n    \"H01M4/5825\",\n    \"H01M4/136\",\n    \"C01B25/45\"\n  ],\n  \"filing_date\": \"2023-09-20\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": null,\n  \"technical_field\": \"positive electrode active material\",\n  \"title\": \"Positive electrode active material and method of manufacture thereof\"\n}",
+          "target_response": "{\n  \"assignee\": \"Cathodica Materials, Inc.\",\n  \"cpc_codes\": [\n    \"H01M4/5825\",\n    \"H01M4/136\",\n    \"C01B25/45\"\n  ],\n  \"filing_date\": \"2023-09-20\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": \"A positive electrode active material comprising carbon-coated LiFe(1-x)MnxPO4 particles wherein 0.15 <= x <= 0.45 and the carbon coating has a thickness of 2 nm to 6 nm.\",\n  \"technical_field\": \"lithium iron phosphate cathodes\",\n  \"title\": \"Positive electrode active material and method of manufacture thereof\"\n}"
+        },
+        {
+          "item_id": "fe-0021",
+          "prompt": "European Patent Application\nPublication No.: EP 3544674 A1\nTitle: Control system for a quantum processor and method of manufacture thereof\nApplicant: Veriqubit Systems, Inc.\nFiling Date: 28 January 2018\nInt. Cl. / CPC: G06N10/70; G06N10/40\n\nA control system for a quantum processor includes a real-time syndrome decoder implemented in field-programmable logic. The decoder is configured to return a correction within one surface-code cycle for a code distance of at least 7. This configuration prevents a backlog, which can destroy the logical qubit, by ensuring decoder throughput does not fall behind the syndrome extraction rate.\n\nClaims:\n1. A control system for a quantum processor, comprising a real-time syndrome decoder implemented in field-programmable logic and configured to return a correction within one surface-code cycle for a code distance of at least 7.\n2. The system according to claim 1, wherein the decoder applies a correlated-noise weighting derived from a calibration of two-qubit gate errors.\n3. The system according to claim 1, wherein the logical error rate per cycle is 1.4e-4 at distance 7.",
+          "model_response": "{\n  \"assignee\": \"Veriqubit Systems, Inc.\",\n  \"cpc_codes\": [\n    \"G06N10/70\",\n    \"G06N10/40\"\n  ],\n  \"filing_date\": \"2018-01-28\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"EP\",\n  \"novelty_statement\": \"A control system for a quantum processor includes a real-time syndrome decoder implemented in field-programmable logic, configured to return a correction within one surface-code cycle for a code distance of at least 7, which prevents a backlog by ensuring decoder throughput does not fall behind the syndrome extraction rate.\",\n  \"technical_field\": \"control systems for quantum processors\",\n  \"title\": \"Control system for a quantum processor and method of manufacture thereof\"\n}",
+          "target_response": "{\n  \"assignee\": \"Veriqubit Systems, Inc.\",\n  \"cpc_codes\": [\n    \"G06N10/70\",\n    \"G06N10/40\"\n  ],\n  \"filing_date\": \"2018-01-28\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"EP\",\n  \"novelty_statement\": \"A control system for a quantum processor comprising a real-time syndrome decoder implemented in field-programmable logic and configured to return a correction within one surface-code cycle for a code distance of at least 7.\",\n  \"technical_field\": \"surface-code quantum error correction\",\n  \"title\": \"Control system for a quantum processor and method of manufacture thereof\"\n}"
+        },
+        {
+          "item_id": "fe-0029",
+          "prompt": "United States Patent Application Publication\nPublication No.: US 2020/369326 A1\nTitle: Method of beam management in a wireless network\nApplicant: Huawei Technologies Co., Ltd.\nFiling Date: 27 January 2019\nCPC: H04B7/0456\n\nBackground: US9450524B2 (assigned to QUALCOMM Incorporated) describes a method of beam management in a wireless network in which a conventional arrangement is used. That approach does not resolve the pilot overhead and latency of exhaustive beam sweeping in large antenna arrays. The present application instead relies on selecting an analog beam from a hierarchical codebook based on a reported layer-1 reference signal received power for each of at least four candidate beams.",
+          "model_response": "{\n  \"assignee\": \"Huawei Technologies Co., Ltd.\",\n  \"cpc_codes\": [\n    \"H04B7/0456\"\n  ],\n  \"filing_date\": \"2019-01-27\",\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": \"The present application instead relies on selecting an analog beam from a hierarchical codebook based on a reported layer-1 reference signal received power for each of at least four candidate beams.\",\n  \"technical_field\": \"beam management in a wireless network\",\n  \"title\": \"Method of beam management in a wireless network\"\n}",
+          "target_response": "{\n  \"assignee\": \"Huawei Technologies Co., Ltd.\",\n  \"cpc_codes\": [\n    \"H04B7/0456\"\n  ],\n  \"filing_date\": \"2019-01-27\",\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": \"Unlike the cited conventional arrangement, the application relies on selecting an analog beam from a hierarchical codebook based on a reported layer-1 reference signal received power for each of at least four candidate beams.\",\n  \"technical_field\": \"millimetre-wave hybrid beamforming\",\n  \"title\": \"Method of beam management in a wireless network\"\n}"
+        },
+        {
+          "item_id": "fe-0032",
+          "prompt": "United States Patent Application Publication\nPublication No.: US 2020/168034 A1\nTitle: Negative electrode for a lithium secondary battery and method of manufacture thereof\nApplicant: LG Energy Solution, Ltd.\nInventors: Nakamura, Hiroshi; Lindqvist, Anja; Vasquez, Elena\nFiling Date: 14 August 2019\nPriority: 28 February 2018 (provisional)\nCPC: H01M4/386; H01M4/134; H01M4/62\nField of Search: H01M4/386, H01M4/134\n\nClaims:\n1. A negative electrode for a lithium secondary battery, comprising a silicon-carbon composite in which silicon domains of 5 nm to 30 nm are dispersed within a porous carbon scaffold.\n2. The electrode according to claim 1, wherein the porous carbon scaffold has a BET specific surface area of 8 m2/g to 40 m2/g.\n3. The electrode according to claim 1, wherein the first-cycle coulombic efficiency is 91.4%.\n4. The electrode according to claim 1, wherein the specific capacity is 1,450 mAh/g at 0.1C.",
+          "model_response": "{\n  \"assignee\": \"LG Energy Solution, Ltd.\",\n  \"cpc_codes\": [\n    \"H01M4/386\",\n    \"H01M4/134\",\n    \"H01M4/62\"\n  ],\n  \"filing_date\": \"2019-08-14\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": null,\n  \"technical_field\": \"negative electrode for a lithium secondary battery\",\n  \"title\": \"Negative electrode for a lithium secondary battery and method of manufacture thereof\"\n}",
+          "target_response": "{\n  \"assignee\": \"LG Energy Solution, Ltd.\",\n  \"cpc_codes\": [\n    \"H01M4/386\",\n    \"H01M4/134\",\n    \"H01M4/62\"\n  ],\n  \"filing_date\": \"2019-08-14\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": \"A negative electrode for a lithium secondary battery comprising a silicon-carbon composite in which silicon domains of 5 nm to 30 nm are dispersed within a porous carbon scaffold.\",\n  \"technical_field\": \"silicon-composite anodes\",\n  \"title\": \"Negative electrode for a lithium secondary battery and method of manufacture thereof\"\n}"
+        },
+        {
+          "item_id": "fe-0037",
+          "prompt": "European Patent Application\nPublication No.: EP 3709967 A1\nPublication Date: 2 September 2020\nTitle: Fusion protein for programmable base editing and method for producing the same\nApplicant: Genentech, Inc.\nCPC: C12N15/11\n\nDisclosed is a fusion protein for programmable base editing, the protein comprising a Cas9 nickase domain fused via a 32-amino-acid linker to an engineered TadA-8e adenosine deaminase domain. The fusion protein is configured to reduce off-target deamination at genomic sites resembling the protospacer.",
+          "model_response": "{\n  \"assignee\": \"Genentech, Inc.\",\n  \"cpc_codes\": [\n    \"C12N15/11\"\n  ],\n  \"filing_date\": null,\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"EP\",\n  \"novelty_statement\": \"The fusion protein is configured to reduce off-target deamination at genomic sites resembling the protospacer.\",\n  \"technical_field\": \"programmable base editing\",\n  \"title\": \"Fusion protein for programmable base editing and method for producing the same\"\n}",
+          "target_response": "{\n  \"assignee\": \"Genentech, Inc.\",\n  \"cpc_codes\": [\n    \"C12N15/11\"\n  ],\n  \"filing_date\": null,\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"EP\",\n  \"novelty_statement\": \"A fusion protein for programmable base editing comprising a Cas9 nickase domain fused to an engineered TadA-8e adenosine deaminase domain via a 32-amino-acid linker.\",\n  \"technical_field\": \"CRISPR base editing\",\n  \"title\": \"Fusion protein for programmable base editing and method for producing the same\"\n}"
+        },
+        {
+          "item_id": "fe-0041",
+          "prompt": "European Patent Application\nPublication No.: EP 3563020 A1\nTitle: Coherent optical ranging system and method of manufacture thereof\nApplicant: Beamforge Semiconductor Co., Ltd.\nFiling Date: 16 December 2018\nCPC: G01S17/34\n\nClaims:\n1. A coherent optical ranging system, comprising a silicon-photonic optical phased array configured to steer a frequency-chirped beam without a moving part, and a balanced photodetector pair for coherent detection.\n2. The system according to claim 1, wherein a chirp non-linearity is corrected using a reference interferometer having a fixed delay.\n3. The system according to claim 1, wherein the range is 260 m at 10% target reflectivity.\n4. A method of manufacturing a coherent optical ranging system, the method comprising forming a silicon-photonic optical phased array configured to steer a frequency-chirped beam without a moving part, and a balanced photodetector pair for coherent detection.\n5. The method according to claim 4, wherein a chirp non-linearity is corrected using a reference interferometer having a fixed delay.\n6. The method according to claim 4, wherein the range is 260 m at 10% target reflectivity.",
+          "model_response": "{\n  \"assignee\": \"Beamforge Semiconductor Co., Ltd.\",\n  \"cpc_codes\": [\n    \"G01S17/34\"\n  ],\n  \"filing_date\": \"2018-12-16\",\n  \"independent_claim_count\": 2,\n  \"jurisdiction\": \"EP\",\n  \"novelty_statement\": \"A coherent optical ranging system comprises a silicon-photonic optical phased array configured to steer a frequency-chirped beam without a moving part, and a balanced photodetector pair for coherent detection.\",\n  \"technical_field\": \"coherent optical ranging systems\",\n  \"title\": \"Coherent optical ranging system and method of manufacture thereof\"\n}",
+          "target_response": "{\n  \"assignee\": \"Beamforge Semiconductor Co., Ltd.\",\n  \"cpc_codes\": [\n    \"G01S17/34\"\n  ],\n  \"filing_date\": \"2018-12-16\",\n  \"independent_claim_count\": 2,\n  \"jurisdiction\": \"EP\",\n  \"novelty_statement\": \"A coherent optical ranging system comprising a silicon-photonic optical phased array configured to steer a frequency-chirped beam without a moving part, and a balanced photodetector pair for coherent detection.\",\n  \"technical_field\": \"frequency-modulated continuous-wave LiDAR\",\n  \"title\": \"Coherent optical ranging system and method of manufacture thereof\"\n}"
+        },
+        {
+          "item_id": "fe-0046",
+          "prompt": "PCT International Publication\nPublication No.: WO 2020/181754 A1\nTitle: Fusion protein for programmable base editing and method for producing the same\nApplicant: Genentech, Inc.\nInternational Filing Date: 21 August 2019\nCPC: C12N15/11\n\nDisclosed is a fusion protein for programmable CRISPR base editing, the protein comprising a Cas9 nickase domain fused via a 32-amino-acid linker to an engineered TadA-8e adenosine deaminase domain. The fusion protein is configured to address off-target deamination at genomic sites that resemble the protospacer.",
+          "model_response": "{\n  \"assignee\": \"Genentech, Inc.\",\n  \"cpc_codes\": [\n    \"C12N15/11\"\n  ],\n  \"filing_date\": \"2019-08-21\",\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"WO\",\n  \"novelty_statement\": \"The fusion protein is configured to address off-target deamination at genomic sites that resemble the protospacer.\",\n  \"technical_field\": \"fusion protein for programmable base editing\",\n  \"title\": \"Fusion protein for programmable base editing and method for producing the same\"\n}",
+          "target_response": "{\n  \"assignee\": \"Genentech, Inc.\",\n  \"cpc_codes\": [\n    \"C12N15/11\"\n  ],\n  \"filing_date\": \"2019-08-21\",\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"WO\",\n  \"novelty_statement\": \"A fusion protein for programmable base editing comprising a Cas9 nickase domain fused to an engineered TadA-8e adenosine deaminase domain via a 32-amino-acid linker, addressing off-target deamination at genomic sites resembling the protospacer.\",\n  \"technical_field\": \"CRISPR base editing\",\n  \"title\": \"Fusion protein for programmable base editing and method for producing the same\"\n}"
+        },
+        {
+          "item_id": "fe-0051",
+          "prompt": "Japan Patent Office - Published Unexamined Application (translation)\nPublication No.: JP 2019-199944 A\nTitle: Monolithic tandem photovoltaic device and method of manufacture thereof\nApplicant: Applied Materials, Inc.\nInventors: Okonkwo, Chidi; Lindqvist, Anja; Liu, Wei-Chen\nFiling Date: 27 July 2018\nPriority: 3 June 2017 (provisional)\nCPC: H10K30/50; H10K85/50; H01L31/0725\nField of Search: H10K30/50, H10K85/50\n\nClaims:\n1. A monolithic tandem photovoltaic device, comprising a wide-bandgap perovskite top cell having a bandgap of 1.66 eV to 1.72 eV deposited on a textured silicon bottom cell.\n2. The device according to claim 1, wherein a self-assembled monolayer hole-selective contact is disposed between the perovskite absorber and the recombination layer.\n3. The device according to claim 1, wherein the power conversion efficiency is 31.2% under AM1.5G.\n4. The device according to claim 1, wherein the open-circuit voltage is 1.92 V.",
+          "model_response": "{\n  \"assignee\": \"Applied Materials, Inc.\",\n  \"cpc_codes\": [\n    \"H10K30/50\",\n    \"H10K85/50\",\n    \"H01L31/0725\"\n  ],\n  \"filing_date\": \"2018-07-27\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"JP\",\n  \"novelty_statement\": null,\n  \"technical_field\": \"monolithic tandem photovoltaic device\",\n  \"title\": \"Monolithic tandem photovoltaic device and method of manufacture thereof\"\n}",
+          "target_response": "{\n  \"assignee\": \"Applied Materials, Inc.\",\n  \"cpc_codes\": [\n    \"H10K30/50\",\n    \"H10K85/50\",\n    \"H01L31/0725\"\n  ],\n  \"filing_date\": \"2018-07-27\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"JP\",\n  \"novelty_statement\": \"A monolithic tandem photovoltaic device comprising a wide-bandgap perovskite top cell having a bandgap of 1.66 eV to 1.72 eV deposited on a textured silicon bottom cell.\",\n  \"technical_field\": \"perovskite-silicon tandem photovoltaics\",\n  \"title\": \"Monolithic tandem photovoltaic device and method of manufacture thereof\"\n}"
+        },
+        {
+          "item_id": "fe-0056",
+          "prompt": "United States Patent Application Publication\nPublication No.: US 2020/241230 A1\nTitle: Membrane electrode assembly for water electrolysis and method of manufacture thereof\nInventors: Rajesh Menon; Anja Lindqvist\nApplicant: (none recorded)\nFiling Date: 7 May 2019\nCPC: C25B1/04\n\nA membrane electrode assembly for water electrolysis includes an anode catalyst layer comprising an iridium catalyst supported on antimony-doped tin oxide. The anode catalyst layer has an iridium loading in a range of 0.15 mg/cm2 to 0.35 mg/cm2.",
+          "model_response": "{\n  \"assignee\": null,\n  \"cpc_codes\": [\n    \"C25B1/04\"\n  ],\n  \"filing_date\": \"2019-05-07\",\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": \"A membrane electrode assembly for water electrolysis includes an anode catalyst layer comprising an iridium catalyst supported on antimony-doped tin oxide, with an iridium loading in a range of 0.15 mg/cm2 to 0.35 mg/cm2.\",\n  \"technical_field\": \"membrane electrode assembly for water electrolysis\",\n  \"title\": \"Membrane electrode assembly for water electrolysis and method of manufacture thereof\"\n}",
+          "target_response": "{\n  \"assignee\": null,\n  \"cpc_codes\": [\n    \"C25B1/04\"\n  ],\n  \"filing_date\": \"2019-05-07\",\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": \"A membrane electrode assembly for water electrolysis comprising an anode catalyst layer having an iridium loading of 0.15 mg/cm2 to 0.35 mg/cm2 supported on antimony-doped tin oxide.\",\n  \"technical_field\": \"proton-exchange-membrane water electrolysis\",\n  \"title\": \"Membrane electrode assembly for water electrolysis and method of manufacture thereof\"\n}"
+        },
+        {
+          "item_id": "fe-0060",
+          "prompt": "European Patent Application\nPublication No.: EP 3847044 A1\nTitle: Positive electrode active material and method of manufacture thereof\nApplicant: Cathodica Materials, Inc.\nFiling Date: 19 March 2020\nCPC: H01M4/5825\n\nClaims:\n1. A positive electrode active material, comprising carbon-coated LiFe(1-x)MnxPO4 particles wherein 0.15 <= x <= 0.45 and the carbon coating has a thickness of 2 nm to 6 nm.\n2. The material according to claim 1, wherein the particles have a tap density of at least 1.4 g/cm3.\n3. The material according to claim 1, wherein the discharge capacity is 158 mAh/g at 1C and 25 degrees C.\n4. A method of manufacturing a positive electrode active material, the method comprising forming carbon-coated LiFe(1-x)MnxPO4 particles wherein 0.15 <= x <= 0.45 and the carbon coating has a thickness of 2 nm to 6 nm.\n5. The method according to claim 4, wherein the particles have a tap density of at least 1.4 g/cm3.\n6. The method according to claim 4, wherein the discharge capacity is 158 mAh/g at 1C and 25 degrees C.",
+          "model_response": "{\n  \"assignee\": \"Cathodica Materials, Inc.\",\n  \"cpc_codes\": [\n    \"H01M4/5825\"\n  ],\n  \"filing_date\": \"2020-03-19\",\n  \"independent_claim_count\": 2,\n  \"jurisdiction\": \"EP\",\n  \"novelty_statement\": null,\n  \"technical_field\": \"positive electrode active material\",\n  \"title\": \"Positive electrode active material and method of manufacture thereof\"\n}",
+          "target_response": "{\n  \"assignee\": \"Cathodica Materials, Inc.\",\n  \"cpc_codes\": [\n    \"H01M4/5825\"\n  ],\n  \"filing_date\": \"2020-03-19\",\n  \"independent_claim_count\": 2,\n  \"jurisdiction\": \"EP\",\n  \"novelty_statement\": \"A positive electrode active material comprising carbon-coated LiFe(1-x)MnxPO4 particles wherein 0.15 <= x <= 0.45 and the carbon coating has a thickness of 2 nm to 6 nm.\",\n  \"technical_field\": \"lithium iron phosphate cathodes\",\n  \"title\": \"Positive electrode active material and method of manufacture thereof\"\n}"
+        },
+        {
+          "item_id": "fe-0064",
+          "prompt": "PCT International Publication\nPublication No.: WO 2020/117082 A1\nTitle: Method of beam management in a wireless network\nApplicant: Telefonaktiebolaget LM Ericsson (publ)\nInternational Filing Date: 8 July 2019\nCPC: H04B7/0456\n\nA method for beam management in a wireless network for millimetre-wave hybrid beamforming includes selecting an analog beam from a hierarchical codebook. The selection is performed based on a reported layer-1 reference signal received power for each of at least four candidate beams, thereby addressing the pilot overhead and latency of exhaustive beam sweeping in large antenna arrays.",
+          "model_response": "{\n  \"assignee\": \"Telefonaktiebolaget LM Ericsson (publ)\",\n  \"cpc_codes\": [\n    \"H04B7/0456\"\n  ],\n  \"filing_date\": \"2019-07-08\",\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"WO\",\n  \"novelty_statement\": \"The selection is performed based on a reported layer-1 reference signal received power for each of at least four candidate beams, thereby addressing the pilot overhead and latency of exhaustive beam sweeping in large antenna arrays.\",\n  \"technical_field\": \"beam management in a wireless network\",\n  \"title\": \"Method of beam management in a wireless network\"\n}",
+          "target_response": "{\n  \"assignee\": \"Telefonaktiebolaget LM Ericsson (publ)\",\n  \"cpc_codes\": [\n    \"H04B7/0456\"\n  ],\n  \"filing_date\": \"2019-07-08\",\n  \"independent_claim_count\": null,\n  \"jurisdiction\": \"WO\",\n  \"novelty_statement\": \"A method of beam management in a wireless network comprising selecting an analog beam from a hierarchical codebook based on a reported layer-1 reference signal received power for each of at least four candidate beams, addressing the pilot overhead and latency of exhaustive beam sweeping in large antenna arrays.\",\n  \"technical_field\": \"millimetre-wave hybrid beamforming\",\n  \"title\": \"Method of beam management in a wireless network\"\n}"
+        },
+        {
+          "item_id": "fe-0067",
+          "prompt": "United States Patent Application Publication\nPublication No.: US 2023/280009 A1\nTitle: Control system for a quantum processor and method of manufacture thereof\nApplicant: Siemens Aktiengesellschaft\nFiling Date: 23 October 2022\nInt. Cl. / CPC: G06N10/70; G06N10/40\n\nA control system for a quantum processor comprises a real-time syndrome decoder implemented in field-programmable logic. The decoder returns a correction within one surface-code cycle for a code distance of at least 7. The decoder operates with a throughput sufficient to match the syndrome extraction rate, thereby avoiding a backlog that would otherwise destroy the logical qubit.\n\nClaims:\n1. A control system for a quantum processor, comprising a real-time syndrome decoder implemented in field-programmable logic and configured to return a correction within one surface-code cycle for a code distance of at least 7.\n2. The system according to claim 1, wherein the decoder applies a correlated-noise weighting derived from a calibration of two-qubit gate errors.\n3. The system according to claim 1, wherein the logical error rate per cycle is 1.4e-4 at distance 7.",
+          "model_response": "{\n  \"assignee\": \"Siemens Aktiengesellschaft\",\n  \"cpc_codes\": [\n    \"G06N10/70\",\n    \"G06N10/40\"\n  ],\n  \"filing_date\": \"2022-10-23\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": \"A control system for a quantum processor comprises a real-time syndrome decoder implemented in field-programmable logic that returns a correction within one surface-code cycle for a code distance of at least 7 and operates with a throughput sufficient to match the syndrome extraction rate, thereby avoiding a backlog.\",\n  \"technical_field\": \"control systems for quantum processors\",\n  \"title\": \"Control system for a quantum processor and method of manufacture thereof\"\n}",
+          "target_response": "{\n  \"assignee\": \"Siemens Aktiengesellschaft\",\n  \"cpc_codes\": [\n    \"G06N10/70\",\n    \"G06N10/40\"\n  ],\n  \"filing_date\": \"2022-10-23\",\n  \"independent_claim_count\": 1,\n  \"jurisdiction\": \"US\",\n  \"novelty_statement\": \"A control system for a quantum processor comprising a real-time syndrome decoder implemented in field-programmable logic and configured to return a correction within one surface-code cycle for a code distance of at least 7.\",\n  \"technical_field\": \"surface-code quantum error correction\",\n  \"title\": \"Control system for a quantum processor and method of manufacture thereof\"\n}"
+        }
+      ],
+      "skipped": {},
+      "overlaps_scored_split": [],
+      "held_out": true
+    },
+    "cutoff_seconds": 7200.0,
+    "elapsed_seconds": 90.19466142300007,
+    "started_at": "2026-08-11T06:03:12+00:00",
+    "project": "vital-octagon-19612",
+    "region": "us-central1",
+    "instruction_path": "/home/catwangzz_google_com/agent-migration-workbench/artifacts/optimizer/feature_extractor/20260811T060312Z.txt"
+  },
+  "candidate": "A4-novelty-tool and A4-optimizer are both in the ladder and neither is the candidate until the ladder scores them. Read them side by side.",
+  "rung_id": "A4-optimizer",
+  "legacy_rung_id": "A4-prime",
+  "mode": "live",
+  "ablation": {
+    "ablation_version": "1",
+    "subagent": "feature_extractor",
+    "rungs": [
+      {
+        "rung": "baseline",
+        "label": "Incumbent: the customer's XML prompt on Claude, emit_* tool",
+        "variant": "claude_baseline",
+        "output_mode": "tool",
+        "model": "claude-sonnet",
+        "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+        "branches_from": null,
+        "status": "measured",
+        "unmeasured_reason": null,
+        "judged_n": 28,
+        "judged_split": "core",
+        "leaked_example_items": [],
+        "provenance": {
+          "customer": "demo_patents",
+          "mode": "replay",
+          "region": "us-central1",
+          "dataset_provenance": "synthetic",
+          "dataset_seed": 20260812,
+          "generator_version": "t06.1",
+          "items": 28,
+          "split": "core",
+          "bootstrap_seed": 20260812,
+          "judge_repeats": 2,
+          "judge_model": "Gemini 2.5 Pro",
+          "judge_prompt_version": "v1",
+          "adapters": {
+            "claude-opus": "replay via replay",
+            "claude-sonnet": "replay via replay",
+            "gemini-flash": "replay via replay",
+            "gemini-pro": "replay via replay"
+          },
+          "run_started": null,
+          "recorded_from": "2026-08-09T17:33:29+00:00",
+          "recorded_to": "2026-08-10T02:33:10+00:00",
+          "written_at": "2026-08-11T02:31:47+00:00"
+        },
+        "arm": {
+          "subagent": "feature_extractor",
+          "variant": "claude_baseline",
+          "model": "claude-sonnet",
+          "output_mode": "tool",
+          "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+          "items": 28,
+          "calls_ok": 28,
+          "calls_error": 0,
+          "error_kinds": {},
+          "metrics": {
+            "answered_precision": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "estimate": {
+                "metric": "answered_precision",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 25,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 25,
+              "n_excluded": 3,
+              "excluded": {
+                "not_applicable": 3
+              }
+            },
+            "extraction_accuracy": {
+              "metric": "extraction_accuracy",
+              "point": 0.9285714285714286,
+              "estimate": {
+                "metric": "extraction_accuracy",
+                "point": 0.9285714285714286,
+                "lo": 0.8214285714285714,
+                "hi": 1.0,
+                "n": 28,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 28,
+              "n_excluded": 0,
+              "excluded": {}
+            },
+            "hallucination_rate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "estimate": {
+                "metric": "hallucination_rate",
+                "point": 0.0,
+                "lo": 0.0,
+                "hi": 0.0,
+                "n": 14,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 14,
+              "n_excluded": 14,
+              "excluded": {
+                "not_applicable": 14
+              }
+            },
+            "json_schema_validity": {
+              "metric": "json_schema_validity",
+              "point": 0.9285714285714286,
+              "estimate": {
+                "metric": "json_schema_validity",
+                "point": 0.9285714285714286,
+                "lo": 0.8214285714285714,
+                "hi": 1.0,
+                "n": 28,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 28,
+              "n_excluded": 0,
+              "excluded": {}
+            },
+            "omission_rate": {
+              "metric": "omission_rate",
+              "point": 0.07407407407407407,
+              "estimate": {
+                "metric": "omission_rate",
+                "point": 0.07407407407407407,
+                "lo": 0.0,
+                "hi": 0.18518518518518517,
+                "n": 27,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 27,
+              "n_excluded": 1,
+              "excluded": {
+                "not_applicable": 1
+              }
+            }
+          },
+          "judge": {
+            "point": 0.9034863945578231,
+            "estimate": {
+              "metric": "judge_score",
+              "point": 0.9034863945578232,
+              "lo": 0.8571428571428571,
+              "hi": 0.9464285714285714,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "split": "core",
+            "items_scored": 28,
+            "expected_repeats": 2,
+            "failed_repeats": 0,
+            "items_short_of_k": [],
+            "dropped_items": [],
+            "mean_within_item_sd": 0.028260219996401128,
+            "full_agreement_rate": 0.7857142857142857,
+            "failure_clusters": {
+              "novelty_statement_correct": [
+                "fe-0002",
+                "fe-0009",
+                "fe-0020",
+                "fe-0026",
+                "fe-0028",
+                "fe-0043",
+                "fe-0048"
+              ],
+              "technical_field_correct": [
+                "fe-0002",
+                "fe-0006",
+                "fe-0011",
+                "fe-0020",
+                "fe-0026",
+                "fe-0027",
+                "fe-0035",
+                "fe-0043",
+                "fe-0048",
+                "fe-0053",
+                "fe-0068"
+              ],
+              "technical_field_inferred": [
+                "fe-0006",
+                "fe-0048",
+                "fe-0053"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "rung": "A0",
+        "label": "Naive endpoint swap: the same prompt bytes on Gemini, same tool",
+        "variant": "gemini_naive",
+        "output_mode": "tool",
+        "model": "gemini-flash",
+        "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+        "branches_from": null,
+        "status": "measured",
+        "unmeasured_reason": null,
+        "judged_n": 28,
+        "judged_split": "core",
+        "leaked_example_items": [],
+        "provenance": {
+          "customer": "demo_patents",
+          "mode": "replay",
+          "region": "us-central1",
+          "dataset_provenance": "synthetic",
+          "dataset_seed": 20260812,
+          "generator_version": "t06.1",
+          "items": 28,
+          "split": "core",
+          "bootstrap_seed": 20260812,
+          "judge_repeats": 2,
+          "judge_model": "Gemini 2.5 Pro",
+          "judge_prompt_version": "v1",
+          "adapters": {
+            "claude-opus": "replay via replay",
+            "claude-sonnet": "replay via replay",
+            "gemini-flash": "replay via replay",
+            "gemini-pro": "replay via replay"
+          },
+          "run_started": null,
+          "recorded_from": "2026-08-09T18:13:35+00:00",
+          "recorded_to": "2026-08-10T02:42:22+00:00",
+          "written_at": "2026-08-11T02:31:49+00:00"
+        },
+        "arm": {
+          "subagent": "feature_extractor",
+          "variant": "gemini_naive",
+          "model": "gemini-flash",
+          "output_mode": "tool",
+          "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+          "items": 28,
+          "calls_ok": 28,
+          "calls_error": 0,
+          "error_kinds": {},
+          "metrics": {
+            "answered_precision": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "estimate": {
+                "metric": "answered_precision",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 27,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 27,
+              "n_excluded": 1,
+              "excluded": {
+                "not_applicable": 1
+              }
+            },
+            "extraction_accuracy": {
+              "metric": "extraction_accuracy",
+              "point": 1.0,
+              "estimate": {
+                "metric": "extraction_accuracy",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 28,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 28,
+              "n_excluded": 0,
+              "excluded": {}
+            },
+            "hallucination_rate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "estimate": {
+                "metric": "hallucination_rate",
+                "point": 0.0,
+                "lo": 0.0,
+                "hi": 0.0,
+                "n": 14,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 14,
+              "n_excluded": 14,
+              "excluded": {
+                "not_applicable": 14
+              }
+            },
+            "json_schema_validity": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "estimate": {
+                "metric": "json_schema_validity",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 28,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 28,
+              "n_excluded": 0,
+              "excluded": {}
+            },
+            "omission_rate": {
+              "metric": "omission_rate",
+              "point": 0.0,
+              "estimate": {
+                "metric": "omission_rate",
+                "point": 0.0,
+                "lo": 0.0,
+                "hi": 0.0,
+                "n": 27,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 27,
+              "n_excluded": 1,
+              "excluded": {
+                "not_applicable": 1
+              }
+            }
+          },
+          "judge": {
+            "point": 0.8371598639455782,
+            "estimate": {
+              "metric": "judge_score",
+              "point": 0.8371598639455782,
+              "lo": 0.7908056972789115,
+              "hi": 0.8822385204081632,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "split": "core",
+            "items_scored": 28,
+            "expected_repeats": 2,
+            "failed_repeats": 0,
+            "items_short_of_k": [],
+            "dropped_items": [],
+            "mean_within_item_sd": 0.015032031912979327,
+            "full_agreement_rate": 0.8571428571428571,
+            "failure_clusters": {
+              "novelty_from_fragment": [
+                "fe-0019"
+              ],
+              "novelty_statement_correct": [
+                "fe-0002",
+                "fe-0003",
+                "fe-0006",
+                "fe-0008",
+                "fe-0009",
+                "fe-0011",
+                "fe-0017",
+                "fe-0019",
+                "fe-0020",
+                "fe-0024",
+                "fe-0026",
+                "fe-0027",
+                "fe-0028",
+                "fe-0038",
+                "fe-0042",
+                "fe-0057",
+                "fe-0068",
+                "fe-0069"
+              ],
+              "technical_field_correct": [
+                "fe-0006",
+                "fe-0020",
+                "fe-0026",
+                "fe-0028",
+                "fe-0035",
+                "fe-0038",
+                "fe-0043",
+                "fe-0048",
+                "fe-0053"
+              ],
+              "technical_field_inferred": [
+                "fe-0006",
+                "fe-0048",
+                "fe-0053"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "rung": "A1-A3",
+        "label": "Bundled: Markdown restructure + system/user split + enforced response_schema + two recalibrated few-shots",
+        "variant": "gemini_tuned_v1",
+        "output_mode": "response_schema",
+        "model": "gemini-flash",
+        "prompt_sha": "627181ec22cde07d124001226201f4e763ad5863b6818f68eb21a67cd2e348e1",
+        "branches_from": "A0",
+        "status": "measured",
+        "unmeasured_reason": null,
+        "judged_n": 28,
+        "judged_split": "core",
+        "leaked_example_items": [],
+        "provenance": {
+          "customer": "demo_patents",
+          "mode": "replay",
+          "region": "us-central1",
+          "dataset_provenance": "synthetic",
+          "dataset_seed": 20260812,
+          "generator_version": "t06.1",
+          "items": 28,
+          "split": "core",
+          "bootstrap_seed": 20260812,
+          "judge_repeats": 2,
+          "judge_model": "Gemini 2.5 Pro",
+          "judge_prompt_version": "v1",
+          "adapters": {
+            "claude-opus": "replay via replay",
+            "claude-sonnet": "replay via replay",
+            "gemini-flash": "replay via replay",
+            "gemini-pro": "replay via replay"
+          },
+          "run_started": null,
+          "recorded_from": "2026-08-10T02:06:46+00:00",
+          "recorded_to": "2026-08-10T02:45:59+00:00",
+          "written_at": "2026-08-11T02:31:50+00:00"
+        },
+        "arm": {
+          "subagent": "feature_extractor",
+          "variant": "gemini_tuned_v1",
+          "model": "gemini-flash",
+          "output_mode": "response_schema",
+          "prompt_sha": "627181ec22cde07d124001226201f4e763ad5863b6818f68eb21a67cd2e348e1",
+          "items": 28,
+          "calls_ok": 28,
+          "calls_error": 0,
+          "error_kinds": {},
+          "metrics": {
+            "answered_precision": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "estimate": {
+                "metric": "answered_precision",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 27,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 27,
+              "n_excluded": 1,
+              "excluded": {
+                "not_applicable": 1
+              }
+            },
+            "extraction_accuracy": {
+              "metric": "extraction_accuracy",
+              "point": 1.0,
+              "estimate": {
+                "metric": "extraction_accuracy",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 28,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 28,
+              "n_excluded": 0,
+              "excluded": {}
+            },
+            "hallucination_rate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "estimate": {
+                "metric": "hallucination_rate",
+                "point": 0.0,
+                "lo": 0.0,
+                "hi": 0.0,
+                "n": 14,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 14,
+              "n_excluded": 14,
+              "excluded": {
+                "not_applicable": 14
+              }
+            },
+            "json_schema_validity": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "estimate": {
+                "metric": "json_schema_validity",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 28,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 28,
+              "n_excluded": 0,
+              "excluded": {}
+            },
+            "omission_rate": {
+              "metric": "omission_rate",
+              "point": 0.0,
+              "estimate": {
+                "metric": "omission_rate",
+                "point": 0.0,
+                "lo": 0.0,
+                "hi": 0.0,
+                "n": 27,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 27,
+              "n_excluded": 1,
+              "excluded": {
+                "not_applicable": 1
+              }
+            }
+          },
+          "judge": {
+            "point": 0.8065476190476192,
+            "estimate": {
+              "metric": "judge_score",
+              "point": 0.806547619047619,
+              "lo": 0.7555272108843537,
+              "hi": 0.8528911564625851,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "split": "core",
+            "items_scored": 28,
+            "expected_repeats": 2,
+            "failed_repeats": 0,
+            "items_short_of_k": [],
+            "dropped_items": [],
+            "mean_within_item_sd": 0.027057657443362772,
+            "full_agreement_rate": 0.75,
+            "failure_clusters": {
+              "novelty_from_fragment": [
+                "fe-0019"
+              ],
+              "novelty_statement_correct": [
+                "fe-0002",
+                "fe-0003",
+                "fe-0006",
+                "fe-0008",
+                "fe-0011",
+                "fe-0017",
+                "fe-0019",
+                "fe-0020",
+                "fe-0024",
+                "fe-0025",
+                "fe-0026",
+                "fe-0027",
+                "fe-0034",
+                "fe-0038",
+                "fe-0042",
+                "fe-0043",
+                "fe-0048",
+                "fe-0053",
+                "fe-0055",
+                "fe-0057",
+                "fe-0069"
+              ],
+              "technical_field_correct": [
+                "fe-0002",
+                "fe-0005",
+                "fe-0006",
+                "fe-0009",
+                "fe-0020",
+                "fe-0026",
+                "fe-0028",
+                "fe-0035",
+                "fe-0038",
+                "fe-0042",
+                "fe-0043",
+                "fe-0048",
+                "fe-0053"
+              ],
+              "technical_field_inferred": [
+                "fe-0006",
+                "fe-0048",
+                "fe-0053"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "rung": "A0-schema",
+        "label": "Mode only: A0's prompt, enforced response_schema instead of the tool",
+        "variant": "gemini_naive_schema",
+        "output_mode": "response_schema",
+        "model": "gemini-flash",
+        "prompt_sha": "4e012d40793b1ffd7189b40877a53213133ccef27881022213eb37b58ca4ec60",
+        "branches_from": "A0",
+        "status": "no_recordings",
+        "unmeasured_reason": "replay mode has no recorded calls for variant 'gemini_naive_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='f2b73b6782f5d9bf') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.",
+        "judged_n": null,
+        "judged_split": null,
+        "leaked_example_items": [],
+        "provenance": {
+          "customer": "demo_patents",
+          "mode": "replay",
+          "region": "us-central1",
+          "dataset_provenance": "synthetic",
+          "dataset_seed": 20260812,
+          "generator_version": "t06.1",
+          "items": 28,
+          "split": "core",
+          "bootstrap_seed": 20260812,
+          "judge_repeats": 2,
+          "judge_model": "Gemini 2.5 Pro",
+          "judge_prompt_version": "v1",
+          "adapters": {
+            "claude-opus": "replay via replay",
+            "claude-sonnet": "replay via replay",
+            "gemini-flash": "replay via replay",
+            "gemini-pro": "replay via replay"
+          },
+          "run_started": null,
+          "recorded_from": null,
+          "recorded_to": null,
+          "written_at": "2026-08-11T02:31:52+00:00"
+        },
+        "arm": null
+      },
+      {
+        "rung": "A4-novelty-tool",
+        "label": "Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example",
+        "variant": "gemini_novelty_v1_tool",
+        "output_mode": "tool",
+        "model": "gemini-flash",
+        "prompt_sha": "96858fda2fd99fbbab39bddb7f43d08cd7a9674a5c4a0e0f28d943ce224573fc",
+        "branches_from": "A0",
+        "status": "no_recordings",
+        "unmeasured_reason": "replay mode has no recorded calls for variant 'gemini_novelty_v1_tool' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='7c8cd0be466029ea') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.",
+        "judged_n": null,
+        "judged_split": null,
+        "leaked_example_items": [
+          "fe-0003"
+        ],
+        "provenance": {
+          "customer": "demo_patents",
+          "mode": "replay",
+          "region": "us-central1",
+          "dataset_provenance": "synthetic",
+          "dataset_seed": 20260812,
+          "generator_version": "t06.1",
+          "items": 28,
+          "split": "core",
+          "bootstrap_seed": 20260812,
+          "judge_repeats": 2,
+          "judge_model": "Gemini 2.5 Pro",
+          "judge_prompt_version": "v1",
+          "adapters": {
+            "claude-opus": "replay via replay",
+            "claude-sonnet": "replay via replay",
+            "gemini-flash": "replay via replay",
+            "gemini-pro": "replay via replay"
+          },
+          "run_started": null,
+          "recorded_from": null,
+          "recorded_to": null,
+          "written_at": "2026-08-11T02:31:54+00:00"
+        },
+        "arm": null
+      },
+      {
+        "rung": "A4-novelty-schema",
+        "label": "Both: the novelty prompt under the enforced response_schema",
+        "variant": "gemini_novelty_v1_schema",
+        "output_mode": "response_schema",
+        "model": "gemini-flash",
+        "prompt_sha": "f64524a224c76a60dc0ec04a06e1aa374acf5ee914f68b4ba59029bbfe13c928",
+        "branches_from": "A4-novelty-tool",
+        "status": "no_recordings",
+        "unmeasured_reason": "replay mode has no recorded calls for variant 'gemini_novelty_v1_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='509c7b09a2aa84a1') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.",
+        "judged_n": null,
+        "judged_split": null,
+        "leaked_example_items": [
+          "fe-0003"
+        ],
+        "provenance": {
+          "customer": "demo_patents",
+          "mode": "replay",
+          "region": "us-central1",
+          "dataset_provenance": "synthetic",
+          "dataset_seed": 20260812,
+          "generator_version": "t06.1",
+          "items": 28,
+          "split": "core",
+          "bootstrap_seed": 20260812,
+          "judge_repeats": 2,
+          "judge_model": "Gemini 2.5 Pro",
+          "judge_prompt_version": "v1",
+          "adapters": {
+            "claude-opus": "replay via replay",
+            "claude-sonnet": "replay via replay",
+            "gemini-flash": "replay via replay",
+            "gemini-pro": "replay via replay"
+          },
+          "run_started": null,
+          "recorded_from": null,
+          "recorded_to": null,
+          "written_at": "2026-08-11T02:31:56+00:00"
+        },
+        "arm": null
+      },
+      {
+        "rung": "A4-optimizer",
+        "label": "Optimizer: a VAIPO-suggested instruction over gemini_naive, read against judge_score",
+        "variant": "gemini_optimizer_v1",
+        "output_mode": "tool",
+        "model": "gemini-flash",
+        "prompt_sha": "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf",
+        "branches_from": "A0",
+        "status": "measured",
+        "unmeasured_reason": null,
+        "judged_n": 28,
+        "judged_split": "core",
+        "leaked_example_items": [],
+        "provenance": {
+          "customer": "demo_patents",
+          "mode": "live",
+          "region": "us-central1",
+          "dataset_provenance": "synthetic",
+          "dataset_seed": 20260812,
+          "generator_version": "t06.1",
+          "items": 28,
+          "split": "core",
+          "bootstrap_seed": 20260812,
+          "judge_repeats": 2,
+          "judge_model": "Gemini 2.5 Pro",
+          "judge_prompt_version": "v1",
+          "adapters": {
+            "claude-opus": "live via claude_vertex",
+            "claude-sonnet": "live via claude_vertex",
+            "gemini-flash": "live via gemini",
+            "gemini-pro": "live via gemini"
+          },
+          "run_started": "2026-08-11T06:04:42+00:00",
+          "recorded_from": null,
+          "recorded_to": null,
+          "written_at": "2026-08-11T06:20:10+00:00"
+        },
+        "arm": {
+          "subagent": "feature_extractor",
+          "variant": "gemini_optimizer_v1",
+          "model": "gemini-flash",
+          "output_mode": "tool",
+          "prompt_sha": "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf",
+          "items": 28,
+          "calls_ok": 28,
+          "calls_error": 0,
+          "error_kinds": {},
+          "metrics": {
+            "answered_precision": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "estimate": {
+                "metric": "answered_precision",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 27,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 27,
+              "n_excluded": 1,
+              "excluded": {
+                "not_applicable": 1
+              }
+            },
+            "extraction_accuracy": {
+              "metric": "extraction_accuracy",
+              "point": 1.0,
+              "estimate": {
+                "metric": "extraction_accuracy",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 28,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 28,
+              "n_excluded": 0,
+              "excluded": {}
+            },
+            "hallucination_rate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "estimate": {
+                "metric": "hallucination_rate",
+                "point": 0.0,
+                "lo": 0.0,
+                "hi": 0.0,
+                "n": 14,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 14,
+              "n_excluded": 14,
+              "excluded": {
+                "not_applicable": 14
+              }
+            },
+            "json_schema_validity": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "estimate": {
+                "metric": "json_schema_validity",
+                "point": 1.0,
+                "lo": 1.0,
+                "hi": 1.0,
+                "n": 28,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 28,
+              "n_excluded": 0,
+              "excluded": {}
+            },
+            "omission_rate": {
+              "metric": "omission_rate",
+              "point": 0.0,
+              "estimate": {
+                "metric": "omission_rate",
+                "point": 0.0,
+                "lo": 0.0,
+                "hi": 0.0,
+                "n": 27,
+                "unit": "fraction",
+                "confidence": 0.95,
+                "resamples": 10000,
+                "seed": 20260812,
+                "method": "percentile_bootstrap",
+                "paired_n": null,
+                "dropped_unpaired": 0
+              },
+              "n": 27,
+              "n_excluded": 1,
+              "excluded": {
+                "not_applicable": 1
+              }
+            }
+          },
+          "judge": {
+            "point": 0.949404761904762,
+            "estimate": {
+              "metric": "judge_score",
+              "point": 0.949404761904762,
+              "lo": 0.9107142857142857,
+              "hi": 0.9791666666666667,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "split": "core",
+            "items_scored": 28,
+            "expected_repeats": 2,
+            "failed_repeats": 0,
+            "items_short_of_k": [],
+            "dropped_items": [],
+            "mean_within_item_sd": 0.012626906806902632,
+            "full_agreement_rate": 0.8928571428571429,
+            "failure_clusters": {
+              "novelty_from_fragment": [
+                "fe-0019"
+              ],
+              "novelty_statement_correct": [
+                "fe-0005",
+                "fe-0008",
+                "fe-0011",
+                "fe-0019",
+                "fe-0024",
+                "fe-0042",
+                "fe-0055",
+                "fe-0069"
+              ],
+              "technical_field_still_extracted": [
+                "fe-0019"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "notes": [
+      "rung A4-novelty-tool: its prompt quotes fe-0003 as a worked example and those items are also in the scored split. Its judged score is optimistic on them by construction. Not excluded — that would change this rung's denominator only.",
+      "rung A4-novelty-schema: its prompt quotes fe-0003 as a worked example and those items are also in the scored split. Its judged score is optimistic on them by construction. Not excluded — that would change this rung's denominator only.",
+      "rung(s) A0-schema, A4-novelty-tool, A4-novelty-schema have no recorded calls in mode 'replay' and carry no numbers. Run them live to measure them."
+    ]
+  },
+  "written_at": "2026-08-11T06:04:42+00:00",
+  "notes": []
+}

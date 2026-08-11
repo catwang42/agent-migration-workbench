@@ -278,6 +278,22 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="where crosscheck.json is written (default: artifacts/results/)",
     )
+    crosscheck.add_argument(
+        "--report",
+        default=None,
+        help=(
+            "also write the agreement tables and the largest per-item "
+            "disagreements, with both judges' rationales, as markdown"
+        ),
+    )
+    crosscheck.add_argument(
+        "--reuse",
+        action="store_true",
+        help=(
+            "render from the existing --out artifact instead of running the "
+            "judges again; needs no credentials"
+        ),
+    )
 
     scorecard = subparsers.choices["scorecard"]
     scorecard.add_argument(
@@ -527,30 +543,50 @@ def cmd_crosscheck(args, cfg) -> int:
     """
     from amw.eval.crosscheck import (
         FULL_CROSSCHECK_SUBAGENTS,
+        CrosscheckResult,
         crosscheck_footer_line,
+        default_crosscheck_path,
+        render_markdown,
         run_crosscheck,
     )
     from amw.reporting.scorecard import _default_results_path
 
-    results_path = Path(args.results) if args.results else _default_results_path()
-    if not results_path.is_file():
-        print(
-            f"error: no phase-2 artifact at {results_path}. The cross-check "
-            "validates an existing judged run; run `python cli.py phase2` first.",
-            file=sys.stderr,
-        )
-        return 2
+    if args.reuse:
+        artifact = Path(args.out) if args.out else default_crosscheck_path()
+        if not artifact.is_file():
+            print(
+                f"error: no cross-check artifact at {artifact}; --reuse renders "
+                "an existing one, it does not create it.",
+                file=sys.stderr,
+            )
+            return 2
+        result = CrosscheckResult.model_validate_json(artifact.read_text())
+    else:
+        results_path = Path(args.results) if args.results else _default_results_path()
+        if not results_path.is_file():
+            print(
+                f"error: no phase-2 artifact at {results_path}. The cross-check "
+                "validates an existing judged run; run `python cli.py phase2` first.",
+                file=sys.stderr,
+            )
+            return 2
 
-    result = run_crosscheck(
-        config=cfg,
-        results_path=results_path,
-        mode=args.mode,
-        subagents=args.subagent,
-        variants=args.variant,
-        full_scope=tuple(args.full or FULL_CROSSCHECK_SUBAGENTS),
-        sample_fraction=args.fraction,
-        out_path=args.out,
-    )
+        result = run_crosscheck(
+            config=cfg,
+            results_path=results_path,
+            mode=args.mode,
+            subagents=args.subagent,
+            variants=args.variant,
+            full_scope=tuple(args.full or FULL_CROSSCHECK_SUBAGENTS),
+            sample_fraction=args.fraction,
+            out_path=args.out,
+        )
+
+    if args.report:
+        report_path = Path(args.report)
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(render_markdown(result), encoding="utf-8")
+        print(f"wrote {report_path}\n")
 
     print(f"gated judge      : {result.gated_judge}")
     print(f"cross-check judge: {result.check_judge}\n")

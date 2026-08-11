@@ -57,25 +57,28 @@ bounding the claim, is a wrong answer and not a shorter right one.
 
 <example>
 <document>
-Japan Patent Office - Published Unexamined Application (translation)
-Publication No.: JP 2019-165530 A
-Title: All-solid-state lithium secondary battery and method of manufacture thereof
-Applicant: Helion Elektrolyte GmbH
-Filing Date: 18 February 2018
+European Patent Application EP 3 742 118 A1
+Title: Clamp-on ultrasonic flow meter for filled conduits
+Applicant: Wrenfield Instrumentation Ltd
+Filing Date: 09 November 2018
+CPC: G01F1/667
 
 Claims:
-1. An all-solid-state lithium secondary battery, comprising a solid electrolyte
-   layer comprising an argyrodite-type Li6PS5Cl having a median particle
-   diameter D50 of 0.8 um to 2.5 um.
-2. The battery according to claim 1, wherein the solid electrolyte layer
-   further comprises 0.5 wt% to 3 wt% of a lithium halide interfacial additive.
+1. A clamp-on ultrasonic flow meter for a filled conduit, comprising a pair of
+   shear-wave transducers coupled to the outer pipe wall at a wedge angle of
+   62 degrees to 68 degrees and driven at a centre frequency of 1.6 MHz, the
+   meter being arranged to resolve a transit-time difference of not more than
+   250 picoseconds.
+2. The flow meter according to claim 1, wherein the transducer wedge is a
+   polyetherimide body having an acoustic impedance of 3.1 MRayl to 3.6 MRayl.
 </document>
 <novelty_statement>
-An all-solid-state lithium secondary battery comprising a solid electrolyte layer comprising an argyrodite-type Li6PS5Cl having a median particle diameter D50 of 0.8 um to 2.5 um.
+A clamp-on ultrasonic flow meter for a filled conduit comprising a pair of shear-wave transducers coupled to the outer pipe wall at a wedge angle of 62 degrees to 68 degrees and driven at a centre frequency of 1.6 MHz, arranged to resolve a transit-time difference of not more than 250 picoseconds.
 </novelty_statement>
 This document has no discussion section and never uses the word "novel". Step 2
-applies: claim 1 is the statement of novelty, and the 0.8 um to 2.5 um limit is
-part of it, so it is carried through rather than summarised away.
+applies: claim 1 is the statement of novelty, and the wedge angle, the centre
+frequency and the 250 ps resolution are all part of it, so they are carried
+through rather than summarised away.
 </example>
 </novelty_statement_rule>
 

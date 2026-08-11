@@ -286,16 +286,57 @@ def test_the_schema_twins_drop_the_tool_description_section():
 # --------------------------------------------------------------------------
 
 
-def test_the_worked_example_item_is_declared_on_both_novelty_rungs():
-    """fe-0003 is a scored corpus item. Declaring it is what makes the overlap
-    visible in the artifact instead of invisible in the prompt."""
+def test_the_novelty_rungs_quote_no_scored_corpus_item():
+    """Both rungs quoted fe-0003 — a scored item — until 2026-08-11.
+
+    The declaration made the overlap visible; the swap removed it
+    (``notes/fe_worked_example_swap.md``). Both variants are still *declared*,
+    with an empty tuple, so the rungs report a measured zero rather than
+    having no check at all.
+    """
     specs = {spec.rung: spec for spec in ladder_for("feature_extractor")}
-    assert specs["A4-novelty-tool"].few_shot_item_ids == ("fe-0003",)
-    assert specs["A4-novelty-schema"].few_shot_item_ids == ("fe-0003",)
+    assert specs["A4-novelty-tool"].few_shot_item_ids == ()
+    assert specs["A4-novelty-schema"].few_shot_item_ids == ()
     assert set(FEW_SHOT_ITEM_IDS) == {
         "gemini_novelty_v1_tool",
         "gemini_novelty_v1_schema",
     }
+
+
+def test_the_replacement_worked_example_is_not_drawn_from_the_corpus():
+    """The real guard. ``few_shot_item_ids`` records what we *say* the prompt
+    quotes; this checks what it actually contains — an id list can be wrong,
+    the prompt text cannot."""
+    items = [
+        json.loads(line)
+        for line in Path("datasets/feature_extractor.jsonl").read_text().splitlines()
+        if line.strip()
+    ]
+    assert len(items) == 70, "corpus changed; re-check this guard"
+
+    for variant in ("gemini_novelty_v1_tool", "gemini_novelty_v1_schema"):
+        text = pp.load_pack("feature_extractor", variant).system
+        for item in items:
+            gold = item["gold"] or {}
+            # The answer keys. A rung quoting one of these is being shown the
+            # answer to an item it is scored on.
+            for field in ("novelty_statement", "title", "assignee"):
+                value = gold.get(field)
+                if value:
+                    assert value not in text, (
+                        f"{variant} quotes {item['item_id']}'s gold {field} — the "
+                        f"rung is being shown one of its own answer keys"
+                    )
+            # And the document itself. Short lines ("Claims:") are shared
+            # boilerplate across every patent and say nothing about provenance,
+            # so only distinctive ones count.
+            for message in item["input"]["messages"]:
+                for line in message.splitlines():
+                    line = line.strip()
+                    if len(line) >= 45:
+                        assert line not in text, (
+                            f"{variant} quotes a line of {item['item_id']}'s document"
+                        )
 
 
 def test_rungs_without_corpus_examples_declare_none():
@@ -303,7 +344,32 @@ def test_rungs_without_corpus_examples_declare_none():
         assert spec.few_shot_item_ids == ()
 
 
-def test_the_overlap_is_reported_on_the_rungs_that_have_it(cfg):
+def test_no_rung_reports_an_overlap_now(cfg):
+    result = run_ladder(
+        "feature_extractor",
+        mode="replay",
+        config=cfg,
+        dataset_dir=cli.E2E_DATASET_DIR,
+        write=False,
+    )
+    assert all(record.leaked_example_items == [] for record in result.rungs)
+    assert not any("fe-0003" in note for note in result.notes)
+
+
+def test_the_overlap_machinery_still_fires_if_an_overlap_returns(cfg, monkeypatch):
+    """The swap removed today's contamination. This proves it would be caught
+    again — a guard that only passes because there is nothing to catch is not a
+    guard."""
+    import amw.tuning.ablate as ablate_mod
+
+    leaky = tuple(
+        spec.model_copy(update={"few_shot_item_ids": ("fe-0003",)})
+        if spec.rung == "A4-novelty-tool"
+        else spec
+        for spec in ablate_mod.ladder_for("feature_extractor")
+    )
+    monkeypatch.setattr(ablate_mod, "ladder_for", lambda _subagent: leaky)
+
     result = run_ladder(
         "feature_extractor",
         mode="replay",

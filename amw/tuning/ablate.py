@@ -82,14 +82,20 @@ That is the honest state, and it is why nothing here has a placeholder value.
 Contamination to carry forward
 ------------------------------
 
-The novelty prompt's worked example is corpus item ``fe-0003``, per the owner's
-instruction in ``notes/day1_failures.md``. That item is in the scored core
-split, so those two rungs are trained on one of the items they are scored on.
-Not silently: :data:`FEW_SHOT_ITEM_IDS` drives ``RungRecord.leaked_example_items``,
-which lists the overlap the run actually had, and a note goes into the
-artifact. The overlap is not auto-excluded — dropping it would give these two
-rungs a different denominator from every other rung, which is a worse problem
-than a disclosed one.
+The novelty prompt's worked example *was* corpus item ``fe-0003``, per the
+owner's instruction in ``notes/day1_failures.md``. That item is in the scored
+core split, so those two rungs quoted one of the items they are scored on. On
+2026-08-11 — before either rung had been measured — the owner ruled it out and
+it was replaced with a freshly authored example that is not drawn from the
+corpus (``notes/fe_worked_example_swap.md``). The rungs therefore quote nothing
+they are scored on, and :data:`FEW_SHOT_ITEM_IDS` is empty for both.
+
+The machinery that caught it stays. :data:`FEW_SHOT_ITEM_IDS` drives
+``RungRecord.leaked_example_items``, which lists whatever overlap a run
+actually had. If overlap ever returns it is recorded, not auto-excluded —
+dropping the overlapping items would give the affected rungs a different
+denominator from every other rung, which is a worse problem than a disclosed
+one.
 
 Extension point: rung A4′ (VAIPO)
 ---------------------------------
@@ -191,13 +197,21 @@ class RungSpec(BaseModel):
         return VARIANT_SPECS[self.variant].output_mode
 
 
-#: Corpus items quoted as worked examples, per variant. Owner's instruction was
-#: to use the ``fe-0003`` example from ``notes/day1_failures.md`` verbatim; the
-#: cost is that the item is also scored, so the overlap is recorded rather than
-#: hidden.
+#: Corpus items quoted as worked examples, per variant.
+#:
+#: Both novelty rungs quoted ``fe-0003`` until 2026-08-11, per the owner's
+#: original instruction in ``notes/day1_failures.md``. That item is scored, so
+#: the rungs were shown one of their own answer keys. The owner ruled the
+#: example out before these rungs were ever measured and it was replaced with a
+#: freshly authored one — a clamp-on ultrasonic flow meter, subject matter that
+#: appears nowhere in the corpus. See ``notes/fe_worked_example_swap.md``.
+#:
+#: The mapping stays, empty, rather than being deleted: it is what drives
+#: ``RungRecord.leaked_example_items``, and a rung that quotes nothing should
+#: say so by measuring zero overlap, not by having no check.
 FEW_SHOT_ITEM_IDS: dict[str, tuple[str, ...]] = {
-    "gemini_novelty_v1_tool": ("fe-0003",),
-    "gemini_novelty_v1_schema": ("fe-0003",),
+    "gemini_novelty_v1_tool": (),
+    "gemini_novelty_v1_schema": (),
 }
 
 #: Every subagent runs these, in this order.

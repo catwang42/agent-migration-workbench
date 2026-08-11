@@ -97,6 +97,7 @@ __all__ = [
     "default_crosscheck_path",
     "largest_disagreements",
     "pair_verdicts",
+    "render_markdown",
     "report_agreement",
     "run_crosscheck",
     "stratified_sample",
@@ -833,6 +834,105 @@ def verdict_for(
 # --------------------------------------------------------------------------
 # the scorecard footer line
 # --------------------------------------------------------------------------
+
+
+def render_markdown(result: CrosscheckResult) -> str:
+    """The cross-check as a page a human can actually read.
+
+    Two audiences, in this order: the agreement table (does the gated judge
+    hold up?) and the disagreement list (where does it not, and what did each
+    judge say?). The second is the point when agreement comes in low — an
+    agreement percentage tells you there is a problem and nothing about what it
+    is, and a defect you cannot name you cannot fix on Wednesday morning.
+    """
+    lines: list[str] = [
+        "# Second-judge cross-check",
+        "",
+        f"**Gated instrument:** {result.gated_judge.get('judge_model', '?')} "
+        f"(prompt `{result.gated_judge.get('judge_prompt_version', '?')}`, "
+        f"`{result.gated_judge.get('judge_output_mode', '?')}`)",
+        "",
+        f"**Validating instrument:** {result.check_judge.get('judge_model', '?')} "
+        f"(prompt `{result.check_judge.get('judge_prompt_version', '?')}`, "
+        f"`{result.check_judge.get('judge_output_mode', '?')}`)",
+        "",
+        COMBINATION_RULE,
+        "",
+        "## Agreement",
+        "",
+        "| Subagent | Arm | Criterion agreement | Cohen's kappa | Gated mean | "
+        "Cross-check mean | Criterion pairs | Unusable |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+
+    def _pct(value: float | None) -> str:
+        return "not measured" if value is None else f"{value:.1%}"
+
+    def _num(value: float | None) -> str:
+        return "undefined" if value is None else f"{value:.3f}"
+
+    for entry in result.subagents:
+        for arm in entry.per_arm:
+            lines.append(
+                f"| {entry.subagent} | {arm.arm} | {_pct(arm.criterion_agreement)} | "
+                f"{_num(arm.cohens_kappa)} | {_num(arm.gated_mean_score)} | "
+                f"{_num(arm.check_mean_score)} | {arm.criterion_pairs} | {arm.unusable} |"
+            )
+        overall = entry.overall
+        lines.append(
+            f"| **{entry.subagent}** | **all arms** | "
+            f"**{_pct(overall.criterion_agreement)}** | "
+            f"**{_num(overall.cohens_kappa)}** | {_num(overall.gated_mean_score)} | "
+            f"{_num(overall.check_mean_score)} | {overall.criterion_pairs} | "
+            f"{overall.unusable} |"
+        )
+
+    lines += ["", "## Verdicts", ""]
+    for entry in result.subagents:
+        lines.append(
+            f"- **{entry.subagent}: {entry.verdict}** at a "
+            f"{entry.threshold:.0%} threshold — {entry.scope}."
+        )
+        if entry.overall.kappa_note:
+            lines.append(f"  - {entry.overall.kappa_note}")
+
+    for entry in result.subagents:
+        if not entry.disagreements:
+            continue
+        lines += [
+            "",
+            f"## Largest per-item disagreements — {entry.subagent}",
+            "",
+        ]
+        for n, d in enumerate(entry.disagreements, start=1):
+            lines += [
+                f"### {n}. `{d.item_id}` ({d.arm}, pass {d.repeat}) — gated "
+                f"{d.gated_score:.3f} vs cross-check {d.check_score:.3f} "
+                f"(gap {d.score_gap:.3f})",
+                "",
+            ]
+            for criterion in d.criteria:
+                gated = "PASS" if criterion.gated_passed else "FAIL"
+                check = "PASS" if criterion.check_passed else "FAIL"
+                lines += [
+                    f"- **`{criterion.criterion_id}`** — gated **{gated}**, "
+                    f"cross-check **{check}**",
+                    f"  - gated: {criterion.gated_rationale}",
+                    f"  - cross-check: {criterion.check_rationale}",
+                ]
+
+    # notes[0] is the combination rule, already stated at the top.
+    other_notes = [note for note in result.notes if note != COMBINATION_RULE]
+    if other_notes:
+        lines += ["", "## Notes", ""] + [f"- {note}" for note in other_notes]
+    lines += [
+        "",
+        f"Recording window for the outputs re-scored: "
+        f"{result.recorded_from or 'n/a'} to {result.recorded_to or 'n/a'}. "
+        f"Cross-check judge run: {result.run_started or 'replayed, no live run'}.",
+        "",
+    ]
+    return "\n".join(lines)
 
 
 def crosscheck_footer_line(result: CrosscheckResult) -> str:

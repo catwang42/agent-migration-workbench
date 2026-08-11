@@ -548,3 +548,129 @@ def test_the_footer_line_names_every_subagent_and_the_rule():
         assert name in line
     assert "never averaged" in line
     assert "not measured" in line
+
+
+# --- the rendered report -----------------------------------------------------
+#
+# The markdown is the artefact a human actually reads on Tuesday evening, so
+# what it must never do is quietly lose the caveats the JSON carries.
+
+
+def _rendered(**kwargs):
+    pairs, _ = cc.pair_verdicts(
+        [
+            _verdict("fe-0001", 1, {"c1": True, "c2": True, "c3": True}),
+            _verdict("fe-0002", 1, {"c1": True, "c2": True, "c3": True}),
+        ],
+        [
+            _verdict("fe-0001", 1, {"c1": True, "c2": True, "c3": False}),
+            _verdict("fe-0002", 1, {"c1": False, "c2": True, "c3": False}),
+        ],
+        subagent="feature_extractor",
+        arm="gemini_naive",
+    )
+    report = cc.report_agreement(
+        pairs, subagent="feature_extractor", arm="gemini_naive", scope="full 70"
+    )
+    overall = cc.report_agreement(
+        pairs, subagent="feature_extractor", scope="full 70"
+    )
+    result = cc.CrosscheckResult(
+        customer="demo_patents",
+        mode="live",
+        judge_repeats=2,
+        gated_judge={"judge_model": "Gemini 2.5 Pro", "judge_prompt_version": "v1"},
+        check_judge={
+            "judge_model": "Claude Sonnet 5",
+            "judge_prompt_version": "v1_crosscheck",
+            "judge_output_mode": "tool",
+        },
+        subagents=[
+            cc.SubagentCrosscheck(
+                subagent="feature_extractor",
+                scope="full 70",
+                per_arm=[report],
+                overall=overall,
+                verdict=cc.verdict_for(overall),
+                disagreements=cc.largest_disagreements(pairs),
+            )
+        ],
+        **kwargs,
+    )
+    return result, cc.render_markdown(result)
+
+
+def test_the_report_shows_both_judges_columns_never_a_merged_one():
+    _, md = _rendered()
+    assert "Gated mean" in md and "Cross-check mean" in md
+    assert "combined" not in md.lower()
+    assert cc.COMBINATION_RULE in md
+
+
+def test_the_report_quotes_both_rationales_for_every_disagreement():
+    result, md = _rendered()
+    disagreements = result.subagents[0].disagreements
+    assert disagreements, "fixture should disagree somewhere"
+    for d in disagreements:
+        for criterion in d.criteria:
+            assert criterion.gated_rationale in md
+            assert criterion.check_rationale in md
+            # Only the criteria that actually differed are worth a human's time.
+            assert criterion.gated_passed != criterion.check_passed
+
+
+def test_the_report_says_not_measured_rather_than_printing_a_zero():
+    empty = cc.report_agreement([], subagent="feature_extractor", scope="none")
+    md = cc.render_markdown(
+        cc.CrosscheckResult(
+            customer="demo_patents",
+            mode="replay",
+            judge_repeats=2,
+            subagents=[
+                cc.SubagentCrosscheck(
+                    subagent="feature_extractor",
+                    scope="none",
+                    overall=empty,
+                    verdict=cc.INSUFFICIENT,
+                )
+            ],
+        )
+    )
+    assert "not measured" in md
+    assert cc.INSUFFICIENT in md
+    assert "0.0%" not in md
+
+
+def test_the_report_carries_the_kappa_caveat_when_there_is_one():
+    labels = [(True, True)] * 49 + [(True, False)]
+    kappa, note = cc.cohens_kappa(labels)
+    assert note, "this sample should be prevalence-deflated"
+    overall = cc.report_agreement(
+        [], subagent="feature_extractor", scope="s"
+    ).model_copy(update={"cohens_kappa": kappa, "kappa_note": note})
+    md = cc.render_markdown(
+        cc.CrosscheckResult(
+            customer="demo_patents",
+            mode="live",
+            judge_repeats=2,
+            subagents=[
+                cc.SubagentCrosscheck(
+                    subagent="feature_extractor",
+                    scope="s",
+                    overall=overall,
+                    verdict=cc.UNRELIABLE,
+                )
+            ],
+        )
+    )
+    assert note in md
+
+
+def test_the_report_dates_what_it_re_scored():
+    _, md = _rendered(
+        recorded_from="2026-08-09T16:07:15+00:00",
+        recorded_to="2026-08-10T02:45:59+00:00",
+        run_started="2026-08-11T09:00:00+00:00",
+    )
+    assert "2026-08-09T16:07:15+00:00" in md
+    assert "2026-08-11T09:00:00+00:00" in md

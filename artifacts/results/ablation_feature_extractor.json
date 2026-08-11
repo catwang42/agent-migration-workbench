@@ -1,0 +1,811 @@
+{
+  "ablation_version": "1",
+  "subagent": "feature_extractor",
+  "rungs": [
+    {
+      "rung": "baseline",
+      "label": "Incumbent: the customer's XML prompt on Claude, emit_* tool",
+      "variant": "claude_baseline",
+      "output_mode": "tool",
+      "model": "claude-sonnet",
+      "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+      "branches_from": null,
+      "status": "measured",
+      "unmeasured_reason": null,
+      "judged_n": 28,
+      "judged_split": "core",
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 28,
+        "split": "core",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-pro": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": "2026-08-09T17:33:29+00:00",
+        "recorded_to": "2026-08-10T02:33:10+00:00",
+        "written_at": "2026-08-11T02:31:47+00:00"
+      },
+      "arm": {
+        "subagent": "feature_extractor",
+        "variant": "claude_baseline",
+        "model": "claude-sonnet",
+        "output_mode": "tool",
+        "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+        "items": 28,
+        "calls_ok": 28,
+        "calls_error": 0,
+        "error_kinds": {},
+        "metrics": {
+          "answered_precision": {
+            "metric": "answered_precision",
+            "point": 1.0,
+            "estimate": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 25,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 25,
+            "n_excluded": 3,
+            "excluded": {
+              "not_applicable": 3
+            }
+          },
+          "extraction_accuracy": {
+            "metric": "extraction_accuracy",
+            "point": 0.9285714285714286,
+            "estimate": {
+              "metric": "extraction_accuracy",
+              "point": 0.9285714285714286,
+              "lo": 0.8214285714285714,
+              "hi": 1.0,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 28,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "hallucination_rate": {
+            "metric": "hallucination_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 14,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 14,
+            "n_excluded": 14,
+            "excluded": {
+              "not_applicable": 14
+            }
+          },
+          "json_schema_validity": {
+            "metric": "json_schema_validity",
+            "point": 0.9285714285714286,
+            "estimate": {
+              "metric": "json_schema_validity",
+              "point": 0.9285714285714286,
+              "lo": 0.8214285714285714,
+              "hi": 1.0,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 28,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "omission_rate": {
+            "metric": "omission_rate",
+            "point": 0.07407407407407407,
+            "estimate": {
+              "metric": "omission_rate",
+              "point": 0.07407407407407407,
+              "lo": 0.0,
+              "hi": 0.18518518518518517,
+              "n": 27,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 27,
+            "n_excluded": 1,
+            "excluded": {
+              "not_applicable": 1
+            }
+          }
+        },
+        "judge": {
+          "point": 0.9034863945578231,
+          "estimate": {
+            "metric": "judge_score",
+            "point": 0.9034863945578232,
+            "lo": 0.8571428571428571,
+            "hi": 0.9464285714285714,
+            "n": 28,
+            "unit": "fraction",
+            "confidence": 0.95,
+            "resamples": 10000,
+            "seed": 20260812,
+            "method": "percentile_bootstrap",
+            "paired_n": null,
+            "dropped_unpaired": 0
+          },
+          "split": "core",
+          "items_scored": 28,
+          "expected_repeats": 2,
+          "failed_repeats": 0,
+          "items_short_of_k": [],
+          "dropped_items": [],
+          "mean_within_item_sd": 0.028260219996401128,
+          "full_agreement_rate": 0.7857142857142857,
+          "failure_clusters": {
+            "novelty_statement_correct": [
+              "fe-0002",
+              "fe-0009",
+              "fe-0020",
+              "fe-0026",
+              "fe-0028",
+              "fe-0043",
+              "fe-0048"
+            ],
+            "technical_field_correct": [
+              "fe-0002",
+              "fe-0006",
+              "fe-0011",
+              "fe-0020",
+              "fe-0026",
+              "fe-0027",
+              "fe-0035",
+              "fe-0043",
+              "fe-0048",
+              "fe-0053",
+              "fe-0068"
+            ],
+            "technical_field_inferred": [
+              "fe-0006",
+              "fe-0048",
+              "fe-0053"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "rung": "A0",
+      "label": "Naive endpoint swap: the same prompt bytes on Gemini, same tool",
+      "variant": "gemini_naive",
+      "output_mode": "tool",
+      "model": "gemini-flash",
+      "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+      "branches_from": null,
+      "status": "measured",
+      "unmeasured_reason": null,
+      "judged_n": 28,
+      "judged_split": "core",
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 28,
+        "split": "core",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-pro": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": "2026-08-09T18:13:35+00:00",
+        "recorded_to": "2026-08-10T02:42:22+00:00",
+        "written_at": "2026-08-11T02:31:49+00:00"
+      },
+      "arm": {
+        "subagent": "feature_extractor",
+        "variant": "gemini_naive",
+        "model": "gemini-flash",
+        "output_mode": "tool",
+        "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+        "items": 28,
+        "calls_ok": 28,
+        "calls_error": 0,
+        "error_kinds": {},
+        "metrics": {
+          "answered_precision": {
+            "metric": "answered_precision",
+            "point": 1.0,
+            "estimate": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 27,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 27,
+            "n_excluded": 1,
+            "excluded": {
+              "not_applicable": 1
+            }
+          },
+          "extraction_accuracy": {
+            "metric": "extraction_accuracy",
+            "point": 1.0,
+            "estimate": {
+              "metric": "extraction_accuracy",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 28,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "hallucination_rate": {
+            "metric": "hallucination_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 14,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 14,
+            "n_excluded": 14,
+            "excluded": {
+              "not_applicable": 14
+            }
+          },
+          "json_schema_validity": {
+            "metric": "json_schema_validity",
+            "point": 1.0,
+            "estimate": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 28,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "omission_rate": {
+            "metric": "omission_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "omission_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 27,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 27,
+            "n_excluded": 1,
+            "excluded": {
+              "not_applicable": 1
+            }
+          }
+        },
+        "judge": {
+          "point": 0.8371598639455782,
+          "estimate": {
+            "metric": "judge_score",
+            "point": 0.8371598639455782,
+            "lo": 0.7908056972789115,
+            "hi": 0.8822385204081632,
+            "n": 28,
+            "unit": "fraction",
+            "confidence": 0.95,
+            "resamples": 10000,
+            "seed": 20260812,
+            "method": "percentile_bootstrap",
+            "paired_n": null,
+            "dropped_unpaired": 0
+          },
+          "split": "core",
+          "items_scored": 28,
+          "expected_repeats": 2,
+          "failed_repeats": 0,
+          "items_short_of_k": [],
+          "dropped_items": [],
+          "mean_within_item_sd": 0.015032031912979327,
+          "full_agreement_rate": 0.8571428571428571,
+          "failure_clusters": {
+            "novelty_from_fragment": [
+              "fe-0019"
+            ],
+            "novelty_statement_correct": [
+              "fe-0002",
+              "fe-0003",
+              "fe-0006",
+              "fe-0008",
+              "fe-0009",
+              "fe-0011",
+              "fe-0017",
+              "fe-0019",
+              "fe-0020",
+              "fe-0024",
+              "fe-0026",
+              "fe-0027",
+              "fe-0028",
+              "fe-0038",
+              "fe-0042",
+              "fe-0057",
+              "fe-0068",
+              "fe-0069"
+            ],
+            "technical_field_correct": [
+              "fe-0006",
+              "fe-0020",
+              "fe-0026",
+              "fe-0028",
+              "fe-0035",
+              "fe-0038",
+              "fe-0043",
+              "fe-0048",
+              "fe-0053"
+            ],
+            "technical_field_inferred": [
+              "fe-0006",
+              "fe-0048",
+              "fe-0053"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "rung": "A1-A3",
+      "label": "Bundled: Markdown restructure + system/user split + enforced response_schema + two recalibrated few-shots",
+      "variant": "gemini_tuned_v1",
+      "output_mode": "response_schema",
+      "model": "gemini-flash",
+      "prompt_sha": "627181ec22cde07d124001226201f4e763ad5863b6818f68eb21a67cd2e348e1",
+      "branches_from": "A0",
+      "status": "measured",
+      "unmeasured_reason": null,
+      "judged_n": 28,
+      "judged_split": "core",
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 28,
+        "split": "core",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-pro": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": "2026-08-10T02:06:46+00:00",
+        "recorded_to": "2026-08-10T02:45:59+00:00",
+        "written_at": "2026-08-11T02:31:50+00:00"
+      },
+      "arm": {
+        "subagent": "feature_extractor",
+        "variant": "gemini_tuned_v1",
+        "model": "gemini-flash",
+        "output_mode": "response_schema",
+        "prompt_sha": "627181ec22cde07d124001226201f4e763ad5863b6818f68eb21a67cd2e348e1",
+        "items": 28,
+        "calls_ok": 28,
+        "calls_error": 0,
+        "error_kinds": {},
+        "metrics": {
+          "answered_precision": {
+            "metric": "answered_precision",
+            "point": 1.0,
+            "estimate": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 27,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 27,
+            "n_excluded": 1,
+            "excluded": {
+              "not_applicable": 1
+            }
+          },
+          "extraction_accuracy": {
+            "metric": "extraction_accuracy",
+            "point": 1.0,
+            "estimate": {
+              "metric": "extraction_accuracy",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 28,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "hallucination_rate": {
+            "metric": "hallucination_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 14,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 14,
+            "n_excluded": 14,
+            "excluded": {
+              "not_applicable": 14
+            }
+          },
+          "json_schema_validity": {
+            "metric": "json_schema_validity",
+            "point": 1.0,
+            "estimate": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 28,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 28,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "omission_rate": {
+            "metric": "omission_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "omission_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 27,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 27,
+            "n_excluded": 1,
+            "excluded": {
+              "not_applicable": 1
+            }
+          }
+        },
+        "judge": {
+          "point": 0.8065476190476192,
+          "estimate": {
+            "metric": "judge_score",
+            "point": 0.806547619047619,
+            "lo": 0.7555272108843537,
+            "hi": 0.8528911564625851,
+            "n": 28,
+            "unit": "fraction",
+            "confidence": 0.95,
+            "resamples": 10000,
+            "seed": 20260812,
+            "method": "percentile_bootstrap",
+            "paired_n": null,
+            "dropped_unpaired": 0
+          },
+          "split": "core",
+          "items_scored": 28,
+          "expected_repeats": 2,
+          "failed_repeats": 0,
+          "items_short_of_k": [],
+          "dropped_items": [],
+          "mean_within_item_sd": 0.027057657443362772,
+          "full_agreement_rate": 0.75,
+          "failure_clusters": {
+            "novelty_from_fragment": [
+              "fe-0019"
+            ],
+            "novelty_statement_correct": [
+              "fe-0002",
+              "fe-0003",
+              "fe-0006",
+              "fe-0008",
+              "fe-0011",
+              "fe-0017",
+              "fe-0019",
+              "fe-0020",
+              "fe-0024",
+              "fe-0025",
+              "fe-0026",
+              "fe-0027",
+              "fe-0034",
+              "fe-0038",
+              "fe-0042",
+              "fe-0043",
+              "fe-0048",
+              "fe-0053",
+              "fe-0055",
+              "fe-0057",
+              "fe-0069"
+            ],
+            "technical_field_correct": [
+              "fe-0002",
+              "fe-0005",
+              "fe-0006",
+              "fe-0009",
+              "fe-0020",
+              "fe-0026",
+              "fe-0028",
+              "fe-0035",
+              "fe-0038",
+              "fe-0042",
+              "fe-0043",
+              "fe-0048",
+              "fe-0053"
+            ],
+            "technical_field_inferred": [
+              "fe-0006",
+              "fe-0048",
+              "fe-0053"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "rung": "A0-schema",
+      "label": "Mode only: A0's prompt, enforced response_schema instead of the tool",
+      "variant": "gemini_naive_schema",
+      "output_mode": "response_schema",
+      "model": "gemini-flash",
+      "prompt_sha": "4e012d40793b1ffd7189b40877a53213133ccef27881022213eb37b58ca4ec60",
+      "branches_from": "A0",
+      "status": "no_recordings",
+      "unmeasured_reason": "replay mode has no recorded calls for variant 'gemini_naive_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='f2b73b6782f5d9bf') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.",
+      "judged_n": null,
+      "judged_split": null,
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 28,
+        "split": "core",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-pro": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": null,
+        "recorded_to": null,
+        "written_at": "2026-08-11T02:31:52+00:00"
+      },
+      "arm": null
+    },
+    {
+      "rung": "A4-novelty-tool",
+      "label": "Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example",
+      "variant": "gemini_novelty_v1_tool",
+      "output_mode": "tool",
+      "model": "gemini-flash",
+      "prompt_sha": "96858fda2fd99fbbab39bddb7f43d08cd7a9674a5c4a0e0f28d943ce224573fc",
+      "branches_from": "A0",
+      "status": "no_recordings",
+      "unmeasured_reason": "replay mode has no recorded calls for variant 'gemini_novelty_v1_tool' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='7c8cd0be466029ea') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.",
+      "judged_n": null,
+      "judged_split": null,
+      "leaked_example_items": [
+        "fe-0003"
+      ],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 28,
+        "split": "core",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-pro": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": null,
+        "recorded_to": null,
+        "written_at": "2026-08-11T02:31:54+00:00"
+      },
+      "arm": null
+    },
+    {
+      "rung": "A4-novelty-schema",
+      "label": "Both: the novelty prompt under the enforced response_schema",
+      "variant": "gemini_novelty_v1_schema",
+      "output_mode": "response_schema",
+      "model": "gemini-flash",
+      "prompt_sha": "f64524a224c76a60dc0ec04a06e1aa374acf5ee914f68b4ba59029bbfe13c928",
+      "branches_from": "A4-novelty-tool",
+      "status": "no_recordings",
+      "unmeasured_reason": "replay mode has no recorded calls for variant 'gemini_novelty_v1_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='509c7b09a2aa84a1') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.",
+      "judged_n": null,
+      "judged_split": null,
+      "leaked_example_items": [
+        "fe-0003"
+      ],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 28,
+        "split": "core",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-pro": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": null,
+        "recorded_to": null,
+        "written_at": "2026-08-11T02:31:56+00:00"
+      },
+      "arm": null
+    }
+  ],
+  "notes": [
+    "rung A4-novelty-tool: its prompt quotes fe-0003 as a worked example and those items are also in the scored split. Its judged score is optimistic on them by construction. Not excluded — that would change this rung's denominator only.",
+    "rung A4-novelty-schema: its prompt quotes fe-0003 as a worked example and those items are also in the scored split. Its judged score is optimistic on them by construction. Not excluded — that would change this rung's denominator only.",
+    "rung(s) A0-schema, A4-novelty-tool, A4-novelty-schema have no recorded calls in mode 'replay' and carry no numbers. Run them live to measure them."
+  ]
+}

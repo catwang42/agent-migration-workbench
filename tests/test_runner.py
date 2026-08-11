@@ -349,8 +349,22 @@ def test_phase2_missing_dataset_says_how_to_make_one(cfg, tmp_path):
 
 
 def test_unimplemented_commands_still_refuse_rather_than_pretend(capsys):
-    assert cli.main(["ablate", "--mode", "replay"]) == 3
-    assert "not implemented" in capsys.readouterr().err
+    """Named against the mechanism, not against one command.
+
+    This used to assert on ``ablate`` specifically, which meant the test had to
+    be rewritten the day T10 landed — and a test you edit to make a feature pass
+    is a test that stopped guarding anything. What must hold as the lanes land
+    is the *rule*: a subcommand with no handler exits 3 and says which task owns
+    it, rather than exiting 0 and printing nothing.
+    """
+    unimplemented = [name for name in cli.COMMANDS if name not in cli.HANDLERS]
+    if not unimplemented:
+        pytest.skip("every subcommand is wired up; the guard has nothing to guard")
+    for name in unimplemented:
+        assert cli.main([name, "--mode", "replay"]) == 3
+        err = capsys.readouterr().err
+        assert "not implemented" in err
+        assert cli.COMMANDS[name][1] in err  # names the task that will deliver it
 
 
 def test_smoke_runs_offline(capsys):

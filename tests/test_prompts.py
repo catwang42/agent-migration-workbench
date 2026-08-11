@@ -29,15 +29,35 @@ from amw.adapters.claude_anthropic import _to_json_schema
 from amw.agents import prompt_packs as pp
 from amw.agents.schemas import SUBAGENTS, json_schema, tool_name
 
+#: The universal ladder: three variants every subagent has. Tests about the
+#: ladder's *shape* (baseline → naive → tuned) belong here.
 ALL_PACKS = [(subagent, variant) for subagent in SUBAGENTS for variant in pp.VARIANTS]
 IDS = [f"{subagent}/{variant}" for subagent, variant in ALL_PACKS]
-TOOL_VARIANTS = [v for v, s in pp.VARIANT_SPECS.items() if s.output_mode == "tool"]
-SCHEMA_VARIANTS = [v for v, s in pp.VARIANT_SPECS.items() if s.output_mode != "tool"]
+
+#: Every pack on disk, including the Feature-Extractor-only 2×2 cells that
+#: unbundle A1–A3. Those are real arms that get run against customers' eyes,
+#: not fixtures, so the mechanism invariants have to hold for them too.
+EVERY_PACK = [(s, v) for s in SUBAGENTS for v in pp.variants_for(s)]
+EVERY_IDS = [f"{s}/{v}" for s, v in EVERY_PACK]
+TOOL_PACKS = [(s, v) for s, v in EVERY_PACK if pp.VARIANT_SPECS[v].output_mode == "tool"]
+TOOL_IDS = [f"{s}/{v}" for s, v in TOOL_PACKS]
+
+#: Deliberately the universal three only. This is a claim about the *tuned
+#: rewrite* — the FE ``_schema`` cells keep A0's XML wording on purpose,
+#: because their whole job is to move the output mode and nothing else.
+SCHEMA_VARIANTS = [v for v in pp.VARIANTS if pp.VARIANT_SPECS[v].output_mode != "tool"]
 
 
 @pytest.fixture(scope="module")
 def packs() -> dict[tuple[str, str], pp.PromptPack]:
+    """The universal three per subagent — what ``load_packs()`` returns."""
     return pp.load_packs()
+
+
+@pytest.fixture(scope="module")
+def every_pack() -> dict[tuple[str, str], pp.PromptPack]:
+    """Every pack on disk, subagent-specific variants included."""
+    return {key: pp.load_pack(*key) for key in EVERY_PACK}
 
 
 # --------------------------------------------------------------------------
@@ -50,10 +70,23 @@ def test_every_subagent_has_all_three_variants(packs):
     assert pp.VARIANTS == ("claude_baseline", "gemini_naive", "gemini_tuned_v1")
 
 
-@pytest.mark.parametrize(("subagent", "variant"), ALL_PACKS, ids=IDS)
-def test_pack_is_a_versioned_file_with_content(packs, subagent, variant):
+def test_subagent_specific_variants_stay_out_of_the_universal_ladder():
+    """``VARIANTS`` is phase2's default arm list — a variant only one subagent
+    has a file for must not sneak into it, or a plain phase2 run tries to load
+    a Query Rewriter prompt that does not and should not exist."""
+    assert set(pp.VARIANTS) <= set(pp.ALL_VARIANTS)
+    for variant in set(pp.ALL_VARIANTS) - set(pp.VARIANTS):
+        assert pp.VARIANT_SPECS[variant].subagents is not None
+    assert pp.variants_for("feature_extractor") == pp.ALL_VARIANTS
+    assert pp.variants_for("query_rewriter") == pp.VARIANTS
+    with pytest.raises(pp.PromptPackError, match="feature_extractor"):
+        pp.load_pack("query_rewriter", "gemini_novelty_v1_tool")
+
+
+@pytest.mark.parametrize(("subagent", "variant"), EVERY_PACK, ids=EVERY_IDS)
+def test_pack_is_a_versioned_file_with_content(every_pack, subagent, variant):
     """Prompts are files on disk, not string literals — customers read them."""
-    pack = packs[(subagent, variant)]
+    pack = every_pack[(subagent, variant)]
     assert pack.path == pp.prompts_dir() / subagent / f"{variant}.txt"
     assert pack.path.is_file()
     assert pack.text == pack.path.read_text(encoding="utf-8")
@@ -66,7 +99,7 @@ def test_no_stray_prompt_files_in_the_pack_directories():
     """A file nobody loads is a prompt nobody reviews."""
     for subagent in SUBAGENTS:
         found = {path.name for path in (pp.prompts_dir() / subagent).glob("*")}
-        assert found == {f"{variant}.txt" for variant in pp.VARIANTS}
+        assert found == {f"{variant}.txt" for variant in pp.variants_for(subagent)}
 
 
 def test_root_orchestrator_has_no_prompt_pack():
@@ -79,10 +112,10 @@ def test_root_orchestrator_has_no_prompt_pack():
 # --------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(("subagent", "variant"), ALL_PACKS, ids=IDS)
-def test_variant_renders_with_a_sample_item(packs, subagent, variant):
+@pytest.mark.parametrize(("subagent", "variant"), EVERY_PACK, ids=EVERY_IDS)
+def test_variant_renders_with_a_sample_item(every_pack, subagent, variant):
     item = pp.sample_item(subagent)
-    rendered = packs[(subagent, variant)].render(item)
+    rendered = every_pack[(subagent, variant)].render(item)
 
     assert rendered.system_prompt.strip()
     assert len(rendered.messages) == 1
@@ -238,19 +271,18 @@ def test_tuned_variant_splits_system_from_user_content(packs, subagent):
 # --------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(("subagent", "variant"), ALL_PACKS, ids=IDS)
-def test_exactly_one_output_mechanism(packs, subagent, variant):
+@pytest.mark.parametrize(("subagent", "variant"), EVERY_PACK, ids=EVERY_IDS)
+def test_exactly_one_output_mechanism(every_pack, subagent, variant):
     """Gemini raises ConfigError when a request carries tools *and* a schema."""
-    pack = packs[(subagent, variant)]
+    pack = every_pack[(subagent, variant)]
     has_tool = bool(pack.tool_specs())
     has_schema = pack.response_schema() is not None
     assert has_tool != has_schema
 
 
-@pytest.mark.parametrize("subagent", SUBAGENTS)
-@pytest.mark.parametrize("variant", TOOL_VARIANTS)
-def test_tool_variants_offer_the_subagents_emit_tool(packs, subagent, variant):
-    (spec,) = packs[(subagent, variant)].tool_specs()
+@pytest.mark.parametrize(("subagent", "variant"), TOOL_PACKS, ids=TOOL_IDS)
+def test_tool_variants_offer_the_subagents_emit_tool(every_pack, subagent, variant):
+    (spec,) = every_pack[(subagent, variant)].tool_specs()
     assert spec.name == tool_name(subagent)
     assert spec.description.strip()
     assert spec.parameters == json_schema(subagent)
@@ -264,16 +296,15 @@ def test_baseline_and_naive_share_the_mechanism():
     assert pp.VARIANT_SPECS["gemini_tuned_v1"].output_mode == "response_schema"
 
 
-@pytest.mark.parametrize("subagent", SUBAGENTS)
-@pytest.mark.parametrize("variant", TOOL_VARIANTS)
-def test_tool_prompts_name_the_tool_they_call(packs, subagent, variant):
-    assert tool_name(subagent) in packs[(subagent, variant)].text
+@pytest.mark.parametrize(("subagent", "variant"), TOOL_PACKS, ids=TOOL_IDS)
+def test_tool_prompts_name_the_tool_they_call(every_pack, subagent, variant):
+    assert tool_name(subagent) in every_pack[(subagent, variant)].text
 
 
-@pytest.mark.parametrize(("subagent", "variant"), ALL_PACKS, ids=IDS)
-def test_schema_compiles_and_serialises(packs, subagent, variant):
+@pytest.mark.parametrize(("subagent", "variant"), EVERY_PACK, ids=EVERY_IDS)
+def test_schema_compiles_and_serialises(every_pack, subagent, variant):
     """"Schemas compile": JSON-serialisable and a valid schema document."""
-    pack = packs[(subagent, variant)]
+    pack = every_pack[(subagent, variant)]
     schema = pack.response_schema()
     if schema is None:
         (spec,) = pack.tool_specs()
@@ -289,7 +320,7 @@ def test_schema_compiles_and_serialises(packs, subagent, variant):
 # --------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(("subagent", "variant"), ALL_PACKS, ids=IDS)
+@pytest.mark.parametrize(("subagent", "variant"), EVERY_PACK, ids=EVERY_IDS)
 def test_build_request_produces_a_runnable_request(subagent, variant):
     item = pp.sample_item(subagent)
     request = pp.build_request(subagent, variant, item)

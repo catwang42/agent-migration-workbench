@@ -4,9 +4,11 @@ Two modules, one seam each:
 
 * :mod:`amw.agents.schemas` — the frozen output contract shared by the dataset
   generator, the prompt packs, and the eval engine.
-* :mod:`amw.agents.prompt_packs` — the three prompt variants per subagent
-  (incumbent Claude, naive A0 swap, tuned Gemini), loaded from versioned text
-  files under ``amw/agents/prompts/``.
+* :mod:`amw.agents.prompt_packs` — the prompt variants per subagent, loaded
+  from versioned text files under ``amw/agents/prompts/``. Every subagent has
+  the universal three (incumbent Claude, naive A0 swap, tuned Gemini) in
+  :data:`VARIANTS`; a subagent may additionally declare its own, which live in
+  :data:`ALL_VARIANTS` and are enumerated per subagent by :func:`variants_for`.
 
 Typical use::
 
@@ -19,6 +21,7 @@ for why it is not evaluated.
 """
 
 from amw.agents.prompt_packs import (
+    ALL_VARIANTS,
     PLACEHOLDERS,
     VARIANT_SPECS,
     VARIANTS,
@@ -30,6 +33,7 @@ from amw.agents.prompt_packs import (
     load_packs,
     resolve_model,
     sample_item,
+    variants_for,
 )
 from amw.agents.schemas import (
     SUBAGENTS,
@@ -53,6 +57,7 @@ __all__ = [
     "tool_name",
     "PLACEHOLDERS",
     "VARIANTS",
+    "ALL_VARIANTS",
     "VARIANT_SPECS",
     "PromptPack",
     "PromptPackError",
@@ -62,4 +67,5 @@ __all__ = [
     "load_packs",
     "resolve_model",
     "sample_item",
+    "variants_for",
 ]

@@ -1,0 +1,32 @@
+=== system ===
+You are ToyAgent. This is a TEST FIXTURE, not a shipped prompt: it exists to
+exercise amw.tuning.translator on every XML shape the real packs use, in a file
+small enough to assert against line by line.
+
+<instructions>
+1. Read the thing inside the <payload> tags.
+2. Do the thing.
+</instructions>
+
+<output_format>
+Answer with one word.
+</output_format>
+
+<examples>
+<example>
+<payload id="p1">
+a fixture payload
+</payload>
+<answer>
+fixture
+</answer>
+</example>
+</examples>
+
+=== user ===
+<payload>
+{{question}}
+</payload>
+
+=== tool_description ===
+A fixture tool description. Never sent to any model.

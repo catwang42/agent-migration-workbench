@@ -29,6 +29,7 @@ from amw.adapters import CLAUDE_PATHS, MODES
 from amw.agents.prompt_packs import VARIANTS
 from amw.agents.schemas import SUBAGENTS
 from amw.config import ConfigError, load_all
+from amw.tuning import cmd_ablate
 
 #: The e2e corpus is a *committed fixture*, not a freshly generated dataset.
 #: Replay is keyed on the exact request bytes, so a corpus regenerated on the
@@ -125,7 +126,44 @@ def build_parser() -> argparse.ArgumentParser:
         help="results path (default: artifacts/results/phase2.json)",
     )
 
-    subparsers.choices["ablate"].add_argument("--subagent", default=None)
+    ablate = subparsers.choices["ablate"]
+    ablate.add_argument("-n", type=int, default=None)
+    ablate.add_argument(
+        "--subagent",
+        choices=SUBAGENTS,
+        default=None,
+        help="restrict to one subagent (default: all three)",
+    )
+    ablate.add_argument(
+        "--rung",
+        action="append",
+        default=None,
+        metavar="RUNG",
+        help="run one rung only, e.g. A0 (repeatable; default: the whole ladder)",
+    )
+    ablate.add_argument(
+        "--dataset-dir",
+        default=None,
+        help="where to read the corpus from (default: datasets/)",
+    )
+    ablate.add_argument(
+        "--out",
+        default=None,
+        help=(
+            "results path (default: artifacts/results/ablation_{subagent}.json); "
+            "needs --subagent"
+        ),
+    )
+    ablate.add_argument(
+        "--no-judge",
+        action="store_true",
+        help="deterministic metrics only; skip the rubric judge",
+    )
+    ablate.add_argument(
+        "--no-append",
+        action="store_true",
+        help="overwrite the artifact instead of appending this run's rungs",
+    )
 
     smoke = subparsers.choices["smoke"]
     smoke.add_argument("-n", type=int, default=2)
@@ -381,7 +419,13 @@ def cmd_smoke(args, cfg) -> int:
     return 0
 
 
-HANDLERS = {"gen": cmd_gen, "phase2": cmd_phase2, "e2e": cmd_e2e, "smoke": cmd_smoke}
+HANDLERS = {
+    "gen": cmd_gen,
+    "phase2": cmd_phase2,
+    "ablate": cmd_ablate,
+    "e2e": cmd_e2e,
+    "smoke": cmd_smoke,
+}
 
 
 def load_env() -> None:

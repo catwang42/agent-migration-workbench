@@ -1,4 +1,4 @@
-"""Prompt packs: the three prompt variants each evaluated subagent runs under.
+"""Prompt packs: the prompt variants each evaluated subagent runs under.
 
 A *pack* is one subagent × one variant. It owns two things that must travel
 together:
@@ -11,8 +11,10 @@ together:
    That is not a stylistic detail; it is a rung on the ablation ladder, so it
    is declared per variant in :data:`VARIANT_SPECS` and carried on the pack.
 
-The three variants
-------------------
+The three universal variants
+----------------------------
+
+Every subagent has these three, and only these three are in :data:`VARIANTS`:
 
 ===================  ========================  =========================
 variant              output mechanism          ladder position
@@ -60,6 +62,44 @@ glue text, labels, or separators**. So a chunk id marker that the Chunk
 Summarizer needs in order to cite that chunk has to come from here. The
 baseline wraps each chunk in ``<chunk id="...">``; the tuned variant uses a
 Markdown heading. That difference is part of what the ladder measures.
+
+Subagent-specific variants
+--------------------------
+
+A variant may declare :attr:`VariantSpec.subagents`, in which case it exists
+for those subagents only and is *not* in :data:`VARIANTS`. Three Feature
+Extractor variants (T10) do: together with ``gemini_naive`` they form the 2×2
+that separates a prompt change from an output-mode change, which the bundled
+A1–A3 rung confounded.
+
+============================  ==============  ===================  ================
+variant                       prompt          output mechanism     ladder cell
+============================  ==============  ===================  ================
+``gemini_naive``              naive (XML)     tool                 prompt −, mode −
+``gemini_naive_schema``       naive (XML)     ``response_schema``  prompt −, mode +
+``gemini_novelty_v1_tool``    naive + rule    tool                 prompt +, mode −
+``gemini_novelty_v1_schema``  naive + rule    ``response_schema``  prompt +, mode +
+============================  ==============  ===================  ================
+
+Two invariants make those cells readable, and ``tests/test_ablate.py`` pins
+both:
+
+* The ``_schema`` files differ from their tool twin **only** in the lines that
+  name the emission mechanism, plus the dropped ``tool_description`` section.
+  A mode change cannot be made without editing the sentence that tells the
+  model how to answer; that edit is the minimum, and nothing else moves with it.
+* The novelty files are the *naive* file plus one added
+  ``<novelty_statement_rule>`` block. The rung branches from A0, not from
+  ``gemini_tuned_v1``, because at n=70 the tuned bundle scores *below* naive on
+  this subagent (``notes/phase2_n70_validation.md``) — building on it would
+  inherit the regression.
+
+Why they are not in :data:`VARIANTS`: that tuple is the default arm list for
+``amw.eval.runner.run_phase2`` and for :func:`load_packs`, and the choices for
+``cli.py phase2 --variant``. Putting a Feature-Extractor-only variant in it
+would make a plain ``phase2`` run try to load a Query Rewriter prompt file that
+does not and should not exist. Use :func:`variants_for` to ask what a given
+subagent can actually run, or :data:`ALL_VARIANTS` to enumerate everything.
 """
 
 from __future__ import annotations
@@ -80,8 +120,10 @@ from amw.traces.schema import Provenance
 
 __all__ = [
     "VARIANTS",
+    "ALL_VARIANTS",
     "VARIANT_SPECS",
     "VariantSpec",
+    "variants_for",
     "PLACEHOLDERS",
     "PromptPack",
     "RenderedPrompt",
@@ -112,9 +154,14 @@ class VariantSpec(BaseModel):
     #: Ablation ladder rung(s) this variant serves, for reports.
     rung: str
     description: str
+    #: Subagents this variant exists for, or ``None`` for "all of them".
+    #: A restricted variant is deliberately absent from :data:`VARIANTS` — see
+    #: the module docstring for why that tuple must stay universal.
+    subagents: tuple[str, ...] | None = None
 
 
-#: Variant order is report order: incumbent, naive swap, tuned.
+#: Variant order is report order: the three universal variants first
+#: (incumbent, naive swap, tuned), then any subagent-specific ones.
 VARIANT_SPECS: dict[str, VariantSpec] = {
     "claude_baseline": VariantSpec(
         output_mode="tool",
@@ -143,9 +190,70 @@ VARIANT_SPECS: dict[str, VariantSpec] = {
             "two recalibrated few-shots."
         ),
     ),
+    # -- Feature Extractor only: the 2x2 that unbundles A1-A3 (T10) ---------
+    "gemini_naive_schema": VariantSpec(
+        output_mode="response_schema",
+        model_role="gemini_candidate",
+        rung="A0-schema",
+        subagents=("feature_extractor",),
+        description=(
+            "A0's prompt with the output mode swapped to an enforced "
+            "response_schema. The mode-only cell: it isolates how much of the "
+            "A1-A3 movement was the mechanism rather than the wording."
+        ),
+    ),
+    "gemini_novelty_v1_tool": VariantSpec(
+        output_mode="tool",
+        model_role="gemini_candidate",
+        rung="A4-novelty-tool",
+        subagents=("feature_extractor",),
+        description=(
+            "A0 plus a novelty_statement rule (claim 1 is the point of novelty "
+            "when there is no discussion section; numeric limits survive) and "
+            "one worked example. The prompt-only cell: same tool mechanism as "
+            "A0."
+        ),
+    ),
+    "gemini_novelty_v1_schema": VariantSpec(
+        output_mode="response_schema",
+        model_role="gemini_candidate",
+        rung="A4-novelty-schema",
+        subagents=("feature_extractor",),
+        description=(
+            "The novelty prompt under the enforced response_schema. Both "
+            "changes at once — the cell the other three are read against."
+        ),
+    ),
 }
 
-VARIANTS: tuple[str, ...] = tuple(VARIANT_SPECS)
+#: The variants every subagent has. This is the default arm list for phase2 and
+#: :func:`load_packs`, and the ``--variant`` choices on the CLI, so it must not
+#: grow a variant that only one subagent has a prompt file for.
+VARIANTS: tuple[str, ...] = tuple(
+    name for name, spec in VARIANT_SPECS.items() if spec.subagents is None
+)
+
+#: Every declared variant, universal and subagent-specific, in report order.
+ALL_VARIANTS: tuple[str, ...] = tuple(VARIANT_SPECS)
+
+
+def variants_for(subagent: str) -> tuple[str, ...]:
+    """Variants ``subagent`` has a prompt file for, in report order.
+
+    The universal three, plus anything whose :attr:`VariantSpec.subagents`
+    names this subagent. Callers that enumerate packs — the ablation ladder,
+    the stray-file guard in ``tests/test_prompts.py`` — should ask here rather
+    than assume :data:`VARIANTS` covers everything on disk.
+    """
+    if subagent not in SUBAGENTS:
+        raise PromptPackError(
+            f"unknown subagent {subagent!r}; expected one of {list(SUBAGENTS)}."
+        )
+    return tuple(
+        name
+        for name, spec in VARIANT_SPECS.items()
+        if spec.subagents is None or subagent in spec.subagents
+    )
 
 #: Item keys each subagent's templates may reference.
 #:
@@ -477,6 +585,16 @@ def load_pack(subagent: str, variant: str) -> PromptPack:
     if variant not in VARIANT_SPECS:
         raise PromptPackError(
             f"unknown variant {variant!r}; expected one of {list(VARIANT_SPECS)}."
+        )
+    allowed = VARIANT_SPECS[variant].subagents
+    if allowed is not None and subagent not in allowed:
+        # Caught here rather than as "no prompt file at ...", because the
+        # missing file is the symptom: this variant is declared for one
+        # subagent and asking another for it is a caller bug, not a gap on
+        # disk that someone should fill in.
+        raise PromptPackError(
+            f"variant {variant!r} exists for {list(allowed)} only, not for "
+            f"{subagent!r}; {subagent} has {list(variants_for(subagent))}."
         )
     path = prompts_dir() / subagent / f"{variant}.txt"
     if not path.is_file():

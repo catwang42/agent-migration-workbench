@@ -105,10 +105,20 @@ def apply_updates(
     return "".join(out)
 
 
-def prompt_float(label: str) -> float | None:
+#: Units, per field. ``cache_storage.per_1m_token_hour`` is rent — USD per 1M
+#: cached tokens *per hour* — not a per-token price, and it is the only input to
+#: the caching breakeven curve. Prompting for it under the same "USD / 1M
+#: tokens" label as the four token prices invites an hourly rate being entered
+#: as a flat one, which the file cannot detect and the breakeven table would
+#: silently report.
+TOKEN_UNIT = "USD / 1M tokens"
+CACHE_STORAGE_UNIT = "USD / 1M cached tokens / hour"
+
+
+def prompt_float(label: str, unit: str = TOKEN_UNIT) -> float | None:
     """Ask for one price. Blank keeps VERIFY. Loops until valid."""
     while True:
-        raw = input(f"  {label} (USD / 1M tokens, blank = leave VERIFY): ").strip()
+        raw = input(f"  {label} ({unit}, blank = leave VERIFY): ").strip()
         if not raw:
             return None
         try:
@@ -142,7 +152,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  - {url}")
     if pricing.verified_on:
         print(f"\nLast verified {pricing.verified_on} by {pricing.verified_by}.")
-    print("\nEnter prices in USD per 1,000,000 tokens.\n")
+    print("\nEach prompt states its own unit. Token prices are USD per")
+    print("1,000,000 tokens; cache storage is rent, per 1M cached tokens/hour.\n")
 
     updates: dict[str, float] = {}
     for model_key, prices in pricing.models.items():
@@ -159,7 +170,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if pricing.cache_storage.per_1m_token_hour == VERIFY:
         print("cache_storage:")
-        value = prompt_float("per_1m_token_hour")
+        value = prompt_float("per_1m_token_hour", CACHE_STORAGE_UNIT)
         if value is not None:
             updates["cache_storage.per_1m_token_hour"] = value
 

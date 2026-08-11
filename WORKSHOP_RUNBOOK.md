@@ -52,7 +52,7 @@ nothing. Notebook 02 also takes `SHADOW_METRIC` — see §2:05 below before you 
 | 0:00–0:20 | Decision framework + **gates sign-off** | `docs/migration_decision_framework.md`, `config/gates.yaml` | discussion |
 | 0:20–0:35 | **Methodology beat**: matching instrument to autonomy level | `docs/what_we_measure.md` taxonomy table | discussion |
 | 0:35–0:55 | Architecture mapping + cost calculator at *their* volumes | `cli.py scorecard --volume` | live, cheap |
-| 0:55–1:15 | Reference system walkthrough — same agent code, both backends | `amw/agents/`, `cli.py` | live hybrid, 2–3 queries |
+| 0:55–1:15 | Reference system walkthrough — the ADK app, same prompt files the bench measured | `cli.py adk-demo --mode live` | live Gemini, 2 queries, **skippable** |
 | 1:15–2:05 | Baseline eval: full n=70 pre-run + **live 10-case subset**; loss clusters; the naive-swap failure; the ablation ladder | notebook 01 | full set pre-run, subset live |
 | 2:05–2:35 | Shadow scorecard + disagreement triage + ROI | notebook 02, `cli.py shadow --live-slice 5` | pre-run + one live slice |
 | 2:35–2:55 | Verdicts vs gates → **the ask** | `docs/data_request_onepager.md` | discussion |
@@ -140,6 +140,35 @@ python cli.py scorecard --mode replay \
   The prices come from one file with a `verified_on` date and source URLs in the footer."
 - The cache-breakeven calculator is math, not a measurement: show the formula and the
   breakeven calls/day, and be clear which is which.
+
+### 0:55 — Reference system walkthrough: the ADK app (demo only, ~8 min)
+
+```bash
+python cli.py adk-demo --mode live      # 2 sample queries, ~40s each, ~6 Gemini calls
+```
+
+Five lines, in this order:
+
+1. "This is the same three subagents, wired up as an ADK app on Vertex. Root orchestrator
+   delegates; each leaf is one of the agents you've been looking at."
+2. Point at the trace as it prints: "`[orchestration]` root, then `[prompt-based]`
+   rewriter, retrieval, `[prompt-based]` summarizer, `[prompt-based]` extractor — those are
+   the taxonomy rows from the table we did at 0:20, printed per agent as it runs."
+3. Point at the `prompt:` line under each leaf: "That's the path and SHA of the prompt file
+   on disk. The ADK app doesn't have its own copy — a test fails the build if the
+   instruction text and the prompt pack ever differ."
+4. "So the thing I measured and the thing you'd ship are the same prompts. That's the point
+   of this segment; it isn't a benchmark."
+5. "Nothing here goes near a scorecard. Every number you'll see from 1:15 runs through the
+   adapter harness, which records every call so it replays offline. The ADK runtime has no
+   such hook, so measuring through it would give you numbers I can't reproduce for you."
+
+**Fallback:** if `adk-demo` does not run cleanly — no ADC, quota 429, ADK version drift —
+**skip it entirely and say so**: "The runnable version of this is a side quest; here's the
+architecture." Then show the diagram, open two prompt files under `amw/agents/prompts/`,
+and go straight to the harness at 1:15. Nothing downstream depends on this segment, and
+there is no replay mode for it — an ADK run is live or it does not happen, because no ADK
+call is recorded and a replayed one would be fabricated.
 
 ### 1:15 — Baseline eval, the heart of it
 

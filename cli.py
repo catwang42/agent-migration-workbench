@@ -50,6 +50,7 @@ COMMANDS: dict[str, tuple[str, str]] = {
     "scorecard": ("gates -> verdicts -> markdown report", "T12"),
     "e2e": ("full offline pipeline (CI gate)", "T09"),
     "smoke": ("pre-demo health check against live backends", "T16"),
+    "adk-demo": ("thin ADK reference app on Gemini (demo only, never evaluated)", "T14-P1"),
 }
 
 
@@ -404,6 +405,24 @@ def build_parser() -> argparse.ArgumentParser:
         help="override $CLAUDE_PATH for this check (default: $CLAUDE_PATH)",
     )
 
+    adk_demo = subparsers.choices["adk-demo"]
+    adk_demo.add_argument(
+        "--query",
+        action="append",
+        default=None,
+        metavar="TEXT",
+        help=(
+            "question to run end to end (repeatable; default: the two sample "
+            "queries in amw/agents/adk_app.py)"
+        ),
+    )
+    adk_demo.add_argument(
+        "--variant",
+        choices=VARIANTS,
+        default=None,
+        help="prompt pack the leaf agents load (default: gemini_tuned_v1)",
+    )
+
     return parser
 
 
@@ -752,6 +771,23 @@ def cmd_smoke(args, cfg) -> int:
     return 0
 
 
+def cmd_adk_demo(args, cfg) -> int:
+    """The ADK reference app: one query, end to end, on Gemini.
+
+    Demo only. It is not an instrument and it is deliberately unreachable from
+    the eval path — phase2/ablate/shadow/scorecard go through amw/adapters/,
+    which records every call so the whole pipeline replays offline. ADK's
+    runtime has no such hook.
+
+    A one-line lazy import on purpose: amw.agents.adk_app is the only module
+    that knows about google-adk, so every other subcommand still works on a
+    machine that does not have it (CLAUDE.md ground rule 4).
+    """
+    from amw.agents.adk_app import cmd_adk_demo as run_adk_demo
+
+    return run_adk_demo(args, cfg)
+
+
 HANDLERS = {
     "gen": cmd_gen,
     "phase2": cmd_phase2,
@@ -761,6 +797,7 @@ HANDLERS = {
     "scorecard": cmd_scorecard,
     "e2e": cmd_e2e,
     "smoke": cmd_smoke,
+    "adk-demo": cmd_adk_demo,
 }
 
 

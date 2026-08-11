@@ -27,10 +27,29 @@ google-genai>=1.0
 # and the current `thinking` shapes do not exist at 0.40, so a lower pin can be
 # satisfied by an SDK that 400s on every structured-output call.
 anthropic[vertex]>=0.120
+# Vertex Gen AI Evaluation Service — the managed second instrument in
+# amw/eval/vertex_eval.py. The [evaluation] extra is what pulls the client-side
+# eval stack (pandas/dataframe plumbing) that `vertexai.Client(...).evals` needs.
+# >=1.140 is a floor, not a preference: `evals.generate_loss_clusters` and the
+# `rubric_group_name` argument that points the managed metric at *our* rubrics
+# are absent from earlier releases, and without them the module can neither
+# cluster losses nor score the same criteria the internal judge scored. Absence
+# is handled, not fatal: with the extra uninstalled the module still imports and
+# the run skips with a stated reason (ground rule 4).
+google-cloud-aiplatform[evaluation]>=1.140
 
 # --- tests ---
 pytest>=8.0
 
-# NOTE: google-adk is deliberately absent. Act 1 ships the root orchestrator as
-# a code stub + diagram only (act1_build_plan.md §2); a runnable ADK orchestrator
-# is P1/P2. Adding the dep before it is used is scope creep.
+# --- demo only (not on the eval path) ---
+# The ADK reference app (amw/agents/adk_app.py, cli.py adk-demo) shows the
+# three subagents wired up as an ADK application. It is a *demo* dependency:
+# nothing in amw/eval, amw/shadow, amw/tuning or amw/reporting imports it
+# (tests/test_adk_app.py asserts that), and `cli.py e2e --mode replay` never
+# touches it. Measurements run exclusively through amw/adapters/, which records
+# every call to artifacts/replay/; the ADK runtime has no such hook, so a number
+# taken through it could not be reproduced offline.
+# 2.x is a floor, not a preference: AgentTool's input_schema path — which is how
+# the demo hands each leaf agent its prompt-pack-rendered turn — is not present
+# in 1.x.
+google-adk>=2.6

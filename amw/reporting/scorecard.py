@@ -66,6 +66,7 @@ from amw.reporting.evidence import (
     build_evidence,
     collect_samples,
 )
+from amw.reporting.ladder import Ladder, build_ladder, render_ladder
 
 __all__ = [
     "INCOMPLETE",
@@ -78,6 +79,7 @@ __all__ = [
     "decide_verdict",
     "build_scorecard",
     "render_markdown",
+    "load_ladders",
     "cmd_scorecard",
 ]
 
@@ -298,6 +300,11 @@ class Scorecard(_Base):
     footer: dict[str, Any]
     costs: CostModelResult
     cache: list[CacheBreakeven] = Field(default_factory=list)
+    #: Per-subagent ablation ladders, keyed by subagent. Empty when no
+    #: ``ablation_{subagent}.json`` sits beside the phase-2 artifact being
+    #: scored — a scorecard with no ladder section is a scorecard that was not
+    #: given one, not a subagent whose prompt was never tuned.
+    ladders: dict[str, Ladder] = Field(default_factory=dict)
     notes: list[str] = Field(default_factory=list)
     #: One line from the second-judge cross-check
     #: (:func:`amw.eval.crosscheck.crosscheck_footer_line`), or None when no
@@ -319,6 +326,7 @@ def build_scorecard(
     volumes: VolumeSet | None = None,
     cache_preamble_tokens: int | None = None,
     crosscheck_line: str | None = None,
+    ladders: Sequence[Any] | None = None,
     **evidence_kwargs: Any,
 ) -> Scorecard:
     """Assemble a scorecard from a phase-2 artifact plus whatever else exists.
@@ -375,6 +383,7 @@ def build_scorecard(
         footer=footer,
         costs=costs,
         cache=cache,
+        ladders={r.subagent: build_ladder(r) for r in (ladders or [])},
         notes=list(phase2.notes),
         crosscheck_line=crosscheck_line,
     )
@@ -679,6 +688,10 @@ def render_markdown(card: Scorecard) -> str:
             ]
         if evidence.notes:
             lines += [""] + [f"- {note}" for note in evidence.notes]
+        ladder = card.ladders.get(evidence.subagent)
+        if ladder is not None and ladder.rows:
+            lines += ["", "### Ablation ladder", ""]
+            lines += render_ladder(ladder)
 
     lines += [""] + _economics_section(card)
     lines += [""] + _footer(card)
@@ -793,6 +806,25 @@ def load_shadow(path: Path, metric: str = DEFAULT_SHADOW_METRIC) -> dict[str, Es
     return {name: Estimate.model_validate(value) for name, value in data.items()}
 
 
+def load_ladders(results_dir: Path) -> list[Any]:
+    """Every ``ablation_{subagent}.json`` sitting beside the scored artifact.
+
+    Read from the *artifact's own* directory rather than from a fixed path, so
+    scoring a fixture run cannot pick up the real corpus's ladders and scoring
+    the real run cannot miss them. An unparseable ladder raises rather than
+    being skipped: a ladder silently dropped is a set of rungs the operator
+    believes are in the report.
+    """
+    from amw.tuning.ablate import AblationResult
+
+    ladders = []
+    for path in sorted(results_dir.glob("ablation_*.json")):
+        ladders.append(
+            AblationResult.model_validate_json(path.read_text(encoding="utf-8"))
+        )
+    return ladders
+
+
 def cmd_scorecard(args, cfg) -> int:
     """``cli.py scorecard`` — gates to verdicts to Markdown.
 
@@ -892,10 +924,15 @@ def cmd_scorecard(args, cfg) -> int:
             CrosscheckResult.model_validate_json(path.read_text(encoding="utf-8"))
         )
 
+    ladders = None
+    if not getattr(args, "no_ladder", False):
+        ladders = load_ladders(results_path.parent)
+
     card = build_scorecard(
         cfg,
         phase2,
         volumes=volumes,
+        ladders=ladders,
         cache_preamble_tokens=getattr(args, "cache_preamble_tokens", None),
         samples=samples,
         shadow=(

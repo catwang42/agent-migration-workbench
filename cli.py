@@ -464,6 +464,15 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="NAME",
         help="who supplied --volume figures; required whenever --volume is used",
     )
+    scorecard.add_argument(
+        "--no-ladder",
+        action="store_true",
+        help=(
+            "omit the per-subagent ablation ladder. By default every "
+            "ablation_<subagent>.json beside --results is rendered, so the "
+            "rungs that were tried and did not help stay visible."
+        ),
+    )
 
     optimize = subparsers.choices["optimize"]
     optimize.add_argument(

@@ -493,9 +493,17 @@ def test_installing_the_rung_registers_it_and_cleans_up_after(
     with installed_rung(fe_target, run) as rung:
         assert rung.rung == OPTIMIZER_RUNG_ID
         assert rung.branches_from == fe_target.branches_from
-        # The overlap rides in on the existing contamination field, so the
-        # ladder discloses it without this module reinventing the machinery.
-        assert rung.few_shot_item_ids == ("fe-0001", "fe-0002")
+        # EVERY training item rides in on the contamination field, not the
+        # pre-computed `overlaps` subset. run_ladder intersects this with the
+        # split it actually scores, so handing it the whole training set is
+        # what keeps the disclosure correct on any split. Passing the
+        # pre-computed intersection instead was a real bug: the overlap was
+        # measured against the core 28, so re-running the rung at n=70 — where
+        # all 6 of these items ARE scored — would have disclosed nothing.
+        assert rung.few_shot_item_ids == tuple(
+            example.item_id for example in run.training.examples
+        )
+        assert set(("fe-0001", "fe-0002")) <= set(rung.few_shot_item_ids)
         assert staged.is_file()
         assert OPTIMIZER_VARIANT in pp.variants_for(fe_target.subagent)
         assert rung in ladder_for(fe_target.subagent)

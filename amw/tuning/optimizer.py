@@ -1067,7 +1067,20 @@ def installed_rung(
         ),
         variant=variant,
         branches_from=target.branches_from,
-        few_shot_item_ids=tuple(run.training.overlaps_scored_split if run.training else ()),
+        # EVERY training item, not just the ones that overlapped the core
+        # split. ``overlaps_scored_split`` was computed against whichever split
+        # was scored when the optimizer ran; feeding that pre-computed
+        # intersection here silently stops disclosing contamination the moment
+        # the rung is re-run on a different split. run_ladder intersects this
+        # with the split it actually scores, so handing it the full training
+        # set is what makes the disclosure correct at core-28 AND at full-70.
+        # (Found on 2026-08-11 widening this rung to n=70: the 12 training
+        # items miss the core 28 entirely but are all inside the full 70.)
+        few_shot_item_ids=tuple(
+            example.item_id for example in run.training.examples
+        )
+        if run.training
+        else (),
     )
 
     previous_variant = VARIANT_SPECS.get(variant)

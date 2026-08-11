@@ -1,7 +1,8 @@
 """The A0–A4 ablation ladder: one subagent, several rungs, one artifact.
 
-A rung is a prompt-pack variant run over the subagent's **core split** and
-scored exactly the way ``cli.py phase2`` scores it — same
+A rung is a prompt-pack variant run over one split of the subagent's corpus —
+the **core split** by default, the full corpus when ``run_ladder(split="all")``
+— and scored exactly the way ``cli.py phase2`` scores it — same
 :func:`amw.eval.runner.run_arm`, same
 :func:`amw.eval.metrics.deterministic_metrics`, same judge at k=2, same
 bootstrap. That reuse is the whole design constraint: a rung measured by a
@@ -388,17 +389,24 @@ class AblationResult(_Strict):
 # --------------------------------------------------------------------------
 
 
-def _core_items(
-    subagent: str, *, dataset_dir: Path, limit: int | None
+def _ladder_items(
+    subagent: str, *, dataset_dir: Path, limit: int | None, split: str = "core"
 ) -> list[DatasetItem]:
-    """The core split for ``subagent``.
+    """The items the ladder scores, for ``split`` "core" or "all".
 
-    The ladder runs on the core set (T10 card: "core set, k=2 judged +
-    deterministic"), so the split is picked here and named in every record
-    rather than being an argument a caller can vary silently. A corpus with no
+    The ladder runs on the core set by default (T10 card: "core set, k=2 judged
+    + deterministic"), so the split is picked here and named in every record
+    rather than being something a caller can vary silently. A corpus with no
     core flags at all falls back to the whole file — small fixture corpora
     exist and a ladder that measured nothing on them would fail the offline
     gate for the wrong reason — and that fallback is written into the notes.
+
+    ``split="all"`` scores the whole corpus. It exists because a rung that
+    answers a *gated* row has to be measured on the split that row was measured
+    on: the FE scorecard row is full-70, so the rungs that resolve it are too
+    (owner's ruling, 2026-08-11). Mixing splits inside one ladder is the thing
+    to avoid — a rung at n=28 and a rung at n=70 are not comparable and the
+    record's ``split``/``judged_split`` fields are what let a reader catch it.
     """
     path = dataset_dir / f"{subagent}.jsonl"
     if not path.exists():
@@ -406,9 +414,16 @@ def _core_items(
             f"no dataset at {path}. Run `python cli.py gen --customer <name> -n 70` "
             f"first — the ladder scores a corpus, it does not create one."
         )
+    if split not in ("core", "all"):
+        raise ValueError(f"split must be 'core' or 'all', not {split!r}")
     items = list(read_items(path))
-    core = [item for item in items if item.core] or items
-    return core[:limit] if limit is not None else core
+    if split == "core":
+        items = [item for item in items if item.core] or items
+    return items[:limit] if limit is not None else items
+
+
+#: Kept as the old name so existing callers and tests keep working.
+_core_items = _ladder_items
 
 
 def _judge_window(judge: Judge | None) -> tuple[datetime, datetime] | None:
@@ -433,6 +448,7 @@ def run_ladder(
     router: AdapterRouter | None = None,
     judge: Judge | None = None,
     bootstrap_seed: int | None = None,
+    split: str = "core",
 ) -> AblationResult:
     """Run the ladder for one subagent and append the records to its artifact.
 
@@ -459,7 +475,7 @@ def run_ladder(
             )
         specs = tuple(spec for spec in specs if spec.rung in wanted)
 
-    items = _core_items(subagent, dataset_dir=dataset_dir, limit=n)
+    items = _ladder_items(subagent, dataset_dir=dataset_dir, limit=n, split=split)
     if not items:
         raise ValueError(f"{subagent}: the corpus at {dataset_dir} is empty.")
 
@@ -502,10 +518,10 @@ def run_ladder(
                 judge=rung_judge,
                 repeats=repeats,
                 bootstrap_seed=seed,
-                # The ladder judges everything it ran, and it ran the core
-                # split. "core" is therefore the honest label even when the
+                # The ladder judges everything it ran, and it ran `split`.
+                # That is therefore the honest label even when the no-core-flags
                 # fallback above widened the item list.
-                judge_split="core",
+                judge_split=split,
             )
         except ReplayMissError as exc:
             # The one place a replay miss is survivable: a rung whose calls
@@ -536,7 +552,7 @@ def run_ladder(
                 sorted({item.generator_version for item in items})
             ),
             items=len(items),
-            split="core",
+            split=split,
             bootstrap_seed=seed,
             judge_repeats=repeats,
             judge_model=(

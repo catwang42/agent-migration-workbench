@@ -16,12 +16,15 @@ Rough effort on your side: **half a day of one engineer, plus a volumes lookup.*
 Put every subagent in your stack into exactly one row. The row determines which instrument
 applies and whether we can give you a verdict.
 
-| Subagent pattern | Autonomy level | What the model decides | Instrument | Verdict available |
+| Subagent pattern | Autonomy level | What the model actually decides | Instrument | Status in this workshop |
 |---|---|---|---|---|
-| **Prompt-based** | **Level 1 — transform** | Output content only. One call in, one structured object out. | **Bench harness**: gold references, deterministic metrics, rubric-anchored judge, bootstrap CIs | **Yes — this is what today measured** |
-| **Tool-calling** | **Level 2 — tool decider** | *Which* tool to call, with what arguments | **Tool-call quality scoring**: selection accuracy, argument validity, call-sequence sanity | Partial — argument/schema formatting now, selection in follow-on |
-| **Retrieval-augmented** | **Level 2/3** | What to retrieve, and whether the answer is supported by it | **Retrieval + groundedness trajectory evaluation**: recall@k, citation faithfulness across the chain | Follow-on |
-| **Orchestration** | **Level 3 — looping** | When to loop, when to delegate, when to stop | **Trajectory evaluation in the runtime**: step-level traces, task completion, cost-per-resolution | Follow-on — **HOLD, no verdict** |
+| **Prompt-based** | **Level 1 — transform** | Output content only. One call in, one structured object out. | **Bench harness**: gold references, deterministic metrics, rubric-anchored judge, bootstrap CIs | **Measured in full here. Verdict-capable.** |
+| **Tool-calling** | **Level 2 — tool decider** | *Which* tool to call and with what arguments | **Tool-call quality scoring**: selection accuracy, argument validity, call-sequence sanity | **Partial.** Argument/schema formatting is measured now on recorded calls; *selection* accuracy is follow-on. |
+| **Retrieval-augmented** | **Level 2/3** | What to retrieve, and whether the answer is supported by it | **Retrieval + groundedness trajectory evaluation**: recall@k, citation faithfulness across the whole chain | **Follow-on.** Citation coverage is measured here for the summarizer, but end-to-end retrieval quality is not. |
+| **Orchestration** | **Level 3 — looping** | When to loop, when to delegate, when to stop | **Trajectory evaluation in the runtime**: step-level traces, task completion, cost-per-resolution | **Follow-on. HOLD on this scorecard — no verdict today.** |
+
+This table is reproduced verbatim from `docs/what_we_measure.md`. If the two ever differ,
+that one is canonical.
 
 **What we need back:** one row per subagent — name, taxonomy row, calls/day, current model,
 and whether it's on the critical path.

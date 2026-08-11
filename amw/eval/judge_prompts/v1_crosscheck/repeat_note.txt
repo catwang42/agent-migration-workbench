@@ -1,0 +1,3 @@
+This is scoring pass $repeat of $k for this item. Each pass is issued and read
+independently: score on the material above alone, and do not try to be
+consistent with, or different from, any other pass.

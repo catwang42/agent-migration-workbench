@@ -295,6 +295,12 @@ class Scorecard(_Base):
     costs: CostModelResult
     cache: list[CacheBreakeven] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    #: One line from the second-judge cross-check
+    #: (:func:`amw.eval.crosscheck.crosscheck_footer_line`), or None when no
+    #: cross-check artifact was supplied. Carried as rendered text rather than
+    #: as numbers on purpose: the scorecard must be unable to do arithmetic
+    #: with the validating judge's scores.
+    crosscheck_line: str | None = None
 
     @property
     def prices_verified(self) -> bool:
@@ -308,6 +314,7 @@ def build_scorecard(
     evidence: Sequence[SubagentEvidence] | None = None,
     volumes: VolumeSet | None = None,
     cache_preamble_tokens: int | None = None,
+    crosscheck_line: str | None = None,
     **evidence_kwargs: Any,
 ) -> Scorecard:
     """Assemble a scorecard from a phase-2 artifact plus whatever else exists.
@@ -365,6 +372,7 @@ def build_scorecard(
         costs=costs,
         cache=cache,
         notes=list(phase2.notes),
+        crosscheck_line=crosscheck_line,
     )
 
 
@@ -594,6 +602,11 @@ def _footer(card: Scorecard) -> list[str]:
     ]
     if card.notes:
         lines += ["", "**Run notes**", ""] + [f"- {note}" for note in card.notes]
+    if card.crosscheck_line:
+        # Its own paragraph, not a table row: the combination rule is a
+        # sentence a reader has to actually read, and it is the answer to the
+        # first question anyone asks about a Gemini-judged comparison.
+        lines += ["", f"**Judge cross-check.** {card.crosscheck_line}"]
     return lines
 
 
@@ -836,6 +849,23 @@ def cmd_scorecard(args, cfg) -> int:
 
     shadow_path = getattr(args, "shadow", None)
     shadow_metric = getattr(args, "shadow_metric", None) or DEFAULT_SHADOW_METRIC
+
+    # Imported here rather than at module scope: the scorecard package is
+    # imported on every cli.py invocation and must not drag the eval runner in
+    # with it. Only text crosses this boundary — see Scorecard.crosscheck_line.
+    crosscheck_line = None
+    crosscheck_path = getattr(args, "crosscheck", None)
+    if crosscheck_path:
+        from amw.eval.crosscheck import CrosscheckResult, crosscheck_footer_line
+
+        path = Path(crosscheck_path)
+        if not path.is_file():
+            print(f"no cross-check artifact at {path}", file=sys.stderr)
+            return 4
+        crosscheck_line = crosscheck_footer_line(
+            CrosscheckResult.model_validate_json(path.read_text(encoding="utf-8"))
+        )
+
     card = build_scorecard(
         cfg,
         phase2,
@@ -849,6 +879,7 @@ def cmd_scorecard(args, cfg) -> int:
         regions=regions,
         baseline_variant=baseline,
         candidate_variant=candidate,
+        crosscheck_line=crosscheck_line,
     )
     markdown = render_markdown(card)
 

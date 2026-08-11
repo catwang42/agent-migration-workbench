@@ -44,7 +44,7 @@ from typing import Any, Iterable, Literal, Mapping, Sequence
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
-from amw.adapters import ModelAdapter, ModelRequest, resolve
+from amw.adapters import ModelAdapter, ModelRequest, ToolSpec, resolve
 from amw.config import ConfigError, ModelsConfig, load_all
 from amw.traces.schema import Trace
 from amw.traces.store import ReplayMissError, ReplayStore
@@ -55,6 +55,10 @@ __all__ = [
     "JUDGE_SUBAGENT_PREFIX",
     "USER_TEMPLATE_FIELDS",
     "JUDGE_RESPONSE_SCHEMA",
+    "JUDGE_OUTPUT_MODES",
+    "DEFAULT_JUDGE_OUTPUT_MODE",
+    "JUDGE_TOOL_NAME",
+    "JUDGE_TOOL_DESCRIPTION",
     "RubricCriterion",
     "Rubric",
     "CriterionVerdict",
@@ -399,6 +403,32 @@ JUDGE_RESPONSE_SCHEMA: dict[str, Any] = {
 }
 
 
+#: How the judge is made to emit :data:`JUDGE_RESPONSE_SCHEMA`.
+#:
+#: ``response_schema`` is the Gemini judge's mechanism and the default. ``tool``
+#: exists for the Claude-class cross-check judge: under this demo
+#: organization's Vertex AI policy configuration
+#: (``constraints/vertexai.allowedPartnerModelFeatures``), partner-model
+#: structured outputs were unavailable, so a Claude judge on Vertex has to emit
+#: through a tool call — the same mechanism the ``claude_baseline`` arm uses.
+#:
+#: The schema handed over is identical either way, so the two judges are asked
+#: for the same object in the same field order; only the transport differs.
+JUDGE_OUTPUT_MODES: tuple[str, ...] = ("response_schema", "tool")
+DEFAULT_JUDGE_OUTPUT_MODE = "response_schema"
+
+#: Tool name for ``output_mode="tool"``. It is part of the replay key (the key
+#: covers ``tools_offered``), so a cross-check call can never collide with a
+#: ``response_schema`` judge call about the same item.
+JUDGE_TOOL_NAME = "emit_judge_verdict"
+
+JUDGE_TOOL_DESCRIPTION = (
+    "Record the scoring decision for this item: one verdict per rubric "
+    "criterion, in the order the criteria were listed, plus a short overall "
+    "rationale. Call this exactly once and emit no prose outside it."
+)
+
+
 def judge_subagent_name(subagent: str) -> str:
     """Replay-store namespace for judge calls about ``subagent``.
 
@@ -455,6 +485,9 @@ class Judge:
         model comes from role ``judge`` — never a literal ID.
     :param model_key: override the role lookup (the P1 dual-judge cross-check
         passes ``judge_crosscheck``'s model here).
+    :param output_mode: ``response_schema`` (Gemini, the default) or ``tool``.
+        See :data:`JUDGE_OUTPUT_MODES` for why the Claude cross-check judge
+        needs the second one.
     :param temperature: forwarded to the adapter. Left at ``None`` (which the
         Gemini adapter reads as 0.0) so replayed and live scores match by
         default; a runner that wants genuine sampling spread across repeats
@@ -471,6 +504,7 @@ class Judge:
         model_key: str | None = None,
         role: str = JUDGE_ROLE,
         prompt_version: str = DEFAULT_PROMPT_VERSION,
+        output_mode: str = DEFAULT_JUDGE_OUTPUT_MODE,
         temperature: float | None = None,
         max_output_tokens: int | None = None,
         store: ReplayStore | None = None,
@@ -481,7 +515,13 @@ class Judge:
             model_key, _spec = self.models.for_role(role)
         else:
             self.models.spec(model_key)  # ConfigError on an unknown key
+        if output_mode not in JUDGE_OUTPUT_MODES:
+            raise ConfigError(
+                f"unknown judge output_mode {output_mode!r}; "
+                f"expected one of {list(JUDGE_OUTPUT_MODES)}"
+            )
         self.model_key = model_key
+        self.output_mode = output_mode
         self.mode = mode
         self.prompt_version = prompt_version
         self.prompts = load_prompt_pack(prompt_version)
@@ -509,6 +549,7 @@ class Judge:
             "judge_mode": self.adapter.mode,
             "judge_prompt_version": self.prompts.version,
             "judge_prompt_sha": self.prompts.sha,
+            "judge_output_mode": self.output_mode,
         }
 
     # -- request building -------------------------------------------------
@@ -540,12 +581,27 @@ class Judge:
             messages.append(
                 self.prompts.render_repeat_note(request.repeat, request.repeats)
             )
+        emit_by_tool = self.output_mode == "tool"
         return ModelRequest(
             subagent=judge_subagent_name(request.subagent),
             model=self.model_key,
             system_prompt=self.prompts.system,
             messages=messages,
-            response_schema=JUDGE_RESPONSE_SCHEMA,
+            # Never both. The Gemini adapter rejects a request carrying tools
+            # and a response schema together, and the two mechanisms ask for
+            # the same object anyway.
+            response_schema=None if emit_by_tool else JUDGE_RESPONSE_SCHEMA,
+            tools=(
+                [
+                    ToolSpec(
+                        name=JUDGE_TOOL_NAME,
+                        description=JUDGE_TOOL_DESCRIPTION,
+                        parameters=JUDGE_RESPONSE_SCHEMA,
+                    )
+                ]
+                if emit_by_tool
+                else []
+            ),
             temperature=self.temperature,
             max_output_tokens=self.max_output_tokens,
             item_id=f"{request.item_id}-r{request.repeat}",
@@ -611,6 +667,13 @@ class Judge:
             )
 
         payload = trace.output.json_
+        if payload is None and len(trace.tool_calls) == 1:
+            # ``output_mode="tool"``. The adapters already mirror a lone tool
+            # call's arguments into ``output.json_``, so this is a belt-and-
+            # braces read of the same place — but a judge whose verdict is
+            # sitting right there in the trace must not be recorded as an
+            # infrastructure failure because of a mirroring convention.
+            payload = dict(trace.tool_calls[0].args)
         if payload is None and trace.output.text:
             try:
                 payload = json.loads(trace.output.text)

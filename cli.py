@@ -29,6 +29,7 @@ from amw.adapters import CLAUDE_PATHS, MODES
 from amw.agents.prompt_packs import VARIANTS
 from amw.agents.schemas import SUBAGENTS
 from amw.config import ConfigError, load_all
+from amw.eval.crosscheck import SAMPLE_FRACTION
 from amw.reporting import DEFAULT_SHADOW_METRIC, SHADOW_METRICS, cmd_scorecard
 from amw.shadow import cmd_shadow
 from amw.tuning import cmd_ablate
@@ -45,6 +46,7 @@ COMMANDS: dict[str, tuple[str, str]] = {
     "phase2": ("baseline eval: Claude vs naive Gemini", "T09"),
     "ablate": ("run the A0-A4 prompt ablation ladder", "T10"),
     "shadow": ("shadow run + disagreement triage", "T11"),
+    "crosscheck": ("second-judge cross-check of the judged metric", "P1/S1"),
     "scorecard": ("gates -> verdicts -> markdown report", "T12"),
     "e2e": ("full offline pipeline (CI gate)", "T09"),
     "smoke": ("pre-demo health check against live backends", "T16"),
@@ -232,11 +234,59 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
 
+    crosscheck = subparsers.choices["crosscheck"]
+    crosscheck.add_argument(
+        "--results",
+        default=None,
+        help=(
+            "phase-2 artifact being validated; its judged split is the eligible "
+            "pool (default: newest of phase2_n70.json, phase2.json)"
+        ),
+    )
+    crosscheck.add_argument(
+        "--subagent",
+        action="append",
+        choices=SUBAGENTS,
+        default=None,
+        help="restrict to one subagent (repeatable; default: all three)",
+    )
+    crosscheck.add_argument(
+        "--variant",
+        action="append",
+        choices=VARIANTS,
+        default=None,
+        help="restrict to one arm (repeatable; default: all three)",
+    )
+    crosscheck.add_argument(
+        "--full",
+        action="append",
+        choices=SUBAGENTS,
+        default=None,
+        help=(
+            "cross-check this subagent's whole judged split instead of a sample "
+            "(repeatable; default: feature_extractor)"
+        ),
+    )
+    crosscheck.add_argument(
+        "--fraction",
+        type=float,
+        default=SAMPLE_FRACTION,
+        help=f"sample fraction of the corpus for sampled subagents (default: {SAMPLE_FRACTION})",
+    )
+    crosscheck.add_argument(
+        "--out",
+        default=None,
+        help="where crosscheck.json is written (default: artifacts/results/)",
+    )
+
     scorecard = subparsers.choices["scorecard"]
     scorecard.add_argument(
         "--results",
         default=None,
-        help="phase-2 artifact to score (default: artifacts/results/phase2.json)",
+        help=(
+            "phase-2 artifact to score "
+            "(default: newest of artifacts/results/phase2_n70.json, phase2.json)"
+        ),
     )
     scorecard.add_argument(
         "--out",
@@ -260,6 +310,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--shadow",
         default=None,
         help="shadow agreement artifact from `cli.py shadow`",
+    )
+    scorecard.add_argument(
+        "--crosscheck",
+        default=None,
+        help=(
+            "second-judge cross-check artifact from `cli.py crosscheck`; adds the "
+            "agreement + combination-rule line to the footer"
+        ),
     )
     scorecard.add_argument(
         "--shadow-metric",
@@ -460,6 +518,81 @@ def cmd_phase2(args, cfg) -> int:
     return 0
 
 
+def cmd_crosscheck(args, cfg) -> int:
+    """Re-score recorded outputs with a second, Claude-class judge.
+
+    The generations are never re-run and the gated judge is always replayed;
+    only the cross-check judge honours ``--mode``. So `--mode live` here means
+    "one new instrument over old data", not "a second measurement run".
+    """
+    from amw.eval.crosscheck import (
+        FULL_CROSSCHECK_SUBAGENTS,
+        crosscheck_footer_line,
+        run_crosscheck,
+    )
+    from amw.reporting.scorecard import _default_results_path
+
+    results_path = Path(args.results) if args.results else _default_results_path()
+    if not results_path.is_file():
+        print(
+            f"error: no phase-2 artifact at {results_path}. The cross-check "
+            "validates an existing judged run; run `python cli.py phase2` first.",
+            file=sys.stderr,
+        )
+        return 2
+
+    result = run_crosscheck(
+        config=cfg,
+        results_path=results_path,
+        mode=args.mode,
+        subagents=args.subagent,
+        variants=args.variant,
+        full_scope=tuple(args.full or FULL_CROSSCHECK_SUBAGENTS),
+        sample_fraction=args.fraction,
+        out_path=args.out,
+    )
+
+    print(f"gated judge      : {result.gated_judge}")
+    print(f"cross-check judge: {result.check_judge}\n")
+    for entry in result.subagents:
+        overall = entry.overall
+        agreement = (
+            "not measured"
+            if overall.criterion_agreement is None
+            else f"{overall.criterion_agreement:.4f}"
+        )
+        kappa = (
+            "undefined" if overall.cohens_kappa is None else f"{overall.cohens_kappa:.4f}"
+        )
+        print(
+            f"{entry.subagent:<18} agreement={agreement}  kappa={kappa}  "
+            f"{entry.verdict}  ({overall.criterion_pairs} criterion pairs over "
+            f"{overall.paired_cells} cells, {overall.unusable} unusable)"
+        )
+        print(f"  scope: {entry.scope}")
+        if overall.kappa_note:
+            print(f"  note: {overall.kappa_note}")
+        for arm in entry.per_arm:
+            value = (
+                "not measured"
+                if arm.criterion_agreement is None
+                else f"{arm.criterion_agreement:.4f}"
+            )
+            print(
+                f"    {arm.arm:<18} agreement={value}  "
+                f"gated mean={_fmt(arm.gated_mean_score)} "
+                f"check mean={_fmt(arm.check_mean_score)}"
+            )
+    for note in result.notes[1:]:  # notes[0] is the combination rule, printed below
+        print(f"note: {note}", file=sys.stderr)
+    print(f"\n{crosscheck_footer_line(result)}")
+    return 0
+
+
+def _fmt(value: float | None) -> str:
+    return "n/a" if value is None else f"{value:.4f}"
+
+
 def cmd_e2e(args, cfg) -> int:
     """The offline CI gate: a tiny committed corpus through the whole path.
 
@@ -588,6 +721,7 @@ HANDLERS = {
     "phase2": cmd_phase2,
     "ablate": cmd_ablate,
     "shadow": cmd_shadow,
+    "crosscheck": cmd_crosscheck,
     "scorecard": cmd_scorecard,
     "e2e": cmd_e2e,
     "smoke": cmd_smoke,

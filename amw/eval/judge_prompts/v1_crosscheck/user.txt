@@ -1,0 +1,19 @@
+SUBAGENT UNDER EVALUATION: $subagent
+ITEM: $item_id
+
+--- TASK INPUT GIVEN TO THE SUBAGENT ---
+$task_input
+
+--- CONTEXT CHUNKS SUPPLIED TO THE SUBAGENT ---
+$context_chunks
+
+--- REFERENCE OUTPUT (one acceptable answer; not the only one) ---
+$reference
+
+--- CANDIDATE OUTPUT TO SCORE ---
+$candidate
+
+--- RUBRIC ---
+Score each criterion below independently, in this order.
+
+$rubric

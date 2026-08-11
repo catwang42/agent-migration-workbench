@@ -10,10 +10,14 @@ a prompt nobody in the room can read.
 
 ```
 judge_prompts/
-  v1/
+  v1/              THE GATED JUDGE (Gemini 2.5 Pro). Registered pre-results.
     system.txt       system_instruction for the judge model
     user.txt         per-item template ($-placeholders, string.Template)
     repeat_note.txt  appended as its own message when k > 1
+  v1_crosscheck/   THE VALIDATING JUDGE (Claude, via Vertex Model Garden).
+    system.txt       same scoring text as v1; tool emission instead of JSON
+    user.txt         byte-identical to v1/user.txt
+    repeat_note.txt  byte-identical to v1/repeat_note.txt
 ```
 
 Loaded by `amw.eval.judge.load_prompt_pack(version="v1")`, which also computes
@@ -32,6 +36,31 @@ produced it.
    time, not as a silently blank section.
 3. `user.txt` must supply every placeholder in
    `amw.eval.judge.USER_TEMPLATE_FIELDS`; `tests/test_judge.py` asserts this.
+
+## Why there are two packs
+
+`v1_crosscheck` is the second-judge cross-check (`amw/eval/crosscheck.py`): a
+Claude-class judge re-scoring the same recorded outputs against the same
+rubrics, so *"Gemini judged the Gemini-vs-Claude comparison"* has an answer made
+of measurements rather than assurances.
+
+It is a **separate pack rather than a `--model` flag on `v1`** for one reason:
+under this demo organization's Vertex AI policy configuration
+(`constraints/vertexai.allowedPartnerModelFeatures`), partner-model structured
+outputs were unavailable, so a Claude judge on Vertex emits its verdict through
+an `emit_judge_verdict` tool call rather than a strict JSON response. That is a
+change to the prompt text — the "Output" section — and editing `v1` in place to
+say it would have broken rule 1 above.
+
+Everything that decides *how an item scores* is byte-identical between the two
+packs, and `tests/test_crosscheck.py` asserts it: `user.txt` and
+`repeat_note.txt` in full, and everything in `system.txt` above the `Output`
+heading. If the two ever drift, a disagreement between the judges stops being
+attributable to the models and the instrument loses its meaning.
+
+The two packs hash differently, so every score names which one produced it.
+`v1` remains the gated instrument; `v1_crosscheck` validates and is never
+averaged with it or substituted for it.
 
 ## Why `repeat_note.txt` exists
 

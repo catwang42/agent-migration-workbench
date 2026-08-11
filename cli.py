@@ -26,13 +26,20 @@ from pathlib import Path
 # the lanes' tests assert that — so MODES/CLAUDE_PATHS are taken from the one
 # place that defines them rather than restated here.
 from amw.adapters import CLAUDE_PATHS, MODES
-from amw.agents.prompt_packs import VARIANTS
+from amw.agents.prompt_packs import ALL_VARIANTS, VARIANTS
 from amw.agents.schemas import SUBAGENTS
 from amw.config import ConfigError, load_all
-from amw.eval.crosscheck import SAMPLE_FRACTION
+from amw.economics.cache_demo import (
+    DEMO_SUBAGENT,
+    DEMO_VARIANT,
+    PREAMBLE_CHUNKS,
+    cmd_cache_demo,
+)
+from amw.eval.crosscheck import INSUFFICIENT, SAMPLE_FRACTION, UNRELIABLE, VALIDATED
 from amw.reporting import DEFAULT_SHADOW_METRIC, SHADOW_METRICS, cmd_scorecard
 from amw.shadow import cmd_shadow
 from amw.tuning import cmd_ablate
+from amw.tuning.optimizer import CUTOFF_SECONDS, TRAINING_EXAMPLES, cmd_optimize
 
 #: The e2e corpus is a *committed fixture*, not a freshly generated dataset.
 #: Replay is keyed on the exact request bytes, so a corpus regenerated on the
@@ -45,9 +52,11 @@ COMMANDS: dict[str, tuple[str, str]] = {
     "gen": ("generate the synthetic dataset + rubrics", "T06"),
     "phase2": ("baseline eval: Claude vs naive Gemini", "T09"),
     "ablate": ("run the A0-A4 prompt ablation ladder", "T10"),
+    "optimize": ("VAIPO rung A4-optimizer (live only)", "P1/S3"),
     "shadow": ("shadow run + disagreement triage", "T11"),
     "crosscheck": ("second-judge cross-check of the judged metric", "P1/S1"),
     "scorecard": ("gates -> verdicts -> markdown report", "T12"),
+    "cache-demo": ("live context-caching demo: real cached-token counts", "P1"),
     "e2e": ("full offline pipeline (CI gate)", "T09"),
     "smoke": ("pre-demo health check against live backends", "T16"),
     "adk-demo": ("thin ADK reference app on Gemini (demo only, never evaluated)", "T14-P1"),
@@ -388,6 +397,104 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         metavar="NAME",
         help="who supplied --volume figures; required whenever --volume is used",
+    )
+
+    optimize = subparsers.choices["optimize"]
+    optimize.add_argument(
+        "--subagent",
+        choices=SUBAGENTS,
+        default=None,
+        help=(
+            "subagent whose cross-check verdict selects the optimizer target "
+            "(default: feature_extractor, the subject of item 1's gate)"
+        ),
+    )
+    optimize.add_argument(
+        "--verdict",
+        choices=[VALIDATED, UNRELIABLE, INSUFFICIENT],
+        default=None,
+        help=(
+            "override the cross-check artifact; for an owner who has ruled but "
+            "not yet re-run `cli.py crosscheck`"
+        ),
+    )
+    optimize.add_argument(
+        "--crosscheck",
+        default=None,
+        help=(
+            "cross-check artifact to read the ruling from "
+            "(default: artifacts/results/crosscheck.json)"
+        ),
+    )
+    optimize.add_argument(
+        "--i-have-the-ruling",
+        action="store_true",
+        help=(
+            "proceed with a retarget the owner has already seen; without it a "
+            "retargeted run prints the reframe and refuses"
+        ),
+    )
+    optimize.add_argument(
+        "--examples",
+        type=int,
+        default=None,
+        help=f"worked examples sent to the optimizer (default: {TRAINING_EXAMPLES})",
+    )
+    optimize.add_argument(
+        "--cutoff",
+        type=float,
+        default=None,
+        help=(
+            "seconds before the hand-tuned rung becomes the candidate "
+            f"(default: {CUTOFF_SECONDS:.0f}, the owner's two hours)"
+        ),
+    )
+    optimize.add_argument("-n", type=int, default=None)
+    optimize.add_argument("--dataset-dir", default=None, help="default: datasets/")
+    optimize.add_argument(
+        "--no-ladder",
+        action="store_true",
+        help="optimize and keep the instruction, but do not run the rung",
+    )
+    optimize.add_argument(
+        "--out",
+        default=None,
+        help="where optimizer_<subagent>.json is written (default: artifacts/results/)",
+    )
+
+    cache_demo = subparsers.choices["cache-demo"]
+    cache_demo.add_argument(
+        "--subagent",
+        choices=SUBAGENTS,
+        default=None,
+        help=f"whose preamble is cached (default: {DEMO_SUBAGENT})",
+    )
+    cache_demo.add_argument(
+        "--variant",
+        choices=ALL_VARIANTS,
+        default=None,
+        help=f"pack the cached system instruction comes from (default: {DEMO_VARIANT})",
+    )
+    cache_demo.add_argument(
+        "--chunks",
+        type=int,
+        default=None,
+        help=(
+            "corpus chunks pooled into the shared preamble; raise it if the "
+            f"service rejects the cache as too small (default: {PREAMBLE_CHUNKS})"
+        ),
+    )
+    cache_demo.add_argument(
+        "--ttl-hours",
+        type=float,
+        default=None,
+        help="cache TTL, and the window the breakeven is computed over (default: 1.0)",
+    )
+    cache_demo.add_argument("--dataset-dir", default=None, help="default: datasets/")
+    cache_demo.add_argument(
+        "--out",
+        default=None,
+        help="where cache_demo.json is written (default: artifacts/results/)",
     )
 
     smoke = subparsers.choices["smoke"]
@@ -792,9 +899,11 @@ HANDLERS = {
     "gen": cmd_gen,
     "phase2": cmd_phase2,
     "ablate": cmd_ablate,
+    "optimize": cmd_optimize,
     "shadow": cmd_shadow,
     "crosscheck": cmd_crosscheck,
     "scorecard": cmd_scorecard,
+    "cache-demo": cmd_cache_demo,
     "e2e": cmd_e2e,
     "smoke": cmd_smoke,
     "adk-demo": cmd_adk_demo,

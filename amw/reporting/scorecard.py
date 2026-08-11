@@ -48,7 +48,11 @@ from amw.eval.runner import Phase2Result
 from amw.eval.stats import Estimate, GateCheck, check_gates, missing_gates
 from amw.reporting.cells import (
     EM_DASH,
+    FAIL_IMPRECISE,
+    FAIL_REGRESSION,
+    IMPRECISION_NOTE,
     cost_cell,
+    delta_failure_kind,
     estimate_text,
     latency_cell,
     paired_delta_text,
@@ -423,6 +427,7 @@ def _gate_table(
         "| Gate | Bound (gates.yaml) | Measured (95% CI) | Bound tested | Result |",
         "| --- | --- | --- | --- | --- |",
     ]
+    imprecise: list[str] = []
     for gate_name in gates.subagent_gates:
         check = verdict.checks.get(gate_name)
         measured = _measured_cell(
@@ -433,9 +438,30 @@ def _gate_table(
         else:
             tested = f"{check.compared_bound} = {check.compared_value:.4g}"
             result = "PASS" if check.passed else "**FAIL**"
+            if not check.passed:
+                # A failing paired delta says *which* kind of failure it is.
+                # CS's -2.32 pp [-5.00, +0.36] and FE's -10.44 pp
+                # [-13.78, -7.12] are both FAIL and are not the same finding;
+                # one interval spans zero and the other does not.
+                kind = delta_failure_kind(check.estimate)
+                if kind is not None:
+                    result = f"{result} — {kind}"
+                if kind == FAIL_IMPRECISE:
+                    imprecise.append(gate_name)
         lines.append(
             f"| `{gate_name}` | {_bound_text(gates, gate_name)} | {measured} "
             f"| {tested} | {result} |"
+        )
+    for gate_name in imprecise:
+        lines.extend(
+            [
+                "",
+                IMPRECISION_NOTE.format(
+                    gate=gate_name,
+                    imprecise=FAIL_IMPRECISE,
+                    regression=FAIL_REGRESSION,
+                ),
+            ]
         )
     return lines
 

@@ -18,15 +18,24 @@ convention:
   that omits :data:`CLAUDE_SCHEMA_CAVEAT`.
 * :class:`JudgeScoreCell` — ``split`` and ``items_scored`` are *required*
   fields, so a judge score whose n and split are unknown cannot be
-  constructed. QR and CS were judged on the 28-item core split, FE on the full
-  70 (a registered deviation); two judge scores from different splits are not
-  directly comparable and the number alone does not say so.
+  constructed. Every **gated** judge score is now full-70 (QR and CS were
+  widened on 2026-08-11, sizing deviation #2), but the **ablation ladder** is a
+  separate instrument with its own split, so two judge scores can still come
+  from different n. They are not directly comparable and the number alone does
+  not say so.
 * :func:`latency_cell` — Claude ran in ``global`` and Gemini in
   ``us-central1``, so p95 is a cross-region comparison. Without a same-region
   probe the cell is the disclosure string and nothing else.
 * :func:`cost_cell` — ``config/pricing.yaml`` is unverified, so every cost and
   savings cell is an em dash. Deliberately digit-free: a reason containing a
   number is a number a reader can mistake for a measurement.
+* :func:`delta_failure_kind` — a failing paired delta says *which* kind of
+  failure it is. FE's ``quality_delta_pp`` is −10.44 pp [−13.78, −7.12], an
+  interval entirely below zero: a regression was measured. CS's is
+  −2.32 pp [−5.00, +0.36], an interval spanning zero: parity was not
+  demonstrated, which is a failure of precision and not a demonstrated drop.
+  Both are FAIL and the gate logic is identical; printing one string for both
+  would let a reader take the weaker finding for the stronger one.
 
 The scorecard renderer imports these and never formats a value itself.
 """
@@ -51,6 +60,10 @@ __all__ = [
     "estimate_text",
     "paired_delta_text",
     "gate_result_text",
+    "delta_failure_kind",
+    "FAIL_REGRESSION",
+    "FAIL_IMPRECISE",
+    "IMPRECISION_NOTE",
 ]
 
 #: Verbatim, owner-specified. Scoped to this organization's policy configuration
@@ -139,9 +152,11 @@ class ClaudeSchemaValidityCell(_Base):
 class JudgeScoreCell(_Base):
     """A judged score that cannot exist without its judged n and split.
 
-    ``split`` and ``items_scored`` have no defaults on purpose. FE was judged
-    on 70 items and QR/CS on 28; a reader comparing them without seeing that
-    is comparing two different instruments, and the score alone hides it.
+    ``split`` and ``items_scored`` have no defaults on purpose. A reader
+    comparing two judged scores without seeing their n and split is comparing
+    two instruments, and the score alone hides it. The gated scores are all
+    full-70 as of 2026-08-11; ladder rungs carry whichever split they were run
+    on, which is what makes this field load-bearing rather than decorative.
     """
 
     split: str
@@ -214,3 +229,54 @@ def latency_cell(
 
 def gate_result_text(status: Literal["pass", "fail", "not_evaluated"]) -> str:
     return {"pass": "PASS", "fail": "FAIL", "not_evaluated": "not evaluated"}[status]
+
+
+#: The two ways a paired delta gate fails, and the words for each.
+#:
+#: Both are FAIL. The gate logic does not move and neither does the gates hash;
+#: what moves is the sentence next to it, because these are not the same
+#: finding and a reader who sees one string for both will draw one conclusion
+#: from two different measurements.
+FAIL_REGRESSION = "measured regression"
+FAIL_IMPRECISE = "parity not demonstrated"
+
+#: Printed under any gate table containing an imprecise failure.
+IMPRECISION_NOTE = (
+    "A `{gate}` failure marked *{imprecise}* means the confidence interval "
+    "spans zero: the gate fails on **precision**, because the data cannot rule "
+    "out a drop larger than the bound — not because a drop was demonstrated. "
+    "A failure marked *{regression}* is the stronger finding: the entire "
+    "interval is below zero, so a real drop was measured. Reporting the first "
+    "as though it were the second overstates a negative result, which is the "
+    "same error as overstating a positive one."
+)
+
+
+def delta_failure_kind(estimate: Estimate | None) -> str | None:
+    """Which kind of failure a paired delta is — or ``None`` if not applicable.
+
+    The discriminator is whether the interval contains zero, and it is a real
+    distinction rather than a softening of bad news. Feature Extractor's
+    ``quality_delta_pp`` is −10.44 pp [−13.78, −7.12]: every plausible value is
+    a loss, so a regression was *measured*. Chunk Summarizer's is
+    −2.32 pp [−5.00, +0.36]: the interval includes zero and a little above it,
+    so what the data establishes is that parity was **not demonstrated** at the
+    pre-agreed bound — not that quality dropped.
+
+    Both fail the gate, and neither verdict changes. Only the wording does.
+
+    Returns ``None`` for anything that is not a paired bootstrap delta. On a
+    level metric such as ``json_schema_validity`` zero is not the reference
+    point, so "spans zero" carries no meaning and inventing one would be worse
+    than saying nothing.
+    """
+    if estimate is None or estimate.method != "paired_percentile_bootstrap":
+        return None
+    if estimate.hi < 0:
+        return FAIL_REGRESSION
+    if estimate.lo <= 0 <= estimate.hi:
+        return FAIL_IMPRECISE
+    # Interval entirely above zero yet still short of the bound: an improvement
+    # too small to clear a positive bound. Neither of the two words fits, and
+    # the number in the adjacent cell already says it.
+    return None

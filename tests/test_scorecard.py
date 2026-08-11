@@ -34,14 +34,19 @@ from amw.eval.stats import Estimate
 from amw.reporting.cells import (
     CLAUDE_SCHEMA_CAVEAT,
     EM_DASH,
+    FAIL_IMPRECISE,
+    FAIL_REGRESSION,
     NOT_MEASURED,
     REGION_SPLIT_DISCLOSURE,
     ClaudeSchemaValidityCell,
     JudgeScoreCell,
     cost_cell,
+    delta_failure_kind,
     latency_cell,
 )
 from amw.reporting.evidence import (
+    BASELINE_VARIANT,
+    CANDIDATE_VARIANT,
     GATE_COST,
     GATE_LATENCY,
     GATE_SCHEMA,
@@ -49,6 +54,7 @@ from amw.reporting.evidence import (
     SameRegionLatencyProbe,
     SubagentEvidence,
     build_evidence,
+    collect_samples,
 )
 from amw.reporting.scorecard import (
     INCOMPLETE,
@@ -89,6 +95,34 @@ def report(cfg: AppConfig, phase2: Phase2Result) -> str:
         cfg,
         phase2,
         regions=Regions(baseline="global", candidate="us-central1", source="test"),
+    )
+    return render_markdown(build_scorecard(cfg, phase2, evidence=evidence))
+
+
+@pytest.fixture(scope="module")
+def report_with_deltas(cfg: AppConfig, phase2: Phase2Result) -> str:
+    """The scorecard *with* the paired-delta gates measured.
+
+    The ``report`` fixture above deliberately skips per-item samples to
+    exercise the gate-absent path. The failure-kind wording only exists on a
+    measured failing delta, so it needs the other path: samples recovered from
+    the replay store, exactly as ``cli.py scorecard`` recovers them.
+    """
+    samples = collect_samples(
+        cfg,
+        phase2,
+        mode="replay",
+        arms=[
+            (arm.subagent, arm.variant)
+            for arm in phase2.arms
+            if arm.variant in (BASELINE_VARIANT, CANDIDATE_VARIANT)
+        ],
+    )
+    evidence = build_evidence(
+        cfg,
+        phase2,
+        regions=Regions(baseline="global", candidate="us-central1", source="test"),
+        samples=samples,
     )
     return render_markdown(build_scorecard(cfg, phase2, evidence=evidence))
 
@@ -397,6 +431,75 @@ def test_parity_language_is_the_pre_agreed_wording(report: str) -> None:
     # forbids it — and nowhere as a claim.
     assert report.count("zero quality drop") == 1
     assert 'never "zero quality drop"' in report
+
+
+def test_a_failing_delta_says_which_kind_of_failure_it_is() -> None:
+    """The two ways a paired delta gate fails are different findings.
+
+    Feature Extractor's ``quality_delta_pp`` is −10.44 pp [−13.78, −7.12]:
+    every plausible value is a loss, so a regression was measured. Chunk
+    Summarizer's is −2.32 pp [−5.00, +0.36]: the interval spans zero, so what
+    the data shows is that parity was not *demonstrated* at the bound — not
+    that quality dropped. Both are FAIL and neither verdict moves.
+
+    Rendering one string for both would overstate the weaker finding, which is
+    the same error as overstating a positive one and is barred by the same
+    ground rule.
+    """
+
+    def delta(point: float, lo: float, hi: float) -> Estimate:
+        return Estimate(
+            metric="quality_delta_pp",
+            point=point,
+            lo=lo,
+            hi=hi,
+            n=70,
+            unit="percentage_points",
+            method="paired_percentile_bootstrap",
+            paired_n=70,
+        )
+
+    assert delta_failure_kind(delta(-10.44, -13.78, -7.12)) == FAIL_REGRESSION
+    assert delta_failure_kind(delta(-2.32, -5.00, 0.36)) == FAIL_IMPRECISE
+    assert FAIL_REGRESSION != FAIL_IMPRECISE
+
+    # An interval that clears zero entirely is neither, even if it fails a
+    # positive bound: it is a small improvement, and both words would misread it.
+    assert delta_failure_kind(delta(3.0, 1.0, 5.0)) is None
+
+    # Zero is the reference point only for a paired delta. On a level metric
+    # such as json_schema_validity, "spans zero" means nothing, so the cell
+    # says nothing rather than inventing a reading.
+    level = Estimate(metric="json_schema_validity", point=0.814, lo=0.714, hi=0.900, n=70)
+    assert delta_failure_kind(level) is None
+    assert delta_failure_kind(None) is None
+
+
+def test_a_failing_gate_row_carries_its_failure_kind_and_the_note(
+    report_with_deltas: str,
+) -> None:
+    """The distinction has to survive into the Markdown a customer reads."""
+    report = report_with_deltas
+    failing = [
+        line
+        for line in report.splitlines()
+        if line.startswith("| `quality_delta_pp` |") and "**FAIL**" in line
+    ]
+    assert failing, "expected at least one failing quality_delta_pp row to word"
+    for line in failing:
+        assert FAIL_REGRESSION in line or FAIL_IMPRECISE in line, line
+
+    # Both kinds are present on the real artifact, which is the point: FE's
+    # interval sits entirely below zero and CS's spans it. If a future artifact
+    # ever renders them with one string, this is the assertion that catches it.
+    assert any(FAIL_REGRESSION in line for line in failing)
+    assert any(FAIL_IMPRECISE in line and FAIL_REGRESSION not in line
+               for line in failing)
+
+    # The qualifier is not self-explanatory, so the report that uses it
+    # explains it.
+    assert "fails on **precision**" in report
+    assert "not because a drop was demonstrated" in report
 
 
 def test_the_report_labels_itself_as_replay(report: str) -> None:

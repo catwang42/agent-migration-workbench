@@ -203,11 +203,18 @@ def test_the_missing_and_the_undecided_rulings_read_differently():
 
 def test_the_verdict_is_read_from_the_artifact_and_is_absent_today(tmp_path):
     assert crosscheck_verdict("feature_extractor", tmp_path / "nope.json") is None
-    # The real one: item 1's ruling has not happened as of this commit, so the
-    # gate is closed. If this ever fails, the ruling landed and the optimizer
-    # is unblocked -- which is information, not breakage.
+    # The real one. As of 2026-08-11 the cross-check HAS run and returned
+    # VALIDATED for feature_extractor, so this reads a verdict rather than
+    # None. Guarded both ways on purpose: the assertion is about the reader
+    # agreeing with the artifact on disk, not about which way the gate fell.
     live = optimizer.default_crosscheck_path()
-    if not live.is_file():
+    if live.is_file():
+        assert crosscheck_verdict("feature_extractor") in {
+            VALIDATED,
+            UNRELIABLE,
+            INSUFFICIENT,
+        }
+    else:
         assert crosscheck_verdict("feature_extractor") is None
 
 
@@ -225,8 +232,17 @@ def test_the_retarget_refuses_until_the_owner_has_seen_it(tmp_path):
 
 
 def test_an_undecided_ruling_writes_an_artifact_saying_so(tmp_path):
+    # crosscheck_path must point somewhere empty. `verdict=None` means "read the
+    # ruling off disk", and the default path is the repo's real artifact — which
+    # exists as of 2026-08-11 and says VALIDATED. Without this the test stops
+    # exercising the no-ruling branch the moment a cross-check has been run, and
+    # worse, walks into the live optimize path.
     result = run_optimizer_rung(
-        mode="live", verdict=None, out_path=tmp_path / "o.json", run_ladder_after=False
+        mode="live",
+        verdict=None,
+        crosscheck_path=tmp_path / "no_crosscheck.json",
+        out_path=tmp_path / "o.json",
+        run_ladder_after=False,
     )
     assert result.run.status == "refused"
     assert result.run.instruction is None
@@ -274,7 +290,11 @@ def test_a_run_that_never_happened_reports_not_run_and_no_figures():
 
 def test_the_console_rendering_of_an_unrun_rung_carries_no_numbers(tmp_path):
     result = run_optimizer_rung(
-        mode="live", verdict=None, out_path=tmp_path / "o.json", run_ladder_after=False
+        mode="live",
+        verdict=None,
+        crosscheck_path=tmp_path / "no_crosscheck.json",
+        out_path=tmp_path / "o.json",
+        run_ladder_after=False,
     )
     text = "\n".join(render_lines(result))
     assert "not run" in text

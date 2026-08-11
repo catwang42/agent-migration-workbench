@@ -302,10 +302,10 @@ TARGETS: dict[str, OptimizerTarget] = {
             "novelty_statement, which are judge-only."
         ),
         objective_note=(
-            "The synchronous VAIPO surface optimizes toward target responses, "
-            "not toward a custom metric — it is not given the judge. The "
-            "targets are the gold outputs, and the judged FE score is the "
-            "instrument the resulting rung is READ against on the ladder. "
+            "VAIPO optimized toward gold reference responses, not toward the "
+            "judge score; the rung is then READ by its judged score beside the "
+            "hand-tuned rung. The synchronous VAIPO surface takes target "
+            "responses, not a custom metric — it is never given the judge. "
             "Nothing here optimizes a judge score directly."
         ),
     ),

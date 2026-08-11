@@ -281,6 +281,14 @@ honesty guarantee; without it, replay mode looks like a live run.
 7. **Never say "agreement" without saying which one.** Structured-fields-only and
    whole-item are different measurements of different things. The card names the figure it
    used; name it out loud too.
+8. **Never merge the two judges.** Quote the **gated Gemini-judge number**, with the Claude
+   cross-check **beside** it. Never averaged, never blended, never substituted. The Gemini
+   2.5 Pro judge was registered before results and is the gated instrument; the Claude judge
+   validates it. Two banned phrases: *"the judge is unbiased"* and *"two judges agreed, so
+   the number is right."* The correct framing is three sentences: the FE ranking replicates
+   under both judges; the Claude judge is systematically ~3–4 points stricter on FE; and
+   Cohen's kappa is prevalence-deflated here because pass rates are high, so read kappa and
+   raw agreement together. Full tables: `artifacts/results/crosscheck.md`.
 
 ---
 

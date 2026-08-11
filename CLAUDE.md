@@ -1,7 +1,7 @@
 # CLAUDE.md — Agent Migration Workbench (Act 1)
 
 ## What this repo is
-A customer-workshop toolkit that evaluates migrating high-volume RAG subagents (Query Rewriter, Chunk Summarizer, Feature Extractor) from Claude to Gemini: baseline eval → prompt adaptation (ablation ladder) → shadow comparison → gates-based Migration Readiness Scorecard. Delivery deadline: **Wed Aug 12**. Work strictly from `TASKS.md` in order; scope tiers are defined in `act1_build_plan.md`.
+A customer-workshop toolkit that evaluates migrating high-volume RAG subagents (Query Rewriter, Chunk Summarizer, Feature Extractor) from Claude to Gemini: baseline eval → prompt adaptation (ablation ladder) → shadow comparison → gates-based Migration Readiness Scorecard. Delivery: **Thu Aug 13**; content freeze **Wed Aug 12** (revised 2026-08-11 by the owner; the original plan said deliver Wed / freeze Tue). Work strictly from `TASKS.md` in order; scope tiers are defined in `act1_build_plan.md`.
 
 The full-system design — including Act 2 (BYOT real-trace ingestion) — lives in `docs/master_plan.md`. Read it once for architectural context (module shapes, naming, where Act 2 plugs into `traces/` and `eval/`), then treat it as reference only: it is **not** a work order, and nothing from it enters the build unless it appears in `TASKS.md`.
 

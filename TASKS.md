@@ -56,7 +56,7 @@ Work top-to-bottom. One commit per task, task ID in the message. Every task ends
 
 ---
 
-## DAY 2 — Mon Aug 10
+## DAY 2 — Mon Aug 10 / Tue Aug 11
 
 ### T10 — Translator + ablation ladder  (est. 2.5h)
 **Goal**: `tuning/translator.py` — mechanical Claude-XML → {system_instruction, Markdown body, response_schema, OpenAPI tool decls}; emits a side-by-side diff (md) for the teaching moment. `tuning/ablate.py` + `cli.py ablate --subagent X` — runs rungs A0–A4 on the core set (k=2 judged + deterministic), where A2/A3/A4 prompt edits are iterated by hand against `notes/day1_failures.md`. Results per rung appended to `artifacts/results/ablation_{subagent}.json`.
@@ -75,30 +75,53 @@ Work top-to-bottom. One commit per task, task ID in the message. Every task ends
 **Goal**: `notebooks/01_baseline_and_tuning.ipynb` (load phase2 + ablation artifacts → tables/charts with error bars; one live 10-case cell parameterized by `--mode`), `notebooks/02_shadow_scorecard.ipynb` (shadow results, triage browser via pandas, final scorecard render). Zero logic beyond display; all cells run headless.
 **Verify**: `papermill` both notebooks in replay mode → clean execution, outputs saved.
 
-### T14 — P1 items in priority order (only those GREEN / time-permitting)
+### T14 — Workshop documentation set  (est. 2.5h)
+**Reassigned 2026-08-11 by the owner.** T14 was the P1 shortlist; that list is now
+**T14-P1** below and stays gated on its spikes. T14 is the five workshop documents,
+pulled forward out of T15's PM block so they are written while T10/T11/T12 are in
+flight rather than on freeze day.
+**Goal**: create (these files do not exist yet)
+1. `WORKSHOP_RUNBOOK.md` (root) — run-of-show, per-segment commands, talk-track
+   bullets, fallback tree incl. the one-flag `hybrid`→`replay` drill, and the
+   methodology beat *"we match the instrument to the subagent's autonomy level"*
+   with the model-never-executes-tools explanation as the skeptic answer.
+2. `docs/what_we_measure.md` — per subagent: what is measured, with which
+   instrument, why. Carries the canonical autonomy-level taxonomy table.
+3. `docs/objection_handling.md` — fairness, judge neutrality, synthetic data,
+   pricing currency, "numbers look too good", plus the four objections this build
+   generated (schema-mechanism asymmetry, tuning-made-FE-worse, latency region
+   split, "isn't this just prompt tuning").
+4. `docs/migration_decision_framework.md` — the gates one-pager.
+5. `docs/data_request_onepager.md` — incl. classify-your-subagents, same taxonomy.
+**Rule**: docs only. No code, no config. Where a CLI flag is still being built in a
+lane, reference it and reconcile at merge.
+**Verify**: all five files exist; every command quoted in them is either runnable in
+replay or explicitly marked live-only; taxonomy table identical in docs 2 and 5.
+
+### T14-P1 — P1 items in priority order (only those GREEN / time-permitting)
 1. **[SPIKE-S2]** Vertex Eval Service rubric metrics + loss clustering wired as an additional metrics source in runner + notebook cell.
 2. Dual-judge cross-check: Claude-class judge re-scores 20% stratified sample; agreement % + Cohen's κ into the scorecard footer.
 3. **Answer Drafter** subagent: prompts + 70 cases + inclusion in phase2/ablation/shadow → the deliberate TUNE_FIRST row.
 4. Live context-caching demo: create cache with shared preamble, two calls, print `cached_tokens` delta + breakeven overlay.
 5. HTML scorecard (same data, jinja template).
 **Verify**: each sub-item has its own test or a replay-mode demo command noted in WORKSHOP_RUNBOOK.
-**HARD STOP tonight — no feature work after Day 2.**
+**HARD STOP Tuesday night — no feature work after Day 2.**
 
 ---
 
-## DAY 3 — Tue Aug 11 (freeze + harden)
+## DAY 3 — Wed Aug 12 (freeze + harden)
 
 ### T15 — Freeze-day run + docs  (est. full day, human-led, Claude Code assists)
 **Goal AM**: run `scripts/refresh_pricing.py` (human verifies against live pricing pages; sets `verified_on`). Full live run: `gen` (if templates changed) → `phase2` full → `ablate` ×3(4) → `shadow` → `scorecard`. This run IS the replay corpus + final artifacts. Review judged CI widths (fallback per build plan §3).
-**Goal PM**: finish `WORKSHOP_RUNBOOK.md` (run-of-show with per-segment commands, talk track bullets, fallback tree incl. the one-flag drill), `docs/objection_handling.md` (from master plan §7), gates one-pager, `data_request_onepager.md`. Full timed rehearsal in `--mode replay`; export notebook HTML backups to `artifacts/backup/`; drill `hybrid`→`replay` switch mid-notebook once.
+**Goal PM**: reconcile the T14 document set against the frozen artifacts (numbers, flags, commands — the docs themselves were written on Day 2). Full timed rehearsal in `--mode replay`; export notebook HTML backups to `artifacts/backup/`; drill `hybrid`→`replay` switch mid-notebook once.
 **Verify**: rehearsal fits the 3h run-of-show with ≥15 min slack; `cli.py e2e --mode replay` green on the frozen corpus; scorecard footer fully populated (no `VERIFY`, no null `verified_on`).
 
-## DAY 4 — Wed Aug 12 (delivery)
+## DAY 4 — Thu Aug 13 (delivery)
 
 ### T16 — Pre-flight  (T-2h)
 `python cli.py smoke --mode live -n 2` per backend from the delivery machine/network; confirm `--mode replay` still green; open notebooks in **hybrid** mode. If smoke fails: flip to replay, deliver anyway — the corpus is Tuesday's real run and says so on screen.
 
 ---
 
-## Backlog (P2 — do not start before Thursday Aug 13)
+## Backlog (P2 — do not start before Fri Aug 14)
 BYOT converters (anthropic logs / LangSmith / Langfuse / ADK / CSV) + PII scrub + notebook 04 · LLM Comparator export · multi-domain generator · local hill-climb APO · risk register · CI (pytest + papermill + e2e-replay on push).

@@ -29,6 +29,7 @@ from amw.adapters import CLAUDE_PATHS, MODES
 from amw.agents.prompt_packs import VARIANTS
 from amw.agents.schemas import SUBAGENTS
 from amw.config import ConfigError, load_all
+from amw.reporting import DEFAULT_SHADOW_METRIC, SHADOW_METRICS, cmd_scorecard
 from amw.shadow import cmd_shadow
 from amw.tuning import cmd_ablate
 
@@ -231,6 +232,89 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
 
+    scorecard = subparsers.choices["scorecard"]
+    scorecard.add_argument(
+        "--results",
+        default=None,
+        help="phase-2 artifact to score (default: artifacts/results/phase2.json)",
+    )
+    scorecard.add_argument(
+        "--out",
+        default=None,
+        help="write the markdown here (default: stdout)",
+    )
+    scorecard.add_argument(
+        "--dataset-dir",
+        default=None,
+        help="corpus to replay when re-deriving per-item scores (default: datasets/)",
+    )
+    scorecard.add_argument(
+        "--no-recompute",
+        action="store_true",
+        help=(
+            "skip replaying the arms to recover per-item vectors; the two paired "
+            "delta gates then report as not evaluated"
+        ),
+    )
+    scorecard.add_argument(
+        "--shadow",
+        default=None,
+        help="shadow agreement artifact from `cli.py shadow`",
+    )
+    scorecard.add_argument(
+        "--shadow-metric",
+        choices=SHADOW_METRICS,
+        default=DEFAULT_SHADOW_METRIC,
+        help=(
+            "which agreement figure the shadow_agreement gate is checked "
+            "against: `structured` drops prose fields; `item` requires every "
+            "field to match and scores prose with a lexical proxy "
+            f"(default: {DEFAULT_SHADOW_METRIC})"
+        ),
+    )
+    scorecard.add_argument(
+        "--cache-preamble-tokens",
+        type=int,
+        default=None,
+        help="shared preamble size for the context-caching breakeven table",
+    )
+    scorecard.add_argument(
+        "--baseline-variant", default=None, help="default: claude_baseline"
+    )
+    scorecard.add_argument(
+        "--candidate-variant", default=None, help="default: gemini_tuned_v1"
+    )
+    scorecard.add_argument(
+        "--claude-region",
+        default=None,
+        help="state the baseline's region explicitly (traces carry none)",
+    )
+    scorecard.add_argument(
+        "--gemini-region",
+        default=None,
+        help="state the candidate's region explicitly (default: the customer profile)",
+    )
+    # The live volume override. Volumes stay illustrative unless BOTH of these
+    # are given; --volume without --volumes-confirmed-by exits 2 rather than
+    # recording an unattributed "the customer told us".
+    scorecard.add_argument(
+        "--volume",
+        action="append",
+        default=None,
+        metavar="SUBAGENT:CALLS_PER_DAY[:AVG_IN:AVG_OUT]",
+        help=(
+            "customer-stated call volume, entered in-session (repeatable). "
+            "Flips the footer to `volumes: customer-provided`. Does NOT unlock "
+            "dollar figures while config/pricing.yaml is unverified."
+        ),
+    )
+    scorecard.add_argument(
+        "--volumes-confirmed-by",
+        default=None,
+        metavar="NAME",
+        help="who supplied --volume figures; required whenever --volume is used",
+    )
+
     smoke = subparsers.choices["smoke"]
     smoke.add_argument("-n", type=int, default=2)
     smoke.add_argument(
@@ -429,6 +513,20 @@ def cmd_e2e(args, cfg) -> int:
             for kind, count in arm.error_kinds.items():
                 print(f"  {arm.subagent}/{arm.variant}: {kind} x{count}", file=sys.stderr)
         return 5
+
+    # The gate is named "full offline pipeline", so it has to reach the end of
+    # the pipeline. Rendering the scorecard here is what catches a report that
+    # only assembles when a full n=70 artifact and a shadow run happen to be
+    # sitting on disk. No recompute: the fixture run is the evidence, and this
+    # is a does-it-render check, not a measurement.
+    from amw.reporting.scorecard import build_scorecard, render_markdown
+
+    try:
+        markdown = render_markdown(build_scorecard(cfg, result))
+    except Exception as exc:  # noqa: BLE001 — any failure here fails the gate
+        print(f"e2e: the scorecard did not render: {exc!r}", file=sys.stderr)
+        return 6
+    print(f"e2e: scorecard rendered, {len(markdown.splitlines())} lines")
     return 0
 
 
@@ -490,6 +588,7 @@ HANDLERS = {
     "phase2": cmd_phase2,
     "ablate": cmd_ablate,
     "shadow": cmd_shadow,
+    "scorecard": cmd_scorecard,
     "e2e": cmd_e2e,
     "smoke": cmd_smoke,
 }

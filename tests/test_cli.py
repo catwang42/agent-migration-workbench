@@ -101,7 +101,19 @@ def test_bad_choices_are_rejected(argv):
 
 
 def test_unimplemented_command_reports_its_task_and_exits_nonzero(capsys):
-    """It must never print something that could be read as "it ran"."""
-    assert cli.main(["scorecard", "--mode", "replay"]) == 3
-    err = capsys.readouterr().err
-    assert "T12" in err and "Nothing was run." in err
+    """It must never print something that could be read as "it ran".
+
+    Written against the mechanism (``COMMANDS`` minus ``HANDLERS``) rather than
+    against one command name. The previous version asserted on ``scorecard``,
+    which meant the test had to be edited the day T12 landed — and a test you
+    rewrite to make a feature pass has stopped guarding anything. This version
+    covers whatever is still unbuilt, and skips itself once nothing is.
+    """
+    unimplemented = [name for name in cli.COMMANDS if name not in cli.HANDLERS]
+    if not unimplemented:
+        pytest.skip("every subcommand is wired up; the guard has nothing to guard")
+    for name in unimplemented:
+        assert cli.main([name, "--mode", "replay"]) == 3
+        err = capsys.readouterr().err
+        assert cli.COMMANDS[name][1] in err
+        assert "Nothing was run." in err

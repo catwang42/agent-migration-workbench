@@ -1,0 +1,34 @@
+=== PHASE 1/2  generations for A4-targeted at n=70 ===
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 0 replayed
+generations: 70 live, 0 from recordings.
+
+waiting up to 90 min for /home/catwangzz_google_com/agent-migration-workbench/artifacts/results/fe_rungs_n70.done before drawing on Gemini Pro judge quota
+FE widening complete (exit_code=0
+finished_utc=2026-08-11T11:00:20Z
+attempt=2) — judging now
+
+=== PHASE 2/2  judge it ===
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 0 replayed
+  ... 75 live judge calls, 2 replayed
+  ... 100 live judge calls, 2 replayed
+  ... 125 live judge calls, 2 replayed
+baseline             claude_baseline            tool             claude-sonnet
+    Incumbent: the customer's XML prompt on Claude, emit_* tool
+    calls 28/28 ok
+    judge_score[core]            0.911  95% CI [0.839, 0.964]  n=28
+A0                   gemini_naive               tool             gemini-flash
+    Naive endpoint swap: the same prompt bytes on Gemini, same tool
+    calls 28/28 ok
+    judge_score[core]            0.836  95% CI [0.787, 0.886]  n=28
+A1-A3                gemini_tuned_v1            response_schema  gemini-flash
+    Bundled: Markdown restructure + system/user split + enforced response_schema + two recalibrated few-shots
+    calls 28/28 ok
+    judge_score[core]            0.852  95% CI [0.796, 0.905]  n=28
+A4-targeted          gemini_targeted_v1         response_schema  gemini-flash
+    A1-A3 plus three bundled rules for the three measured loss clusters: publication numbers verbatim in query, explicit date_to copied not expanded, landscape vs ownership by which side of the question is unknown (per-rule credit not isolated)
+    calls 70/70 ok
+    judge_score[all]             0.963  95% CI [0.934, 0.986]  n=70
+
+judge calls: 138 live, 2 from recordings.

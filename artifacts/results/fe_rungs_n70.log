@@ -1,0 +1,169 @@
+=== PHASE 1/4  generations for A0-schema, A4-novelty-tool, A4-novelty-schema at n=70 ===
+generations: 18 live, 192 from recordings.
+
+=== PHASE 2/4  judge them ===
+  ... 25 live judge calls, 78 replayed
+  ... 50 live judge calls, 112 replayed
+  ... 75 live judge calls, 144 replayed
+  ... 100 live judge calls, 162 replayed
+  ... 125 live judge calls, 200 replayed
+  ... 150 live judge calls, 222 replayed
+baseline             claude_baseline            tool             claude-sonnet
+    Incumbent: the customer's XML prompt on Claude, emit_* tool
+    calls 28/28 ok
+    judge_score[core]            0.903  95% CI [0.857, 0.946]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=25
+A0                   gemini_naive               tool             gemini-flash
+    Naive endpoint swap: the same prompt bytes on Gemini, same tool
+    calls 28/28 ok
+    judge_score[core]            0.837  95% CI [0.791, 0.882]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A1-A3                gemini_tuned_v1            response_schema  gemini-flash
+    Bundled: Markdown restructure + system/user split + enforced response_schema + two recalibrated few-shots
+    calls 28/28 ok
+    judge_score[core]            0.807  95% CI [0.756, 0.853]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A0-schema            gemini_naive_schema        response_schema  gemini-flash
+    Mode only: A0's prompt, enforced response_schema instead of the tool
+    NOT MEASURED — replay mode has no recorded calls for variant 'gemini_naive_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='f2b73b6782f5d9bf') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+    Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+    NOT MEASURED — replay mode has no recorded calls for variant 'gemini_novelty_v1_tool' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='7c8cd0be466029ea') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+    Both: the novelty prompt under the enforced response_schema
+    NOT MEASURED — replay mode has no recorded calls for variant 'gemini_novelty_v1_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='509c7b09a2aa84a1') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+A4-optimizer         gemini_optimizer_v1        tool             gemini-flash
+    Optimizer: a VAIPO-suggested instruction over gemini_naive, read against judge_score
+    calls 28/28 ok
+    judge_score[core]            0.949  95% CI [0.911, 0.979]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A0-schema            gemini_naive_schema        response_schema  gemini-flash
+    Mode only: A0's prompt, enforced response_schema instead of the tool
+    calls 28/28 ok
+    judge_score[core]            0.826  95% CI [0.773, 0.875]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+    Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+    calls 28/28 ok
+    judge_score[core]            0.901  95% CI [0.859, 0.940]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+    Both: the novelty prompt under the enforced response_schema
+    calls 28/28 ok
+    judge_score[core]            0.920  95% CI [0.878, 0.957]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A0-schema            gemini_naive_schema        response_schema  gemini-flash
+    Mode only: A0's prompt, enforced response_schema instead of the tool
+    calls 70/70 ok
+    judge_score[all]             0.831  95% CI [0.798, 0.862]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+    Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+    calls 70/70 ok
+    judge_score[all]             0.892  95% CI [0.864, 0.918]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+    Both: the novelty prompt under the enforced response_schema
+    calls 70/70 ok
+    judge_score[all]             0.903  95% CI [0.876, 0.929]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+
+judge calls: 170 live, 250 from recordings.
+
+=== PHASE 3/4  generations for A4-optimizer at n=70 ===
+re-installing the instruction from run 20260811T060312Z (/home/catwangzz_google_com/agent-migration-workbench/artifacts/optimizer/feature_extractor/20260811T060312Z.txt)
+  ... 25 live judge calls, 20 replayed
+generations: 42 live, 28 from recordings.
+
+=== PHASE 4/4  judge A4-optimizer ===
+  ... 25 live judge calls, 22 replayed
+  ... 50 live judge calls, 42 replayed
+  ... 75 live judge calls, 54 replayed
+baseline             claude_baseline            tool             claude-sonnet
+    Incumbent: the customer's XML prompt on Claude, emit_* tool
+    calls 28/28 ok
+    judge_score[core]            0.903  95% CI [0.857, 0.946]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=25
+A0                   gemini_naive               tool             gemini-flash
+    Naive endpoint swap: the same prompt bytes on Gemini, same tool
+    calls 28/28 ok
+    judge_score[core]            0.837  95% CI [0.791, 0.882]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A1-A3                gemini_tuned_v1            response_schema  gemini-flash
+    Bundled: Markdown restructure + system/user split + enforced response_schema + two recalibrated few-shots
+    calls 28/28 ok
+    judge_score[core]            0.807  95% CI [0.756, 0.853]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A0-schema            gemini_naive_schema        response_schema  gemini-flash
+    Mode only: A0's prompt, enforced response_schema instead of the tool
+    NOT MEASURED — replay mode has no recorded calls for variant 'gemini_naive_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='f2b73b6782f5d9bf') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+    Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+    NOT MEASURED — replay mode has no recorded calls for variant 'gemini_novelty_v1_tool' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='7c8cd0be466029ea') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+    Both: the novelty prompt under the enforced response_schema
+    NOT MEASURED — replay mode has no recorded calls for variant 'gemini_novelty_v1_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='509c7b09a2aa84a1') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+A4-optimizer         gemini_optimizer_v1        tool             gemini-flash
+    Optimizer: a VAIPO-suggested instruction over gemini_naive, read against judge_score
+    calls 28/28 ok
+    judge_score[core]            0.949  95% CI [0.911, 0.979]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A0-schema            gemini_naive_schema        response_schema  gemini-flash
+    Mode only: A0's prompt, enforced response_schema instead of the tool
+    calls 28/28 ok
+    judge_score[core]            0.826  95% CI [0.773, 0.875]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+    Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+    calls 28/28 ok
+    judge_score[core]            0.901  95% CI [0.859, 0.940]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+    Both: the novelty prompt under the enforced response_schema
+    calls 28/28 ok
+    judge_score[core]            0.920  95% CI [0.878, 0.957]  n=28
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+A0-schema            gemini_naive_schema        response_schema  gemini-flash
+    Mode only: A0's prompt, enforced response_schema instead of the tool
+    calls 70/70 ok
+    judge_score[all]             0.831  95% CI [0.798, 0.862]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+    Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+    calls 70/70 ok
+    judge_score[all]             0.892  95% CI [0.864, 0.918]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+    Both: the novelty prompt under the enforced response_schema
+    calls 70/70 ok
+    judge_score[all]             0.903  95% CI [0.876, 0.929]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+A4-optimizer         gemini_optimizer_v1        tool             gemini-flash
+    Optimizer: a VAIPO-suggested instruction over gemini_naive, read against judge_score
+    calls 70/70 ok
+    judge_score[all]             0.951  95% CI [0.929, 0.970]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+    few-shot overlap with scored items: fe-0004, fe-0021, fe-0029, fe-0032, fe-0037, fe-0041, fe-0046, fe-0051, fe-0056, fe-0060, fe-0064, fe-0067
+
+judge calls: 82 live, 58 from recordings.

@@ -913,6 +913,49 @@
   margin: 0 0 0.15rem;
   font-size: 0.95rem;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Two arms are shown, but only one of them ships. Without a visual rank the
+   pair reads as an open choice, and the arm that was *replaced* is the one a
+   skimming reader is equally likely to write down. The shipping card gets the
+   accent edge and the badge; the replaced card is muted and says what it is. */
+.md-typeset .amw-compare__card--ships {
+  border-color: var(--amw-cyan);
+  border-left-width: 4px;
+}
+
+.md-typeset .amw-compare__card--replaced {
+  opacity: 0.72;
+}
+
+.amw-compare__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.amw-compare__tag--ships {
+  color: #06222a;
+  background: var(--amw-cyan);
+}
+
+.amw-compare__tag--replaced {
+  color: var(--amw-muted);
+  border: 1px solid var(--amw-card-border);
+  background: transparent;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
 }
 
 .md-typeset .amw-compare__verdict {

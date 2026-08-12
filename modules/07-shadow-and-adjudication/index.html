@@ -270,6 +270,44 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../../models-in-this-study/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Models in this study
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architecture & toolchain
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -434,6 +472,60 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../../models-in-this-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models in this study
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & toolchain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -473,10 +565,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -494,8 +586,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -790,10 +882,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#latency-and-why-there-is-no-number" class="md-nav__link">
+  <a href="#latency-and-why-this-run-has-no-number" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Latency, and why there is no number
+        Latency, and why this run has no number
       
     </span>
   </a>
@@ -865,6 +957,8 @@
       
         
       
+        
+      
     
     
     
@@ -878,7 +972,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -900,14 +994,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -934,6 +1028,34 @@
     
   
     Migration Readiness Scorecard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../results/scorecard_development_generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How we got here — development generation
   
 
     
@@ -1142,10 +1264,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#latency-and-why-there-is-no-number" class="md-nav__link">
+  <a href="#latency-and-why-this-run-has-no-number" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Latency, and why there is no number
+        Latency, and why this run has no number
       
     </span>
   </a>
@@ -1172,6 +1294,22 @@
 <h1 id="module-07-shadow-adjudication">Module 07 — Shadow &amp; adjudication<a class="headerlink" href="#module-07-shadow-adjudication" title="Permanent link">&para;</a></h1>
 <p><em>~6 min read · <a href="../06-the-second-judge/">06 The second judge</a> → </em><em>07</em><em> → <a href="../08-the-scorecard/">08 The scorecard</a></em></p>
 <hr />
+<div class="admonition info">
+<p class="admonition-title">Which model these figures are from</p>
+<p>The arm labelled "Gemini" on this page is <strong>Gemini 2.5 Flash</strong> — the
+<em>development generation</em>, where the adaptation ladder and the prompt-optimizer
+work were done. It is not what the scorecard recommends deploying.</p>
+<p>The prompts tuned here were then run <strong>unchanged</strong> on the deployment
+generation — Gemini 3.6 Flash, with Gemini 3.5 Flash as a second candidate
+column — and the instruction rules kept working across the generation gap.
+That portability is a finding in its own right: the adaptation work is an
+asset that survives a model upgrade, not a tax you pay again on every new
+model. It is also why both generations appear on this site rather than only
+the newest one — deleting the development generation would delete the
+evidence that the rules transfer.</p>
+<p>Every model, its provider ID, its region and the window its calls were
+recorded in: <a href="../../models-in-this-study/">Models in this study</a>.</p>
+</div>
 <p>A shadow run puts both arms on the same inputs and asks a narrower question than
 the eval does: <strong>where do these two models actually produce different answers, and
 when they differ, who is right?</strong></p>
@@ -1386,8 +1524,8 @@ are from the <strong>candidate's</strong> point of view, and the scores are the 
 judge scores for those exact outputs, replayed — no judge call was made to build
 these tables.</p>
 <div class="amw-compare">
-<div class="amw-compare__card">
-<p class="amw-compare__title">gemini_targeted_v1</p>
+<div class="amw-compare__card amw-compare__card--ships">
+<p class="amw-compare__title">gemini_targeted_v1 <span class="amw-compare__tag amw-compare__tag--ships">Ships</span></p>
 <p class="amw-compare__verdict amw-compare__verdict--pass">Passes the alt clause</p>
 <div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">51</span></div>
 <div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">15W</span><span class="amw-wl amw-wl--loss">3L</span><span class="amw-wl amw-wl--tie">33T</span></span></div>
@@ -1395,8 +1533,8 @@ these tables.</p>
 <div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.643 [0.529, 0.757]</span></div>
 <div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Passes on either figure</span></div>
 </div>
-<div class="amw-compare__card">
-<p class="amw-compare__title">gemini_tuned_v1 — the arm it replaced</p>
+<div class="amw-compare__card amw-compare__card--replaced">
+<p class="amw-compare__title">gemini_tuned_v1 <span class="amw-compare__tag amw-compare__tag--replaced">Replaced — kept as the control</span></p>
 <p class="amw-compare__verdict amw-compare__verdict--fail">Fails the alt clause</p>
 <div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">60</span></div>
 <div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">14W</span><span class="amw-wl amw-wl--loss">20L</span><span class="amw-wl amw-wl--tie">26T</span></span></div>
@@ -1405,12 +1543,18 @@ these tables.</p>
 <div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Fails on either figure</span></div>
 </div>
 </div>
-<p class="amw-legend">15W / 3L / 33T = 15 wins, 3 losses, 33 ties, judged from the new model's point of
-view. Bracketed pairs are the 95% confidence range (CI).</p>
-<p>Both arms have <code>json_schema_validity</code> 1.000 [1.000, 1.000]. Both are Gemini Flash
-on the same corpus. The difference is three prompt rules written from the <em>measured</em>
-loss clusters in the n=70 adjudication — and the adjudication flips from 14W/20L to
-15W/3L.</p>
+<p class="amw-legend">Reading both cards: <strong>15W / 3L / 33T</strong> means 15 wins, 3 losses and 33 ties,
+judged from the new model's point of view — a win is an item where the judge
+scored the Gemini answer above the Claude one. Bracketed pairs are the 95%
+confidence range. The left card is the arm the scorecard ships; the right card is
+the arm it replaced, kept on the page as the control that makes the difference
+readable.</p>
+<p><strong>Same model, same data — three instruction rules written from the measured
+failures moved the adjudication from 14W/20L to 15W/3L.</strong> Both arms have
+<code>json_schema_validity</code> 1.000 [1.000, 1.000] and both are the same Gemini 2.5 Flash
+model on the same corpus. Nothing changed but the prompt, and the rules were not
+guessed: each one was written from a loss cluster counted in the n=70
+adjudication of the arm on the right.</p>
 <div class="admonition note">
 <p class="admonition-title">Why 'excluding structurally malformed baseline emissions' is quoted too</p>
 <p>Under this demo organization's Vertex AI policy configuration
@@ -1463,7 +1607,7 @@ passing gate is not a reason to stop showing the disagreements underneath it.</p
 adjudicated</strong> means no recorded verdict exists for it, and adjudicating it would
 require new judge calls. On the widened n=70 run, <code>not_adjudicated</code> is 0 for all
 three subagents — every disagreement has a recorded verdict behind it.</p>
-<h2 id="latency-and-why-there-is-no-number">Latency, and why there is no number<a class="headerlink" href="#latency-and-why-there-is-no-number" title="Permanent link">&para;</a></h2>
+<h2 id="latency-and-why-this-run-has-no-number">Latency, and why this run has no number<a class="headerlink" href="#latency-and-why-this-run-has-no-number" title="Permanent link">&para;</a></h2>
 <p>The shadow run does capture per-arm latency. It also captures why you cannot use
 it:</p>
 <blockquote>
@@ -1472,8 +1616,17 @@ it:</p>
 p95; the <code>gates.yaml</code> basis for <code>latency_p95</code> asks for same region, same load
 profile.</p>
 </blockquote>
-<p>So <code>latency_p95</code> renders throughout as <strong>not comparable — region split
-disclosed</strong>. Not evaluated, and specifically not passed.</p>
+<p>So on <strong>this</strong> run — the development-generation arms above — <code>latency_p95</code>
+renders as <strong>not comparable — region split disclosed</strong>. Not evaluated, and
+specifically not passed.</p>
+<p>That is a property of how these particular calls were routed, not a permanent
+hole in the method. The deployment candidates were later probed with both arms
+pinned to the same region, which is the only input that can open the gate; the
+probe refuses to record itself at all if the two arms end up in different
+regions. Whether the gate then passes or fails is a separate question, and the
+answer for each subagent is in the scorecard — where a probe exists it is
+evaluated on the confidence-range upper bound like any other ceiling, and where
+none exists the gate stays unevaluated rather than borrowing one.</p>
 <hr />
 <p><strong>Next:</strong> <a href="../08-the-scorecard/">Module 08 — The scorecard</a></p>
 <p><em>Source: <code>artifacts/results/shadow_widened.json</code>, <code>artifacts/results/shadow_qr_targeted.json</code>, <code>artifacts/results/shadow_triage_widened.md</code>, <code>artifacts/results/shadow_triage_qr_targeted.md</code>. Mode <code>replay</code>, similarity metric <code>token_jaccard_lexical_proxy</code>, prose threshold 0.6, bootstrap seed <code>20260812</code>.</em></p>

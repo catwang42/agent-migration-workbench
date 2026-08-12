@@ -270,6 +270,44 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../../models-in-this-study/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Models in this study
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architecture & toolchain
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -434,6 +472,60 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../../models-in-this-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models in this study
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & toolchain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -473,10 +565,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -494,8 +586,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -887,6 +979,8 @@
       
         
       
+        
+      
     
     
     
@@ -900,7 +994,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -922,14 +1016,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -956,6 +1050,34 @@
     
   
     Migration Readiness Scorecard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../results/scorecard_development_generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How we got here — development generation
   
 
     
@@ -1216,6 +1338,22 @@
 <h1 id="module-05-the-adaptation-ladder">Module 05 — The adaptation ladder<a class="headerlink" href="#module-05-the-adaptation-ladder" title="Permanent link">&para;</a></h1>
 <p><em>~7 min read · <a href="../04-the-naive-swap/">04 The naive swap</a> → </em><em>05</em><em> → <a href="../06-the-second-judge/">06 The second judge</a></em></p>
 <hr />
+<div class="admonition info">
+<p class="admonition-title">Which model these figures are from</p>
+<p>The arm labelled "Gemini" on this page is <strong>Gemini 2.5 Flash</strong> — the
+<em>development generation</em>, where the adaptation ladder and the prompt-optimizer
+work were done. It is not what the scorecard recommends deploying.</p>
+<p>The prompts tuned here were then run <strong>unchanged</strong> on the deployment
+generation — Gemini 3.6 Flash, with Gemini 3.5 Flash as a second candidate
+column — and the instruction rules kept working across the generation gap.
+That portability is a finding in its own right: the adaptation work is an
+asset that survives a model upgrade, not a tax you pay again on every new
+model. It is also why both generations appear on this site rather than only
+the newest one — deleting the development generation would delete the
+evidence that the rules transfer.</p>
+<p>Every model, its provider ID, its region and the window its calls were
+recorded in: <a href="../../models-in-this-study/">Models in this study</a>.</p>
+</div>
 <p>"Adapt the prompt" is not one action, so it cannot be one number. The ladder runs
 each adaptation as its own rung against the same corpus, so you can see which
 change bought what — and, on one subagent here, which change <strong>cost</strong> something.</p>
@@ -1247,27 +1385,27 @@ change bought what — and, on one subagent here, which change <strong>cost</str
 <td><code>response_schema</code></td>
 </tr>
 <tr>
-<td><code>A0-schema</code> <em>(FE)</em></td>
+<td><code>A0-schema</code> <em>(Feature Extractor)</em></td>
 <td><strong>Mode only</strong>: A0's prompt, enforced <code>response_schema</code> instead of the tool</td>
 <td><code>response_schema</code></td>
 </tr>
 <tr>
-<td><code>A4-novelty-tool</code> <em>(FE)</em></td>
+<td><code>A4-novelty-tool</code> <em>(Feature Extractor)</em></td>
 <td><strong>Prompt only</strong>: A0 plus the <code>novelty_statement</code> rule (claim 1 is the point of novelty; numeric limits survive) and one worked example</td>
 <td><code>tool</code></td>
 </tr>
 <tr>
-<td><code>A4-novelty-schema</code> <em>(FE)</em></td>
+<td><code>A4-novelty-schema</code> <em>(Feature Extractor)</em></td>
 <td><strong>Both</strong>: the novelty prompt under the enforced <code>response_schema</code></td>
 <td><code>response_schema</code></td>
 </tr>
 <tr>
-<td><code>A4-optimizer</code> <em>(FE)</em></td>
+<td><code>A4-optimizer</code> <em>(Feature Extractor)</em></td>
 <td>Optimizer: a VAIPO-suggested instruction over <code>gemini_naive</code>, read against <code>judge_score</code></td>
 <td><code>tool</code></td>
 </tr>
 <tr>
-<td><code>A4-targeted</code> <em>(QR)</em></td>
+<td><code>A4-targeted</code> <em>(Query Rewriter)</em></td>
 <td>A1-A3 plus three bundled rules for the three measured loss clusters — publication numbers verbatim in <code>query</code>, explicit <code>date_to</code> copied not expanded, landscape vs ownership by which side of the question is unknown (per-rule credit is <strong>not</strong> isolated)</td>
 <td><code>response_schema</code></td>
 </tr>
@@ -1286,10 +1424,10 @@ two corpora, not one number rounded twice. <strong>Never quote one against the
 other.</strong> A rung measured at n=70 and compared to 0.903 is being scored
 against a corpus it did not run on.</p>
 </div>
-<p>Bracketed pairs in every table below are the <strong>95% confidence range</strong> (CI) — the
+<p>Bracketed pairs in every table below are the <strong>95% confidence range</strong> — the
 span the true value is likely to sit in at this sample size. Wide brackets mean a
 small sample, not a shaky measurement.</p>
-<p>The comparison column below is the rung's 95% CI lower bound against the
+<p>The comparison column below is the rung's 95% confidence-range lower bound against the
 incumbent's point estimate <em>on the same split</em>. It is <strong>unpaired</strong>, and it is not
 the <code>quality_delta_pp</code> gate — that gate is a paired bootstrap over per-item
 differences, and it is what the verdict is decided on. This table informs the
@@ -1301,7 +1439,7 @@ selection; it does not make it.</p>
 <tr>
 <th>Rung</th>
 <th>Mode</th>
-<th>Judged score (95% CI)</th>
+<th>Judged score (95% confidence range)</th>
 <th>vs incumbent</th>
 </tr>
 </thead>
@@ -1332,7 +1470,7 @@ selection; it does not make it.</p>
 <tr>
 <th>Rung / arm</th>
 <th>Mode</th>
-<th>Judged score (95% CI)</th>
+<th>Judged score (95% confidence range)</th>
 <th><code>exact_match_intent</code></th>
 <th><code>json_schema_validity</code></th>
 <th>vs incumbent</th>
@@ -1382,7 +1520,7 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
 <tr>
 <th>Rung</th>
 <th>Mode</th>
-<th>Judged score (95% CI)</th>
+<th>Judged score (95% confidence range)</th>
 <th><code>citation_coverage</code></th>
 <th>vs incumbent</th>
 </tr>
@@ -1418,7 +1556,7 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
 <tr>
 <th>Rung</th>
 <th>Mode</th>
-<th>Judged score (95% CI)</th>
+<th>Judged score (95% confidence range)</th>
 <th>vs incumbent</th>
 </tr>
 </thead>

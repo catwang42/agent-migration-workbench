@@ -270,6 +270,44 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../../models-in-this-study/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Models in this study
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architecture & toolchain
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -434,6 +472,60 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../../models-in-this-study/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models in this study
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & toolchain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -473,10 +565,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -494,8 +586,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -859,6 +951,8 @@
       
         
       
+        
+      
     
     
     
@@ -872,7 +966,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -894,14 +988,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -928,6 +1022,34 @@
     
   
     Migration Readiness Scorecard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../results/scorecard_development_generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How we got here — development generation
   
 
     
@@ -1160,6 +1282,22 @@
 <h1 id="module-04-the-naive-swap">Module 04 — The naive swap<a class="headerlink" href="#module-04-the-naive-swap" title="Permanent link">&para;</a></h1>
 <p><em>~5 min read · <a href="../03-gates-as-contract/">03 Gates as contract</a> → </em><em>04</em><em> → <a href="../05-adaptation-ladder/">05 The adaptation ladder</a></em></p>
 <hr />
+<div class="admonition info">
+<p class="admonition-title">Which model these figures are from</p>
+<p>The arm labelled "Gemini" on this page is <strong>Gemini 2.5 Flash</strong> — the
+<em>development generation</em>, where the adaptation ladder and the prompt-optimizer
+work were done. It is not what the scorecard recommends deploying.</p>
+<p>The prompts tuned here were then run <strong>unchanged</strong> on the deployment
+generation — Gemini 3.6 Flash, with Gemini 3.5 Flash as a second candidate
+column — and the instruction rules kept working across the generation gap.
+That portability is a finding in its own right: the adaptation work is an
+asset that survives a model upgrade, not a tax you pay again on every new
+model. It is also why both generations appear on this site rather than only
+the newest one — deleting the development generation would delete the
+evidence that the rules transfer.</p>
+<p>Every model, its provider ID, its region and the window its calls were
+recorded in: <a href="../../models-in-this-study/">Models in this study</a>.</p>
+</div>
 <p>The naive swap is the migration everybody actually tries first: point the same
 prompt bytes at a different endpoint and see what happens. In the ablation ladder
 it is rung <strong>A0</strong> — the customer's production prompt, unmodified, on Gemini,
@@ -1169,7 +1307,7 @@ Claude-vs-A0 delta a statement about <em>prompt format</em> rather than about ou
 plumbing.</p>
 <p>All figures below are n=70 on the full corpus, seed <code>20260812</code>, from
 <code>artifacts/results/phase2_n70_widened.json</code>. Bracketed pairs are the <strong>95%
-confidence range</strong> (CI) — the span the true value is likely to sit in at this
+confidence range</strong> — the span the true value is likely to sit in at this
 sample size. Every call was executed live and recorded.</p>
 <p class="amw-provenance">Recorded 10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM (SGT) · UTC: <code>2026-08-09T16:07:15+00:00</code> → <code>2026-08-11T06:20:37+00:00</code></p>
 <!-- GENERATED by scripts/build_site.py — do not edit by hand. -->

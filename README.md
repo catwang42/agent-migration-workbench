@@ -16,7 +16,6 @@ The scorecard is the deliverable. It applies pre-agreed gates from
 `config/gates.yaml` and returns one of three verdicts per subagent —
 **MIGRATE**, **TUNE_FIRST**, or **HOLD** — with the evidence behind each.
 
-**Delivery deadline: Wed 12 Aug 2026.**
 
 ---
 

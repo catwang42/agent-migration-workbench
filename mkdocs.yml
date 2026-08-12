@@ -22,39 +22,49 @@ edit_uri: ""
 docs_dir: site_src
 site_dir: site
 
+# Theme block ported from catwang42/skill-library-workshop mkdocs.yml: the
+# Inter / JetBrains Mono pair, the slate-default palette with `primary: custom`
+# so the header navy comes from extra.css tokens rather than a stock Material
+# hue, and cyan as the accent. Deviations from the reference are the four
+# navigation.instant/tracking features this site already had and keeps.
 theme:
   name: material
   language: en
   icon:
     repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: JetBrains Mono
   features:
     - navigation.instant
     - navigation.instant.progress
     - navigation.tracking
+    - navigation.tabs
     - navigation.sections
     - navigation.top
     - navigation.footer
+    - navigation.indexes
     - toc.follow
     - search.suggest
     - search.highlight
     - search.share
     - content.code.copy
+    - content.code.annotate
     - content.tabs.link
   palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: indigo
-      accent: indigo
+    # Slate (deep navy) is the default look; the toggle mirrors it in light.
+    - scheme: slate
+      primary: custom
+      accent: cyan
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+    - scheme: default
+      primary: custom
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
 
 extra_css:
   - stylesheets/extra.css
@@ -79,6 +89,13 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  # Required by the ported design: the hero timeline, stat tiles, module cards
+  # and "before you start" notes all render :material-*: icons inline.
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 plugins:
   - search

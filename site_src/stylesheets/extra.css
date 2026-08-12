@@ -1,240 +1,684 @@
-/* Agent Migration Workbench — workshop companion.
-   Layout primitives only: hero, chip strip, stat tiles, cards, draft badge.
-   Everything derives from Material's own tokens so light and dark are one
-   system rather than an automatic flip. */
+/* ==========================================================================
+   Agent Migration Workbench — visual identity
+
+   PORTED, not approximated. Sections 1-12 below are
+   catwang42/skill-library-workshop docs/stylesheets/extra.css, copied verbatim
+   with one systematic change: the `skl-` class/token prefix is renamed `amw-`.
+   Reversing that rename reproduces the reference file byte for byte.
+
+   Section 13 is the only original CSS in this file: the components this repo
+   has and the reference does not -- the provenance line under every stat, the
+   draft badge, and the legacy `amw-card*` classes the module and results pages
+   were already written against.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. Design tokens
+   -------------------------------------------------------------------------- */
 
 :root {
-  --amw-radius: 0.6rem;
-  --amw-border: 0.05rem solid var(--md-default-fg-color--lightest);
+  /* Brand palette (scheme-independent). */
+  --amw-navy: #0b1220;       /* deep base */
+  --amw-surface: #111a2e;    /* raised surface (dark) */
+  --amw-indigo: #4f6df5;     /* primary brand */
+  --amw-indigo-bright: #6a86ff;
+  --amw-cyan: #22d3ee;       /* accent */
+
+  /* Geometry. */
+  --amw-radius: 12px;
+  --amw-radius-sm: 8px;
+  --amw-shadow: 0 1px 2px rgba(11, 18, 32, 0.06),
+                0 6px 20px rgba(11, 18, 32, 0.06);
+  --amw-shadow-hover: 0 2px 6px rgba(11, 18, 32, 0.10),
+                      0 12px 32px rgba(11, 18, 32, 0.12);
 }
 
-/* ---------------------------------------------------------------- hero -- */
+/* Header stays deep navy in BOTH schemes (primary: custom reads these). */
+:root,
+[data-md-color-scheme="slate"],
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--amw-navy);
+  --md-primary-fg-color--light: #1b2740;
+  --md-primary-fg-color--dark: #070c16;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.72);
+  --md-accent-fg-color: var(--amw-cyan);
+}
+
+/* Slate: navy canvas, indigo links, cyan hover. */
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: var(--amw-navy);
+  --md-default-bg-color--light: #0e1626;
+  --md-default-bg-color--lighter: #16223a;
+  --md-typeset-a-color: var(--amw-indigo-bright);
+  --md-accent-fg-color: var(--amw-cyan);
+
+  --amw-page-bg: var(--amw-navy);
+  --amw-card-bg: var(--amw-surface);
+  --amw-card-border: rgba(255, 255, 255, 0.09);
+  --amw-card-border-hover: rgba(34, 211, 238, 0.55);
+  --amw-muted: rgba(226, 232, 240, 0.68);
+  --amw-chip-bg: rgba(79, 109, 245, 0.16);
+  --amw-hero-text: #f4f7ff;
+}
+
+/* Light mirror: pale surfaces, same indigo/cyan, navy header. */
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: #f6f8fc;
+  --md-typeset-a-color: var(--amw-indigo);
+  --md-accent-fg-color: #0891b2; /* darker cyan for AA contrast on white */
+
+  --amw-page-bg: #f6f8fc;
+  --amw-card-bg: #ffffff;
+  --amw-card-border: rgba(11, 18, 32, 0.10);
+  --amw-card-border-hover: rgba(79, 109, 245, 0.55);
+  --amw-muted: rgba(30, 41, 59, 0.66);
+  --amw-chip-bg: rgba(79, 109, 245, 0.10);
+  --amw-hero-text: #f4f7ff;
+}
+
+/* --------------------------------------------------------------------------
+   2. Global polish
+   -------------------------------------------------------------------------- */
+
+.md-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.md-typeset pre > code {
+  border-radius: var(--amw-radius-sm);
+}
+
+/* Reusable card primitive. */
+.amw-card {
+  background: var(--amw-card-bg);
+  border: 1px solid var(--amw-card-border);
+  border-radius: var(--amw-radius);
+  box-shadow: var(--amw-shadow);
+  transition: border-color 140ms ease, box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.amw-card:hover {
+  border-color: var(--amw-card-border-hover);
+  box-shadow: var(--amw-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   3. Hero
+   -------------------------------------------------------------------------- */
 
 .amw-hero {
-  border: var(--amw-border);
+  position: relative;
+  overflow: hidden;
   border-radius: var(--amw-radius);
-  padding: 1.6rem 1.4rem 1.3rem;
-  margin: 0 0 1.6rem;
-  background: var(--md-code-bg-color);
+  margin: 0.4rem 0 2.4rem;
+  padding: 2.6rem 2rem;
+  color: var(--amw-hero-text);
+  /* SVG circuit/grid tile (top) over a navy -> indigo gradient (bottom). */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M0 .5H32M.5 0V32' stroke='%238fb0ff' stroke-opacity='0.10' fill='none'/%3E%3Ccircle cx='.5' cy='.5' r='1.1' fill='%2322d3ee' fill-opacity='0.28'/%3E%3C/svg%3E"),
+    linear-gradient(135deg, #0b1220 0%, #182a63 58%, #3b56d4 120%);
+  background-size: 32px 32px, cover;
 }
 
-.amw-hero__eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: var(--md-default-fg-color--light);
-  margin: 0 0 0.4rem;
+/* Faint glow, not animated. */
+.amw-hero::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.22), transparent 62%);
+  pointer-events: none;
 }
 
-.amw-hero h1,
-.amw-hero__title {
-  font-size: 1.85rem;
-  line-height: 1.15;
-  font-weight: 700;
-  margin: 0 0 0.6rem;
-  color: var(--md-default-fg-color);
+.amw-hero__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 2rem;
+  align-items: center;
 }
 
-.amw-hero__thesis {
-  font-size: 0.86rem;
-  line-height: 1.6;
-  max-width: 42rem;
-  color: var(--md-default-fg-color--light);
-  margin: 0 0 1.1rem;
+.md-typeset .amw-hero h1 {
+  margin: 0 0 0.5rem;
+  color: var(--amw-hero-text);
+  font-weight: 800;
+  font-size: 2.3rem;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.amw-hero__lead {
+  margin: 0 0 1.4rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(244, 247, 255, 0.86);
+  max-width: 34rem;
 }
 
 .amw-hero__cta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.75rem;
 }
 
-/* --------------------------------------------------------- chip strip -- */
-
-.amw-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin: 0 0 1.6rem;
-  padding: 0;
-  list-style: none;
-}
-
-.amw-chips li {
+.md-typeset .amw-hero .md-button {
   margin: 0;
+  border-radius: var(--amw-radius-sm);
+  font-weight: 600;
+  border-width: 1px;
 }
 
-.amw-chip {
+/* Primary button: indigo fill. */
+.md-typeset .amw-hero .md-button--primary {
+  background: var(--amw-indigo);
+  border-color: var(--amw-indigo);
+  color: #ffffff;
+}
+
+.md-typeset .amw-hero .md-button--primary:hover {
+  background: var(--amw-cyan);
+  border-color: var(--amw-cyan);
+  color: #06222a;
+}
+
+/* Secondary button: outline on the dark band. */
+.md-typeset .amw-hero .md-button:not(.md-button--primary) {
+  color: var(--amw-hero-text);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.md-typeset .amw-hero .md-button:not(.md-button--primary):hover {
+  border-color: var(--amw-cyan);
+  color: var(--amw-cyan);
+  background: rgba(34, 211, 238, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   4. Module pipeline (hero right) — vertical stepper connected by a rail
+   -------------------------------------------------------------------------- */
+
+.amw-pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.amw-pipeline__chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+  border-radius: var(--amw-radius-sm);
+  color: var(--amw-hero-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background 140ms ease;
+}
+
+.amw-pipeline__chip:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Numbered badge doubles as the rail node. */
+.amw-pipeline__num {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.4rem;
-  padding: 0.28rem 0.65rem;
-  border: var(--amw-border);
-  border-radius: 2rem;
-  font-size: 0.66rem;
-  line-height: 1.4;
-  color: var(--md-default-fg-color--light);
-  text-decoration: none;
-  transition: border-color 120ms, color 120ms;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: rgba(34, 211, 238, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  font-family: var(--md-code-font-family, monospace);
+  font-size: 0.72rem;
+  color: var(--amw-cyan);
 }
 
-.amw-chip:hover,
-.amw-chip:focus {
-  border-color: var(--md-accent-fg-color);
-  color: var(--md-accent-fg-color);
+/* Vertical rail connecting each node to the next. */
+.amw-pipeline__chip:not(:last-child) .amw-pipeline__num::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: calc(0.5rem + 0.5rem);
+  transform: translateX(-0.5px);
+  background: rgba(34, 211, 238, 0.35);
 }
 
-.amw-chip__num {
-  font-weight: 700;
-  font-size: 0.62rem;
-  color: var(--md-primary-fg-color);
+.amw-pipeline__ic {
+  display: inline-flex;
+  color: var(--amw-cyan);
+  flex: none;
 }
 
-[data-md-color-scheme="slate"] .amw-chip__num {
-  color: var(--md-accent-fg-color);
+.amw-pipeline__chip .twemoji svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: currentColor;
 }
 
-/* --------------------------------------------------------- stat tiles -- */
+/* --------------------------------------------------------------------------
+   5. Stat band
+   -------------------------------------------------------------------------- */
 
 .amw-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-  gap: 0.7rem;
-  margin: 0 0 1.6rem;
-  padding: 0;
-  list-style: none;
-}
-
-.amw-stats li {
-  margin: 0;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 0 0 2.6rem;
 }
 
 .amw-stat {
-  border: var(--amw-border);
-  border-radius: var(--amw-radius);
-  padding: 0.9rem 0.85rem;
-  height: 100%;
+  padding: 1.2rem 1.1rem;
+  text-align: left;
 }
 
-.amw-stat__value {
-  display: block;
-  font-size: 1.6rem;
-  font-weight: 600;
-  line-height: 1.1;
+.amw-stat__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: var(--amw-radius-sm);
+  background: var(--amw-chip-bg);
+  color: var(--amw-indigo);
+  margin-bottom: 0.7rem;
+}
+
+.amw-stat__icon .twemoji svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentColor;
+}
+
+.amw-stat__num {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
   color: var(--md-default-fg-color);
-  /* Proportional figures: tabular-nums makes a display-size number read loose.
-     Tabular is for columns that must align, not for a standalone value. */
-  font-variant-numeric: proportional-nums;
 }
 
 .amw-stat__label {
-  display: block;
-  margin-top: 0.3rem;
-  font-size: 0.68rem;
-  line-height: 1.4;
-  color: var(--md-default-fg-color--light);
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--amw-muted);
 }
 
+/* --------------------------------------------------------------------------
+   6. Section headings on the landing page
+   -------------------------------------------------------------------------- */
+
+.md-typeset .amw-section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.3rem;
+}
+
+.amw-section-sub {
+  margin: 0 0 1.3rem;
+  color: var(--amw-muted);
+}
+
+/* --------------------------------------------------------------------------
+   7. Differentiators band (the four moats)
+   -------------------------------------------------------------------------- */
+
+.amw-diffs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 0 0 2.6rem;
+}
+
+.amw-diff {
+  padding: 1.2rem 1.2rem 1.1rem;
+  border-left: 3px solid var(--amw-indigo);
+}
+
+.md-typeset .amw-diff h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.amw-diff p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--amw-muted);
+}
+
+/* --------------------------------------------------------------------------
+   8. Module cards
+   -------------------------------------------------------------------------- */
+
+.amw-modules {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 0 0 2.6rem;
+}
+
+.amw-module {
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem 1.3rem 1rem;
+}
+
+.amw-module__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.amw-module__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--amw-radius-sm);
+  background: var(--amw-chip-bg);
+  color: var(--amw-indigo);
+  flex: none;
+}
+
+.amw-module__icon .twemoji svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: currentColor;
+}
+
+.md-typeset .amw-module__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.amw-module__desc {
+  flex: 1 1 auto;
+  margin: 0 0 1rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--amw-muted);
+}
+
+.amw-module__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+}
+
+.amw-module__time {
+  color: var(--amw-muted);
+}
+
+.md-typeset .amw-module__link {
+  font-weight: 600;
+}
+
+/* Core / moat badge (module 05). */
+.amw-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #06222a;
+  background: var(--amw-cyan);
+}
+
+.amw-module--core {
+  border-color: var(--amw-card-border-hover);
+}
+
+/* --------------------------------------------------------------------------
+   9. "Before you start" callouts
+   -------------------------------------------------------------------------- */
+
+.amw-notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 0 0 2rem;
+}
+
+.amw-note {
+  padding: 1.1rem 1.2rem;
+  border-left: 3px solid var(--amw-cyan);
+}
+
+.amw-note__head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.amw-note__head .twemoji svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: var(--amw-cyan);
+}
+
+.amw-note p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--amw-muted);
+}
+
+/* --------------------------------------------------------------------------
+   10. Admonitions + tables, themed to the palette (both schemes)
+   -------------------------------------------------------------------------- */
+
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: var(--amw-radius-sm);
+  border-left-width: 3px;
+  box-shadow: var(--amw-shadow);
+}
+
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  border-left-color: var(--amw-indigo);
+}
+
+.md-typeset table:not([class]) {
+  border-radius: var(--amw-radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--amw-card-border);
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--amw-chip-bg);
+  color: var(--md-default-fg-color);
+  font-weight: 700;
+}
+
+/* Schedule table (facilitator guide): tight rows, fixed time column. */
+.md-typeset table.amw-schedule {
+  font-size: 0.85rem;
+}
+
+.md-typeset table.amw-schedule th,
+.md-typeset table.amw-schedule td {
+  padding: 0.35rem 0.7rem;
+}
+
+.md-typeset table.amw-schedule td:first-child,
+.md-typeset table.amw-schedule th:first-child {
+  width: 6.5rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--amw-indigo);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   11. Content-page grids (module/exercise pages reuse the card look)
+   -------------------------------------------------------------------------- */
+
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid > .card {
+  border-radius: var(--amw-radius);
+  border-color: var(--amw-card-border);
+  transition: border-color 140ms ease, box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.md-typeset .grid.cards > ul > li:hover {
+  border-color: var(--amw-card-border-hover);
+  box-shadow: var(--amw-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   12. Responsive — collapse grids, scroll the pipeline
+   -------------------------------------------------------------------------- */
+
+@media screen and (max-width: 76.1875em) {
+  .amw-hero__grid {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+}
+
+@media screen and (max-width: 44.9375em) {
+  .amw-hero {
+    padding: 1.8rem 1.2rem;
+  }
+
+  .md-typeset .amw-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .amw-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .amw-diffs,
+  .amw-modules,
+  .amw-notes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. Workbench-only components (not in the reference)
+   -------------------------------------------------------------------------- */
+
+/* Five stats, not the reference's four. */
+.amw-stats--5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* Every stat cites where it came from. Ground rule 2: a number on a
+   customer-facing surface says what produced it, on the surface itself. */
 .amw-stat__source {
   display: block;
-  margin-top: 0.35rem;
-  font-size: 0.58rem;
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
   line-height: 1.4;
-  color: var(--md-default-fg-color--lighter);
+  color: var(--amw-muted);
+  opacity: 0.85;
 }
 
 .amw-stat__source code {
-  font-size: 0.9em;
-  background: transparent;
-  padding: 0;
-  color: inherit;
+  font-size: 0.92em;
 }
 
-/* -------------------------------------------------------------- cards -- */
+/* Draft badge. Sits on any page whose figures come from the pre-freeze run;
+   the post-freeze refresh removes it. Amber rather than the brand palette,
+   because it is a warning and must not read as decoration. */
+.amw-draft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(217, 119, 6, 0.45);
+  background: rgba(217, 119, 6, 0.12);
+  color: #b45309;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
 
+[data-md-color-scheme="slate"] .amw-draft {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: rgba(251, 191, 36, 0.12);
+  color: #fbbf24;
+}
+
+/* Legacy card classes. The module and results pages were written against
+   these before the restyle; they are aliased onto the ported primitives
+   rather than rewritten, so the port touched one page (index) instead of
+   nineteen. */
 .amw-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: 0.8rem;
-  margin: 0 0 1.6rem;
-  padding: 0;
-  list-style: none;
-}
-
-.amw-cards li {
-  margin: 0;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 0 0 2.6rem;
 }
 
 .amw-card {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  border: var(--amw-border);
-  border-radius: var(--amw-radius);
-  padding: 1rem 0.95rem;
+  padding: 1.3rem 1.3rem 1rem;
 }
 
-.amw-card h3,
-.amw-card__title {
-  margin: 0 0 0.4rem;
-  font-size: 0.82rem;
+.md-typeset .amw-card__title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
   font-weight: 700;
-  line-height: 1.35;
-  color: var(--md-default-fg-color);
-}
-
-.amw-card p {
-  margin: 0 0 0.6rem;
-  font-size: 0.72rem;
-  line-height: 1.6;
-  color: var(--md-default-fg-color--light);
 }
 
 .amw-card__meta {
-  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.6rem;
-  padding-top: 0.5rem;
+  margin-top: auto;
+  font-size: 0.78rem;
 }
 
 .amw-card__readtime {
-  font-size: 0.62rem;
-  color: var(--md-default-fg-color--lighter);
-  white-space: nowrap;
+  color: var(--amw-muted);
 }
 
-.amw-card .md-button {
-  padding: 0.2rem 0.7rem;
-  font-size: 0.66rem;
+@media screen and (max-width: 76.1875em) {
+  .amw-stats--5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-/* ------------------------------------------------------- draft badge -- */
-
-.amw-draft {
-  display: inline-block;
-  padding: 0.1rem 0.5rem;
-  border-radius: 2rem;
-  border: 0.05rem solid var(--md-typeset-mark-color, #ffd54f);
-  background: var(--md-typeset-mark-color, #fff3c4);
-  color: #5f4b00;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  vertical-align: middle;
-}
-
-[data-md-color-scheme="slate"] .amw-draft {
-  background: transparent;
-  color: #ffd54f;
-  border-color: #ffd54f;
-}
-
-/* Em-dash cost cells and "not measured" cells should not read as a number. */
-.amw-nomeasure {
-  color: var(--md-default-fg-color--lighter);
-  font-style: italic;
+@media screen and (max-width: 44.9375em) {
+  .amw-stats--5,
+  .amw-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

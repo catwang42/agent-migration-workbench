@@ -1,0 +1,80 @@
+[2026-08-12T03:51:19+00:00] === PHASE 1/3  live generations on gemini-flash-current, n=70 ===
+[2026-08-12T03:51:19+00:00]   query_rewriter: A0-current, ship-current
+[2026-08-12T04:00:07+00:00]   chunk_summarizer: A0-current, ship-current
+[2026-08-12T04:12:44+00:00]   feature_extractor: A0-current, ship-current
+[2026-08-12T04:28:22+00:00] generations recorded.
+[2026-08-12T04:28:22+00:00] === PHASE 2/3  judge the recorded generations (gated judge, k=2) ===
+[2026-08-12T04:28:22+00:00]   judge = gemini-pro (unchanged; registered before results)
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 0 replayed
+  ... 75 live judge calls, 0 replayed
+  ... 100 live judge calls, 0 replayed
+  ... 125 live judge calls, 0 replayed
+  ... 150 live judge calls, 0 replayed
+  ... 175 live judge calls, 0 replayed
+  ... 200 live judge calls, 0 replayed
+  ... 225 live judge calls, 0 replayed
+  ... 250 live judge calls, 0 replayed
+  ... 275 live judge calls, 0 replayed
+[2026-08-12T05:09:12+00:00] --- query_rewriter ---
+A0-current           gemini_naive               tool             gemini-flash-current
+    Generation only: A0's prompt bytes, unchanged, on the current-generation model
+    calls 70/70 ok
+    judge_score[all]             0.904  95% CI [0.871, 0.936]  n=70
+ship-current         gemini_targeted_v1         response_schema  gemini-flash-current
+    Generation only: the shipping arm's prompt bytes, unchanged, on the current-generation model
+    calls 70/70 ok
+    judge_score[all]             0.964  95% CI [0.939, 0.986]  n=70
+[2026-08-12T05:09:12+00:00]   judge calls: 280 live, 0 from recordings
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 0 replayed
+  ... 75 live judge calls, 0 replayed
+  ... 100 live judge calls, 0 replayed
+  ... 125 live judge calls, 0 replayed
+  ... 150 live judge calls, 0 replayed
+  ... 175 live judge calls, 0 replayed
+  ... 200 live judge calls, 0 replayed
+  ... 225 live judge calls, 0 replayed
+  ... 250 live judge calls, 0 replayed
+  ... 275 live judge calls, 0 replayed
+[2026-08-12T06:10:33+00:00] --- chunk_summarizer ---
+A0-current           gemini_naive               tool             gemini-flash-current
+    Generation only: A0's prompt bytes, unchanged, on the current-generation model
+    calls 70/70 ok
+    judge_score[all]             0.902  95% CI [0.864, 0.936]  n=70
+ship-current         gemini_tuned_v1            response_schema  gemini-flash-current
+    Generation only: the shipping arm's prompt bytes, unchanged, on the current-generation model
+    calls 70/70 ok
+    judge_score[all]             0.902  95% CI [0.866, 0.936]  n=70
+[2026-08-12T06:10:33+00:00]   judge calls: 280 live, 0 from recordings
+  ... 25 live judge calls, 14 replayed
+  ... 50 live judge calls, 26 replayed
+  ... 75 live judge calls, 38 replayed
+  ... 100 live judge calls, 48 replayed
+  ... 125 live judge calls, 54 replayed
+  ... 150 live judge calls, 60 replayed
+  ... 175 live judge calls, 62 replayed
+  ... 200 live judge calls, 68 replayed
+[2026-08-12T07:04:37+00:00] --- feature_extractor ---
+A0-current           gemini_naive               tool             gemini-flash-current
+    Generation only: A0's prompt bytes, unchanged, on the current-generation model
+    calls 70/70 ok
+    judge_score[all]             0.827  95% CI [0.790, 0.861]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           0.997  95% CI [0.991, 1.000]  n=68
+ship-current         gemini_optimizer_v1        tool             gemini-flash-current
+    Generation only: the shipping arm's prompt bytes, unchanged, on the current-generation model
+    calls 70/70 ok
+    judge_score[all]             0.950  95% CI [0.926, 0.970]  n=70
+    hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+    answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T07:04:37+00:00]   judge calls: 208 live, 72 from recordings
+[2026-08-12T07:04:37+00:00] === PHASE 3/3  shadow adjudication vs claude_baseline ===
+[2026-08-12T07:04:37+00:00]   query_rewriter: gemini_targeted_v1 on gemini-flash-current vs claude_baseline
+[2026-08-12T07:04:38+00:00]     judge calls: 0 live, 88 from recordings (0 live = phase 2's verdicts covered the adjudication)
+Traceback (most recent call last):
+  File "/home/catwangzz_google_com/agent-migration-workbench/scripts/measure_current_gen.py", line 204, in main
+    phase3(cfg)
+  File "/home/catwangzz_google_com/agent-migration-workbench/scripts/measure_current_gen.py", line 181, in phase3
+    f"    agreement {sub.agreement.agreement:.3f} "
+TypeError: unsupported format string passed to Estimate.__format__

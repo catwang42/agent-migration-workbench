@@ -2681,6 +2681,518 @@
           }
         }
       }
+    },
+    {
+      "rung": "A0-current",
+      "label": "Generation only: A0's prompt bytes, unchanged, on the current-generation model",
+      "variant": "gemini_naive",
+      "output_mode": "tool",
+      "model": "gemini-flash-current",
+      "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+      "branches_from": "A0",
+      "status": "measured",
+      "unmeasured_reason": null,
+      "judged_n": 70,
+      "judged_split": "all",
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 70,
+        "split": "all",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-flash-current": "replay via replay",
+          "gemini-pro": "replay via replay",
+          "gemini-pro-current": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": "2026-08-12T04:12:54+00:00",
+        "recorded_to": "2026-08-12T04:21:09+00:00",
+        "written_at": "2026-08-12T06:35:02+00:00"
+      },
+      "arm": {
+        "subagent": "feature_extractor",
+        "variant": "gemini_naive",
+        "model": "gemini-flash-current",
+        "output_mode": "tool",
+        "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+        "items": 70,
+        "calls_ok": 70,
+        "calls_error": 0,
+        "error_kinds": {},
+        "metrics": {
+          "answered_precision": {
+            "metric": "answered_precision",
+            "point": 0.9970588235294118,
+            "estimate": {
+              "metric": "answered_precision",
+              "point": 0.9970588235294118,
+              "lo": 0.9911764705882352,
+              "hi": 1.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          },
+          "extraction_accuracy": {
+            "metric": "extraction_accuracy",
+            "point": 0.9976190476190475,
+            "estimate": {
+              "metric": "extraction_accuracy",
+              "point": 0.9976190476190477,
+              "lo": 0.9928571428571429,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "hallucination_rate": {
+            "metric": "hallucination_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 33,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 33,
+            "n_excluded": 37,
+            "excluded": {
+              "not_applicable": 37
+            }
+          },
+          "json_schema_validity": {
+            "metric": "json_schema_validity",
+            "point": 1.0,
+            "estimate": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "omission_rate": {
+            "metric": "omission_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "omission_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          }
+        },
+        "judge": {
+          "point": 0.8272789115646256,
+          "estimate": {
+            "metric": "judge_score",
+            "point": 0.8272789115646256,
+            "lo": 0.7896598639455783,
+            "hi": 0.8610884353741497,
+            "n": 70,
+            "unit": "fraction",
+            "confidence": 0.95,
+            "resamples": 10000,
+            "seed": 20260812,
+            "method": "percentile_bootstrap",
+            "paired_n": null,
+            "dropped_unpaired": 0
+          },
+          "split": "all",
+          "items_scored": 70,
+          "expected_repeats": 2,
+          "failed_repeats": 0,
+          "items_short_of_k": [],
+          "dropped_items": [],
+          "mean_within_item_sd": 0.02597535114562827,
+          "full_agreement_rate": 0.7714285714285715,
+          "failure_clusters": {
+            "date_normalised": [
+              "fe-0022"
+            ],
+            "novelty_from_fragment": [
+              "fe-0019",
+              "fe-0040"
+            ],
+            "novelty_statement_correct": [
+              "fe-0000",
+              "fe-0002",
+              "fe-0003",
+              "fe-0004",
+              "fe-0006",
+              "fe-0008",
+              "fe-0009",
+              "fe-0010",
+              "fe-0012",
+              "fe-0013",
+              "fe-0014",
+              "fe-0016",
+              "fe-0018",
+              "fe-0019",
+              "fe-0020",
+              "fe-0023",
+              "fe-0024",
+              "fe-0027",
+              "fe-0028",
+              "fe-0031",
+              "fe-0032",
+              "fe-0034",
+              "fe-0037",
+              "fe-0038",
+              "fe-0040",
+              "fe-0043",
+              "fe-0044",
+              "fe-0046",
+              "fe-0050",
+              "fe-0051",
+              "fe-0053",
+              "fe-0055",
+              "fe-0056",
+              "fe-0058",
+              "fe-0060",
+              "fe-0061",
+              "fe-0063",
+              "fe-0067"
+            ],
+            "technical_field_correct": [
+              "fe-0000",
+              "fe-0002",
+              "fe-0003",
+              "fe-0004",
+              "fe-0005",
+              "fe-0006",
+              "fe-0009",
+              "fe-0010",
+              "fe-0014",
+              "fe-0015",
+              "fe-0016",
+              "fe-0020",
+              "fe-0025",
+              "fe-0031",
+              "fe-0033",
+              "fe-0034",
+              "fe-0035",
+              "fe-0036",
+              "fe-0038",
+              "fe-0040",
+              "fe-0041",
+              "fe-0043",
+              "fe-0044",
+              "fe-0048",
+              "fe-0053",
+              "fe-0054",
+              "fe-0057",
+              "fe-0058",
+              "fe-0059",
+              "fe-0060",
+              "fe-0061",
+              "fe-0063",
+              "fe-0064",
+              "fe-0065"
+            ],
+            "technical_field_inferred": [
+              "fe-0006",
+              "fe-0031",
+              "fe-0041",
+              "fe-0048",
+              "fe-0053",
+              "fe-0058",
+              "fe-0060",
+              "fe-0065"
+            ],
+            "technical_field_still_extracted": [
+              "fe-0019",
+              "fe-0040"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "rung": "ship-current",
+      "label": "Generation only: the shipping arm's prompt bytes, unchanged, on the current-generation model",
+      "variant": "gemini_optimizer_v1",
+      "output_mode": "tool",
+      "model": "gemini-flash-current",
+      "prompt_sha": "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf",
+      "branches_from": null,
+      "status": "measured",
+      "unmeasured_reason": null,
+      "judged_n": 70,
+      "judged_split": "all",
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 70,
+        "split": "all",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-flash-current": "replay via replay",
+          "gemini-pro": "replay via replay",
+          "gemini-pro-current": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": "2026-08-12T04:21:16+00:00",
+        "recorded_to": "2026-08-12T04:28:21+00:00",
+        "written_at": "2026-08-12T07:04:37+00:00"
+      },
+      "arm": {
+        "subagent": "feature_extractor",
+        "variant": "gemini_optimizer_v1",
+        "model": "gemini-flash-current",
+        "output_mode": "tool",
+        "prompt_sha": "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf",
+        "items": 70,
+        "calls_ok": 70,
+        "calls_error": 0,
+        "error_kinds": {},
+        "metrics": {
+          "answered_precision": {
+            "metric": "answered_precision",
+            "point": 1.0,
+            "estimate": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          },
+          "extraction_accuracy": {
+            "metric": "extraction_accuracy",
+            "point": 0.9952380952380951,
+            "estimate": {
+              "metric": "extraction_accuracy",
+              "point": 0.9952380952380953,
+              "lo": 0.9880952380952379,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "hallucination_rate": {
+            "metric": "hallucination_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 33,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 33,
+            "n_excluded": 37,
+            "excluded": {
+              "not_applicable": 37
+            }
+          },
+          "json_schema_validity": {
+            "metric": "json_schema_validity",
+            "point": 1.0,
+            "estimate": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "omission_rate": {
+            "metric": "omission_rate",
+            "point": 0.004901960784313725,
+            "estimate": {
+              "metric": "omission_rate",
+              "point": 0.004901960784313725,
+              "lo": 0.0,
+              "hi": 0.012254901960784312,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          }
+        },
+        "judge": {
+          "point": 0.9499999999999998,
+          "estimate": {
+            "metric": "judge_score",
+            "point": 0.95,
+            "lo": 0.9261904761904763,
+            "hi": 0.9702380952380953,
+            "n": 70,
+            "unit": "fraction",
+            "confidence": 0.95,
+            "resamples": 10000,
+            "seed": 20260812,
+            "method": "percentile_bootstrap",
+            "paired_n": null,
+            "dropped_unpaired": 0
+          },
+          "split": "all",
+          "items_scored": 70,
+          "expected_repeats": 2,
+          "failed_repeats": 0,
+          "items_short_of_k": [],
+          "dropped_items": [],
+          "mean_within_item_sd": 0.0067343502970147375,
+          "full_agreement_rate": 0.9428571428571428,
+          "failure_clusters": {
+            "novelty_from_fragment": [
+              "fe-0019",
+              "fe-0040"
+            ],
+            "novelty_statement_correct": [
+              "fe-0001",
+              "fe-0008",
+              "fe-0013",
+              "fe-0015",
+              "fe-0018",
+              "fe-0019",
+              "fe-0022",
+              "fe-0024",
+              "fe-0030",
+              "fe-0040",
+              "fe-0046",
+              "fe-0050",
+              "fe-0055",
+              "fe-0064",
+              "fe-0068",
+              "fe-0069"
+            ],
+            "technical_field_correct": [
+              "fe-0041",
+              "fe-0049",
+              "fe-0055"
+            ],
+            "technical_field_inferred": [
+              "fe-0041"
+            ],
+            "technical_field_still_extracted": [
+              "fe-0019"
+            ]
+          }
+        }
+      }
     }
   ],
   "notes": [

@@ -1,0 +1,8 @@
+FAILED started=2026-08-12T03:51:19+00:00 failed=2026-08-12T07:04:38+00:00
+
+Traceback (most recent call last):
+  File "/home/catwangzz_google_com/agent-migration-workbench/scripts/measure_current_gen.py", line 204, in main
+    phase3(cfg)
+  File "/home/catwangzz_google_com/agent-migration-workbench/scripts/measure_current_gen.py", line 181, in phase3
+    f"    agreement {sub.agreement.agreement:.3f} "
+TypeError: unsupported format string passed to Estimate.__format__

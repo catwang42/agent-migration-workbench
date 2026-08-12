@@ -213,6 +213,17 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     shadow.add_argument(
+        "--candidate-model",
+        default=None,
+        help=(
+            "run the candidate arm on this logical model key from "
+            "config/models.yaml instead of the one its role resolves to. How "
+            "the same shipping prompt is adjudicated on a second model "
+            "generation without inventing a second variant; the key is written "
+            "into the artifact"
+        ),
+    )
+    shadow.add_argument(
         "--live-slice",
         type=int,
         default=0,

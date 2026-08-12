@@ -376,6 +376,11 @@ class ShadowResult(_Strict):
     judge_repeats: int
     baseline_arm: str
     candidate_arm: str
+    #: Set when the candidate arm was run on a model other than the one its
+    #: role resolves to — the current-generation adjudication runs the same
+    #: shipping prompt on a newer model. None means "the role's model", which
+    #: is what every artifact recorded before the two-generation split says.
+    candidate_model_override: str | None = None
     similarity_metric: str = LEXICAL_SIMILARITY_NAME
     prose_threshold: float = DEFAULT_PROSE_THRESHOLD
     live_slice: int = 0
@@ -465,10 +470,24 @@ def _run_arm(
     *,
     router: AdapterRouter,
     models: ModelsConfig,
+    model: str | None = None,
 ) -> tuple[str, list[Trace]]:
-    """One arm over ``items``. Sequential — see the module docstring on asyncio."""
+    """One arm over ``items``. Sequential — see the module docstring on asyncio.
+
+    ``model`` overrides the model the arm's role resolves to, which is what
+    lets the same candidate prompt be adjudicated on a second model generation
+    without inventing a second variant. The resolved key is returned and ends
+    up in the artifact, so a run and its model stay attached to each other.
+    """
     requests = [
-        build_request(subagent, arm, prompt_view(item), models=models, item_id=item.item_id)
+        build_request(
+            subagent,
+            arm,
+            prompt_view(item),
+            models=models,
+            item_id=item.item_id,
+            model=model,
+        )
         for item in items
     ]
     traces = router.complete_many(requests)
@@ -484,6 +503,7 @@ def run_shadow(
     subagents: Sequence[str] | None = None,
     baseline_arm: str = DEFAULT_BASELINE_ARM,
     candidate_arm: str = DEFAULT_CANDIDATE_ARM,
+    candidate_model: str | None = None,
     n: int | None = None,
     live_slice: int = 0,
     dataset_dir: str | Path | None = None,
@@ -535,6 +555,11 @@ def run_shadow(
         raise ConfigError(
             f"baseline and candidate are both {baseline_arm!r}; a shadow run "
             "compares two backends"
+        )
+    if candidate_model is not None and candidate_model not in cfg.models.models:
+        raise ConfigError(
+            f"unknown candidate model {candidate_model!r}; config/models.yaml "
+            f"declares {list(cfg.models.models)}"
         )
     if live_slice < 0:
         raise ConfigError("--live-slice must be >= 0")
@@ -619,6 +644,7 @@ def run_shadow(
         judge_repeats=repeats,
         baseline_arm=baseline_arm,
         candidate_arm=candidate_arm,
+        candidate_model_override=candidate_model,
         prose_threshold=prose_threshold,
         live_slice=live_slice,
         adapters=router.describe(),
@@ -649,6 +675,7 @@ def run_shadow(
                 repeats=repeats,
                 baseline_arm=baseline_arm,
                 candidate_arm=candidate_arm,
+                candidate_model_key=candidate_model,
                 seed=seed,
                 split=splits.get(subagent, "core"),
                 prose_similarity=prose_similarity,
@@ -693,6 +720,7 @@ def _shadow_one(
     repeats: int,
     baseline_arm: str,
     candidate_arm: str,
+    candidate_model_key: str | None,
     seed: int,
     split: str,
     prose_similarity: SimilarityFn,
@@ -703,7 +731,12 @@ def _shadow_one(
         subagent, baseline_arm, items, router=router, models=cfg.models
     )
     candidate_model, candidate_traces = _run_arm(
-        subagent, candidate_arm, items, router=router, models=cfg.models
+        subagent,
+        candidate_arm,
+        items,
+        router=router,
+        models=cfg.models,
+        model=candidate_model_key,
     )
 
     baseline_region, baseline_source = arm_region(
@@ -871,6 +904,7 @@ def cmd_shadow(args, cfg) -> int:
             subagents=subagents,
             baseline_arm=opt("baseline_arm") or DEFAULT_BASELINE_ARM,
             candidate_arm=opt("candidate_arm") or DEFAULT_CANDIDATE_ARM,
+            candidate_model=opt("candidate_model"),
             live_slice=opt("live_slice") or 0,
             dataset_dir=opt("dataset_dir"),
             out_path=opt("out"),

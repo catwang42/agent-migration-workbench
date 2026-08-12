@@ -41,6 +41,11 @@ is no prompt text in this file. ``tests/test_adk_app.py::test_instruction_is_the
 perturbs the pack in memory and asserts the instruction moves with it, so a
 copy that merely happens to match today cannot pass.
 
+*Which* pack is :data:`SHIPPING_VARIANTS` — one arm per subagent, the arms the
+scorecard reports. Same-file identity is not enough on its own: loading the
+right file from the wrong arm would still show the customer a prompt no gate
+was evaluated against.
+
 The user turn is rendered through the same pack too, and encoded the way
 ``amw/adapters/gemini.py`` encodes it (one user ``Content`` of chunk parts,
 then one user ``Content`` of message parts, no glue text). That is what
@@ -97,6 +102,8 @@ __all__ = [
     "ROOT_TAXONOMY",
     "ROOT_NAME",
     "DEMO_VARIANT",
+    "SHIPPING_VARIANTS",
+    "variant_for",
     "SAMPLE_QUERIES",
     "DelegationStep",
     "DelegationTrace",
@@ -142,9 +149,48 @@ RETRIEVAL_TAXONOMY = "retrieval-augmented"
 
 ROOT_NAME = "root_orchestrator"
 
-#: The demo runs the tuned Gemini arm — the arm a migration would actually
-#: ship. Overridable so the workshop can show A0 next to it if asked.
+#: The arm each subagent actually ships, per the 2026-08-11 selection ruling.
+#: The demo loads *these* prompts, one per subagent, so the thing on screen is
+#: the thing the scorecard measured.
+#:
+#: It used to be a single variant for all three, back when all three shipped
+#: the same rung. They no longer do: Feature Extractor ships the promoted
+#: optimizer instruction and Query Rewriter ships the targeted rung. Leaving
+#: the demo on ``gemini_tuned_v1`` would have put two prompts on screen that
+#: no gate was evaluated against — the exact drift this module's
+#: single-source-of-truth mechanism exists to prevent, just one level up.
+#:
+#: ``tests/test_adk_app.py`` pins each entry against the arm named in the
+#: scorecard, so a re-selection that forgets the demo fails there.
+SHIPPING_VARIANTS: dict[str, str] = {
+    "query_rewriter": "gemini_targeted_v1",
+    "chunk_summarizer": "gemini_tuned_v1",
+    "feature_extractor": "gemini_optimizer_v1",
+}
+
+#: What ``--variant`` falls back to when the workshop pins one arm across all
+#: three — used to show A0 beside the shipping arms if asked. Not the default:
+#: passing no ``--variant`` gets :data:`SHIPPING_VARIANTS`, per subagent.
 DEMO_VARIANT = "gemini_tuned_v1"
+
+
+def variant_for(subagent: str, variant: str | None = None) -> str:
+    """Which pack this subagent loads: the explicit override, or its shipping arm.
+
+    One function so the per-subagent default is resolved in exactly one place
+    (the same discipline ``adapters/__init__.py`` applies to modes). ``None``
+    means "whatever ships", which is the answer everywhere except a workshop
+    A/B where the operator names one arm for all three.
+    """
+    if variant is not None:
+        return variant
+    try:
+        return SHIPPING_VARIANTS[subagent]
+    except KeyError:
+        raise KeyError(
+            f"no shipping arm declared for {subagent!r}; SHIPPING_VARIANTS "
+            f"covers {sorted(SHIPPING_VARIANTS)}"
+        ) from None
 
 #: The two queries the DoD requires a live run of. Patents-domain, and shaped
 #: to exercise both the summarizer path (needs chunks) and the extractor path.
@@ -200,7 +246,7 @@ def _require_adk() -> None:
 # --------------------------------------------------------------------------
 
 
-def instruction_for(subagent: str, variant: str = DEMO_VARIANT) -> str:
+def instruction_for(subagent: str, variant: str | None = None) -> str:
     """The ADK ``instruction`` for ``subagent`` — read off disk, every call.
 
     This is the whole single-source-of-truth mechanism, and it is deliberately
@@ -208,11 +254,14 @@ def instruction_for(subagent: str, variant: str = DEMO_VARIANT) -> str:
     ``amw/agents/prompts/{subagent}/{variant}.txt``'s ``=== system ===``
     section, byte for byte. Nothing rewrites, wraps, or reformats it, so there
     is no place for a copy to hide and drift.
+
+    ``variant=None`` loads the subagent's shipping arm — see
+    :func:`variant_for`.
     """
-    return load_pack(subagent, variant).system
+    return load_pack(subagent, variant_for(subagent, variant)).system
 
 
-def resolve_demo_model(variant: str = DEMO_VARIANT, cfg: "AppConfig | None" = None) -> str:
+def resolve_demo_model(variant: str | None = None, cfg: "AppConfig | None" = None) -> str:
     """Provider model ID for the demo, from ``config/models.yaml``.
 
     No model ID literal appears in this module (CLAUDE.md conventions): the
@@ -220,17 +269,30 @@ def resolve_demo_model(variant: str = DEMO_VARIANT, cfg: "AppConfig | None" = No
     access path names the ID. Non-Google providers are refused here rather
     than failing obscurely inside ADK — the constraint is "Gemini backend
     only", so it should read as a constraint.
+
+    With no explicit variant the three shipping arms are resolved together and
+    required to agree. They do today — all three are ``gemini_candidate`` — but
+    the root and its three leaves share one ``model``, so an arm that moved to
+    a different role would silently run on the wrong one. Better to say so.
     """
     from amw.adapters.gemini import ACCESS_PATH
     from amw.config import ConfigError, load_all
 
     if cfg is None:
         cfg = load_all()
-    key = resolve_model(variant, cfg.models)
+    wanted = [variant] if variant is not None else sorted(set(SHIPPING_VARIANTS.values()))
+    roles = {v: resolve_model(v, cfg.models) for v in wanted}
+    if len(set(roles.values())) > 1:
+        raise ConfigError(
+            f"the demo runs one model for the root and all three leaves, but "
+            f"the shipping arms resolve to different models: {roles}. Pin one "
+            f"with --variant, or reconcile config/models.yaml."
+        )
+    key = next(iter(roles.values()))
     spec = cfg.models.spec(key)
     if spec.provider != "google":
         raise ConfigError(
-            f"the ADK reference app is Gemini-only, but variant {variant!r} "
+            f"the ADK reference app is Gemini-only, but {wanted!r} "
             f"resolves to {key!r} (provider {spec.provider!r}). The incumbent is "
             f"measured through the adapter harness, not re-implemented here."
         )
@@ -538,16 +600,22 @@ def _on_tool_end(trace: DelegationTrace):
     return callback
 
 
-def build_subagent(subagent: str, *, model: str, variant: str, trace: DelegationTrace):
+def build_subagent(
+    subagent: str, *, model: str, variant: str | None = None, trace: DelegationTrace
+):
     """One evaluated subagent as an ADK ``Agent``.
 
     Instruction from the prompt pack, output schema from
     ``amw/agents/schemas.py``. Those two files are the contract the bench
     measures; this function is a wiring adapter over them and owns neither.
+
+    ``variant=None`` loads this subagent's shipping arm, which is not the same
+    arm for all three — see :data:`SHIPPING_VARIANTS`.
     """
     _require_adk()
     from google.adk.agents import Agent
 
+    variant = variant_for(subagent, variant)
     pack = load_pack(subagent, variant)
     return Agent(
         name=subagent,
@@ -606,7 +674,7 @@ failed and stop — do not invent its output.
 
 
 def build_root_agent(
-    *, model: str, variant: str = DEMO_VARIANT, trace: DelegationTrace | None = None
+    *, model: str, variant: str | None = None, trace: DelegationTrace | None = None
 ):
     """The delegating root, with the three subagents attached as tools.
 
@@ -652,7 +720,7 @@ def build_root_agent(
     )
 
 
-def build_app(*, variant: str = DEMO_VARIANT, cfg: "AppConfig | None" = None):
+def build_app(*, variant: str | None = None, cfg: "AppConfig | None" = None):
     """``(root_agent, trace, model_id)`` — everything a run needs, wired."""
     model = resolve_demo_model(variant, cfg)
     trace = DelegationTrace()
@@ -683,7 +751,7 @@ def _export_vertex_env() -> tuple[str, str]:
     return project, location
 
 
-async def _run_once_async(query: str, *, variant: str, cfg: "AppConfig | None"):
+async def _run_once_async(query: str, *, variant: str | None, cfg: "AppConfig | None"):
     _require_adk()
     from google.adk.runners import InMemoryRunner
     from google.genai import types
@@ -712,7 +780,7 @@ async def _run_once_async(query: str, *, variant: str, cfg: "AppConfig | None"):
 
 
 def run_demo(
-    query: str, *, variant: str = DEMO_VARIANT, cfg: "AppConfig | None" = None
+    query: str, *, variant: str | None = None, cfg: "AppConfig | None" = None
 ) -> tuple[DelegationTrace, str]:
     """Run one query end to end on Gemini. Returns ``(trace, model_id)``.
 
@@ -726,9 +794,23 @@ def run_demo(
     return asyncio.run(_run_once_async(query, variant=variant, cfg=cfg))
 
 
-def _print_run(query: str, trace: DelegationTrace, model: str, variant: str) -> None:
+def _packs_label(variant: str | None) -> str:
+    """What to print for "which prompts is this running".
+
+    Spelled out per subagent when the arms differ, because "prompt pack
+    gemini_tuned_v1" on a run where two of the three leaves load something
+    else is a caption that contradicts the screen.
+    """
+    if variant is not None:
+        return f"prompt pack {variant} (pinned for all three)"
+    return "prompt packs " + ", ".join(
+        f"{name}={variant_for(name)}" for name in SUBAGENTS
+    )
+
+
+def _print_run(query: str, trace: DelegationTrace, model: str, variant: str | None) -> None:
     print(f"\n{'=' * 78}\nquery: {query}\n{'=' * 78}")
-    print(f"model {model} · prompt pack {variant} · live Gemini, not recorded\n")
+    print(f"model {model} · {_packs_label(variant)} · live Gemini, not recorded\n")
     print(trace.render() or "(no steps — the run produced no callbacks)")
     print(f"\nfinal answer:\n{trace.final_text or '(none)'}")
 
@@ -741,7 +823,10 @@ def cmd_adk_demo(args, cfg) -> int:
     """
     from amw.config import ConfigError
 
-    variant = getattr(args, "variant", None) or DEMO_VARIANT
+    # None, not DEMO_VARIANT: no --variant means each leaf loads its own
+    # shipping arm. Collapsing to one arm here is what used to put a prompt on
+    # screen that no gate was evaluated against.
+    variant = getattr(args, "variant", None)
     queries: Sequence[str] = getattr(args, "query", None) or list(SAMPLE_QUERIES)
 
     if getattr(args, "mode", "live") != "live":

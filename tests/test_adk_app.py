@@ -41,10 +41,13 @@ MODULE_PATH = Path(adk_app.__file__).resolve()
 #: registry rather than written down, per CLAUDE.md conventions.
 MODEL = adk_app.resolve_demo_model()
 
-VARIANTS = [adk_app.DEMO_VARIANT, "gemini_naive"]
+#: ``None`` first, deliberately: it is the default path — each leaf loads its
+#: own shipping arm — and the one a demo actually runs. The two named arms are
+#: the pinned-across-all-three override.
+VARIANTS = [None, adk_app.DEMO_VARIANT, "gemini_naive"]
 
 
-def _agent(subagent: str, variant: str = adk_app.DEMO_VARIANT):
+def _agent(subagent: str, variant: str | None = None):
     return adk_app.build_subagent(
         subagent,
         model=MODEL,
@@ -62,8 +65,53 @@ def _agent(subagent: str, variant: str = adk_app.DEMO_VARIANT):
 @pytest.mark.parametrize("variant", VARIANTS)
 def test_instruction_equals_the_pack_system_section(subagent, variant):
     """Byte-for-byte, with no wrapper, prefix, or reformatting."""
-    pack = pp.load_pack(subagent, variant)
+    pack = pp.load_pack(subagent, adk_app.variant_for(subagent, variant))
     assert _agent(subagent, variant).instruction == pack.system
+
+
+def test_the_demo_loads_the_arm_the_scorecard_reports():
+    """Each leaf runs the arm that was selected to ship, not one shared arm.
+
+    The single-source-of-truth mechanism above proves the instruction is *a*
+    pack rather than a copy. It cannot prove it is the *right* pack — and after
+    the 2026-08-11 selection the right pack stopped being the same one for all
+    three. Feature Extractor ships the promoted optimizer instruction whose
+    core-28 figure the scorecard quotes; Query Rewriter ships the targeted
+    rung it was adjudicated on. A demo left on ``gemini_tuned_v1`` would put
+    two prompts on screen that no reported gate was evaluated against, while
+    every other test in this file passed.
+
+    Pinned as literals, next to the rung ids, so re-selecting an arm and
+    forgetting the demo is a failure here rather than a discrepancy someone
+    notices mid-workshop.
+    """
+    assert adk_app.SHIPPING_VARIANTS == {
+        "query_rewriter": "gemini_targeted_v1",
+        "chunk_summarizer": "gemini_tuned_v1",
+        "feature_extractor": "gemini_optimizer_v1",
+    }
+    assert set(adk_app.SHIPPING_VARIANTS) == set(SUBAGENTS)
+
+    expected_rungs = {
+        # "A4-targeted", not the "A5-targeted" the selection ruling called it:
+        # the rung id in ablate.py, the artifact, and notes/ is A4-targeted,
+        # and the id is what a reader greps for. Same rung either way.
+        "query_rewriter": "A4-targeted",
+        "chunk_summarizer": "A1-A3",
+        "feature_extractor": "A4-optimizer",
+    }
+    for subagent, variant in adk_app.SHIPPING_VARIANTS.items():
+        # A real, loadable arm for *this* subagent — not merely a declared name.
+        assert variant in pp.variants_for(subagent), (subagent, variant)
+        assert pp.VARIANT_SPECS[variant].rung == expected_rungs[subagent]
+        assert _agent(subagent).instruction == pp.load_pack(subagent, variant).system
+
+
+def test_pinning_one_variant_overrides_every_leaf():
+    """``--variant`` is the workshop A/B: one arm across all three, as asked."""
+    for subagent in SUBAGENTS:
+        agent = _agent(subagent, "gemini_naive")
+        assert agent.instruction == pp.load_pack(subagent, "gemini_naive").system
 
 
 @pytest.mark.parametrize("subagent", SUBAGENTS)

@@ -606,9 +606,16 @@ def build_parser() -> argparse.ArgumentParser:
     )
     adk_demo.add_argument(
         "--variant",
-        choices=VARIANTS,
+        # ALL_VARIANTS: the shipping arms are subagent-specific rungs, so the
+        # A/B override has to be able to name them too. adk_app.variant_for()
+        # resolves the default per subagent; load_pack refuses an arm the
+        # subagent does not have.
+        choices=ALL_VARIANTS,
         default=None,
-        help="prompt pack the leaf agents load (default: gemini_tuned_v1)",
+        help=(
+            "pin one prompt pack across all three leaf agents (default: each "
+            "loads its own shipping arm, adk_app.SHIPPING_VARIANTS)"
+        ),
     )
 
     return parser

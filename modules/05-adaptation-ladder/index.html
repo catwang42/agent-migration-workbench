@@ -1,0 +1,1510 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A workshop companion for migrating high-volume RAG subagents from Claude to Gemini on evidence: pre-registered gates, recorded calls, and a scorecard that is allowed to say no.">
+      
+      
+        <meta name="author" content="Agent Migration Workbench">
+      
+      
+        <link rel="canonical" href="https://catwang42.github.io/agent-migration-workbench/modules/05-adaptation-ladder/">
+      
+      
+        <link rel="prev" href="../04-the-naive-swap/">
+      
+      
+        <link rel="next" href="../06-the-second-judge/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>05 — The adaptation ladder - Agent Migration Workbench</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-05-the-adaptation-ladder" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Agent Migration Workbench" class="md-header__button md-logo" aria-label="Agent Migration Workbench" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Agent Migration Workbench
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              05 — The adaptation ladder
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/catwang42/agent-migration-workbench" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    catwang42/agent-migration-workbench
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Agent Migration Workbench" class="md-nav__button md-logo" aria-label="Agent Migration Workbench" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Agent Migration Workbench
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/catwang42/agent-migration-workbench" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    catwang42/agent-migration-workbench
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modules
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Modules
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-why-subagents-first/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 — Why subagents migrate first
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-reference-workload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 — The reference workload
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-gates-as-contract/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 — Gates as contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-the-naive-swap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 — The naive swap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 — The adaptation ladder
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 — The adaptation ladder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-rungs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The rungs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-the-split-before-you-read-the-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the split before you read the number
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-rewriter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query Rewriter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chunk-summarizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chunk Summarizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-extractor-the-rung-that-went-backwards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature Extractor — the rung that went backwards
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Feature Extractor — the rung that went backwards">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-optimizer-rung-and-its-contamination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The optimizer rung and its contamination
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-full-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The full table
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-the-second-judge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 — The second judge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-shadow-and-adjudication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 — Shadow & adjudication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-the-scorecard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 — The scorecard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Results
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Results
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../results/scorecard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Readiness Scorecard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../results/selection_table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Selection table
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../results/crosscheck/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Judge cross-check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../results/charts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Charts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exercises/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exercises
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-rungs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The rungs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-the-split-before-you-read-the-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the split before you read the number
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-rewriter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query Rewriter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chunk-summarizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chunk Summarizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-extractor-the-rung-that-went-backwards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature Extractor — the rung that went backwards
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Feature Extractor — the rung that went backwards">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-optimizer-rung-and-its-contamination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The optimizer rung and its contamination
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-full-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The full table
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="module-05-the-adaptation-ladder">Module 05 — The adaptation ladder<a class="headerlink" href="#module-05-the-adaptation-ladder" title="Permanent link">&para;</a></h1>
+<p><em>~7 min read · <a href="../04-the-naive-swap/">04 The naive swap</a> → </em><em>05</em><em> → <a href="../06-the-second-judge/">06 The second judge</a></em></p>
+<hr />
+<p>"Adapt the prompt" is not one action, so it cannot be one number. The ladder runs
+each adaptation as its own rung against the same corpus, so you can see which
+change bought what — and, on one subagent here, which change <strong>cost</strong> something.</p>
+<p><code>bash
+python cli.py ablate --subagent query_rewriter</code></p>
+<h2 id="the-rungs">The rungs<a class="headerlink" href="#the-rungs" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Rung</th>
+<th>What changes</th>
+<th>Output mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>baseline</code></td>
+<td>Incumbent: the customer's XML prompt on Claude, <code>emit_*</code> tool</td>
+<td><code>tool</code></td>
+</tr>
+<tr>
+<td><code>A0</code></td>
+<td>Naive endpoint swap: the same prompt bytes on Gemini, same tool</td>
+<td><code>tool</code></td>
+</tr>
+<tr>
+<td><code>A1-A3</code></td>
+<td>Bundled: Markdown restructure + system/user split + enforced <code>response_schema</code> + two recalibrated few-shots</td>
+<td><code>response_schema</code></td>
+</tr>
+<tr>
+<td><code>A0-schema</code> <em>(FE)</em></td>
+<td><strong>Mode only</strong>: A0's prompt, enforced <code>response_schema</code> instead of the tool</td>
+<td><code>response_schema</code></td>
+</tr>
+<tr>
+<td><code>A4-novelty-tool</code> <em>(FE)</em></td>
+<td><strong>Prompt only</strong>: A0 plus the <code>novelty_statement</code> rule (claim 1 is the point of novelty; numeric limits survive) and one worked example</td>
+<td><code>tool</code></td>
+</tr>
+<tr>
+<td><code>A4-novelty-schema</code> <em>(FE)</em></td>
+<td><strong>Both</strong>: the novelty prompt under the enforced <code>response_schema</code></td>
+<td><code>response_schema</code></td>
+</tr>
+<tr>
+<td><code>A4-optimizer</code> <em>(FE)</em></td>
+<td>Optimizer: a VAIPO-suggested instruction over <code>gemini_naive</code>, read against <code>judge_score</code></td>
+<td><code>tool</code></td>
+</tr>
+<tr>
+<td><code>A4-targeted</code> <em>(QR)</em></td>
+<td>A1-A3 plus three bundled rules for the three measured loss clusters — publication numbers verbatim in <code>query</code>, explicit <code>date_to</code> copied not expanded, landscape vs ownership by which side of the question is unknown (per-rule credit is <strong>not</strong> isolated)</td>
+<td><code>response_schema</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>A0-schema</code>, <code>A4-novelty-tool</code> and <code>A4-novelty-schema</code> exist as a 2×2: prompt
+change alone, mode change alone, and both. Bundling them would have made "the
+enforced schema helped" unfalsifiable.</p>
+<h2 id="read-the-split-before-you-read-the-number">Read the split before you read the number<a class="headerlink" href="#read-the-split-before-you-read-the-number" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Two splits, two incumbents</p>
+<p>The ablation ladder is scored on the <strong>core 28</strong>; the gated scorecard run is
+scored on the <strong>full 70</strong>. Feature Extractor's Claude incumbent is
+<strong>0.903</strong> on the core 28 and <strong>0.900</strong> on the full 70 — two measurements on
+two corpora, not one number rounded twice. <strong>Never quote one against the
+other.</strong> A rung measured at n=70 and compared to 0.903 is being scored
+against a corpus it did not run on.</p>
+</div>
+<p>The comparison column below is the rung's 95% CI lower bound against the
+incumbent's point estimate <em>on the same split</em>. It is <strong>unpaired</strong>, and it is not
+the <code>quality_delta_pp</code> gate — that gate is a paired bootstrap over per-item
+differences, and it is what the verdict is decided on. This table informs the
+selection; it does not make it.</p>
+<h2 id="query-rewriter">Query Rewriter<a class="headerlink" href="#query-rewriter" title="Permanent link">&para;</a></h2>
+<p><strong>Core 28</strong> — incumbent <code>baseline</code> 0.911 [0.839, 0.964]</p>
+<table>
+<thead>
+<tr>
+<th>Rung</th>
+<th>Mode</th>
+<th>Judged score (95% CI)</th>
+<th>vs incumbent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>baseline</code></td>
+<td><code>tool</code></td>
+<td>0.911 [0.839, 0.964]</td>
+<td>incumbent</td>
+</tr>
+<tr>
+<td><code>A0</code></td>
+<td><code>tool</code></td>
+<td>0.836 [0.787, 0.886]</td>
+<td>below incumbent (hi 0.886 &lt; 0.911)</td>
+</tr>
+<tr>
+<td><code>A1-A3</code></td>
+<td><code>response_schema</code></td>
+<td>0.852 [0.796, 0.905]</td>
+<td>below incumbent (hi 0.905 &lt; 0.911)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Full 70</strong> — incumbent <code>gated:claude_baseline</code> 0.886 [0.838, 0.932]</p>
+<table>
+<thead>
+<tr>
+<th>Rung / arm</th>
+<th>Mode</th>
+<th>Judged score (95% CI)</th>
+<th><code>exact_match_intent</code></th>
+<th><code>json_schema_validity</code></th>
+<th>vs incumbent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A4-targeted</code></td>
+<td><code>response_schema</code></td>
+<td>0.963 [0.934, 0.986]</td>
+<td>0.957 [0.900, 1.000]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td><strong>clears</strong> (lo 0.934 &gt; 0.886)</td>
+</tr>
+<tr>
+<td><code>gated:claude_baseline</code></td>
+<td><code>tool</code></td>
+<td>0.886 [0.838, 0.932]</td>
+<td>0.729 [0.629, 0.829]</td>
+<td>0.814 [0.714, 0.900]</td>
+<td>incumbent</td>
+</tr>
+<tr>
+<td><code>gated:gemini_naive</code></td>
+<td><code>tool</code></td>
+<td>0.831 [0.797, 0.865]</td>
+<td>0.571 [0.457, 0.686]</td>
+<td>0.971 [0.929, 1.000]</td>
+<td>below incumbent (hi 0.865 &lt; 0.886)</td>
+</tr>
+<tr>
+<td><code>gated:gemini_tuned_v1</code></td>
+<td><code>response_schema</code></td>
+<td>0.879 [0.843, 0.914]</td>
+<td>0.814 [0.714, 0.900]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td><strong>recovery to parity</strong> (lo 0.843 ≤ 0.886 ≤ hi 0.914)</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>A4-targeted</code> rung was built from the <em>measured</em> loss clusters, not from
+intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
+<h2 id="chunk-summarizer">Chunk Summarizer<a class="headerlink" href="#chunk-summarizer" title="Permanent link">&para;</a></h2>
+<p><strong>Core 28</strong> — incumbent <code>baseline</code> 0.902 [0.830, 0.956]</p>
+<table>
+<thead>
+<tr>
+<th>Rung</th>
+<th>Mode</th>
+<th>Judged score (95% CI)</th>
+<th><code>citation_coverage</code></th>
+<th>vs incumbent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>baseline</code></td>
+<td><code>tool</code></td>
+<td>0.902 [0.830, 0.956]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td>incumbent</td>
+</tr>
+<tr>
+<td><code>A0</code></td>
+<td><code>tool</code></td>
+<td>0.897 [0.830, 0.955]</td>
+<td>0.963 [0.889, 1.000]</td>
+<td><strong>recovery to parity</strong></td>
+</tr>
+<tr>
+<td><code>A1-A3</code></td>
+<td><code>response_schema</code></td>
+<td>0.915 [0.871, 0.955]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td><strong>recovery to parity</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="feature-extractor-the-rung-that-went-backwards">Feature Extractor — the rung that went backwards<a class="headerlink" href="#feature-extractor-the-rung-that-went-backwards" title="Permanent link">&para;</a></h2>
+<p><strong>Core 28</strong> — incumbent <code>baseline</code> 0.903 [0.857, 0.946]</p>
+<table>
+<thead>
+<tr>
+<th>Rung</th>
+<th>Mode</th>
+<th>Judged score (95% CI)</th>
+<th>vs incumbent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>baseline</code></td>
+<td><code>tool</code></td>
+<td>0.903 [0.857, 0.946]</td>
+<td>incumbent</td>
+</tr>
+<tr>
+<td><code>A0</code></td>
+<td><code>tool</code></td>
+<td>0.837 [0.791, 0.882]</td>
+<td>below incumbent (hi 0.882 &lt; 0.903)</td>
+</tr>
+<tr>
+<td><code>A1-A3</code></td>
+<td><code>response_schema</code></td>
+<td>0.807 [0.756, 0.853]</td>
+<td>below incumbent (hi 0.853 &lt; 0.903)</td>
+</tr>
+<tr>
+<td><code>A0-schema</code></td>
+<td><code>response_schema</code></td>
+<td>0.826 [0.773, 0.875]</td>
+<td>below incumbent (hi 0.875 &lt; 0.903)</td>
+</tr>
+<tr>
+<td><code>A4-novelty-tool</code></td>
+<td><code>tool</code></td>
+<td>0.901 [0.859, 0.940]</td>
+<td><strong>recovery to parity</strong></td>
+</tr>
+<tr>
+<td><code>A4-novelty-schema</code></td>
+<td><code>response_schema</code></td>
+<td>0.920 [0.878, 0.957]</td>
+<td><strong>recovery to parity</strong></td>
+</tr>
+<tr>
+<td><code>A4-optimizer</code></td>
+<td><code>tool</code></td>
+<td><strong>0.949 [0.911, 0.979]</strong></td>
+<td><strong>clears</strong> (lo 0.911 &gt; 0.903)</td>
+</tr>
+</tbody>
+</table>
+<p>Two things in that column deserve to be said out loud.</p>
+<p><strong>First: the tuning made it worse before it made it better.</strong> <code>A1-A3</code> — the
+generic adaptation bundle that helped Chunk Summarizer — took Feature Extractor
+from 0.837 down to 0.807. That is a <strong>measured regression, recovered by tuning</strong>,
+and it stays in the report. An ablation ladder that only ever goes up is not a
+ladder, it is a sales chart.</p>
+<p><strong>Second: the 2×2 says where the recovery came from.</strong> <code>A0-schema</code> (mode only)
+0.826 and <code>A4-novelty-tool</code> (prompt only) 0.901 against <code>A0</code> 0.837 — the
+<code>novelty_statement</code> rule carried the recovery, the enforced schema alone did not.
+<code>A4-novelty-schema</code> (both) reaches 0.920.</p>
+<h3 id="the-optimizer-rung-and-its-contamination">The optimizer rung and its contamination<a class="headerlink" href="#the-optimizer-rung-and-its-contamination" title="Permanent link">&para;</a></h3>
+<p><code>A4-optimizer</code> is a Vertex AI Prompt Optimizer suggestion over <code>gemini_naive</code>,
+read against <code>judge_score</code>. It is the strongest rung in the workshop, and the
+figure that ships is the <strong>clean core-28 measurement</strong>:</p>
+<div class="amw-stats">
+<div class="amw-stat">
+  <span class="amw-stat__value">0.949</span>
+  <span class="amw-stat__label">A4-optimizer, judged score (95% CI [0.911, 0.979])</span>
+  <span class="amw-stat__source">core 28, no leaked example items · <code>artifacts/results/ablation_feature_extractor.json</code></span>
+</div>
+</div>
+<p>There is also a measurement of the same rung at n=70. It is <strong>not</strong> the shipping
+figure, and this is why.<sup id="fnref:contamination"><a class="footnote-ref" href="#fn:contamination">1</a></sup></p>
+<p>That is the general rule, and it is worth stating as a rule rather than as a
+one-off: <strong>a rung whose prompt contains items from the split it was scored on is
+reported with its contamination, or it is not reported.</strong> Deleting the number
+hides the finding; quoting it plain would be the fabrication.</p>
+<h2 id="the-full-table">The full table<a class="headerlink" href="#the-full-table" title="Permanent link">&para;</a></h2>
+<p>Every rung, per subagent, at the n it was actually run on, with all deterministic
+metrics beside the judged score:</p>
+<p><a class="md-button" href="../../results/selection_table/">Open the selection table</a></p>
+<hr />
+<p><strong>Next:</strong> <a href="../06-the-second-judge/">Module 06 — The second judge</a></p>
+<p><em>Source: <code>artifacts/results/ablation_{query_rewriter,chunk_summarizer,feature_extractor}.json</code>, <code>artifacts/reports/selection_table.md</code>, <code>artifacts/results/phase2_n70_widened.json</code>. Bootstrap seed <code>20260812</code>, 10,000 resamples, judge Gemini 2.5 Pro prompt <code>v1</code>, k=2.</em></p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:contamination">
+<p><strong>Excluded from the shipping quote: <code>A4-optimizer</code> at n=70, 0.951 [0.929, 0.970].</strong>
+Reason: the rung's prompt quotes <code>fe-0004</code>, <code>fe-0021</code>, <code>fe-0029</code>, <code>fe-0032</code>,
+<code>fe-0037</code>, <code>fe-0041</code>, <code>fe-0046</code>, <code>fe-0051</code>, <code>fe-0056</code>, <code>fe-0060</code>, <code>fe-0064</code>
+and <code>fe-0067</code> as worked examples, and all 12 of those items are <strong>inside</strong> the
+n=70 split it was scored on (<code>leaked_example_items</code> in
+<code>artifacts/results/ablation_feature_extractor.json</code>). Its judged score there is
+optimistic by construction. The 12 items are not dropped from the split,
+because that would give this rung a different denominator from every other
+rung — so instead the whole n=70 measurement is quoted nowhere except in this
+footnote, with its reason attached. The core-28 measurement of the same rung
+has <code>leaked_example_items: []</code> and is the figure the selection table and this
+site use.&#160;<a class="footnote-backref" href="#fnref:contamination" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../04-the-naive-swap/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 04 — The naive swap">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                04 — The naive swap
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../06-the-second-judge/" class="md-footer__link md-footer__link--next" aria-label="Next: 06 — The second judge">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                06 — The second judge
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Every figure on this site comes from an executed model call recorded in <code>artifacts/replay/</code>. Corpus is synthetic (<code>demo_patents</code>, seed <code>20260812</code>). Cost figures render as em dashes until <code>config/pricing.yaml</code> is verified.
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/catwang42/agent-migration-workbench" target="_blank" rel="noopener" title="agent-migration-workbench on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

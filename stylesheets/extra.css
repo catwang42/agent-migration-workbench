@@ -1,0 +1,240 @@
+/* Agent Migration Workbench — workshop companion.
+   Layout primitives only: hero, chip strip, stat tiles, cards, draft badge.
+   Everything derives from Material's own tokens so light and dark are one
+   system rather than an automatic flip. */
+
+:root {
+  --amw-radius: 0.6rem;
+  --amw-border: 0.05rem solid var(--md-default-fg-color--lightest);
+}
+
+/* ---------------------------------------------------------------- hero -- */
+
+.amw-hero {
+  border: var(--amw-border);
+  border-radius: var(--amw-radius);
+  padding: 1.6rem 1.4rem 1.3rem;
+  margin: 0 0 1.6rem;
+  background: var(--md-code-bg-color);
+}
+
+.amw-hero__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--md-default-fg-color--light);
+  margin: 0 0 0.4rem;
+}
+
+.amw-hero h1,
+.amw-hero__title {
+  font-size: 1.85rem;
+  line-height: 1.15;
+  font-weight: 700;
+  margin: 0 0 0.6rem;
+  color: var(--md-default-fg-color);
+}
+
+.amw-hero__thesis {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  max-width: 42rem;
+  color: var(--md-default-fg-color--light);
+  margin: 0 0 1.1rem;
+}
+
+.amw-hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* --------------------------------------------------------- chip strip -- */
+
+.amw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0 0 1.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.amw-chips li {
+  margin: 0;
+}
+
+.amw-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.28rem 0.65rem;
+  border: var(--amw-border);
+  border-radius: 2rem;
+  font-size: 0.66rem;
+  line-height: 1.4;
+  color: var(--md-default-fg-color--light);
+  text-decoration: none;
+  transition: border-color 120ms, color 120ms;
+}
+
+.amw-chip:hover,
+.amw-chip:focus {
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color);
+}
+
+.amw-chip__num {
+  font-weight: 700;
+  font-size: 0.62rem;
+  color: var(--md-primary-fg-color);
+}
+
+[data-md-color-scheme="slate"] .amw-chip__num {
+  color: var(--md-accent-fg-color);
+}
+
+/* --------------------------------------------------------- stat tiles -- */
+
+.amw-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.7rem;
+  margin: 0 0 1.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.amw-stats li {
+  margin: 0;
+}
+
+.amw-stat {
+  border: var(--amw-border);
+  border-radius: var(--amw-radius);
+  padding: 0.9rem 0.85rem;
+  height: 100%;
+}
+
+.amw-stat__value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--md-default-fg-color);
+  /* Proportional figures: tabular-nums makes a display-size number read loose.
+     Tabular is for columns that must align, not for a standalone value. */
+  font-variant-numeric: proportional-nums;
+}
+
+.amw-stat__label {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: var(--md-default-fg-color--light);
+}
+
+.amw-stat__source {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.58rem;
+  line-height: 1.4;
+  color: var(--md-default-fg-color--lighter);
+}
+
+.amw-stat__source code {
+  font-size: 0.9em;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* -------------------------------------------------------------- cards -- */
+
+.amw-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.8rem;
+  margin: 0 0 1.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.amw-cards li {
+  margin: 0;
+}
+
+.amw-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: var(--amw-border);
+  border-radius: var(--amw-radius);
+  padding: 1rem 0.95rem;
+}
+
+.amw-card h3,
+.amw-card__title {
+  margin: 0 0 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--md-default-fg-color);
+}
+
+.amw-card p {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--md-default-fg-color--light);
+}
+
+.amw-card__meta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding-top: 0.5rem;
+}
+
+.amw-card__readtime {
+  font-size: 0.62rem;
+  color: var(--md-default-fg-color--lighter);
+  white-space: nowrap;
+}
+
+.amw-card .md-button {
+  padding: 0.2rem 0.7rem;
+  font-size: 0.66rem;
+}
+
+/* ------------------------------------------------------- draft badge -- */
+
+.amw-draft {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 2rem;
+  border: 0.05rem solid var(--md-typeset-mark-color, #ffd54f);
+  background: var(--md-typeset-mark-color, #fff3c4);
+  color: #5f4b00;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+[data-md-color-scheme="slate"] .amw-draft {
+  background: transparent;
+  color: #ffd54f;
+  border-color: #ffd54f;
+}
+
+/* Em-dash cost cells and "not measured" cells should not read as a number. */
+.amw-nomeasure {
+  color: var(--md-default-fg-color--lighter);
+  font-style: italic;
+}

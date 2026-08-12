@@ -5,7 +5,7 @@ __pycache__/
 .ipynb_checkpoints/
 .pytest_cache/
 
-# Run outputs are regenerated, with four exceptions that are not.
+# Run outputs are regenerated, with five exceptions that are not.
 #
 #   artifacts/replay/  the recorded trace corpus `cli.py e2e --mode replay`
 #                      runs against. A corpus that exists on one laptop is not
@@ -27,6 +27,12 @@ __pycache__/
 #                      laptop. Same reasoning as artifacts/replay/: a
 #                      deliverable that is not on the remote is not a
 #                      deliverable, it is a local file.
+#   artifacts/backup/  the adk-demo terminal capture. It is the fallback for
+#                      the one workshop segment that cannot run in replay mode,
+#                      so if the live demo fails and this file is not on the
+#                      remote, that segment has no fallback at all. Recorded
+#                      once during rehearsal and never regenerated — a re-record
+#                      is a different recording.
 #
 # artifacts/samples/ stays ignored — review scratch, superseded by the corpus.
 artifacts/*
@@ -34,3 +40,4 @@ artifacts/*
 !artifacts/results/
 !artifacts/optimizer/
 !artifacts/reports/
+!artifacts/backup/

@@ -65,7 +65,7 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict, Field
 
 from amw.adapters import AdapterRouter, merge_windows
-from amw.agents.prompt_packs import VARIANTS, build_request
+from amw.agents.prompt_packs import ALL_VARIANTS, VARIANTS, build_request, variants_for
 from amw.agents.schemas import SUBAGENTS
 from amw.config import AppConfig, ConfigError, ModelsConfig, load_all
 from amw.datasets.schema import DatasetItem, read_items
@@ -503,11 +503,25 @@ def run_shadow(
     """
     cfg = config or load_all(customer=customer)
     subagents = tuple(subagents or SUBAGENTS)
+    # A shadow arm may be subagent-specific. `VARIANTS` is only the three every
+    # subagent has; a targeted rung like `gemini_targeted_v1` exists for one
+    # subagent and must not be added there (see its docstring), so the arm is
+    # checked against every declared variant and then against the prompts the
+    # subagents in *this* run actually have. Rejecting it outright would mean a
+    # tuned rung can be measured on the ladder but never adjudicated against
+    # the incumbent — which is the evidence the alt clause is decided on.
     for arm in (baseline_arm, candidate_arm):
-        if arm not in VARIANTS:
+        if arm not in ALL_VARIANTS:
             raise ConfigError(
-                f"unknown arm {arm!r}; config/models.yaml roles are wired to "
-                f"variants {list(VARIANTS)}"
+                f"unknown arm {arm!r}; declared variants are "
+                f"{list(ALL_VARIANTS)}"
+            )
+        missing = [s for s in subagents if arm not in variants_for(s)]
+        if missing:
+            raise ConfigError(
+                f"arm {arm!r} has no prompt for {missing}. It is defined for "
+                f"{[s for s in SUBAGENTS if arm in variants_for(s)]}; restrict "
+                f"the run with --subagent."
             )
     if baseline_arm == candidate_arm:
         raise ConfigError(

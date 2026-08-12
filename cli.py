@@ -194,17 +194,23 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="restrict to one subagent (default: all three)",
     )
+    # ALL_VARIANTS, not VARIANTS: a subagent-specific tuned rung is a legal
+    # shadow candidate. run_shadow() checks the arm has a prompt for every
+    # subagent in the run and tells you to use --subagent if it does not.
     shadow.add_argument(
         "--baseline-arm",
-        choices=VARIANTS,
+        choices=ALL_VARIANTS,
         default="claude_baseline",
         help="incumbent arm (default: claude_baseline)",
     )
     shadow.add_argument(
         "--candidate-arm",
-        choices=VARIANTS,
+        choices=ALL_VARIANTS,
         default="gemini_tuned_v1",
-        help="migration candidate (default: gemini_tuned_v1)",
+        help=(
+            "migration candidate (default: gemini_tuned_v1). A subagent-specific "
+            "arm requires --subagent"
+        ),
     )
     shadow.add_argument(
         "--live-slice",

@@ -739,6 +739,45 @@ def test_an_unknown_arm_is_refused(cfg):
         )
 
 
+def test_a_subagent_specific_arm_is_refused_across_all_subagents(cfg):
+    """`gemini_targeted_v1` is a query_rewriter prompt and only that.
+
+    Running it against all three would silently compare two subagents on a
+    prompt they do not have. The error has to name the subagents that *do*
+    have it, because the fix is `--subagent`, not a different arm.
+    """
+    with pytest.raises(ConfigError, match="has no prompt for"):
+        run_shadow(
+            config=cfg,
+            mode="replay",
+            candidate_arm="gemini_targeted_v1",
+            write=False,
+        )
+
+
+def test_a_subagent_specific_arm_is_accepted_for_its_own_subagent(cfg, tmp_path):
+    """The alt clause is decided on adjudicated wins, so a targeted rung has
+    to be shadowable against the incumbent — otherwise it can be measured on
+    the ladder and never adjudicated, which is the evidence the gate needs.
+
+    The e2e fixture corpus has no ``gemini_targeted_v1`` recordings, so this
+    gets as far as the replay store and stops there. That is the assertion:
+    the run reached call resolution, which means the arm cleared validation.
+    A ``ConfigError`` here would mean it never got that far.
+    """
+    with pytest.raises(ReplayMissError):
+        run_shadow(
+            config=cfg,
+            mode="replay",
+            subagents=["query_rewriter"],
+            dataset_dir=cli.E2E_DATASET_DIR,
+            candidate_arm="gemini_targeted_v1",
+            out_path=tmp_path / "s.json",
+            triage_path=tmp_path / "s.md",
+            run_judge=False,
+        )
+
+
 def test_a_missing_dataset_says_which_command_makes_one(cfg, tmp_path):
     with pytest.raises(FileNotFoundError, match="cli.py gen"):
         run_shadow(config=cfg, mode="replay", dataset_dir=tmp_path, write=False)

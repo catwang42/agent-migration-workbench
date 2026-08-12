@@ -557,10 +557,55 @@ class GateCheck(_Base):
     #: here — it needs triage data — but carried so the scorecard cannot forget
     #: that a failed gate had a documented alternative route.
     alt: str | None = None
+    #: Whether that alt clause was met. ``None`` means it was never evaluated:
+    #: the gate has no clause, or nothing supplied the evidence one needs.
+    #: ``None`` is emphatically not ``False`` — an unevaluated route is not a
+    #: rejected one, and a report that conflates them is claiming a finding it
+    #: does not have. Set by the scorecard (:func:`apply_alt_clause`), which is
+    #: the layer that has the triage data.
+    alt_passed: bool | None = None
+    #: The measurement the clause was decided on, in full, quoted into the
+    #: report's footnote. Never a bare verdict — the number has to travel with
+    #: it or "passed by the alt clause" is unauditable.
+    alt_evidence: str = ""
+    #: The same measurement compressed to a table cell (e.g. ``15W/3L``).
+    alt_summary: str = ""
+
+    @property
+    def by_alt(self) -> bool:
+        """The gate missed its CI bound and its alternative route carried it."""
+        return not self.passed and self.alt_passed is True
+
+    @property
+    def effective_passed(self) -> bool:
+        """Did this gate clear, by *either* pre-registered route?
+
+        This — not :attr:`passed` — is what a verdict is computed from. They
+        differ only where gates.yaml wrote an ``alt`` clause in advance, which
+        is the only circumstance under which a missed CI bound is allowed to
+        become a pass.
+        """
+        return self.passed or self.alt_passed is True
+
+    def result_text(self) -> str:
+        """The result cell: PASS, FAIL, or PASS with the route named.
+
+        A gate carried by its alt clause never renders as a bare ``PASS``. The
+        CI bound was missed; a reader who cannot see that from the cell is
+        being told something untrue by omission.
+        """
+        if self.passed:
+            return "PASS"
+        if self.alt_passed is True:
+            detail = f": adjudication {self.alt_summary}" if self.alt_summary else ""
+            return f"PASS (by pre-registered alt clause{detail})"
+        return "**FAIL**"
 
     def describe(self) -> str:
         verb = ">=" if self.direction == "min" else "<="
-        status = "PASS" if self.passed else "FAIL"
+        status = "PASS" if self.effective_passed else "FAIL"
+        if self.by_alt:
+            status = "PASS(alt)"
         return (
             f"{status} {self.gate}: {self.compared_bound}={self.compared_value:.4g} "
             f"{verb} {self.bound:g} ({self.estimate.unit})"

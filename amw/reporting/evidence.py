@@ -58,6 +58,7 @@ from amw.config import AppConfig
 from amw.eval.metrics import MetricSample
 from amw.eval.runner import ArmResult, Phase2Result
 from amw.eval.stats import Estimate, paired_bootstrap_delta
+from amw.shadow.triage import TriageSummary
 from amw.reporting.cells import (
     ClaudeSchemaValidityCell,
     JudgeScoreCell,
@@ -241,6 +242,11 @@ class SubagentEvidence(_Base):
     judge_baseline: JudgeScoreCell | None = None
     judge_candidate: JudgeScoreCell | None = None
     latency_probe: SameRegionLatencyProbe | None = None
+    #: The judge-adjudicated disagreement tally, when a shadow run produced
+    #: one. This is the evidence for ``shadow_agreement``'s pre-registered
+    #: ``alt`` clause and is the *only* thing that can turn that gate's missed
+    #: CI bound into a pass; absent it, the gate fails as measured.
+    adjudication: TriageSummary | None = None
     regions: Regions
     notes: list[str] = Field(default_factory=list)
 
@@ -454,6 +460,7 @@ def build_evidence(
     samples: Mapping[tuple[str, str], ArmSamples] | None = None,
     shadow: Mapping[str, Estimate] | None = None,
     shadow_metric: str | None = None,
+    adjudications: Mapping[str, TriageSummary] | None = None,
     latency_probes: Mapping[str, SameRegionLatencyProbe] | None = None,
     regions: Regions | None = None,
     baseline_variant: str = BASELINE_VARIANT,
@@ -471,6 +478,7 @@ def build_evidence(
     """
     regions = regions or Regions.from_env(cfg)
     shadow = shadow or {}
+    adjudications = adjudications or {}
     latency_probes = latency_probes or {}
     cost_savings = cost_savings or {}
     seed = phase2.bootstrap_seed
@@ -582,6 +590,7 @@ def build_evidence(
                 judge_baseline=_judge_cell(base_arm),
                 judge_candidate=_judge_cell(cand_arm),
                 latency_probe=probe,
+                adjudication=adjudications.get(subagent),
                 regions=regions,
                 notes=notes,
             )

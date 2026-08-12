@@ -41,7 +41,7 @@ from typing import Any, Sequence
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from amw.config import AppConfig, GatesConfig
+from amw.config import AppConfig, ConfigError, GatesConfig
 from amw.economics.cache_breakeven import CacheBreakeven, breakeven_curve
 from amw.economics.cost_model import CostModelResult, VolumeSet, confirm_volumes, cost_model
 from amw.eval.runner import Phase2Result
@@ -60,6 +60,7 @@ from amw.reporting.cells import (
 from amw.reporting.evidence import (
     GATE_COST,
     GATE_LATENCY,
+    GATE_SHADOW,
     EvidenceMismatchError,
     Regions,
     SubagentEvidence,
@@ -67,9 +68,12 @@ from amw.reporting.evidence import (
     collect_samples,
 )
 from amw.reporting.ladder import Ladder, build_ladder, render_ladder
+from amw.shadow.triage import MALFORMED_CAVEAT, TriageSummary
 
 __all__ = [
     "INCOMPLETE",
+    "ALT_EVALUATORS",
+    "apply_alt_clause",
     "UNDETERMINED",
     "TAXONOMY_LINE",
     "PARITY_SENTENCE",
@@ -79,6 +83,7 @@ __all__ = [
     "decide_verdict",
     "build_scorecard",
     "render_markdown",
+    "load_adjudications",
     "load_ladders",
     "cmd_scorecard",
 ]
@@ -187,6 +192,11 @@ class SubagentVerdict(_Base):
     provisional: str | None = None
     checks: dict[str, GateCheck] = Field(default_factory=dict)
     failed: list[str] = Field(default_factory=list)
+    #: Gates that missed their CI bound and cleared on the ``alt`` clause
+    #: gates.yaml wrote for them in advance. Not in ``failed`` — they passed —
+    #: but named separately, because "passed" and "passed by the alternative
+    #: route" are different claims and the card has to be able to say which.
+    passed_by_alt: list[str] = Field(default_factory=list)
     missing: list[str] = Field(default_factory=list)
     rationale: str = ""
 
@@ -207,6 +217,70 @@ def _rule_verdict(failed: Sequence[str], rules: VerdictRules) -> str:
     return UNDETERMINED
 
 
+#: Gates whose ``alt`` clause this module knows how to evaluate, and what it
+#: reads to do it. A clause nobody can evaluate is not silently ignored —
+#: :func:`apply_alt_clause` raises — because an unevaluated alternative route
+#: is exactly the "gate that quietly disappears" failure that
+#: :func:`amw.eval.stats.missing_gates` exists to prevent, wearing a different
+#: hat.
+ALT_EVALUATORS: dict[str, str] = {
+    GATE_SHADOW: "the judge-adjudicated disagreement triage (SubagentEvidence.adjudication)",
+}
+
+#: Said when a gate has an alt clause and the run produced nothing to evaluate
+#: it against. It is not a failure of the clause; it is an absence of evidence,
+#: and the gate stands failed on its CI bound.
+ALT_UNEVALUATED = (
+    "the pre-registered alt clause was not evaluated: no {source} in this "
+    "artifact set. The gate stands on its CI bound."
+)
+
+
+def apply_alt_clause(check: GateCheck, evidence: SubagentEvidence) -> GateCheck:
+    """Give a gate that missed its CI bound its pre-registered second route.
+
+    Only a gate that (a) failed and (b) was written with an ``alt`` clause in
+    ``gates.yaml`` *before* any of this was measured can be rescued here. The
+    clause is evaluated on exactly what it says — ``shadow_agreement``'s reads
+    "on disagreements, judge-adjudicated wins >= losses", with no exclusion in
+    it, so it is decided on the overall tally. The quality-only tally travels
+    beside it in :attr:`GateCheck.alt_evidence` as the honesty check, never as
+    the thing being tested.
+
+    :raises ~amw.config.ConfigError: gates.yaml declares an ``alt`` clause on a
+        gate with no evaluator wired here.
+    """
+    if check.alt is None or check.passed:
+        return check
+    if check.gate not in ALT_EVALUATORS:
+        raise ConfigError(
+            f"gate {check.gate!r} has an alt clause in gates.yaml "
+            f"({check.alt!r}) but nothing here knows how to evaluate it, so a "
+            f"pre-agreed route to passing would be silently unavailable. Add an "
+            f"evaluator to amw.reporting.scorecard.ALT_EVALUATORS."
+        )
+
+    summary = evidence.adjudication
+    outcome = summary.wins_ge_losses if summary is not None else None
+    if outcome is None:
+        return check.model_copy(
+            update={
+                "alt_evidence": ALT_UNEVALUATED.format(
+                    source=ALT_EVALUATORS[check.gate]
+                )
+            }
+        )
+    return check.model_copy(
+        update={
+            "alt_passed": bool(outcome),
+            "alt_summary": f"{summary.wins}W/{summary.losses}L",
+            "alt_evidence": summary.adjudication_text(
+                baseline_label=f"`{evidence.baseline_variant}`"
+            ),
+        }
+    )
+
+
 def decide_verdict(
     evidence: SubagentEvidence, gates: GatesConfig, *, rules: VerdictRules | None = None
 ) -> SubagentVerdict:
@@ -215,9 +289,32 @@ def decide_verdict(
     checks = check_gates(
         evidence.estimates, gates, sentinel_values=evidence.sentinel_values
     )
+    checks = {
+        name: apply_alt_clause(check, evidence) for name, check in checks.items()
+    }
     missing = missing_gates(checks, gates)
-    failed = sorted(name for name, check in checks.items() if not check.passed)
+    # `effective_passed`, not `passed`: a gate carried by the alt clause
+    # gates.yaml pre-registered for it has cleared, and the verdict rules are
+    # written over cleared/not-cleared. `passed_by_alt` keeps the route on the
+    # record so nothing downstream can print a bare PASS for it.
+    failed = sorted(name for name, check in checks.items() if not check.effective_passed)
+    by_alt = sorted(name for name, check in checks.items() if check.by_alt)
     blocking_failed = [name for name in failed if name in rules.blocking_gates]
+
+    # Appended to whichever rationale is produced below. A verdict that rests
+    # on an alt clause has to say so in its own sentence — the route is part of
+    # the finding, not a footnote to it.
+    alt_note = ""
+    if by_alt:
+        routes = "; ".join(
+            f"{name} missed its CI bound "
+            f"({checks[name].compared_bound} = {checks[name].compared_value:.4g} "
+            f"vs {checks[name].bound:g}) and cleared on the alt clause "
+            f'pre-registered in gates.yaml ("{checks[name].alt}"), '
+            f"measured at {checks[name].alt_evidence}"
+            for name in by_alt
+        )
+        alt_note = f" {routes}."
 
     if blocking_failed:
         # A blocking gate that actually failed is a finding on its own terms.
@@ -228,10 +325,12 @@ def decide_verdict(
             verdict=rules.any_blocking_gate_fails,
             checks=checks,
             failed=failed,
+            passed_by_alt=by_alt,
             missing=missing,
             rationale=(
                 f"blocking gate(s) {', '.join(blocking_failed)} failed on the CI "
                 f"bound. {rules.descriptions.get(rules.any_blocking_gate_fails, '')}"
+                f"{alt_note}"
             ).strip(),
         )
 
@@ -243,12 +342,14 @@ def decide_verdict(
             provisional=provisional,
             checks=checks,
             failed=failed,
+            passed_by_alt=by_alt,
             missing=missing,
             rationale=(
                 f"{len(checks)} of {len(gates.subagent_gates)} pre-agreed gates were "
                 f"measured; {', '.join(missing)} were not. A verdict over a subset of "
                 f"the gates is not the verdict that was agreed, so none is issued. "
                 f"Were every unmeasured gate to pass, it would be {provisional}."
+                f"{alt_note}"
             ),
         )
 
@@ -272,8 +373,9 @@ def decide_verdict(
         verdict=verdict,
         checks=checks,
         failed=failed,
+        passed_by_alt=by_alt,
         missing=missing,
-        rationale=rationale,
+        rationale=(rationale + alt_note).strip(),
     )
 
 
@@ -425,6 +527,27 @@ def _measured_cell(
     return paired_delta_text(check.estimate)
 
 
+def _alt_clause_note(check: GateCheck) -> str:
+    """The paragraph under the table for a gate that passed by its alt clause.
+
+    The Result cell has room for the tally the clause was decided on and
+    nothing else. Everything a reader needs to audit the pass goes here: the
+    bound that was missed, the clause quoted from ``gates.yaml``, both
+    adjudication figures, and the mechanism behind the exclusion in the second
+    one — which is the same org-policy tool-emission artifact disclosed beside
+    the baseline everywhere else in this report.
+    """
+    return (
+        f"`{check.gate}` did not clear its CI bound "
+        f"({check.compared_bound} = {check.compared_value:.4g}, bound "
+        f"{'≥' if check.direction == 'min' else '≤'} {check.bound:g}). It passes on "
+        f'the alternative route pre-registered in gates.yaml — "{check.alt}" — '
+        f"measured at {check.alt_evidence}. {MALFORMED_CAVEAT} The clause was "
+        f"written before any of this was measured; it is the pre-agreed second "
+        f"route, not a threshold chosen after seeing the result."
+    )
+
+
 def _gate_table(
     evidence: SubagentEvidence,
     verdict: SubagentVerdict,
@@ -437,6 +560,7 @@ def _gate_table(
         "| --- | --- | --- | --- | --- |",
     ]
     imprecise: list[str] = []
+    by_alt: list[str] = []
     for gate_name in gates.subagent_gates:
         check = verdict.checks.get(gate_name)
         measured = _measured_cell(
@@ -446,8 +570,13 @@ def _gate_table(
             tested, result = "not evaluated", "not evaluated"
         else:
             tested = f"{check.compared_bound} = {check.compared_value:.4g}"
-            result = "PASS" if check.passed else "**FAIL**"
-            if not check.passed:
+            # Never a bare "PASS" for a gate carried by its alt clause: the
+            # cell itself names the route, because the CI bound was missed and
+            # a reader scanning the Result column would otherwise not know it.
+            result = check.result_text()
+            if check.by_alt:
+                by_alt.append(gate_name)
+            elif not check.passed:
                 # A failing paired delta says *which* kind of failure it is.
                 # CS's -2.32 pp [-5.00, +0.36] and FE's -10.44 pp
                 # [-13.78, -7.12] are both FAIL and are not the same finding;
@@ -461,6 +590,8 @@ def _gate_table(
             f"| `{gate_name}` | {_bound_text(gates, gate_name)} | {measured} "
             f"| {tested} | {result} |"
         )
+    for gate_name in by_alt:
+        lines.extend(["", _alt_clause_note(verdict.checks[gate_name])])
     for gate_name in imprecise:
         lines.extend(
             [
@@ -806,6 +937,30 @@ def load_shadow(path: Path, metric: str = DEFAULT_SHADOW_METRIC) -> dict[str, Es
     return {name: Estimate.model_validate(value) for name, value in data.items()}
 
 
+def load_adjudications(path: Path) -> dict[str, TriageSummary]:
+    """``{subagent: TriageSummary}`` from the same shadow artifact.
+
+    This is the evidence for ``shadow_agreement``'s ``alt`` clause, and it
+    comes off disk beside the agreement estimates rather than being recomputed
+    — the clause has to be decided on the same run the gate was checked
+    against, or the two halves of the row describe different corpora.
+
+    A record with no ``triage_summary`` is skipped, not defaulted. An absent
+    triage is "the clause was not evaluated", which
+    :func:`apply_alt_clause` says out loud; a zeroed summary would be
+    "adjudicated, and it tied", which is a measurement nobody made.
+    """
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not (isinstance(data, dict) and isinstance(data.get("subagents"), list)):
+        return {}
+    out: dict[str, TriageSummary] = {}
+    for record in data["subagents"]:
+        summary = record.get("triage_summary")
+        if summary:
+            out[record["subagent"]] = TriageSummary.model_validate(summary)
+    return out
+
+
 def load_ladders(results_dir: Path) -> list[Any]:
     """Every ``ablation_{subagent}.json`` sitting beside the scored artifact.
 
@@ -939,6 +1094,11 @@ def cmd_scorecard(args, cfg) -> int:
             load_shadow(Path(shadow_path), shadow_metric) if shadow_path else None
         ),
         shadow_metric=shadow_metric if shadow_path else None,
+        # Same file, same run: the alt clause is evaluated on the adjudication
+        # of the very disagreements the agreement estimate was computed over.
+        adjudications=(
+            load_adjudications(Path(shadow_path)) if shadow_path else None
+        ),
         regions=regions,
         baseline_variant=baseline,
         candidate_variant=candidate,

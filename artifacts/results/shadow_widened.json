@@ -184,7 +184,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0001",
@@ -200,7 +201,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0002",
@@ -218,7 +220,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0003",
@@ -233,7 +236,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0004",
@@ -248,7 +252,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0005",
@@ -269,7 +274,8 @@
           "candidate_score": 0.8,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0006",
@@ -285,7 +291,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0008",
@@ -303,7 +310,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 3 validation errors for QueryPlan (query Field required [type=missing, input_value={'query_plan': {'query': ... 'intent': 'landscape'}}, input_type=dict])"
         },
         {
           "item_id": "qr-0009",
@@ -318,7 +326,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0010",
@@ -333,7 +342,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0011",
@@ -348,7 +358,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0012",
@@ -363,7 +374,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0013",
@@ -378,7 +390,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0014",
@@ -393,7 +406,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0015",
@@ -408,7 +422,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0016",
@@ -424,7 +439,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0017",
@@ -445,7 +461,8 @@
           "candidate_score": 0.8,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0018",
@@ -462,7 +479,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0019",
@@ -477,7 +495,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0021",
@@ -493,7 +512,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0022",
@@ -510,7 +530,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0023",
@@ -525,7 +546,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0024",
@@ -541,7 +563,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0026",
@@ -556,7 +579,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0027",
@@ -571,7 +595,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0028",
@@ -586,7 +611,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0029",
@@ -602,7 +628,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0032",
@@ -620,7 +647,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 5 validation errors for QueryPlan (query Field required [type=missing, input_value={'filters': {'query': 'pe...: [], 'cpc_codes': []}}}, input_type=dict])"
         },
         {
           "item_id": "qr-0033",
@@ -635,7 +663,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0034",
@@ -651,7 +680,8 @@
           "candidate_score": 0.8,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0035",
@@ -666,7 +696,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0036",
@@ -681,7 +712,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0038",
@@ -697,7 +729,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0039",
@@ -712,7 +745,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0040",
@@ -727,7 +761,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0041",
@@ -742,7 +777,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0042",
@@ -759,7 +795,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0043",
@@ -774,7 +811,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0045",
@@ -791,7 +829,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 4 validation errors for QueryPlan (query Field required [type=missing, input_value={'filters': {'query': 'io... 'intent': 'prior_art'}}, input_type=dict])"
         },
         {
           "item_id": "qr-0046",
@@ -812,7 +851,8 @@
           "candidate_score": 0.8,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 3 validation errors for QueryPlan (query Field required [type=missing, input_value={'query_plan': {'query': ... 'intent': 'landscape'}}, input_type=dict])"
         },
         {
           "item_id": "qr-0047",
@@ -827,7 +867,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0049",
@@ -842,7 +883,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0050",
@@ -857,7 +899,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0051",
@@ -873,7 +916,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0052",
@@ -892,7 +936,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0053",
@@ -908,7 +953,8 @@
           "candidate_score": 0.8,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0054",
@@ -923,7 +969,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0055",
@@ -938,7 +985,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0056",
@@ -953,7 +1001,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0057",
@@ -971,7 +1020,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0058",
@@ -986,7 +1036,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0059",
@@ -1003,7 +1054,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0060",
@@ -1018,7 +1070,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0062",
@@ -1035,7 +1088,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0063",
@@ -1052,7 +1106,8 @@
           "candidate_score": 0.8,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0064",
@@ -1067,7 +1122,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0066",
@@ -1082,7 +1138,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0067",
@@ -1098,7 +1155,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0068",
@@ -1113,7 +1171,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0069",
@@ -1129,7 +1188,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         }
       ],
       "triage_summary": {
@@ -1139,7 +1199,9 @@
         "losses": 20,
         "ties": 26,
         "not_adjudicated": 0,
-        "not_adjudicated_reasons": {}
+        "not_adjudicated_reasons": {},
+        "wins_baseline_malformed": 6,
+        "losses_baseline_malformed": 5
       },
       "judged_split": "all",
       "judged_items": 70
@@ -1270,7 +1332,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0001",
@@ -1285,7 +1348,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0002",
@@ -1300,7 +1364,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0003",
@@ -1315,7 +1380,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0004",
@@ -1331,7 +1397,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0006",
@@ -1347,7 +1414,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0007",
@@ -1363,7 +1431,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0008",
@@ -1378,7 +1447,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0009",
@@ -1393,7 +1463,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0010",
@@ -1408,7 +1479,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0011",
@@ -1423,7 +1495,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0012",
@@ -1438,7 +1511,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0013",
@@ -1453,7 +1527,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0014",
@@ -1468,7 +1543,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0016",
@@ -1483,7 +1559,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0017",
@@ -1498,7 +1575,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0018",
@@ -1515,7 +1593,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'key_points' field"
         },
         {
           "item_id": "cs-0019",
@@ -1530,7 +1609,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0020",
@@ -1545,7 +1625,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0021",
@@ -1560,7 +1641,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0022",
@@ -1575,7 +1657,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0023",
@@ -1590,7 +1673,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0024",
@@ -1605,7 +1689,8 @@
           "candidate_score": 0.875,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0025",
@@ -1620,7 +1705,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0026",
@@ -1636,7 +1722,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0029",
@@ -1652,7 +1739,8 @@
           "candidate_score": 0.25,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0030",
@@ -1667,7 +1755,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0032",
@@ -1683,7 +1772,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0034",
@@ -1698,7 +1788,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0035",
@@ -1713,7 +1804,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0036",
@@ -1728,7 +1820,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0037",
@@ -1743,7 +1836,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0038",
@@ -1758,7 +1852,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0039",
@@ -1773,7 +1868,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0040",
@@ -1788,7 +1884,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0041",
@@ -1803,7 +1900,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0042",
@@ -1818,7 +1916,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0043",
@@ -1833,7 +1932,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0044",
@@ -1848,7 +1948,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0045",
@@ -1863,7 +1964,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0046",
@@ -1878,7 +1980,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0047",
@@ -1893,7 +1996,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0049",
@@ -1908,7 +2012,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0050",
@@ -1923,7 +2028,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0051",
@@ -1940,7 +2046,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 1 validation error for ChunkSummary (key_points Input should be a valid list [type=list_type, input_value='\\n<parameter name=\"chunk...926365B2::desc::p0035\"]', input_type=str])"
         },
         {
           "item_id": "cs-0052",
@@ -1956,7 +2063,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0053",
@@ -1972,7 +2080,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0054",
@@ -1987,7 +2096,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0055",
@@ -2002,7 +2112,8 @@
           "candidate_score": 0.875,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0056",
@@ -2018,7 +2129,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0057",
@@ -2033,7 +2145,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0058",
@@ -2048,7 +2161,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0059",
@@ -2063,7 +2177,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0061",
@@ -2078,7 +2193,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0062",
@@ -2095,7 +2211,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0063",
@@ -2110,7 +2227,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0064",
@@ -2125,7 +2243,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0066",
@@ -2140,7 +2259,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0067",
@@ -2155,7 +2275,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0068",
@@ -2170,7 +2291,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "cs-0069",
@@ -2185,7 +2307,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         }
       ],
       "triage_summary": {
@@ -2195,7 +2318,9 @@
         "losses": 11,
         "ties": 47,
         "not_adjudicated": 0,
-        "not_adjudicated_reasons": {}
+        "not_adjudicated_reasons": {},
+        "wins_baseline_malformed": 1,
+        "losses_baseline_malformed": 0
       },
       "judged_split": "all",
       "judged_items": 70
@@ -2367,7 +2492,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0001",
@@ -2383,7 +2509,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0002",
@@ -2398,7 +2525,8 @@
           "candidate_score": 0.7857142857142857,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0003",
@@ -2414,7 +2542,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0004",
@@ -2429,7 +2558,8 @@
           "candidate_score": 0.7857142857142857,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0005",
@@ -2444,7 +2574,8 @@
           "candidate_score": 0.9166666666666667,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0006",
@@ -2460,7 +2591,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0007",
@@ -2475,7 +2607,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0008",
@@ -2490,7 +2623,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0009",
@@ -2506,7 +2640,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0010",
@@ -2522,7 +2657,8 @@
           "candidate_score": 0.7142857142857143,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0011",
@@ -2537,7 +2673,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0012",
@@ -2552,7 +2689,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0013",
@@ -2567,7 +2705,8 @@
           "candidate_score": 0.6666666666666666,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0015",
@@ -2582,7 +2721,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0017",
@@ -2597,7 +2737,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0018",
@@ -2612,7 +2753,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0019",
@@ -2627,7 +2769,8 @@
           "candidate_score": 0.6666666666666666,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0021",
@@ -2642,7 +2785,8 @@
           "candidate_score": 0.7142857142857143,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0022",
@@ -2657,7 +2801,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0024",
@@ -2673,7 +2818,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0025",
@@ -2688,7 +2834,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0026",
@@ -2710,7 +2857,8 @@
           "candidate_score": 0.7857142857142857,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 1 validation error for PatentFeatures ($PARAMETER_NAME Extra inputs are not permitted [type=extra_forbidden, input_value={'title': 'Negative elect...licon upon lithiation.'}, input_type=dict])"
         },
         {
           "item_id": "fe-0027",
@@ -2726,7 +2874,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0028",
@@ -2741,7 +2890,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0030",
@@ -2756,7 +2906,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0031",
@@ -2772,7 +2923,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0032",
@@ -2788,7 +2940,8 @@
           "candidate_score": 0.7857142857142857,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0033",
@@ -2803,7 +2956,8 @@
           "candidate_score": 0.8,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0034",
@@ -2819,7 +2973,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0035",
@@ -2834,7 +2989,8 @@
           "candidate_score": 0.9166666666666667,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0036",
@@ -2849,7 +3005,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0037",
@@ -2864,7 +3021,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0038",
@@ -2879,7 +3037,8 @@
           "candidate_score": 0.7857142857142857,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0039",
@@ -2894,7 +3053,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0040",
@@ -2910,7 +3070,8 @@
           "candidate_score": 0.6666666666666666,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0041",
@@ -2925,7 +3086,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0042",
@@ -2941,7 +3103,8 @@
           "candidate_score": 0.6666666666666666,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0044",
@@ -2956,7 +3119,8 @@
           "candidate_score": 0.7857142857142857,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0045",
@@ -2971,7 +3135,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0046",
@@ -2986,7 +3151,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0047",
@@ -3001,7 +3167,8 @@
           "candidate_score": 0.7857142857142857,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0048",
@@ -3022,7 +3189,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 1 validation error for PatentFeatures (features Extra inputs are not permitted [type=extra_forbidden, input_value={'title': 'Method of trai... centralised training.'}, input_type=dict])"
         },
         {
           "item_id": "fe-0052",
@@ -3038,7 +3206,8 @@
           "candidate_score": 0.8571428571428571,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0053",
@@ -3053,7 +3222,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0054",
@@ -3068,7 +3238,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0055",
@@ -3083,7 +3254,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0056",
@@ -3098,7 +3270,8 @@
           "candidate_score": 0.9166666666666667,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0058",
@@ -3113,7 +3286,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0059",
@@ -3128,7 +3302,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0063",
@@ -3143,7 +3318,8 @@
           "candidate_score": 0.7142857142857143,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 1 validation error for PatentFeatures (feature Extra inputs are not permitted [type=extra_forbidden, input_value={}, input_type=dict])"
         },
         {
           "item_id": "fe-0064",
@@ -3158,7 +3334,8 @@
           "candidate_score": 0.8333333333333334,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0065",
@@ -3173,7 +3350,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0066",
@@ -3188,7 +3366,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0067",
@@ -3203,7 +3382,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "fe-0068",
@@ -3218,7 +3398,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         }
       ],
       "triage_summary": {
@@ -3228,7 +3409,9 @@
         "losses": 39,
         "ties": 12,
         "not_adjudicated": 0,
-        "not_adjudicated_reasons": {}
+        "not_adjudicated_reasons": {},
+        "wins_baseline_malformed": 0,
+        "losses_baseline_malformed": 2
       },
       "judged_split": "all",
       "judged_items": 70

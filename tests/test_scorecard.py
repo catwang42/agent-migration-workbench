@@ -28,7 +28,7 @@ from pathlib import Path
 
 import pytest
 
-from amw.config import AppConfig, load_all
+from amw.config import AppConfig, ConfigError, load_all
 from amw.eval.runner import Phase2Result
 from amw.eval.stats import Estimate
 from amw.reporting.cells import (
@@ -57,14 +57,19 @@ from amw.reporting.evidence import (
     collect_samples,
 )
 from amw.reporting.scorecard import (
+    ALT_EVALUATORS,
     INCOMPLETE,
     PARITY_SENTENCE,
     TAXONOMY_LINE,
     VerdictRules,
+    apply_alt_clause,
     build_scorecard,
+    decide_verdict,
+    load_adjudications,
     parse_volume,
     render_markdown,
 )
+from amw.shadow.triage import MALFORMED_CAVEAT, TriageSummary
 
 ARTIFACT = (
     Path(__file__).resolve().parents[1] / "artifacts" / "results" / "phase2_n70.json"
@@ -543,13 +548,21 @@ def test_every_unevaluated_gate_carries_a_reason(
 # --------------------------------------------------------------------------
 
 
-def _forced(cfg: AppConfig, phase2: Phase2Result, subagent: str, estimates) -> list:
+def _forced(
+    cfg: AppConfig,
+    phase2: Phase2Result,
+    subagent: str,
+    estimates,
+    *,
+    adjudication: TriageSummary | None = None,
+) -> list:
     return [
         SubagentEvidence(
             subagent=subagent,
             baseline_variant="claude_baseline",
             candidate_variant="gemini_tuned_v1",
             estimates=estimates,
+            adjudication=adjudication,
             unmeasured={
                 g: "not supplied by this fixture"
                 for g in cfg.gates.subagent_gates
@@ -642,6 +655,157 @@ def test_forced_migrate_still_renders_the_latency_probe_rule(
     # discloses the split even though the gate was evaluated.
     assert REGION_SPLIT_DISCLOSURE in markdown
     assert f"**{rules.all_pass}**" in markdown
+
+
+# --------------------------------------------------------------------------
+# the pre-registered alt clause
+#
+# `shadow_agreement` is the one gate gates.yaml gave a second route: "on
+# disagreements, judge-adjudicated wins >= losses". It was written before
+# anything was measured, which is the only reason a missed CI bound is allowed
+# to become a pass. These tests pin the three things that keeps honest — the
+# route is visible in the cell, the clause is decided on the tally it names,
+# and an absent adjudication is not a silent pass.
+# --------------------------------------------------------------------------
+
+
+def _shadow_only(cfg: AppConfig, agreement: Estimate) -> dict[str, Estimate]:
+    return {"shadow_agreement": agreement}
+
+
+def _failing_agreement() -> Estimate:
+    return Estimate(
+        metric="shadow_agreement", point=0.643, lo=0.529, hi=0.757, n=70, unit="fraction"
+    )
+
+
+def _triage(wins: int, losses: int, **kw) -> TriageSummary:
+    return TriageSummary(
+        subagent="query_rewriter",
+        disagreements=wins + losses + kw.pop("ties", 33),
+        wins=wins,
+        losses=losses,
+        ties=33,
+        **kw,
+    )
+
+
+def _qr(cfg, phase2, summary, agreement=None):
+    evidence = _forced(
+        cfg,
+        phase2,
+        "query_rewriter",
+        _shadow_only(cfg, agreement or _failing_agreement()),
+        adjudication=summary,
+    )
+    return evidence, decide_verdict(evidence[0], cfg.gates)
+
+
+def test_a_missed_bound_clears_on_the_pre_registered_alt_clause(cfg, phase2) -> None:
+    _, verdict = _qr(cfg, phase2, _triage(15, 3, wins_baseline_malformed=6))
+    check = verdict.checks["shadow_agreement"]
+    assert check.passed is False, "the CI bound was and remains missed"
+    assert check.alt_passed is True
+    assert check.effective_passed is True
+    assert verdict.passed_by_alt == ["shadow_agreement"]
+    assert "shadow_agreement" not in verdict.failed
+
+
+def test_the_result_cell_is_never_a_bare_pass(cfg, phase2) -> None:
+    """A reader scanning the Result column has to see the route.
+
+    "PASS" alone would say the gate cleared its bound. It did not.
+    """
+    evidence, _ = _qr(cfg, phase2, _triage(15, 3, wins_baseline_malformed=6))
+    markdown = render_markdown(build_scorecard(cfg, phase2, evidence=evidence))
+    row = next(
+        line for line in markdown.splitlines() if line.startswith("| `shadow_agreement`")
+    )
+    assert "PASS (by pre-registered alt clause: adjudication 15W/3L)" in row
+    assert "| PASS |" not in row
+
+
+def test_the_footnote_carries_both_figures_and_the_mechanism(cfg, phase2) -> None:
+    evidence, _ = _qr(cfg, phase2, _triage(15, 3, wins_baseline_malformed=6))
+    markdown = render_markdown(build_scorecard(cfg, phase2, evidence=evidence))
+    assert "15W/3L overall" in markdown
+    assert "9W/3L excluding items" in markdown
+    assert MALFORMED_CAVEAT in markdown
+    assert "did not clear its CI bound" in markdown
+    assert "pre-agreed second route, not a threshold chosen after seeing" in markdown
+
+
+def test_the_clause_is_decided_on_the_tally_it_names(cfg, phase2) -> None:
+    """gates.yaml's clause has no exclusion in it, so neither does the check.
+
+    Deciding it on the quality-only tally would be applying a rule the
+    customer never agreed to — even though here it would be the stricter one.
+    """
+    _, verdict = _qr(cfg, phase2, _triage(4, 3, wins_baseline_malformed=3))
+    assert verdict.checks["shadow_agreement"].alt_passed is True, "4 >= 3"
+    assert "1W/3L excluding items" in verdict.checks["shadow_agreement"].alt_evidence
+
+
+def test_losing_the_clause_leaves_the_gate_failed(cfg, phase2) -> None:
+    rules = VerdictRules.of(cfg.gates)
+    _, verdict = _qr(cfg, phase2, _triage(14, 20))
+    check = verdict.checks["shadow_agreement"]
+    assert check.alt_passed is False
+    assert check.effective_passed is False
+    assert check.result_text() == "**FAIL**"
+    assert verdict.verdict == rules.any_blocking_gate_fails
+
+
+def test_no_adjudication_is_not_a_pass(cfg, phase2) -> None:
+    """An unevaluated route is not a cleared one — the gate stands as measured."""
+    _, verdict = _qr(cfg, phase2, None)
+    check = verdict.checks["shadow_agreement"]
+    assert check.alt_passed is None
+    assert check.effective_passed is False
+    assert "was not evaluated" in check.alt_evidence
+    assert verdict.passed_by_alt == []
+
+
+def test_nothing_adjudicated_is_not_a_vacuous_pass(cfg, phase2) -> None:
+    summary = TriageSummary(
+        subagent="query_rewriter", disagreements=51, not_adjudicated=51
+    )
+    _, verdict = _qr(cfg, phase2, summary)
+    assert verdict.checks["shadow_agreement"].alt_passed is None, "0 >= 0 is not evidence"
+
+
+def test_a_gate_that_already_passed_is_left_alone(cfg, phase2) -> None:
+    passing = Estimate(
+        metric="shadow_agreement", point=0.97, lo=0.94, hi=0.99, n=70, unit="fraction"
+    )
+    _, verdict = _qr(cfg, phase2, _triage(0, 51, ties=0), agreement=passing)
+    check = verdict.checks["shadow_agreement"]
+    assert check.passed is True
+    assert check.alt_passed is None, "the alt clause is a rescue, not a second hurdle"
+    assert check.result_text() == "PASS"
+
+
+def test_an_alt_clause_with_no_evaluator_is_refused_not_ignored(cfg, phase2) -> None:
+    """A pre-agreed route nobody can evaluate is a gate quietly disappearing."""
+    evidence, _ = _qr(cfg, phase2, None)
+    check = decide_verdict(evidence[0], cfg.gates).checks["shadow_agreement"]
+    orphan = check.model_copy(update={"gate": "quality_delta_pp", "alt": "some clause"})
+    assert "quality_delta_pp" not in ALT_EVALUATORS
+    with pytest.raises(ConfigError, match="knows how to evaluate"):
+        apply_alt_clause(orphan, evidence[0])
+
+
+def test_the_adjudication_is_read_off_the_same_run_as_the_agreement() -> None:
+    """One file, one corpus: the clause and the gate describe the same items."""
+    path = ARTIFACT.parent / "shadow_qr_targeted.json"
+    if not path.is_file():  # pragma: no cover - artifact-dependent
+        pytest.skip("no query_rewriter shadow artifact in this checkout")
+    summaries = load_adjudications(path)
+    assert set(summaries) == {"query_rewriter"}
+    summary = summaries["query_rewriter"]
+    assert summary.wins == 15 and summary.losses == 3
+    assert summary.wins_baseline_malformed == 6
+    assert summary.wins_ge_losses is True
 
 
 # --------------------------------------------------------------------------

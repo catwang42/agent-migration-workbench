@@ -97,6 +97,7 @@ never instead of it.
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import json
 import sys
 import time
@@ -230,6 +231,13 @@ def default_instruction_path(subagent: str, run_id: str) -> Path:
     depends on whether anyone has run the optimizer. The generated file is a
     run artifact — dated, tied to a run id, and staged into the pack directory
     only for the seconds the ladder needs it (:func:`installed_rung`).
+
+    A rung that goes on to *ship* is the exception: it gets promoted into the
+    pack by hand, byte-identically, because a customer-facing arm has to be
+    readable in the same place as every other arm. Feature Extractor's
+    ``gemini_optimizer_v1`` is the one such file today. Promotion does not
+    replace this copy — it is still the dated original the pack file is
+    checked against.
     """
     return REPO_ROOT / "artifacts" / "optimizer" / subagent / f"{run_id}.txt"
 
@@ -1004,20 +1012,30 @@ def installed_rung(
 ) -> Iterator[RungSpec]:
     """Make the generated rung runnable for the duration of the block.
 
-    Three registrations, all undone on the way out:
+    Two paths, depending on whether this rung has been **promoted**.
 
-    1. the variant into :data:`~amw.agents.prompt_packs.VARIANT_SPECS`, at run
-       time only — a variant declared at import time would need a prompt file
-       committed beside the hand-written ones, and there is no honest file to
-       commit before the optimizer has run;
-    2. the prompt file, staged into the pack directory because
-       :func:`~amw.agents.prompt_packs.load_pack` reads from there and takes no
-       override. The durable copy is already in ``artifacts/optimizer/``; this
-       one is scaffolding and is removed in ``finally``, so
-       ``tests/test_prompts.py``'s stray-file guard still holds afterwards;
-    3. the rung itself, through the public
-       :func:`~amw.tuning.ablate.register_p1_rung` seam — ``ablate.py`` needed
-       no edit.
+    *Promoted* (Feature Extractor, since 2026-08-11): the variant is declared
+    in :data:`~amw.agents.prompt_packs.VARIANT_SPECS` at import time and its
+    prompt is committed in the pack directory, because it is a shipping arm
+    and a shipping arm has to live where every other arm lives. When the
+    freshly composed text matches that committed file, nothing is staged and
+    nothing is registered — the pack already *is* the rung. Only the ladder
+    entry is added. This is what keeps the cited core-28 figure attached to a
+    file a customer can open.
+
+    *Unpromoted* (every other subagent): the variant and a scaffolding prompt
+    file are registered at run time and removed in ``finally``, so
+    ``tests/test_prompts.py``'s stray-file guard still holds afterwards. There
+    is no honest file to commit before the optimizer has run.
+
+    A composed text that differs from an already-committed pack file is
+    refused rather than staged over: silently shadowing the shipping prompt
+    for the length of a block would produce numbers that do not belong to any
+    committed file.
+
+    The rung itself is registered through the public
+    :func:`~amw.tuning.ablate.register_p1_rung` seam either way — ``ablate.py``
+    needed no edit.
 
     The training-set overlap with the scored split rides in on
     ``RungSpec.few_shot_item_ids``, which is what ``run_ladder`` turns into
@@ -1040,13 +1058,52 @@ def installed_rung(
     durable.write_text(text, encoding="utf-8")
     run.instruction_path = str(durable)
 
-    staged = prompts_dir() / target.subagent / f"{variant}.txt"
-    if staged.exists():
+    pack_file = prompts_dir() / target.subagent / f"{variant}.txt"
+
+    # Promoted iff the variant is declared at import time. That is the only
+    # signal that distinguishes "this prompt is committed and shipping" from
+    # "a previous run died mid-ladder and left its scaffolding behind" — the
+    # two look identical on disk, and treating a leftover as promoted would
+    # run the rung on a stale instruction.
+    #
+    # Scoped to the subagent as well as the variant: `gemini_optimizer_v1` is
+    # declared for feature_extractor only, so the query_rewriter retarget
+    # reuses the name and still takes the staging path.
+    declared = VARIANT_SPECS.get(variant)
+    promoted = declared is not None and target.subagent in declared.subagents
+    if promoted and not pack_file.exists():
         raise PromptPackError(
-            f"{staged} already exists. That file is staged per-run and removed "
-            f"afterwards, so a leftover means a previous optimizer run died "
-            f"mid-ladder. Inspect it against artifacts/optimizer/ and delete it "
-            f"by hand — reusing it would run this rung on a stale instruction."
+            f"{variant!r} is declared in VARIANT_SPECS but {pack_file} is "
+            f"missing. A declared variant must have a committed prompt; "
+            f"restore the file or drop the declaration."
+        )
+    if promoted:
+        committed = pack_file.read_text(encoding="utf-8")
+        if committed != text:
+            raise PromptPackError(
+                f"the composed instruction differs from the committed shipping "
+                f"prompt at {pack_file}.\n"
+                f"  committed sha256 "
+                f"{hashlib.sha256(committed.encode()).hexdigest()}\n"
+                f"  composed  sha256 "
+                f"{hashlib.sha256(text.encode()).hexdigest()}\n"
+                f"The composed text is kept at {durable}. Staging over the "
+                f"committed file would score this rung on a prompt no one can "
+                f"open afterwards, and the figure quoted in the scorecard is "
+                f"cited from the committed one. Promoting a new instruction is "
+                f"a deliberate act: replace the pack file, update the "
+                f"provenance block and the digests in "
+                f"tests/test_prompts.py::"
+                f"test_the_promoted_optimizer_pack_is_the_measured_file, and "
+                f"re-measure."
+            )
+    elif pack_file.exists():
+        raise PromptPackError(
+            f"{pack_file} already exists. That file is staged per-run and "
+            f"removed afterwards, so a leftover means a previous optimizer run "
+            f"died mid-ladder. Inspect it against artifacts/optimizer/ and "
+            f"delete it by hand — reusing it would run this rung on a stale "
+            f"instruction."
         )
 
     spec = VariantSpec(
@@ -1083,26 +1140,32 @@ def installed_rung(
         else (),
     )
 
-    previous_variant = VARIANT_SPECS.get(variant)
     previous_rungs = P1_RUNGS.get(target.subagent)
-    VARIANT_SPECS[variant] = spec
-    staged.parent.mkdir(parents=True, exist_ok=True)
-    staged.write_text(text, encoding="utf-8")
-    load_pack.cache_clear()
+    if not promoted:
+        VARIANT_SPECS[variant] = spec
+        pack_file.parent.mkdir(parents=True, exist_ok=True)
+        pack_file.write_text(text, encoding="utf-8")
+        load_pack.cache_clear()
     try:
         register_p1_rung(target.subagent, rung)
         yield rung
     finally:
-        staged.unlink(missing_ok=True)
-        if previous_variant is None:
-            VARIANT_SPECS.pop(variant, None)
-        else:
-            VARIANT_SPECS[variant] = previous_variant
+        # Nothing to undo on the promoted path. The unlink in particular is
+        # why this is conditional: it would delete the committed shipping
+        # prompt on the way out of a block that only meant to read it.
+        if not promoted:
+            pack_file.unlink(missing_ok=True)
+            if declared is None:
+                VARIANT_SPECS.pop(variant, None)
+            else:
+                # The QR retarget borrows a name feature_extractor owns
+                # permanently. Popping it would unregister the shipping arm.
+                VARIANT_SPECS[variant] = declared
+            load_pack.cache_clear()
         if previous_rungs is None:
             P1_RUNGS.pop(target.subagent, None)
         else:
             P1_RUNGS[target.subagent] = previous_rungs
-        load_pack.cache_clear()
 
 
 # --------------------------------------------------------------------------

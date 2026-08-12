@@ -68,6 +68,18 @@ def fe_target():
     return TARGETS["fe_novelty_judged"]
 
 
+@pytest.fixture
+def qr_target():
+    """The retarget — and the only target still on the staging path.
+
+    Feature Extractor's optimizer rung was promoted into the prompt pack when
+    it was selected to ship, so it no longer stages anything. Every assertion
+    about staging has to be made against a target that still stages, or it
+    stops testing the code it names.
+    """
+    return TARGETS["qr_intent_deterministic"]
+
+
 def training(size: int, *, overlaps=()) -> TrainingSet:
     return TrainingSet(
         subagent="feature_extractor",
@@ -144,15 +156,29 @@ def test_importing_the_scaffold_does_not_install_the_rung():
         assert LEGACY_RUNG_ID not in rungs
 
 
-def test_the_optimizer_variant_is_not_a_committed_prompt():
-    """No prompt file exists for the generated variant, and none should.
+def test_the_optimizer_variant_is_committed_only_where_it_ships():
+    """Exactly one subagent has a committed optimizer prompt: the one that ships it.
 
-    Committing one would mean shipping an "optimizer output" no optimizer
-    produced — and would trip ``test_prompts.py``'s stray-file guard.
+    The rule used to be "no prompt file exists for the generated variant, and
+    none should" — committing one would mean shipping an "optimizer output" no
+    optimizer produced. That still holds everywhere the rung is a run artifact.
+    It stops holding the moment a rung is *selected to ship*: Feature Extractor
+    quotes ``A4-optimizer``'s core-28 score on the scorecard, and a number
+    quoted from a file that is deleted at the end of the block is a number no
+    customer can check. So the file is promoted by hand, byte-identically, and
+    the declaration in ``VARIANT_SPECS`` is what
+    :func:`~amw.tuning.optimizer.installed_rung` reads to know it must not
+    stage over it.
+
+    Both halves are asserted, because either one failing is a different bug:
+    an undeclared file is the stray-file guard's problem, and a declared
+    variant with no file means the shipping arm cannot be loaded at all.
     """
-    assert OPTIMIZER_VARIANT not in pp.VARIANT_SPECS
+    declared = pp.VARIANT_SPECS[OPTIMIZER_VARIANT].subagents
+    assert declared == ("feature_extractor",)
     for subagent in SUBAGENTS:
-        assert not (pp.prompts_dir() / subagent / f"{OPTIMIZER_VARIANT}.txt").exists()
+        path = pp.prompts_dir() / subagent / f"{OPTIMIZER_VARIANT}.txt"
+        assert path.exists() is (subagent in declared), path
 
 
 def test_every_declared_target_names_things_that_exist():
@@ -476,23 +502,23 @@ def test_an_empty_instruction_is_not_composable(fe_target):
 
 
 def test_installing_the_rung_registers_it_and_cleans_up_after(
-    fe_target, tmp_path, monkeypatch
+    qr_target, tmp_path, monkeypatch
 ):
     monkeypatch.setattr(
         optimizer, "default_instruction_path", lambda s, r: tmp_path / f"{s}-{r}.txt"
     )
     run = OptimizationRun(
         run_id="testrun",
-        target_key=fe_target.key,
+        target_key=qr_target.key,
         status="optimized",
         instruction="Focus on what is new relative to the cited art.",
         training=training(6, overlaps=("fe-0001", "fe-0002")),
     )
-    staged = pp.prompts_dir() / fe_target.subagent / f"{OPTIMIZER_VARIANT}.txt"
+    staged = pp.prompts_dir() / qr_target.subagent / f"{OPTIMIZER_VARIANT}.txt"
 
-    with installed_rung(fe_target, run) as rung:
+    with installed_rung(qr_target, run) as rung:
         assert rung.rung == OPTIMIZER_RUNG_ID
-        assert rung.branches_from == fe_target.branches_from
+        assert rung.branches_from == qr_target.branches_from
         # EVERY training item rides in on the contamination field, not the
         # pre-computed `overlaps` subset. run_ladder intersects this with the
         # split it actually scores, so handing it the whole training set is
@@ -505,20 +531,23 @@ def test_installing_the_rung_registers_it_and_cleans_up_after(
         )
         assert set(("fe-0001", "fe-0002")) <= set(rung.few_shot_item_ids)
         assert staged.is_file()
-        assert OPTIMIZER_VARIANT in pp.variants_for(fe_target.subagent)
-        assert rung in ladder_for(fe_target.subagent)
-        assert pp.load_pack(fe_target.subagent, OPTIMIZER_VARIANT).system.startswith(
+        assert OPTIMIZER_VARIANT in pp.variants_for(qr_target.subagent)
+        assert rung in ladder_for(qr_target.subagent)
+        assert pp.load_pack(qr_target.subagent, OPTIMIZER_VARIANT).system.startswith(
             "Focus on what is new"
         )
 
     assert not staged.exists(), "the staged prompt must not survive the run"
-    assert OPTIMIZER_VARIANT not in pp.VARIANT_SPECS
     assert P1_RUNGS == {}
-    assert (tmp_path / f"{fe_target.subagent}-testrun.txt").is_file()
+    assert (tmp_path / f"{qr_target.subagent}-testrun.txt").is_file()
+    # Not `not in`: the variant name is owned permanently by feature_extractor,
+    # which ships it. Borrowing the name for the query_rewriter retarget must
+    # put the shipping declaration back, not delete it.
+    assert pp.VARIANT_SPECS[OPTIMIZER_VARIANT].subagents == ("feature_extractor",)
 
 
 def test_the_rung_is_cleaned_up_even_when_the_ladder_explodes(
-    fe_target, tmp_path, monkeypatch
+    qr_target, tmp_path, monkeypatch
 ):
     monkeypatch.setattr(
         optimizer, "default_instruction_path", lambda s, r: tmp_path / "i.txt"
@@ -526,33 +555,102 @@ def test_the_rung_is_cleaned_up_even_when_the_ladder_explodes(
     run = OptimizationRun(
         run_id="boom", status="optimized", instruction="x", training=training(6)
     )
-    staged = pp.prompts_dir() / fe_target.subagent / f"{OPTIMIZER_VARIANT}.txt"
+    staged = pp.prompts_dir() / qr_target.subagent / f"{OPTIMIZER_VARIANT}.txt"
     with pytest.raises(RuntimeError):
-        with installed_rung(fe_target, run):
+        with installed_rung(qr_target, run):
             raise RuntimeError("the ladder fell over")
     assert not staged.exists()
     assert P1_RUNGS == {}
-    assert OPTIMIZER_VARIANT not in pp.VARIANT_SPECS
+    assert pp.VARIANT_SPECS[OPTIMIZER_VARIANT].subagents == ("feature_extractor",)
 
 
-def test_a_leftover_staged_prompt_stops_the_run(fe_target, tmp_path, monkeypatch):
+def test_a_leftover_staged_prompt_stops_the_run(qr_target, tmp_path, monkeypatch):
     """A file left behind by a crashed run is a stale instruction; reusing it
     would score this rung on a prompt from a different optimization."""
     monkeypatch.setattr(
         optimizer, "default_instruction_path", lambda s, r: tmp_path / "i.txt"
     )
-    staged = pp.prompts_dir() / fe_target.subagent / f"{OPTIMIZER_VARIANT}.txt"
+    staged = pp.prompts_dir() / qr_target.subagent / f"{OPTIMIZER_VARIANT}.txt"
     staged.write_text("=== system ===\nstale\n\n=== user ===\n{x}\n", encoding="utf-8")
     run = OptimizationRun(
         run_id="r", status="optimized", instruction="fresh", training=training(6)
     )
     try:
         with pytest.raises(pp.PromptPackError, match="already exists"):
-            with installed_rung(fe_target, run):
+            with installed_rung(qr_target, run):
                 pass
     finally:
         staged.unlink(missing_ok=True)
         pp.load_pack.cache_clear()
+
+
+# -- the promoted path: feature_extractor, which ships this rung -------------
+
+
+def test_a_promoted_rung_runs_off_the_committed_pack(fe_target, tmp_path, monkeypatch):
+    """No staging, no deletion — the committed file *is* the rung.
+
+    Feature Extractor's scorecard row quotes ``A4-optimizer``'s core-28 score,
+    and the honesty of that citation rests on the prompt behind it being one a
+    customer can open. So re-installing the rung must leave the pack file
+    exactly where it is: the old code wrote a scaffolding copy on the way in
+    and unlinked it on the way out, which would now delete the shipping arm.
+    """
+    monkeypatch.setattr(
+        optimizer, "default_instruction_path", lambda s, r: tmp_path / "i.txt"
+    )
+    pack_file = pp.prompts_dir() / fe_target.subagent / f"{OPTIMIZER_VARIANT}.txt"
+    before = pack_file.read_bytes()
+    committed = pp.load_pack(fe_target.subagent, OPTIMIZER_VARIANT)
+
+    run = OptimizationRun(
+        run_id="20260811T060312Z",
+        target_key=fe_target.key,
+        status="optimized",
+        # The instruction that composes back to the committed file: its own
+        # system section. Anything else is a different prompt and is refused
+        # by the test below.
+        instruction=committed.system,
+        training=training(6),
+    )
+    with installed_rung(fe_target, run) as rung:
+        assert rung.rung == OPTIMIZER_RUNG_ID
+        assert rung.variant == OPTIMIZER_VARIANT
+        assert rung in ladder_for(fe_target.subagent)
+        assert pack_file.read_bytes() == before
+
+    assert pack_file.read_bytes() == before, "the shipping prompt was modified"
+    assert pp.VARIANT_SPECS[OPTIMIZER_VARIANT].subagents == ("feature_extractor",)
+    assert P1_RUNGS == {}
+
+
+def test_a_promoted_rung_refuses_an_instruction_that_is_not_the_committed_one(
+    fe_target, tmp_path, monkeypatch
+):
+    """A new optimizer run does not get to silently shadow the shipping prompt.
+
+    Staging over it would score the rung on a file that is deleted seconds
+    later, while the scorecard goes on citing the committed one — two
+    different prompts behind a single number. Promotion is a deliberate act;
+    this is the speed bump that makes it one.
+    """
+    monkeypatch.setattr(
+        optimizer, "default_instruction_path", lambda s, r: tmp_path / "i.txt"
+    )
+    pack_file = pp.prompts_dir() / fe_target.subagent / f"{OPTIMIZER_VARIANT}.txt"
+    before = pack_file.read_bytes()
+    run = OptimizationRun(
+        run_id="later",
+        status="optimized",
+        instruction="A different instruction from a later run.",
+        training=training(6),
+    )
+    with pytest.raises(pp.PromptPackError, match="differs from the committed"):
+        with installed_rung(fe_target, run):
+            pass
+    assert pack_file.read_bytes() == before
+    # Still recoverable: the composed text is on disk under its own run id.
+    assert (tmp_path / "i.txt").is_file()
 
 
 def test_an_undelivered_run_cannot_be_installed(fe_target):

@@ -20,6 +20,7 @@ loading a pack touches the filesystem and ``config/models.yaml`` only.
 from __future__ import annotations
 
 import json
+import pathlib
 import re
 
 import pytest
@@ -28,6 +29,7 @@ from amw.adapters.base import ModelRequest
 from amw.adapters.claude_anthropic import _to_json_schema
 from amw.agents import prompt_packs as pp
 from amw.agents.schemas import SUBAGENTS, json_schema, tool_name
+from amw.traces.schema import sha256_text
 
 #: The universal ladder: three variants every subagent has. Tests about the
 #: ladder's *shape* (baseline → naive → tuned) belong here.
@@ -116,6 +118,42 @@ def test_no_stray_prompt_files_in_the_pack_directories():
     for subagent in SUBAGENTS:
         found = {path.name for path in (pp.prompts_dir() / subagent).glob("*")}
         assert found == {f"{variant}.txt" for variant in pp.variants_for(subagent)}
+
+
+def test_the_promoted_optimizer_pack_is_the_measured_file():
+    """The committed FE shipping prompt is the one behind the 0.949 figure.
+
+    Feature Extractor ships on ``A4-optimizer`` quoting its clean core-28
+    score, and that score is *not* re-measured — it is cited from
+    ``ablation_feature_extractor.json``. That citation is only honest while
+    the file in the pack is byte-for-byte the file that was run, so both
+    digests are pinned here rather than left to inspection:
+
+    ``sha256``
+        the pack digest recorded as ``RungRecord.prompt_sha`` on both the
+        core-28 and full-70 optimizer rungs.
+    ``system`` sha16
+        the digest that feeds ``input_sha``, the replay store key. If this
+        moves, every recorded FE optimizer trace becomes unreachable and the
+        offline demo loses the arm it is meant to show.
+
+    Editing the prompt is allowed; editing it and keeping the cited number is
+    not. This test is what makes that a failure instead of a silent drift.
+    """
+    pack = pp.load_pack("feature_extractor", "gemini_optimizer_v1")
+    assert pack.sha256 == (
+        "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf"
+    )
+    assert sha256_text(pack.system) == "569838504b393eee"
+
+    durable = (
+        pathlib.Path(__file__).resolve().parents[1]
+        / "artifacts"
+        / "optimizer"
+        / "feature_extractor"
+        / "20260811T060312Z.txt"
+    )
+    assert pack.text == durable.read_text(encoding="utf-8")
 
 
 def test_root_orchestrator_has_no_prompt_pack():

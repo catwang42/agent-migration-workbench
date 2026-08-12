@@ -40,6 +40,10 @@ enforced schema helped" unfalsifiable.
     other.** A rung measured at n=70 and compared to 0.903 is being scored
     against a corpus it did not run on.
 
+Bracketed pairs in every table below are the **95% confidence range** (CI) — the
+span the true value is likely to sit in at this sample size. Wide brackets mean a
+small sample, not a shaky measurement.
+
 The comparison column below is the rung's 95% CI lower bound against the
 incumbent's point estimate *on the same split*. It is **unpaired**, and it is not
 the `quality_delta_pp` gate — that gate is a paired bootstrap over per-item
@@ -92,6 +96,8 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.
 | `A4-novelty-schema` | `response_schema` | 0.920 [0.878, 0.957] | **recovery to parity** |
 | `A4-optimizer` | `tool` | **0.949 [0.911, 0.979]** | **clears** (lo 0.911 > 0.903) |
 
+--8<-- "charts/fe-ladder.md"
+
 Two things in that column deserve to be said out loud.
 
 **First: the tuning made it worse before it made it better.** `A1-A3` — the
@@ -111,12 +117,11 @@ ladder, it is a sales chart.
 read against `judge_score`. It is the strongest rung in the workshop, and the
 figure that ships is the **clean core-28 measurement**:
 
-<div class="amw-stats" markdown>
-<div class="amw-stat">
-  <span class="amw-stat__value">0.949</span>
-  <span class="amw-stat__label">A4-optimizer, judged score (95% CI [0.911, 0.979])</span>
-  <span class="amw-stat__source">core 28, no leaked example items · <code>artifacts/results/ablation_feature_extractor.json</code></span>
-</div>
+<div class="amw-callout" markdown="1">
+<span class="amw-callout__value">0.949</span>
+<span class="amw-callout__range">95% confidence range 0.911 – 0.979</span>
+<span class="amw-callout__note">measured on the 28 held-out items the optimizer never trained on</span>
+<span class="amw-callout__source"><code>artifacts/results/ablation_feature_extractor.json</code></span>
 </div>
 
 There is also a measurement of the same rung at n=70. It is **not** the shipping

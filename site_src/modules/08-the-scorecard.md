@@ -37,7 +37,8 @@ different sentence from a verdict, and the report keeps them different.
 
 ### Why Query Rewriter is HOLD
 
-`shadow_agreement` failed on the CI bound: 0.557 [0.443, 0.671] against a 0.90
+`shadow_agreement` failed on the **95% confidence range** (CI) bound: 0.557
+[0.443, 0.671] against a 0.90
 minimum, and the `alt` clause also fails for this arm (14W/20L, or 8W/15L
 excluding structurally malformed baseline emissions). `shadow_agreement` is a
 **blocking** gate, so the rule in `gates.yaml` produces HOLD without discretion:
@@ -82,7 +83,7 @@ the widened data, and that is the number that ships.
 
 Three cells recur across every subagent:
 
-- **`cost_savings_pct`** — not computable. `config/pricing.yaml` has 13 rates still
+- **`cost_savings_pct`** — not computable. `config/pricing.yaml` has 19 rates still
   reading `VERIFY` and `verified_on` is null; the customer profile's volume block
   is illustrative (`volumes_confirmed: false`). Two independent gates, each of
   which a human has to clear. Every cost cell is an em dash — not a zero.
@@ -105,9 +106,9 @@ the measured ones. It never quietly becomes a pass.
 | Judge | Gemini 2.5 Pro, prompt `v1`, k=2 repeats |
 | Mode | `replay` |
 | Run date | no live run — assembled from recordings |
-| Recording window | 2026-08-09T16:07:15+00:00 → 2026-08-11T06:20:37+00:00 |
+| Recording window | 10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM (SGT) — UTC `2026-08-09T16:07:15+00:00` → `2026-08-11T06:20:37+00:00` |
 | Region(s) | Claude `global`, Gemini + judge `us-central1` |
-| Prices verified on | UNVERIFIED — 13 rates still read `VERIFY` |
+| Prices verified on | UNVERIFIED — 19 rates still read `VERIFY` |
 | Volumes | volumes: illustrative |
 | Gates | version 1, hash `92f9d018432f` |
 

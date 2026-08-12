@@ -10,9 +10,12 @@ procedure.
 
 !!! warning "Pre-freeze run"
 
-    These artifacts come from the run recorded 2026-08-09T16:07:15+00:00 →
-    2026-08-11T06:20:37+00:00. They are measurements, not placeholders. They are
-    replaced wholesale by the freeze-v1 run.
+    These artifacts come from the run recorded 10 Aug 2026, 12:07 AM →
+    11 Aug 2026, 2:20 PM (SGT, Singapore time). They are measurements, not
+    placeholders. They are replaced wholesale by the freeze-v1 run.
+
+    UTC: `2026-08-09T16:07:15+00:00` → `2026-08-11T06:20:37+00:00`
+    { .amw-provenance }
 
 ## The four artifacts
 
@@ -53,7 +56,7 @@ procedure.
 - **Every figure came from an executed call.** No number in any artifact is a
   placeholder, an estimate or a projection. Where a value could not be measured,
   the cell says so and names the reason.
-- **Every gate is a CI bound, not a point estimate.** 95% bootstrap, 10,000
+- **Every gate is a 95% confidence range (CI) bound, not a point estimate.** 10,000
   resamples, seed `20260812`. Lower bound for `min` gates, upper for `max`.
 - **Every judge score carries its n and its split.** Two judge scores at
   different n are not directly comparable, and the number alone does not say so.

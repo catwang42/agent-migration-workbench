@@ -22,6 +22,16 @@ edit_uri: ""
 docs_dir: site_src
 site_dir: site
 
+# site_src/charts/*.md are snippet partials, not pages: each is a bare <figure>
+# that pages pull in with `--8<--`. Excluding them keeps three headless,
+# title-less pages out of the build and out of the search index. Snippets reads
+# them off disk, so the includes still resolve.
+# The leading slash anchors this to site_src/charts/. Without it the pattern is
+# gitignore-style and also swallows site_src/results/charts/*.png — the notebook
+# figures, which are pages' worth of real content.
+exclude_docs: |
+  /charts/
+
 # Theme block ported from catwang42/skill-library-workshop mkdocs.yml: the
 # Inter / JetBrains Mono pair, the slate-default palette with `primary: custom`
 # so the header navy comes from extra.css tokens rather than a stock Material
@@ -85,7 +95,18 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.keys
-  - pymdownx.snippets
+  # Charts are generated into site_src/charts/*.md by scripts/build_site.py and
+  # pulled into pages with `--8<--`, so a chart and its numbers refresh together
+  # at the freeze rebuild. check_paths makes a missing partial fail the build
+  # rather than render an empty figure.
+  # `config` is a base path so a page can embed config/gates.yaml itself
+  # instead of retyping it — a retyped threshold is a threshold that can drift
+  # from the file the scorecard hashes. It is scoped to `config` rather than
+  # the repo root on purpose: with `.` reachable, one `--8<--` typo could pull
+  # a file out of docs/ (internal presenter material) into the public build.
+  - pymdownx.snippets:
+      base_path: ["site_src", "config"]
+      check_paths: true
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true

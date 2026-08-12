@@ -46,7 +46,8 @@ Leave them as they are for now.
 python cli.py e2e --mode replay
 ```
 
-This is the CI gate for the whole repository. It regenerates the dataset from its
+This is the continuous-integration gate for the whole repository (a different CI
+from the confidence ranges the modules quote). It regenerates the dataset from its
 seed, replays the recorded baseline, ablation, shadow and judge calls, evaluates
 the gates in `config/gates.yaml`, and renders the Migration Readiness Scorecard.
 A green exit means the evidence on this site reproduces on your machine.

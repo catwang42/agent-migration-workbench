@@ -36,65 +36,91 @@ hide:
 !!! warning "Draft — refreshes at freeze-v1"
 
     Every figure on this site is measured, but the run behind it is the
-    pre-freeze run (recordings 2026-08-09T16:07:15+00:00 → 2026-08-11T06:20:37+00:00).
+    pre-freeze run, recorded 10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM
+    (SGT, Singapore time).
     The final run replaces these pages via one command
     (`python scripts/build_site.py`) at content freeze; nothing here is a
     placeholder waiting for a value.
 
-<div class="amw-stats amw-stats--5" markdown="1">
+    UTC: `2026-08-09T16:07:15+00:00` → `2026-08-11T06:20:37+00:00`
+    { .amw-provenance }
+
+<div class="amw-stats amw-stats--5 amw-stats--band" markdown="1">
 <div class="amw-card amw-stat" markdown="1">
 <div class="amw-stat__icon" markdown="span">:material-robot-outline:</div>
 <div class="amw-stat__num">3</div>
-<div class="amw-stat__label">Subagents measured end to end</div>
-<span class="amw-stat__source">Query Rewriter, Chunk Summarizer, Feature&nbsp;Extractor · <code>config/customers/demo_patents.yaml</code></span>
+<div class="amw-stat__label">Subagents measured</div>
 </div>
 <div class="amw-card amw-stat" markdown="1">
 <div class="amw-stat__icon" markdown="span">:material-file-document-multiple-outline:</div>
 <div class="amw-stat__num">210</div>
-<div class="amw-stat__label">Corpus items, 70 per subagent</div>
-<span class="amw-stat__source">Synthetic, seed <code>20260812</code>, generator <code>t06.1</code> · <code>wc -l datasets/*.jsonl</code></span>
+<div class="amw-stat__label">Corpus items</div>
 </div>
 <div class="amw-card amw-stat" markdown="1">
 <div class="amw-stat__icon" markdown="span">:material-record-circle-outline:</div>
 <div class="amw-stat__num">5,193</div>
-<div class="amw-stat__label">Recorded live model calls</div>
-<span class="amw-stat__source">5,186 <code>ok</code> / 7 <code>error</code>, all replayable · <code>artifacts/replay/*.jsonl</code></span>
+<div class="amw-stat__label">Recorded model calls</div>
 </div>
 <div class="amw-card amw-stat" markdown="1">
 <div class="amw-stat__icon" markdown="span">:material-check-decagram-outline:</div>
-<div class="amw-stat__num">1,011</div>
+<div class="amw-stat__num">1,046</div>
 <div class="amw-stat__label">Tests passing</div>
-<span class="amw-stat__source">2 skipped, 0 failing · <code>pytest tests/</code></span>
 </div>
 <div class="amw-card amw-stat" markdown="1">
 <div class="amw-stat__icon" markdown="span">:material-compare:</div>
 <div class="amw-stat__num">210</div>
-<div class="amw-stat__label">Judged pairs in the shadow run</div>
-<span class="amw-stat__source">Full corpus, <code>split=all</code>; 177 disagreed and went to adjudication</span>
+<div class="amw-stat__label">Judged shadow pairs</div>
 </div>
 </div>
+
+<details class="amw-provenance-block" markdown="1">
+<summary>Where these numbers come from</summary>
+
+| Figure | What it counts | Source |
+| --- | --- | --- |
+| 3 subagents | Query Rewriter, Chunk Summarizer, Feature Extractor | `config/customers/demo_patents.yaml` |
+| 210 corpus items | 70 per subagent; synthetic, seed `20260812`, generator `t06.1` | `wc -l datasets/*.jsonl` |
+| 5,193 recorded calls | 5,186 `ok` / 7 `error`; every one replayable with no credentials | `artifacts/replay/*.jsonl` |
+| 1,046 tests passing | 2 skipped, 0 failing | `pytest tests/` |
+| 210 judged pairs | Full corpus, `split=all`; 177 pairs disagreed and went to adjudication | `artifacts/results/shadow_widened.json` |
+
+Every corpus item is labelled `provenance: synthetic` and carries its generator
+seed. No figure on this site is typed in by hand: each one is read from a
+recorded model call or computed over recorded model calls.
+
+</details>
 
 <h2 class="amw-section-title">What makes this different</h2>
 <p class="amw-section-sub">Four ideas run through every module. This is where "we swapped the model and it seemed fine" stops and this workshop starts.</p>
 
 <div class="amw-diffs" markdown="1">
 <div class="amw-card amw-diff" markdown="1">
-### Gates are pre-registered, and the report proves it
-Six thresholds live in `config/gates.yaml`, signed off before the first result appears. Every scorecard footer prints the file's version hash — `92f9d018432f` — so a reader can tell no threshold moved after the numbers landed. Gates read the **95% CI bound**, never the point estimate.
+### The pass marks are agreed before the results exist
+Six thresholds were signed off in `config/gates.yaml` before the first number came back. Every report prints that file's version hash, so a reader can see no threshold moved afterwards.
+
+[Read more →](modules/03-gates-as-contract.md){ .amw-diff__more }
 </div>
 <div class="amw-card amw-diff" markdown="1">
-### The instrument is matched to the subagent's autonomy level
-A single-call transform, a tool decider, a retrieval chain and a looping orchestrator do not decide the same things, so they cannot share one bench. The taxonomy in module 01 picks the instrument, and the instrument decides whether a verdict is even available.
+### The test is matched to how much the agent decides
+A one-shot text transform and a looping orchestrator do not decide the same things, so they cannot share one bench. Picking the wrong test is how a migration passes on paper.
+
+[Read more →](modules/01-why-subagents-first.md){ .amw-diff__more }
 </div>
 <div class="amw-card amw-diff" markdown="1">
-### Two vendors' judges, cross-checked, never averaged
-Gemini 2.5 Pro is the gated judge, registered before results. Claude Sonnet 5 re-scored the same recorded outputs: criterion agreement 98.8% / 99.0% / 92.9%, kappa 0.936 / 0.948 / 0.758. The cross-check validates the instrument; it does not replace it.
+### Two judges, one from each vendor
+Two independent judges — one from each vendor — graded the same answers and produced the same ranking of the three subagents.
+
+[Read more →](modules/06-the-second-judge.md){ .amw-diff__more }
 </div>
 <div class="amw-card amw-diff" markdown="1">
-### Verdicts that can say no
-This run produced no MIGRATE. Query Rewriter is **HOLD** on a failed blocking gate; the other two are **INCOMPLETE** — a verdict over a subset of the gates is not the verdict that was agreed. The orchestrator is deliberately unmeasured and gets no verdict at all.
+### The verdict is allowed to say no
+This run produced no MIGRATE verdict. One subagent is on HOLD for a failed blocking gate, and two are INCOMPLETE because part of the agreed evidence is still missing.
+
+[Read more →](modules/08-the-scorecard.md){ .amw-diff__more }
 </div>
 </div>
+
+--8<-- "charts/two-judges.md"
 
 <h2 class="amw-section-title">The eight modules</h2>
 <p class="amw-section-sub">Roughly five minutes each, in the order the workshop runs them. Each one assumes the last.</p>

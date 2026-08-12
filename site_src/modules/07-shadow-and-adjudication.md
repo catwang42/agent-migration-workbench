@@ -81,6 +81,9 @@ The field breakdown makes the split visible:
 
 ## Adjudication: two arms, same subagent, opposite verdicts
 
+Where the two models gave different answers, a judge ruled on every
+disagreement: win, loss, or tie.
+
 Query Rewriter fails the primary `shadow_agreement` bound on both candidate arms.
 So the [`alt` clause](03-gates-as-contract.md#the-alt-clause-on-shadow_agreement)
 applies: on the disagreements, adjudicated wins must be at least losses. Verdicts
@@ -88,22 +91,30 @@ are from the **candidate's** point of view, and the scores are the recorded phas
 judge scores for those exact outputs, replayed — no judge call was made to build
 these tables.
 
-<div class="amw-cards" markdown>
-<div class="amw-card">
-  <p class="amw-card__title">gemini_targeted_v1 — passes the alt clause</p>
-  <p>51 disagreements · <strong>15W / 3L</strong> / 33 ties overall.<br>
-  <strong>9W / 3L</strong> excluding structurally malformed baseline emissions.<br>
-  <strong>Passes on either figure.</strong></p>
-  <p>Structured agreement 0.643 [0.529, 0.757].</p>
+<div class="amw-compare" markdown="1">
+<div class="amw-compare__card" markdown="1">
+<p class="amw-compare__title">gemini_targeted_v1</p>
+<p class="amw-compare__verdict amw-compare__verdict--pass">Passes the alt clause</p>
+<div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">51</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">15W</span><span class="amw-wl amw-wl--loss">3L</span><span class="amw-wl amw-wl--tie">33T</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Excluding malformed baseline emissions</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">9W</span><span class="amw-wl amw-wl--loss">3L</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.643 [0.529, 0.757]</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Passes on either figure</span></div>
 </div>
-<div class="amw-card">
-  <p class="amw-card__title">gemini_tuned_v1 — the arm it replaced</p>
-  <p>60 disagreements · <strong>14W / 20L</strong> / 26 ties overall.<br>
-  <strong>8W / 15L</strong> excluding structurally malformed baseline emissions.<br>
-  <strong>Fails on either figure.</strong></p>
-  <p>Structured agreement 0.557 [0.443, 0.671].</p>
+<div class="amw-compare__card" markdown="1">
+<p class="amw-compare__title">gemini_tuned_v1 — the arm it replaced</p>
+<p class="amw-compare__verdict amw-compare__verdict--fail">Fails the alt clause</p>
+<div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">60</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">14W</span><span class="amw-wl amw-wl--loss">20L</span><span class="amw-wl amw-wl--tie">26T</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Excluding malformed baseline emissions</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">8W</span><span class="amw-wl amw-wl--loss">15L</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.557 [0.443, 0.671]</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Fails on either figure</span></div>
 </div>
 </div>
+
+15W / 3L / 33T = 15 wins, 3 losses, 33 ties, judged from the new model's point of
+view. Bracketed pairs are the 95% confidence range (CI).
+{ .amw-legend }
 
 Both arms have `json_schema_validity` 1.000 [1.000, 1.000]. Both are Gemini Flash
 on the same corpus. The difference is three prompt rules written from the *measured*
@@ -132,6 +143,9 @@ loss clusters in the n=70 adjudication — and the adjudication flips from 14W/2
 |---|---|---|---|---|
 | chunk_summarizer | `gemini_tuned_v1` | 61 | 3W / 11L / 47T | 2W / 11L |
 | feature_extractor | `gemini_tuned_v1` | 56 | 5W / 39L / 12T | 5W / 37L |
+
+W / L / T = wins / losses / ties, judged from the new model's point of view.
+{ .amw-legend }
 
 Neither needs the `alt` clause — both clear the primary `shadow_agreement` bound
 (0.957 and 0.971). Their adjudication tables are published anyway, because a

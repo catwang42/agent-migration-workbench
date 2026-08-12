@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """Refresh the public workshop companion's Results section, then prove it is clean.
 
-Two jobs, in this order:
+Three jobs, in this order:
 
 1. **Copy an explicit WHITELIST** of repository artifacts into ``site_src/results/``
    so that refreshing the published site after the final run is one command. Only
    files named in :data:`DOC_WHITELIST` and :data:`CHART_WHITELIST` are ever
    copied. There is no glob over ``artifacts/`` and no glob over ``docs/``.
 
-2. **Grep the BUILT output for leaks.** ``docs/`` holds internal presenter
+2. **Generate the inline charts** in :mod:`amw.reporting.charts` from the same
+   artifacts the tables are built from, into ``site_src/charts/*.md`` partials
+   that the pages include. Nothing is drawn by hand and no figure is committed
+   without the artifact behind it, so the freeze rebuild refreshes every chart
+   with one command and a chart can never quietly disagree with its table.
+
+3. **Grep the BUILT output for leaks.** ``docs/`` holds internal presenter
    material — objection handling, the master plan, the build plan, the spike log,
    the runbook talk track — none of which may reach a customer-facing site. The
    check looks for distinctive *phrases* from each of those files rather than
@@ -46,9 +52,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
+
+from amw.reporting.timefmt import to_sgt_text  # noqa: E402  (needs REPO on sys.path)
+
 SITE_SRC = REPO / "site_src"
 RESULTS_DIR = SITE_SRC / "results"
 CHARTS_DIR = RESULTS_DIR / "charts"
+#: Generated inline-SVG chart partials, included by pages via pymdownx.snippets.
+FIGURES_DIR = SITE_SRC / "charts"
 
 DRAFT_BADGE = '<span class="amw-draft">Draft — refreshes at freeze-v1</span>'
 
@@ -358,6 +370,18 @@ ALLOWLIST: tuple[Excuse, ...] = (
             "wording CLAUDE.md ground rule 7 asks for. Any other occurrence still fails."
         ),
     ),
+    Excuse(
+        phrase="zero quality drop",
+        context="the reports never say &quot;zero quality drop&quot;",
+        reason=(
+            "config/gates.yaml's own header comment, embedded into module 03 by "
+            "pymdownx.snippets so the page cannot drift from the file. The line is the "
+            "gates file forbidding the phrase — the same disavowal the scorecard makes, "
+            "in the source of truth rather than the report. Matching on the escaped "
+            "'the reports never say' prefix keeps this narrow: a page that used the "
+            "phrase as a claim would not carry it."
+        ),
+    ),
 )
 
 
@@ -390,7 +414,38 @@ def _normalise(text: str) -> str:
 # --------------------------------------------------------------------------- #
 
 
-def _banner(entry: DocEntry) -> str:
+#: Any UTC ISO-8601 timestamp in a copied artifact body.
+_ISO_TS = re.compile(r"\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\+00:00|Z)\b")
+
+
+def _sgt_key(body: str) -> list[str]:
+    """Banner lines translating every ISO timestamp in ``body`` into Singapore time.
+
+    The site-wide rule is that no bare ISO timestamp appears in body text — a
+    workshop audience sitting in Singapore should not have to subtract eight
+    hours while the presenter keeps talking. But these pages are *verbatim
+    copies*, and the banner above them promises exactly that: editing the body to
+    read nicer would make the promise false, which is a worse trade than an ugly
+    timestamp.
+
+    So the translation goes in the banner instead, where it is this script's own
+    text and the artifact stays byte-for-byte. The reader gets the local reading
+    before they meet the ISO string, and the ISO string is still the one in the
+    JSON they can grep for.
+    """
+    stamps = sorted(set(_ISO_TS.findall(body)))
+    if not stamps:
+        return []
+    lines = [
+        "    Times in the artifact below are UTC. In Singapore time:",
+        "",
+    ]
+    lines += [f"      - `{s}` — {to_sgt_text(s)}" for s in stamps]
+    lines.append("")
+    return lines
+
+
+def _banner(entry: DocEntry, body: str = "") -> str:
     """The provenance header prepended to a copied artifact."""
     lines = [
         GENERATED_MARKER,
@@ -411,6 +466,7 @@ def _banner(entry: DocEntry) -> str:
         "    model call.",
         "",
     ]
+    lines += _sgt_key(body)
     return "\n".join(lines)
 
 
@@ -438,7 +494,7 @@ def copy_docs(verbose: bool = True) -> list[str]:
             )
         dest = RESULTS_DIR / entry.dest
         body = src.read_text(encoding="utf-8")
-        out = _insert_after_h1(body, _banner(entry)).rstrip() + "\n"
+        out = _insert_after_h1(body, _banner(entry, body)).rstrip() + "\n"
         previous = dest.read_text(encoding="utf-8") if dest.is_file() else None
         dest.write_text(out, encoding="utf-8")
         state = "unchanged" if previous == out else "written"
@@ -549,6 +605,148 @@ def _charts_page(charts: list[ChartEntry]) -> str:
         "",
     ]
     return "\n".join(parts)
+
+
+# --------------------------------------------------------------------------- #
+# Generated figures                                                            #
+# --------------------------------------------------------------------------- #
+
+
+def _figure_partial(chart: "object") -> str:
+    """One chart as a Markdown partial a page includes with ``--8<--``.
+
+    The SVG is inlined rather than linked as an ``<img>`` for one reason that
+    matters and one that is convenient. The reason that matters: an ``<img>`` is
+    a separate document, so the page's stylesheet cannot reach inside it, and
+    this theme has a light scheme and a dark one that need different label ink.
+    The convenience: one fewer binary in the repository per chart.
+
+    Captions carry no links. A partial is included from pages at two different
+    directory depths, and a relative link that resolves from ``index.md`` breaks
+    from ``modules/``. The linking sentence, where a page wants one, is the
+    page's own.
+    """
+    return "\n".join(
+        [
+            GENERATED_MARKER,
+            f"<!-- source: {chart.source} via amw/reporting/charts.py -->",
+            "",
+            f'<figure class="amw-chart" role="img" aria-label="{chart.alt}">',
+            chart.svg,
+            "</figure>",
+            "",
+            chart.caption,
+            "{ .amw-chart__caption }",
+            "",
+            f"Generated at site-build time from `{chart.source}`.",
+            "{ .amw-chart__source }",
+            "",
+        ]
+    )
+
+
+def generate_figures(verbose: bool = True) -> list[str]:
+    """Draw every chart in :mod:`amw.reporting.charts` from the artifacts."""
+    from amw.reporting.charts import build_all
+
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    written: list[str] = []
+    for chart in build_all(REPO):
+        dest = FIGURES_DIR / f"{chart.slug}.md"
+        body = _figure_partial(chart)
+        previous = dest.read_text(encoding="utf-8") if dest.is_file() else None
+        dest.write_text(body, encoding="utf-8")
+        written.append(chart.slug)
+        if verbose:
+            state = "unchanged" if previous == body else "written"
+            print(
+                f"  figure {chart.source:<48} -> site_src/charts/{chart.slug}.md"
+                f"  [{state}]"
+            )
+    return written
+
+
+# --------------------------------------------------------------------------- #
+# Figures on hand-written pages that would drift                               #
+# --------------------------------------------------------------------------- #
+
+
+@dataclass(frozen=True)
+class LiveFigure:
+    """A number written into prose that a config change can silently falsify.
+
+    Most numbers on this site are copied from artifacts by this script, so they
+    refresh themselves. A handful sit in hand-written sentences on the module
+    pages because they *are* the sentence — "13 rates still read VERIFY" only
+    reads well inline. Those are the ones that rot: adding two models to
+    ``config/pricing.yaml`` moved that count from 13 to 19 and nothing failed.
+
+    Each entry re-derives the value from config and greps the page for it. This
+    does not rewrite the page — a script editing prose is worse than a stale
+    number — it fails the build and says which sentence to fix.
+    """
+
+    page: str
+    describe: str
+    #: Called with no arguments; returns the value that must appear on the page.
+    value: "object"
+    #: How the value is written in the prose, given the value.
+    pattern: "object"
+
+
+def _unverified_rate_count() -> int:
+    from amw.config import load_all
+
+    return len(load_all().pricing.unverified_keys())
+
+
+LIVE_FIGURES: tuple[LiveFigure, ...] = (
+    LiveFigure(
+        page="modules/03-gates-as-contract.md",
+        describe="count of unverified rates in config/pricing.yaml",
+        value=_unverified_rate_count,
+        pattern=lambda n: f"{n} rates still reading `VERIFY`",
+    ),
+    LiveFigure(
+        page="modules/08-the-scorecard.md",
+        describe="count of unverified rates in config/pricing.yaml",
+        value=_unverified_rate_count,
+        pattern=lambda n: f"{n} rates still read `VERIFY`",
+    ),
+)
+
+
+def check_live_figures(verbose: bool = True) -> list[str]:
+    """Every :data:`LIVE_FIGURES` entry still matches config. Returns failures."""
+    failures: list[str] = []
+    for figure in LIVE_FIGURES:
+        path = SITE_SRC / figure.page
+        if not path.is_file():
+            failures.append(f"{figure.page}: page is missing")
+            continue
+        expected = figure.pattern(figure.value())
+        if expected not in path.read_text(encoding="utf-8"):
+            failures.append(
+                f"{figure.page}: expected to find {expected!r} "
+                f"({figure.describe}) and did not"
+            )
+    if verbose:
+        print(
+            f"\nLive-figure check: {len(LIVE_FIGURES)} hand-written figure(s) "
+            "re-derived from config."
+        )
+        if not failures:
+            print("  PASS — every hand-written figure still matches its source.")
+        else:
+            print("  FAIL — a hand-written figure has drifted from its source:\n")
+            for failure in failures:
+                print(f"    {failure}")
+            print(
+                "\n  Update the sentence on the page. Do not update this check to "
+                "match the page —\n  the point of the check is that the page follows "
+                "the config, not the other way round."
+            )
+    return failures
 
 
 # --------------------------------------------------------------------------- #
@@ -683,20 +881,23 @@ def main(argv: list[str] | None = None) -> int:
         print("Copying whitelisted artifacts:")
         copy_docs()
         copy_charts()
+        generate_figures()
+
+    drifted = check_live_figures()
 
     if args.site_dir is not None:
         hits = check_forbidden(args.site_dir)
-        return report_hits(hits)
+        return report_hits(hits) or bool(drifted)
 
     if args.no_build:
         print("\n--no-build: checking site_src/ sources rather than built output.")
-        return report_hits(check_forbidden(SITE_SRC))
+        return report_hits(check_forbidden(SITE_SRC)) or bool(drifted)
 
     with tempfile.TemporaryDirectory(prefix="amw-site-") as tmp:
         built = Path(tmp) / "site"
         build_site(built)
         hits = check_forbidden(built)
-        status = report_hits(hits)
+        status = report_hits(hits) or bool(drifted)
 
     if status == 0:
         print(

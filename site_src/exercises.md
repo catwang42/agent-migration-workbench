@@ -26,7 +26,8 @@ ablation, shadow and judge calls, evaluates the gates, and renders the scorecard
    — it never presents a recorded call as a fresh one.
 2. The dataset counts: 70 items per subagent, 28 in the core split, every item
    `provenance: synthetic`.
-3. The gate evaluation lines. Each gate prints the bound it tested (a CI bound,
+3. The gate evaluation lines. Each gate prints the bound it tested (a 95%
+   confidence-range bound,
    not a point estimate) and the result.
 4. The unmeasured gates. `cost_savings_pct` and `latency_p95` print a reason, not
    a value.

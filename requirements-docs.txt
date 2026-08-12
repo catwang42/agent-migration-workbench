@@ -9,7 +9,23 @@
 # Install:  .venv/bin/pip install -r requirements-docs.txt
 # Build:    mkdocs build --strict
 # Publish:  mkdocs gh-deploy --strict     (a human runs this, never the build)
+#
+# Every version is pinned exactly, including the two transitive ones, because
+# this stack has already failed silently once. pymdown-extensions 10.16.1
+# against Markdown 3.10.3 stopped rendering code fences site-wide — ```yaml came
+# out as a paragraph of literal backticks on every page — and `mkdocs build
+# --strict` exited 0 throughout. Nothing in the toolchain reports it. A version
+# range lets that pairing come back on whichever machine rebuilds the site at
+# freeze, so: bump deliberately, rebuild, and look at a page with a code block
+# on it before committing the bump.
+#
+# matplotlib is not pinned here (requirements.txt already carries it) but is
+# part of this toolchain: amw/reporting/charts.py draws the generated chart SVGs
+# with it and the SVG bytes are committed, so a different matplotlib shows up as
+# a diff in every partial under site_src/charts/.
 
 mkdocs==1.6.1
 mkdocs-material==9.7.7
-pymdown-extensions==10.16.1
+mkdocs-material-extensions==1.3.1
+pymdown-extensions==11.0.1
+Markdown==3.10.3

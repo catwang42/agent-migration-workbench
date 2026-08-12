@@ -13,10 +13,15 @@ Keeping the mechanism identical is not a detail. It is what makes the
 Claude-vs-A0 delta a statement about *prompt format* rather than about output
 plumbing.
 
-All figures below are n=70 on the full corpus, 95% bootstrap CIs, seed
-`20260812`, from `artifacts/results/phase2_n70_widened.json`. Every call was
-executed; the recording window is 2026-08-09T16:07:15+00:00 →
-2026-08-11T06:20:37+00:00.
+All figures below are n=70 on the full corpus, seed `20260812`, from
+`artifacts/results/phase2_n70_widened.json`. Bracketed pairs are the **95%
+confidence range** (CI) — the span the true value is likely to sit in at this
+sample size. Every call was executed live and recorded.
+
+Recorded 10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM (SGT) · UTC: `2026-08-09T16:07:15+00:00` → `2026-08-11T06:20:37+00:00`
+{ .amw-provenance }
+
+--8<-- "charts/naive-swap.md"
 
 ## Query Rewriter
 

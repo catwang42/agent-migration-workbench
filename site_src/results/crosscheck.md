@@ -15,6 +15,12 @@
     retyped, rounded or reformatted; every figure came from an executed
     model call.
 
+    Times in the artifact below are UTC. In Singapore time:
+
+      - `2026-08-09T16:07:18+00:00` — 10 Aug 2026, 12:07 AM (SGT)
+      - `2026-08-10T02:45:59+00:00` — 10 Aug 2026, 10:45 AM (SGT)
+      - `2026-08-11T03:52:19+00:00` — 11 Aug 2026, 11:52 AM (SGT)
+
 **Gated instrument:** Gemini 2.5 Pro (prompt `v1`, `response_schema`)
 
 **Validating instrument:** Claude Sonnet 5 (prompt `v1_crosscheck`, `tool`)

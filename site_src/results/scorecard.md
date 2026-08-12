@@ -15,6 +15,11 @@
     retyped, rounded or reformatted; every figure came from an executed
     model call.
 
+    Times in the artifact below are UTC. In Singapore time:
+
+      - `2026-08-09T16:07:15+00:00` — 10 Aug 2026, 12:07 AM (SGT)
+      - `2026-08-11T06:20:37+00:00` — 11 Aug 2026, 2:20 PM (SGT)
+
 **REPLAY — every number below comes from model calls recorded 2026-08-09T16:07:15+00:00 to 2026-08-11T06:20:37+00:00, not from a run just now.**
 
 Gates are checked against 95% CI bounds, so a passing gate licenses "quality parity within measurement under pre-agreed gates" — never "zero quality drop".

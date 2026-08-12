@@ -14,19 +14,22 @@ shown.
 
 ## The header, verbatim
 
-```yaml
-# Migration gates. THE ONLY PLACE THRESHOLDS LIVE (CLAUDE.md conventions).
-# Thresholds are pre-agreed with the customer BEFORE the run, and the scorecard
-# footer prints this file's version hash so a reader can tell they were not
-# moved after seeing the numbers.
-#
-# Every gate is checked against the 95% CI LOWER BOUND (upper bound for `max`
-# gates), never the point estimate.
+<!-- Embedded from the real file, not retyped: a hand-copied threshold is a
+     threshold that can quietly disagree with the one the scorecard hashes. -->
 
-version: 1
+```yaml
+--8<-- "gates.yaml:1:11"
 ```
 
+Verbatim from `config/gates.yaml`, version hash `92f9d018432f`.
+{ .amw-chart__source }
+
 ## The six gates
+
+Every "basis" below is a **95% confidence range** — the span the true value is
+likely to sit in, given how few items were measured. Written **CI** from here on.
+Gates are checked against the *worst* end of that range, never the middle: the
+lower bound where the gate is a floor, the upper bound where it is a ceiling.
 
 | Gate | Bound | Basis |
 |---|---|---|
@@ -138,7 +141,7 @@ clear:
 
 | Gate | Why it is closed | Clears when |
 |---|---|---|
-| pricing | `config/pricing.yaml` has 13 rates still reading `VERIFY` and `verified_on` is null | a human runs `scripts/refresh_pricing.py` |
+| pricing | `config/pricing.yaml` has 19 rates still reading `VERIFY` and `verified_on` is null | a human runs `scripts/refresh_pricing.py` |
 | volumes | the customer profile's volume block is illustrative (`volumes_confirmed: false`) | the customer states their call volumes |
 
 Until both clear, every cost cell renders an em dash. Not a zero, not a

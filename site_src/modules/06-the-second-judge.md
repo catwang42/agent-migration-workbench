@@ -37,8 +37,11 @@ python cli.py crosscheck
 ```
 
 Claude Sonnet 5 (prompt `v1_crosscheck`, `tool` mode) re-scored the **same recorded
-outputs** against the **same rubrics**. Run 2026-08-11T03:52:19+00:00; the outputs
-re-scored were recorded 2026-08-09T16:07:18+00:00 → 2026-08-10T02:45:59+00:00.
+outputs** against the **same rubrics**. Run 11 Aug 2026, 11:52 AM (SGT); the
+outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM (SGT).
+
+Run UTC: `2026-08-11T03:52:19+00:00` · outputs recorded `2026-08-09T16:07:18+00:00` → `2026-08-10T02:45:59+00:00`
+{ .amw-provenance }
 
 | Subagent | Arm | Criterion agreement | Cohen's kappa | Gated mean | Cross-check mean | Criterion pairs |
 |---|---|---|---|---|---|---|

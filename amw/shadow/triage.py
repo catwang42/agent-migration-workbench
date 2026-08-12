@@ -52,6 +52,7 @@ from amw.eval.judge import Judge, JudgeRequest, JudgeVerdict
 from amw.eval.runner import judge_candidate, rubric_of
 from amw.datasets.schema import DatasetItem
 from amw.shadow.agreement import ItemAgreement
+from amw.shadow.emission import malformed_emission
 from amw.traces.schema import Trace
 
 __all__ = [
@@ -59,6 +60,7 @@ __all__ = [
     "LOSS",
     "TIE",
     "NOT_ADJUDICATED",
+    "MALFORMED_CAVEAT",
     "TriageVerdict",
     "TriageRow",
     "TriageSummary",
@@ -90,6 +92,19 @@ SPLIT_LABELS = {
 OUTSIDE_SPLIT = "outside judged split"
 
 _MAX_RATIONALE_CHARS = 180
+
+#: Printed wherever the structural exclusion is quoted. The mechanism is the
+#: same one disclosed beside the Claude baseline everywhere else in the report,
+#: and naming it here is what stops "excluded" reading as "discarded because it
+#: was inconvenient".
+MALFORMED_CAVEAT = (
+    "Under this demo organization's Vertex AI policy configuration "
+    "(`constraints/vertexai.allowedPartnerModelFeatures`), partner-model "
+    "structured outputs were unavailable, so the Claude baseline was measured "
+    "using tool-call structured emission; the excluded items are ones where "
+    "that emission was structurally broken (see `amw/shadow/emission.py`), not "
+    "ones where the baseline merely answered worse."
+)
 
 
 class _Strict(BaseModel):
@@ -137,6 +152,15 @@ class TriageRow(_Strict):
     #: Why an item was not adjudicated. Always set when verdict is
     #: ``not_adjudicated``, never set otherwise.
     reason: str | None = None
+    #: One line saying why the *baseline* arm's emission was structurally
+    #: broken on this item, or None when it emitted a well-formed payload. See
+    #: :mod:`amw.shadow.emission`. Set on adjudicated rows only — a row with no
+    #: recorded verdict has nothing to attribute.
+    #:
+    #: This is what separates "the candidate wrote a better plan" from "the
+    #: incumbent emitted a broken object and anything would have beaten it".
+    #: Both are real; only one is a quality claim.
+    baseline_malformed: str | None = None
 
     @property
     def adjudicated(self) -> bool:
@@ -161,6 +185,11 @@ class TriageSummary(_Strict):
     not_adjudicated: int = 0
     #: reason -> count over the not-adjudicated rows.
     not_adjudicated_reasons: dict[str, int] = Field(default_factory=dict)
+    #: Of ``wins`` / ``losses``, how many landed on an item where the baseline
+    #: arm's emission was structurally broken (:mod:`amw.shadow.emission`).
+    #: Subtracting them gives the quality-only tally.
+    wins_baseline_malformed: int = 0
+    losses_baseline_malformed: int = 0
 
     @property
     def adjudicated(self) -> int:
@@ -172,6 +201,54 @@ class TriageSummary(_Strict):
         if not self.adjudicated:
             return None
         return self.wins >= self.losses
+
+    @property
+    def quality_wins(self) -> int:
+        """Wins on items where the baseline emitted a well-formed payload."""
+        return self.wins - self.wins_baseline_malformed
+
+    @property
+    def quality_losses(self) -> int:
+        return self.losses - self.losses_baseline_malformed
+
+    @property
+    def quality_wins_ge_losses(self) -> bool | None:
+        """The alt clause again, with the structural failures taken out.
+
+        Reported beside :attr:`wins_ge_losses`, never instead of it. The gate's
+        ``alt`` text says "judge-adjudicated wins >= losses" with no exclusion,
+        so the overall tally is the one the clause is evaluated on; this is the
+        honesty check that says how much of it is a quality claim.
+        """
+        if not self.adjudicated:
+            return None
+        return self.quality_wins >= self.quality_losses
+
+    def adjudication_text(self, *, baseline_label: str = "the baseline") -> str:
+        """The one wording used everywhere the adjudication is quoted.
+
+        Both figures, always, in the order the ruling fixed: overall first,
+        because that is what the pre-registered clause is evaluated on, then
+        the quality-only tally with the reason for the exclusion named.
+        """
+        if not self.adjudicated:
+            return (
+                f"no disagreement was adjudicated "
+                f"({self.not_adjudicated} not adjudicated)"
+            )
+        text = f"{self.wins}W/{self.losses}L overall"
+        if self.wins_baseline_malformed or self.losses_baseline_malformed:
+            text += (
+                f"; {self.quality_wins}W/{self.quality_losses}L excluding items "
+                f"where {baseline_label}'s tool emission was structurally "
+                f"malformed"
+            )
+        else:
+            text += (
+                f"; no item was excluded — {baseline_label} emitted a "
+                f"well-formed payload on every adjudicated disagreement"
+            )
+        return text
 
 
 # --------------------------------------------------------------------------
@@ -307,6 +384,7 @@ def adjudicate_item(
     )
     baseline_score, baseline_n = _mean_score(baseline_verdicts)
     candidate_score, candidate_n = _mean_score(candidate_verdicts)
+    baseline_malformed = malformed_emission(item.subagent, baseline_trace)
 
     row = TriageRow(
         item_id=item.item_id,
@@ -318,6 +396,7 @@ def adjudicate_item(
         candidate_score=candidate_score,
         baseline_repeats=baseline_n,
         candidate_repeats=candidate_n,
+        baseline_malformed=baseline_malformed,
     )
 
     if baseline_score is None or candidate_score is None:
@@ -460,8 +539,12 @@ def summarize(subagent: str, rows: Sequence[TriageRow]) -> TriageSummary:
     for row in rows:
         if row.verdict == WIN:
             summary.wins += 1
+            if row.baseline_malformed:
+                summary.wins_baseline_malformed += 1
         elif row.verdict == LOSS:
             summary.losses += 1
+            if row.baseline_malformed:
+                summary.losses_baseline_malformed += 1
         elif row.verdict == TIE:
             summary.ties += 1
         else:
@@ -500,13 +583,19 @@ def triage_table_markdown(
     lines = [f"## {title}", ""]
     if summaries:
         lines += [
-            "| subagent | disagreements | win | loss | tie | not adjudicated |",
-            "|---|---|---|---|---|---|",
+            "| subagent | disagreements | win | loss | tie | not adjudicated "
+            "| of which baseline emission malformed |",
+            "|---|---|---|---|---|---|---|",
         ]
         for summary in summaries:
+            malformed = (
+                f"{summary.wins_baseline_malformed}W/"
+                f"{summary.losses_baseline_malformed}L"
+            )
             lines.append(
                 f"| {summary.subagent} | {summary.disagreements} | {summary.wins} "
-                f"| {summary.losses} | {summary.ties} | {summary.not_adjudicated} |"
+                f"| {summary.losses} | {summary.ties} | {summary.not_adjudicated} "
+                f"| {malformed} |"
             )
         lines.append("")
         lines.append(
@@ -516,11 +605,26 @@ def triage_table_markdown(
             "table."
         )
         lines.append("")
+        for summary in summaries:
+            if not (
+                summary.wins_baseline_malformed or summary.losses_baseline_malformed
+            ):
+                continue
+            lines.append(
+                f"**{summary.subagent}** adjudication: "
+                f"{summary.adjudication_text(baseline_label='the Claude baseline')}. "
+                + MALFORMED_CAVEAT
+            )
+            lines.append("")
 
     lines += [_TABLE_HEADER, _TABLE_RULE]
     for row in rows:
         fields = ", ".join(row.fields) or "—"
         detail = row.rationale or (row.reason or "")
+        if row.baseline_malformed:
+            # Prefixed, not appended: the reader has to see that the baseline's
+            # output was broken before reading the judge's words about it.
+            detail = f"[baseline emission malformed — {row.baseline_malformed}] {detail}"
         scores = (
             f"{row.baseline_score:.2f} vs {row.candidate_score:.2f}"
             if row.baseline_score is not None and row.candidate_score is not None

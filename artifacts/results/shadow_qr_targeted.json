@@ -184,7 +184,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0002",
@@ -202,7 +203,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0003",
@@ -217,7 +219,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0004",
@@ -233,7 +236,8 @@
           "candidate_score": 0.5,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0005",
@@ -254,7 +258,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0006",
@@ -270,7 +275,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0007",
@@ -285,7 +291,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0008",
@@ -303,7 +310,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 3 validation errors for QueryPlan (query Field required [type=missing, input_value={'query_plan': {'query': ... 'intent': 'landscape'}}, input_type=dict])"
         },
         {
           "item_id": "qr-0009",
@@ -318,7 +326,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0010",
@@ -333,7 +342,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0011",
@@ -348,7 +358,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0016",
@@ -364,7 +375,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0017",
@@ -385,7 +397,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0018",
@@ -400,7 +413,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0021",
@@ -415,7 +429,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0022",
@@ -432,7 +447,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0024",
@@ -449,7 +465,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0026",
@@ -464,7 +481,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0027",
@@ -479,7 +497,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0029",
@@ -495,7 +514,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0031",
@@ -510,7 +530,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0032",
@@ -528,7 +549,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 5 validation errors for QueryPlan (query Field required [type=missing, input_value={'filters': {'query': 'pe...: [], 'cpc_codes': []}}}, input_type=dict])"
         },
         {
           "item_id": "qr-0033",
@@ -543,7 +565,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0034",
@@ -558,7 +581,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0035",
@@ -573,7 +597,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0038",
@@ -588,7 +613,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0039",
@@ -603,7 +629,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0040",
@@ -618,7 +645,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0041",
@@ -633,7 +661,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0042",
@@ -649,7 +678,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0043",
@@ -664,7 +694,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0045",
@@ -681,7 +712,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 4 validation errors for QueryPlan (query Field required [type=missing, input_value={'filters': {'query': 'io... 'intent': 'prior_art'}}, input_type=dict])"
         },
         {
           "item_id": "qr-0046",
@@ -702,7 +734,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 3 validation errors for QueryPlan (query Field required [type=missing, input_value={'query_plan': {'query': ... 'intent': 'landscape'}}, input_type=dict])"
         },
         {
           "item_id": "qr-0047",
@@ -718,7 +751,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0048",
@@ -733,7 +767,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0050",
@@ -748,7 +783,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0051",
@@ -764,7 +800,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0052",
@@ -783,7 +820,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0053",
@@ -798,7 +836,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0054",
@@ -813,7 +852,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0056",
@@ -829,7 +869,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0057",
@@ -847,7 +888,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0058",
@@ -864,7 +906,8 @@
           "candidate_score": 0.75,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0059",
@@ -881,7 +924,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
         },
         {
           "item_id": "qr-0060",
@@ -896,7 +940,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0062",
@@ -914,7 +959,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0064",
@@ -929,7 +975,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0066",
@@ -944,7 +991,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0067",
@@ -960,7 +1008,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0068",
@@ -976,7 +1025,8 @@
           "candidate_score": 1.0,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         },
         {
           "item_id": "qr-0069",
@@ -991,7 +1041,8 @@
           "candidate_score": 0.375,
           "baseline_repeats": 2,
           "candidate_repeats": 2,
-          "reason": null
+          "reason": null,
+          "baseline_malformed": null
         }
       ],
       "triage_summary": {
@@ -1001,7 +1052,9 @@
         "losses": 3,
         "ties": 33,
         "not_adjudicated": 0,
-        "not_adjudicated_reasons": {}
+        "not_adjudicated_reasons": {},
+        "wins_baseline_malformed": 6,
+        "losses_baseline_malformed": 0
       },
       "judged_split": "all",
       "judged_items": 70

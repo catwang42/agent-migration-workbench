@@ -517,6 +517,78 @@ def test_summary_has_no_opinion_when_nothing_was_adjudicated(items):
     assert summary.wins_ge_losses is None, "0 >= 0 is not evidence of parity"
 
 
+# --------------------------------------------------------------------------
+# the second adjudication figure
+#
+# The Query Rewriter alt clause is carried by 15W/3L, but 6 of those wins are
+# items where the Claude baseline's tool call emitted a broken object. The
+# quality-only tally is a separate number and both are reported, always.
+# --------------------------------------------------------------------------
+
+
+def _summary(**kw) -> T.TriageSummary:
+    base = dict(subagent="query_rewriter", disagreements=51, wins=15, losses=3, ties=33)
+    return T.TriageSummary(**{**base, **kw})
+
+
+def test_the_structural_exclusion_is_subtracted_from_both_sides():
+    summary = _summary(wins_baseline_malformed=6, losses_baseline_malformed=1)
+    assert summary.quality_wins == 9
+    assert summary.quality_losses == 2
+    assert summary.wins_ge_losses is True
+    assert summary.quality_wins_ge_losses is True
+
+
+def test_the_clause_is_evaluated_on_the_overall_tally_not_the_quality_one():
+    """gates.yaml's alt text has no exclusion in it, so neither does the check.
+
+    The quality figure is the honesty check reported beside it — if it ever
+    became the thing the gate is evaluated on, the scorecard would be applying
+    a clause the customer never pre-agreed to.
+    """
+    summary = _summary(wins=4, losses=3, wins_baseline_malformed=3)
+    assert summary.wins_ge_losses is True
+    assert summary.quality_wins_ge_losses is False, "1 >= 3 is false"
+
+
+def test_the_adjudication_wording_carries_both_figures():
+    text = _summary(wins_baseline_malformed=6).adjudication_text(
+        baseline_label="the Claude baseline"
+    )
+    assert text.startswith("15W/3L overall")
+    assert "9W/3L excluding items" in text
+    assert "the Claude baseline's tool emission was structurally malformed" in text
+
+
+def test_the_wording_says_so_when_nothing_was_excluded():
+    """Silence would read as "no exclusion applies" and as "nobody looked"."""
+    text = _summary().adjudication_text()
+    assert "15W/3L overall" in text
+    assert "no item was excluded" in text
+    assert "well-formed payload on every adjudicated disagreement" in text
+
+
+def test_the_wording_refuses_to_speak_when_nothing_was_adjudicated():
+    text = _summary(wins=0, losses=0, ties=0, not_adjudicated=51).adjudication_text()
+    assert "no disagreement was adjudicated" in text
+    assert "W/" not in text, "a 0W/0L tally reads as a measured parity finding"
+
+
+def test_the_triage_table_names_the_mechanism_behind_the_exclusion(items):
+    """The exclusion is the org-policy tool-emission artifact, not a discard."""
+    item = items["feature_extractor"][0]
+    row, _ = _adjudicate_one(item, baseline_score=0.5, candidate_score=1.0)
+    row = row.model_copy(update={"baseline_malformed": "the call failed: boom"})
+    table = T.triage_table_markdown(
+        [row], summaries=[T.summarize("feature_extractor", [row])]
+    )
+    assert "of which baseline emission malformed" in table
+    assert "[baseline emission malformed — the call failed: boom]" in table
+    assert "constraints/vertexai.allowedPartnerModelFeatures" in table
+    assert "merely answered worse" in table
+    assert "1W/0L overall; 0W/0L excluding items" in table
+
+
 def test_the_markdown_table_has_the_columns_the_card_asked_for(items):
     item = items["feature_extractor"][0]
     row, _ = _adjudicate_one(item, baseline_score=0.5, candidate_score=1.0)

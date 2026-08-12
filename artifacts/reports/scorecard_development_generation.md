@@ -1,0 +1,147 @@
+# Migration Readiness Scorecard — Demo — Patents RAG
+
+**REPLAY — every number below comes from model calls recorded 2026-08-09T16:07:15+00:00 to 2026-08-11T06:20:37+00:00, not from a run just now.**
+
+Gates are checked against 95% CI bounds, so a passing gate licenses "quality parity within measurement under pre-agreed gates" — never "zero quality drop".
+
+## Verdicts
+
+| Subagent | Baseline | Candidate | Gates evaluated | Verdict | Why |
+| --- | --- | --- | --- | --- | --- |
+| Chunk Summarizer | `claude_baseline` | `gemini_tuned_v1` | 4 of 6 | **INCOMPLETE** (provisional: TUNE_FIRST) | 4 of 6 pre-agreed gates were measured; cost_savings_pct, latency_p95 were not. A verdict over a subset of the gates is not the verdict that was agreed, so none is issued. Were every unmeasured gate to pass, it would be TUNE_FIRST. |
+| Feature Extractor | `claude_baseline` | `gemini_tuned_v1` | 3 of 6 | **INCOMPLETE** (provisional: TUNE_FIRST) | 3 of 6 pre-agreed gates were measured; cost_savings_pct, groundedness_delta_pp, latency_p95 were not. A verdict over a subset of the gates is not the verdict that was agreed, so none is issued. Were every unmeasured gate to pass, it would be TUNE_FIRST. |
+| Query Rewriter | `claude_baseline` | `gemini_tuned_v1` | 3 of 6 | **HOLD** | blocking gate(s) shadow_agreement failed on the CI bound. Structural failure. Do not migrate this subagent on the current prompt pack. |
+
+## Chunk Summarizer
+
+| Gate | Bound (gates.yaml) | Measured (95% CI) | Bound tested | Result |
+| --- | --- | --- | --- | --- |
+| `quality_delta_pp` | `>= -2.0` | -2.32 pp [-5.00 pp, +0.36 pp] (paired n=70) | ci_lower = -5 | **FAIL** |
+| `json_schema_validity` | `>= 0.99` | 1.000 [1.000, 1.000] | ci_lower = 1 | PASS |
+| `groundedness_delta_pp` | `>= -1.0` | +0.00 pp [+0.00 pp, +0.00 pp] (paired n=68, 2 unpaired dropped) | ci_lower = 0 | PASS |
+| `shadow_agreement` | `>= 0.9` | 0.957 [0.900, 1.000] | ci_lower = 0.9 | PASS |
+| `cost_savings_pct` | `>= 30.0` | — (prices unverified — run scripts/refresh_pricing.py) | not evaluated | not evaluated |
+| `latency_p95` | `<= claude_baseline_p95` | not comparable — region split disclosed | not evaluated | not evaluated |
+
+### Evidence
+
+| Evidence | Value |
+| --- | --- |
+| Claude `json_schema_validity` (`claude_baseline`) | 0.971 [0.929, 1.000] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
+| Gemini `json_schema_validity` (`gemini_tuned_v1`) | 1.000 [1.000, 1.000] |
+| Judge score — Claude | 0.918 [0.879, 0.954] (judged n=70, split=all) |
+| Judge score — Gemini | 0.895 [0.857, 0.929] (judged n=70, split=all) |
+| Latency p95 | not comparable — region split disclosed |
+| Cost per call | — (prices unverified — run scripts/refresh_pricing.py) |
+| Monthly run rate | — (prices unverified — run scripts/refresh_pricing.py) |
+| Annual run rate | — (prices unverified — run scripts/refresh_pricing.py) |
+| Cost savings vs Claude | — (prices unverified — run scripts/refresh_pricing.py) |
+
+**Not evaluated, and why**
+
+- `cost_savings_pct` — not computable — pricing unverified / volumes unconfirmed
+- `latency_p95` — not comparable — region split disclosed: Claude ran in global, Gemini in us-central1. The claude_baseline_p95 sentinel resolves only from a same-region probe, so this gate is not evaluated — it is not passed.
+
+- shadow_agreement counts **structured fields only** — the fields with a defined right answer. Prose fields are excluded here and adjudicated separately in the disagreement triage; this figure is not a claim that the prose matched.
+
+## Feature Extractor
+
+| Gate | Bound (gates.yaml) | Measured (95% CI) | Bound tested | Result |
+| --- | --- | --- | --- | --- |
+| `quality_delta_pp` | `>= -2.0` | -10.44 pp [-13.78 pp, -7.12 pp] (paired n=70) | ci_lower = -13.78 | **FAIL** |
+| `json_schema_validity` | `>= 0.99` | 1.000 [1.000, 1.000] | ci_lower = 1 | PASS |
+| `groundedness_delta_pp` | `>= -1.0` | not evaluated — feature_extractor has no citation_coverage instrument, so groundedness_delta_pp was not measured for it | not evaluated | not evaluated |
+| `shadow_agreement` | `>= 0.9` | 0.971 [0.929, 1.000] | ci_lower = 0.9286 | PASS |
+| `cost_savings_pct` | `>= 30.0` | — (prices unverified — run scripts/refresh_pricing.py) | not evaluated | not evaluated |
+| `latency_p95` | `<= claude_baseline_p95` | not comparable — region split disclosed | not evaluated | not evaluated |
+
+### Evidence
+
+| Evidence | Value |
+| --- | --- |
+| Claude `json_schema_validity` (`claude_baseline`) | 0.957 [0.900, 1.000] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
+| Gemini `json_schema_validity` (`gemini_tuned_v1`) | 1.000 [1.000, 1.000] |
+| Judge score — Claude | 0.900 [0.868, 0.929] (judged n=70, split=all) |
+| Judge score — Gemini | 0.795 [0.760, 0.828] (judged n=70, split=all) |
+| Latency p95 | not comparable — region split disclosed |
+| Cost per call | — (prices unverified — run scripts/refresh_pricing.py) |
+| Monthly run rate | — (prices unverified — run scripts/refresh_pricing.py) |
+| Annual run rate | — (prices unverified — run scripts/refresh_pricing.py) |
+| Cost savings vs Claude | — (prices unverified — run scripts/refresh_pricing.py) |
+
+**Not evaluated, and why**
+
+- `cost_savings_pct` — not computable — pricing unverified / volumes unconfirmed
+- `groundedness_delta_pp` — feature_extractor has no citation_coverage instrument, so groundedness_delta_pp was not measured for it
+- `latency_p95` — not comparable — region split disclosed: Claude ran in global, Gemini in us-central1. The claude_baseline_p95 sentinel resolves only from a same-region probe, so this gate is not evaluated — it is not passed.
+
+- shadow_agreement counts **structured fields only** — the fields with a defined right answer. Prose fields are excluded here and adjudicated separately in the disagreement triage; this figure is not a claim that the prose matched.
+
+## Query Rewriter
+
+| Gate | Bound (gates.yaml) | Measured (95% CI) | Bound tested | Result |
+| --- | --- | --- | --- | --- |
+| `quality_delta_pp` | `>= -2.0` | -0.64 pp [-5.50 pp, +4.32 pp] (paired n=70) | ci_lower = -5.501 | **FAIL** |
+| `json_schema_validity` | `>= 0.99` | 1.000 [1.000, 1.000] | ci_lower = 1 | PASS |
+| `groundedness_delta_pp` | `>= -1.0` | not evaluated — query_rewriter has no citation_coverage instrument, so groundedness_delta_pp was not measured for it | not evaluated | not evaluated |
+| `shadow_agreement` | `>= 0.9` | 0.557 [0.443, 0.671] | ci_lower = 0.4429 | **FAIL** |
+| `cost_savings_pct` | `>= 30.0` | — (prices unverified — run scripts/refresh_pricing.py) | not evaluated | not evaluated |
+| `latency_p95` | `<= claude_baseline_p95` | not comparable — region split disclosed | not evaluated | not evaluated |
+
+### Evidence
+
+| Evidence | Value |
+| --- | --- |
+| Claude `json_schema_validity` (`claude_baseline`) | 0.814 [0.714, 0.900] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
+| Gemini `json_schema_validity` (`gemini_tuned_v1`) | 1.000 [1.000, 1.000] |
+| Judge score — Claude | 0.886 [0.838, 0.932] (judged n=70, split=all) |
+| Judge score — Gemini | 0.879 [0.843, 0.914] (judged n=70, split=all) |
+| Latency p95 | not comparable — region split disclosed |
+| Cost per call | — (prices unverified — run scripts/refresh_pricing.py) |
+| Monthly run rate | — (prices unverified — run scripts/refresh_pricing.py) |
+| Annual run rate | — (prices unverified — run scripts/refresh_pricing.py) |
+| Cost savings vs Claude | — (prices unverified — run scripts/refresh_pricing.py) |
+
+**Not evaluated, and why**
+
+- `cost_savings_pct` — not computable — pricing unverified / volumes unconfirmed
+- `groundedness_delta_pp` — query_rewriter has no citation_coverage instrument, so groundedness_delta_pp was not measured for it
+- `latency_p95` — not comparable — region split disclosed: Claude ran in global, Gemini in us-central1. The claude_baseline_p95 sentinel resolves only from a same-region probe, so this gate is not evaluated — it is not passed.
+
+- shadow_agreement counts **structured fields only** — the fields with a defined right answer. Prose fields are excluded here and adjudicated separately in the disagreement triage; this figure is not a claim that the prose matched.
+
+## Economics
+
+**not computable — pricing unverified / volumes unconfirmed.** No dollar figure is produced — not a zero, not a placeholder. Both gates below are independent and each has to be cleared by a human.
+
+| Gate | Why it is closed | Clears when |
+| --- | --- | --- |
+| pricing | config/pricing.yaml has 13 rate(s) still reading VERIFY and verified_on is null | a human runs scripts/refresh_pricing.py |
+| volumes | the customer profile's volume block is illustrative (volumes_confirmed: false) | the customer states their call volumes — economics.confirm_volumes() or `cli.py scorecard --volume` |
+
+Volume basis: volumes: illustrative — 3 evaluated subagent(s), x0.5/x1/x2 sensitivity band and cached/uncached rows ready to run the moment both gates clear.
+
+## Footer
+
+Verdicts apply to each subagent's measured behavior class (Level 1 single-call transforms, measured in full here); tool-selection and multi-step trajectory behaviors are evaluated with their own instruments in the follow-on and receive no verdict today.
+
+| Field | Value |
+| --- | --- |
+| Customer | Demo — Patents RAG (`demo_patents`) |
+| Provenance | synthetic, generator `t06.1`, dataset seed `20260812` |
+| Bootstrap | 95% CI, seed `20260812` |
+| Judge | Gemini 2.5 Pro, prompt `v1`, k=2 repeats |
+| Mode | `replay` |
+| Run date | no live run — assembled from recordings |
+| Recording window | 2026-08-09T16:07:15+00:00 to 2026-08-11T06:20:37+00:00 |
+| Region(s) | Claude `global`, Gemini + judge `us-central1` (source: $CLAUDE_REGION / $REGION, falling back to the customer profile) |
+| Prices verified on | UNVERIFIED — 13 rates still read `VERIFY` |
+| Pricing sources | https://cloud.google.com/vertex-ai/generative-ai/pricing, https://cloud.google.com/vertex-ai/generative-ai/pricing#claude-models, https://claude.com/pricing |
+| Volumes | volumes: illustrative |
+| Gates | version 1, hash `92f9d018432f` |
+
+**Run notes**
+
+- judged on the FULL corpus, not the registered core split: chunk_summarizer, feature_extractor, query_rewriter. Every other subagent is judged on core only, so judged n differs across subagents — see each arm's judge.split and judge.items_scored before comparing judge scores.
+
+**Judge cross-check.** Second-judge cross-check: Claude Sonnet 5 re-scored the recorded outputs against the same rubrics — criterion-level agreement with the gated Gemini 2.5 Pro judge: query_rewriter 98.8% (kappa 0.936, VALIDATED); chunk_summarizer 99.0% (kappa 0.948, VALIDATED); feature_extractor 92.9% (kappa 0.758, VALIDATED). The Gemini 2.5 Pro judge is the gated instrument and was registered before results were seen. The Claude cross-check judge validates it. The two are never averaged and one is never substituted for the other.

@@ -18,6 +18,21 @@
 # us-central1 (see CLAUDE_REGION in .env.example for why the two differ).
 # All four returned status: ok.
 ids_verified_on: 2026-08-07
+#
+# TWO GENERATIONS, ON PURPOSE.
+# The measured campaign ran on the 2.5-class models below and those artifacts
+# are the validated evidence spine; they are not re-run and not relabelled.
+# The workshop's actual migration target is the current generation, so the
+# registry carries both, and every rendered cell states which model produced
+# it. The gated judge stays `gemini-pro` (2.5) in every generation: it was
+# registered before results were seen, and an instrument that moves on freeze
+# day invalidates the comparison it is there to make.
+#
+# The `-current` IDs below were confirmed on 2026-08-12 by executed round
+# trips (`cli.py smoke --mode live --model <key>`, 6/6 ok each), not by
+# reading a docs page. `ids_verified_on` above still covers the 2.5-class
+# IDs; the `-current` entries carry their own confirmation in their notes,
+# including the region each one had to be pinned to.
 
 # Logical role -> model key. Swapping a model for the whole workbench is a
 # one-line change here.
@@ -74,3 +89,40 @@ models:
     supports_json_schema: true
     supports_tools: true
     notes: Local judge, and the escalation rung for subagents Flash cannot carry.
+
+  gemini-flash-current:
+    provider: google
+    display_name: Gemini 3.6 Flash
+    ids:
+      vertex: gemini-3.6-flash
+    # Not served in us-central1 (404 NOT_FOUND, confirmed by a live call
+    # 2026-08-12 — a metadata read resolves and is not availability). Pinned
+    # here rather than by moving $REGION, so the gated judge keeps running in
+    # us-central1 where it was registered.
+    region: global
+    context_window: 1048576
+    supports_json_schema: true
+    supports_tools: true
+    notes: >-
+      Current-generation migration target, and the only new model the
+      current-generation campaign measures. Generally available — chosen over
+      the 3.x preview Flash SKUs because the scorecard is a production
+      migration recommendation and a preview SKU is a different claim. ID
+      confirmed 2026-08-12 by an executed round trip in `global`, 6/6 ok; the
+      same calls returned 404 NOT_FOUND in us-central1.
+
+  gemini-pro-current:
+    provider: google
+    display_name: Gemini 3.1 Pro (preview)
+    ids:
+      vertex: gemini-3.1-pro-preview
+    region: global
+    context_window: 1048576
+    supports_json_schema: true
+    supports_tools: true
+    notes: >-
+      PREVIEW. Priced, never measured: there is no generally-available Pro past
+      2.5 in this catalogue, so this entry exists to cost the escalation rung
+      on the current generation and nothing else. No arm runs on it and no
+      metric is attributed to it. ID confirmed 2026-08-12 by an executed round
+      trip in `global`, 6/6 ok; 404 NOT_FOUND in us-central1.

@@ -207,6 +207,14 @@ def arm_region(
     has not established.
     """
     spec = models.spec(model_key)
+    if spec.region:
+        # The registry pinned this model to a region because $REGION does not
+        # serve it (the current-generation Gemini SKUs 404 in us-central1).
+        # That pin beats the environment here for the same reason it beats it
+        # in the adapter: it is where the call actually went. Reading $REGION
+        # instead would label a `global` arm us-central1 and, worse, would
+        # report a cross-region split where there is now a same-region one.
+        return spec.region, f"config/models.yaml:{model_key}.region"
     if spec.provider == "anthropic":
         # ClaudeVertexAdapter's order, including CLOUD_ML_REGION, which the
         # Gemini adapter does not consult.

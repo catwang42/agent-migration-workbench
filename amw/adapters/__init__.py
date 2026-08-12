@@ -271,7 +271,12 @@ def resolve(
         return replay()
 
     if spec.provider == "google":
-        return recorded(GeminiAdapter(models=registry))
+        # spec.region is None for every model that runs where $REGION points;
+        # the adapter falls back to $REGION in that case. Only a model the
+        # region does not serve carries an override, and it carries it in the
+        # registry rather than at the callsite, so every path that resolves
+        # this model gets the same region.
+        return recorded(GeminiAdapter(models=registry, location=spec.region))
 
     if spec.provider == "anthropic":
         if mode == "hybrid":

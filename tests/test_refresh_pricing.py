@@ -36,9 +36,13 @@ def test_format_price_never_uses_exponent(value: float, expected: str) -> None:
 
 def test_apply_updates_fills_prices_and_stamps() -> None:
     text = PRICING.read_text()
+    # Every model in the shipped file, not a hand-listed subset: the assertion
+    # below is that a full walkthrough leaves nothing unverified, which is only
+    # a real assertion if "full" tracks the file.
+    shipped = PricingConfig.model_validate(yaml.safe_load(text))
     updates = {
         f"models.{m}.{f}": 1.5
-        for m in ("gemini-flash", "gemini-pro", "claude-sonnet", "claude-opus")
+        for m in shipped.models
         for f in refresh_pricing.PRICE_FIELDS
     }
     updates["cache_storage.per_1m_token_hour"] = 0.25

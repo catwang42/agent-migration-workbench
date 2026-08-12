@@ -37,12 +37,15 @@ from amw.tuning import cmd_ablate
 from amw.tuning.ablate import (
     ABLATION_VERSION,
     COMMON_RUNGS,
+    CURRENT_GEN_MODEL,
     FEW_SHOT_ITEM_IDS,
     P1_RUNGS,
+    SHIPPING_VARIANT,
     SUBAGENT_RUNGS,
     VAIPO_RUNG_ID,
     AblationResult,
     RungSpec,
+    _current_gen_rungs,
     default_results_path,
     error_kinds,
     format_rung,
@@ -107,16 +110,39 @@ def test_rung_ids_are_unique_within_a_ladder():
 
 
 def test_extra_rungs_exist_only_where_a_measurement_asked_for_them():
-    """Two subagents carry extra rungs, for two different reasons, and the
-    third carries none. Chunk Summarizer is the control: nothing was added to
-    it, so its ladder must still be exactly the common three."""
+    """Two subagents carry *hand-written* extra rungs, for two different
+    reasons, and the third carries none. Chunk Summarizer is the control: no
+    prompt work was added to it, so its ladder must be exactly the common three
+    plus the current-generation pair every subagent gets."""
     assert set(SUBAGENT_RUNGS) == {"feature_extractor", "query_rewriter"}
-    assert ladder_for("chunk_summarizer") == COMMON_RUNGS
+    assert ladder_for("chunk_summarizer") == COMMON_RUNGS + _current_gen_rungs(
+        "chunk_summarizer"
+    )
     # Every extra rung is an extension of the common three, never a
     # replacement: a subagent-specific ladder still has to start with the
     # incumbent, A0 and A1-A3 or its rungs are not comparable to the others'.
     for subagent in SUBAGENTS:
         assert ladder_for(subagent)[: len(COMMON_RUNGS)] == COMMON_RUNGS
+
+
+def test_every_subagent_gets_the_same_two_current_generation_rungs():
+    """The current-generation pair is not subagent-specific work — it is the
+    same question asked of all three (does the same prompt, unchanged, hold up
+    on the model the workshop actually recommends?). So unlike SUBAGENT_RUNGS
+    it is unconditional, it changes only the model, and it always sits at the
+    end of the hand-tuned rungs so the prompt-work story reads in order."""
+    for subagent in SUBAGENTS:
+        rungs = ladder_for(subagent)
+        current = [spec for spec in rungs if spec.model == CURRENT_GEN_MODEL]
+        assert [spec.rung for spec in current] == ["A0-current", "ship-current"]
+        # Same prompt bytes as rungs already measured on the old generation:
+        # A0's variant, and the arm this subagent actually ships.
+        assert current[0].variant == "gemini_naive"
+        assert current[1].variant == SHIPPING_VARIANT[subagent]
+        # Nothing else on the ladder names a model — every other rung takes the
+        # model its variant's role resolves to.
+        assert [spec for spec in rungs if spec.model is not None] == current
+        assert rungs[-len(current) :] == tuple(current)
 
 
 def test_the_novelty_rungs_branch_from_naive_not_from_the_tuned_bundle():
@@ -460,6 +486,10 @@ def test_an_unmeasured_rung_carries_no_numbers_at_all(cfg):
         "A0-schema",
         "A4-novelty-tool",
         "A4-novelty-schema",
+        # The current-generation pair: the e2e fixture corpus was recorded on
+        # the 2.5-class models, so these two miss the replay store by design.
+        "A0-current",
+        "ship-current",
     }
     for record in unmeasured:
         assert record.arm is None

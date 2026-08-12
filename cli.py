@@ -590,6 +590,15 @@ def build_parser() -> argparse.ArgumentParser:
     smoke = subparsers.choices["smoke"]
     smoke.add_argument("-n", type=int, default=2)
     smoke.add_argument(
+        "--model",
+        default=None,
+        help=(
+            "logical model key from config/models.yaml to check instead of the "
+            "one the variant's role resolves to; the way to confirm a newly "
+            "registered model with a real round trip before anything runs on it"
+        ),
+    )
+    smoke.add_argument(
         "--backend",
         choices=("gemini", "claude"),
         default=None,
@@ -1052,7 +1061,18 @@ def cmd_smoke(args, cfg) -> int:
             path = E2E_DATASET_DIR / f"{subagent}.jsonl"
             items = list(read_items(path))[: args.n]
             requests = [
-                build_request(subagent, variant, prompt_view(i), item_id=i.item_id)
+                build_request(
+                    subagent,
+                    variant,
+                    prompt_view(i),
+                    item_id=i.item_id,
+                    # None keeps the variant's own role lookup. --model is the
+                    # only way to health-check a registry entry no role points
+                    # at yet, which is exactly the state a newly added model
+                    # is in before its first round trip.
+                    model=getattr(args, "model", None),
+                    models=cfg.models,
+                )
                 for i in items
             ]
             traces = router.complete_many(requests)

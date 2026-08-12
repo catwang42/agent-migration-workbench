@@ -14,18 +14,35 @@
 verified_on: null
 verified_by: null
 
+# Exactly the pages these rates were read from, and nothing else. The
+# first-party Anthropic pricing page is deliberately absent: this platform runs
+# CLAUDE_PATH=vertex, so rows 7-12 come off the Vertex partner page, and citing
+# a page that quotes different numbers as a "source" would misattribute them.
+# The direct-API question is answered in docs/objection_handling.md instead.
 sources:
   - https://cloud.google.com/vertex-ai/generative-ai/pricing
   # Claude on Vertex AI is a partner-operated offering priced separately from
   # the first-party Anthropic API. Use the partner page for CLAUDE_PATH=vertex.
   - https://cloud.google.com/vertex-ai/generative-ai/pricing#claude-models
-  - https://claude.com/pricing
 
+# TIER CHOICE, recorded so the citation is not ambiguous: Gemini Pro is priced
+# in two prompt-length tiers (<=200k and >200k input tokens). Every item in
+# this corpus is far under 200k, so the SHORT-CONTEXT tier is the correct one
+# and is what belongs in the gemini-pro / gemini-pro-current rows below. A
+# long-context workload would be re-priced on the other tier.
+#
+# Two generations are priced. The 2.5-class rows price the measured campaign;
+# the `-current` rows price the migration target the workshop actually
+# recommends. See config/models.yaml for why both exist.
 models:
   gemini-flash:  {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
   gemini-pro:    {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
   claude-sonnet: {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
   claude-opus:   {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
+  # Current generation. gemini-pro-current is a PREVIEW SKU that no arm runs
+  # on — these rates cost the escalation rung, they do not price a measurement.
+  gemini-flash-current: {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
+  gemini-pro-current:   {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
 
 # Context-caching storage rent, USD per 1M cached tokens per hour.
 # Feeds the caching breakeven calculator.

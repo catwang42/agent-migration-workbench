@@ -365,6 +365,7 @@ def run_arm(
     repeats: int = 2,
     bootstrap_seed: int = 20260812,
     judge_split: str = "core",
+    model: str | None = None,
 ) -> tuple[ArmResult, list[Trace]]:
     """Execute one arm over ``items`` and score it.
 
@@ -378,8 +379,15 @@ def run_arm(
     if judge_split not in ("core", "all"):
         raise ValueError(f"judge_split must be 'core' or 'all', not {judge_split!r}")
     pack = load_pack(subagent, variant)
-    requests = [build_request(subagent, variant, prompt_view(item), item_id=item.item_id)
-                for item in items]
+    # ``model`` overrides the variant's role lookup. It is how the same prompt
+    # bytes get run against a different model — which is the only way to
+    # measure a model swap as a model swap rather than as a prompt change.
+    requests = [
+        build_request(
+            subagent, variant, prompt_view(item), item_id=item.item_id, model=model
+        )
+        for item in items
+    ]
     traces = router.complete_many(requests)
 
     outcomes: list[MetricOutcome] = []

@@ -141,6 +141,8 @@ __all__ = [
     "COMMON_RUNGS",
     "SUBAGENT_RUNGS",
     "P1_RUNGS",
+    "CURRENT_GEN_MODEL",
+    "SHIPPING_VARIANT",
     "RungSpec",
     "RungProvenance",
     "RungRecord",
@@ -192,6 +194,13 @@ class RungSpec(BaseModel):
     #: Corpus item ids used as few-shots in this rung's prompt. Empty for a
     #: prompt whose examples are invented rather than lifted from the corpus.
     few_shot_item_ids: tuple[str, ...] = ()
+    #: Logical model key overriding the variant's role lookup. Set only on a
+    #: rung whose point IS the model — the current-generation rungs run byte
+    #: identical prompts against a different model, so the delta is
+    #: attributable to the model and to nothing else. ``None`` means "whatever
+    #: this variant's role resolves to today", which is what every prompt rung
+    #: wants.
+    model: str | None = None
 
     @property
     def output_mode(self) -> str:
@@ -293,6 +302,59 @@ SUBAGENT_RUNGS: dict[str, tuple[RungSpec, ...]] = {
     ),
 }
 
+#: The logical model key the current-generation rungs run on. One name, so a
+#: generation change is a registry edit rather than a search-and-replace.
+CURRENT_GEN_MODEL = "gemini-flash-current"
+
+#: Each subagent's shipping arm — the variant the scorecard actually
+#: recommends. The current-generation rungs run exactly these prompts, so the
+#: pair (A0-current, <shipping>-current) answers "what does the model swap do
+#: to the arm we ship" and not "what does a different prompt do".
+SHIPPING_VARIANT: dict[str, str] = {
+    "query_rewriter": "gemini_targeted_v1",
+    "chunk_summarizer": "gemini_tuned_v1",
+    "feature_extractor": "gemini_optimizer_v1",
+}
+
+
+def _current_gen_rungs(subagent: str) -> tuple[RungSpec, ...]:
+    """The two current-generation rungs for one subagent.
+
+    Same prompt bytes as rungs already on the ladder, different model. That is
+    the whole design: every existing rung holds the model fixed and varies the
+    prompt, so a rung that holds the prompt fixed and varies the model is the
+    only one whose delta is attributable to the generation. The rung ids carry
+    the suffix and the rows carry the model ID, because two rungs with the same
+    prompt and different models are not comparable to each other by default —
+    they are comparable *because* the prompt is identical, and the reader has
+    to be able to see that.
+    """
+    shipping = SHIPPING_VARIANT[subagent]
+    return (
+        RungSpec(
+            rung="A0-current",
+            label=(
+                "Generation only: A0's prompt bytes, unchanged, on the "
+                "current-generation model"
+            ),
+            variant="gemini_naive",
+            branches_from="A0",
+            model=CURRENT_GEN_MODEL,
+        ),
+        RungSpec(
+            rung="ship-current",
+            label=(
+                "Generation only: the shipping arm's prompt bytes, unchanged, "
+                "on the current-generation model"
+            ),
+            variant=shipping,
+            branches_from=None,
+            few_shot_item_ids=FEW_SHOT_ITEM_IDS.get(shipping, ()),
+            model=CURRENT_GEN_MODEL,
+        ),
+    )
+
+
 #: P1 rungs, registered only once their spike is GREEN. Empty in this build —
 #: see the module docstring's extension-point section.
 P1_RUNGS: dict[str, tuple[RungSpec, ...]] = {}
@@ -313,7 +375,12 @@ def register_p1_rung(subagent: str, spec: RungSpec) -> None:
 
 def ladder_for(subagent: str) -> tuple[RungSpec, ...]:
     """Every rung defined for ``subagent``, in report order."""
-    rungs = COMMON_RUNGS + SUBAGENT_RUNGS.get(subagent, ()) + P1_RUNGS.get(subagent, ())
+    rungs = (
+        COMMON_RUNGS
+        + SUBAGENT_RUNGS.get(subagent, ())
+        + _current_gen_rungs(subagent)
+        + P1_RUNGS.get(subagent, ())
+    )
     available = set(variants_for(subagent))
     missing = [rung.variant for rung in rungs if rung.variant not in available]
     if missing:
@@ -543,6 +610,7 @@ def run_ladder(
                 judge=rung_judge,
                 repeats=repeats,
                 bootstrap_seed=seed,
+                model=spec.model,
                 # The ladder judges everything it ran, and it ran `split`.
                 # That is therefore the honest label even when the no-core-flags
                 # fallback above widened the item list.
@@ -621,7 +689,7 @@ def run_ladder(
                 model=(
                     arm.model
                     if arm is not None
-                    else resolve_model(spec.variant, cfg.models)
+                    else spec.model or resolve_model(spec.variant, cfg.models)
                 ),
                 prompt_sha=pack.sha256,
                 branches_from=spec.branches_from,

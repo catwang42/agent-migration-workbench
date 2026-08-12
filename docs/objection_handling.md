@@ -104,6 +104,11 @@ em-dash, because pricing hasn't been verified for this run.
 
 **Don't say:** a savings percentage from memory. Ever. Not even "roughly."
 
+**And the follow-up you will get — "is Claude cheaper direct from Anthropic?"** The cost cells
+price the path this platform actually runs: partner models on Vertex. A customer running the
+direct Anthropic API gets re-priced on their real path in the follow-on — the pricing source,
+like the baseline mechanism, is a per-customer config field, not a universal claim.
+
 ### 5. "These numbers look too good. Real migrations aren't this clean."
 
 **Short answer:** They aren't clean. Three rows on this scorecard are failures, and two of

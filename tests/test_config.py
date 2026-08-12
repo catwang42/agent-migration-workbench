@@ -126,8 +126,14 @@ def test_unknown_key_is_rejected() -> None:
 def test_shipped_prices_are_all_unverified(cfg: AppConfig) -> None:
     assert cfg.pricing.verified_on is None
     assert not cfg.pricing.is_verified
-    # 4 models x 3 fields + cache storage
-    assert len(cfg.pricing.unverified_keys()) == 13
+    # 6 models x 3 fields + cache storage. Two generations are priced: the
+    # 2.5-class models the campaign was measured on, and the `-current` models
+    # the workshop recommends migrating to. The literal is deliberate — a human
+    # walks refresh_pricing.py rate by rate, so adding a model has to force a
+    # re-count here rather than silently lengthening that walkthrough.
+    assert len(cfg.pricing.unverified_keys()) == 19
+    # Nothing partially priced: every slot in the file is still VERIFY.
+    assert len(cfg.pricing.unverified_keys()) == 3 * len(cfg.pricing.models) + 1
 
 
 def test_reading_an_unverified_price_raises(cfg: AppConfig) -> None:

@@ -86,6 +86,13 @@ class ModelSpec(_Base):
     context_window: int
     supports_json_schema: bool
     supports_tools: bool
+    #: Pin this model to one region, overriding ``$REGION``. Set only when the
+    #: model is not served where the rest of the workbench runs — the
+    #: current-generation Gemini SKUs serve in ``global`` and 404 in
+    #: ``us-central1``. Leaving it unset is what keeps the gated judge running
+    #: exactly where it ran when it was registered; an instrument that moves
+    #: region on freeze day is not the instrument the comparison was agreed on.
+    region: str | None = None
     notes: str | None = None
 
     def id_for(self, path: str) -> str:

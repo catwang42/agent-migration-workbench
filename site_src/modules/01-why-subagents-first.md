@@ -23,8 +23,10 @@ Two honesty notes attach to that number and travel with it everywhere:
 - Those volumes are **illustrative, not customer-confirmed**
   (`volumes_confirmed: false`).
 - "This tier dominates the bill" is a *shape* claim derived from the call-volume
-  profile. It is **not a measured share**, and no dollar figure exists, because
-  `config/pricing.yaml` is unverified.
+  profile. It is **not a measured share**. Corpus-cost dollar figures do exist —
+  `config/pricing.yaml` was verified on **2026-08-12** and 0 rates still read
+  `VERIFY` — but a *run rate* still does not, because that is a multiplication
+  against volumes the customer has not confirmed.
 
 What makes this tier migrate first is not only the volume. It is that one input,
 one output, a gold reference and a deterministic metric make it the easiest tier
@@ -92,18 +94,25 @@ choice, and it is printed in the scorecard footer so nobody has to remember it.
 
 ## The row that justifies the whole method
 
-On Feature Extractor the deterministic instruments are **saturated**. Gemini
-scores 1.000 `extraction_accuracy`, 1.000 `json_schema_validity`, 0.000
-`omission_rate`, 0.000 `hallucination_rate`; Claude scores 0.971 / 0.957 / 0.029 /
-0.000 (n=70, `artifacts/results/phase2_n70_widened.json`).
+On Feature Extractor the deterministic instruments are **saturated** — on both
+Gemini generations, from an unmodified prompt (n=70):
 
-On the deterministic instruments alone, Gemini wins outright. The judge disagrees:
-Claude **0.900 [0.868, 0.929]** against Gemini naive **0.821 [0.787, 0.854]**,
-non-overlapping at n=70.
+| Instrument | **Claude Sonnet 5**<br><small>incumbent</small> | **Gemini 3.6 Flash**<br><small>deployment gen, naive</small> | **Gemini 2.5 Flash**<br><small>development gen, naive</small> |
+|---|---|---|---|
+| `extraction_accuracy` | 0.971 | 0.998 | 1.000 |
+| `json_schema_validity` | 0.957 | 1.000 | 1.000 |
+| `omission_rate` | 0.029 | 0.000 | 0.000 |
+| `hallucination_rate` | 0.000 | 0.000 | 0.000 |
+| **`judge_score`** | **0.900 [0.868, 0.929]** | **0.827 [0.790, 0.861]** | **0.821 [0.787, 0.854]** |
+
+On the deterministic instruments alone, Gemini wins outright. The judge
+disagrees, **non-overlapping at n=70**, and it disagrees by the same margin on a
+model a full generation newer.
 
 That is the most important row in the workshop, because it is the row where the
 cheap instrument and the expensive instrument point in opposite directions. Had we
-run only the cheap one, we would have shipped a confident wrong answer.
+run only the cheap one, we would have shipped a confident wrong answer — and the
+newer model would not have saved us, because the gap did not close.
 
 ## What is deliberately not measured
 
@@ -113,8 +122,9 @@ run only the cheap one, we would have shipped a confident wrong answer.
   behaviour. Row 4, follow-on, and it receives no verdict today.
 - **Real customer traffic** — this corpus is synthetic and every item carries
   `provenance: synthetic`.
-- **Dollar figures** — prices are unverified and volumes unconfirmed. Em dashes
-  until a human clears both.
+- **Run-rate dollar figures** — prices are verified, but volumes are unconfirmed,
+  so monthly and annual figures stay as em dashes until a human clears them. Cost
+  *over this corpus* is measured and is on the scorecard.
 
 The orchestrator stays put not because it cannot move, but because migrating it on
 the strength of a Level 1 measurement would mean extrapolating across two autonomy

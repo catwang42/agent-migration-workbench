@@ -27,10 +27,10 @@ the bound, and let a second vendor's judge check the work.
   `shadow_agreement` — are deterministic.
 
 There is also an empirical check, and it is the uncomfortable kind that is worth
-more than an argument: on Feature Extractor the Gemini judge scored **Claude
-higher** — 0.900 [0.868, 0.929] against Gemini naive 0.821 [0.787, 0.854],
-non-overlapping at n=70. A judge with a thumb on the scale does not hand the
-contested row to the competitor.
+more than an argument: on Feature Extractor the Gemini 2.5 Pro judge scored
+**Claude Sonnet 5 higher** — 0.900 [0.868, 0.929] against **Gemini 2.5 Flash**
+(`gemini_naive`) 0.821 [0.787, 0.854], non-overlapping at n=70. A judge with a
+thumb on the scale does not hand the contested row to the competitor.
 
 ## The cross-check
 
@@ -45,20 +45,37 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 Run UTC: `2026-08-11T03:52:19+00:00` · outputs recorded `2026-08-09T16:07:18+00:00` → `2026-08-10T02:45:59+00:00`
 { .amw-provenance }
 
-| Subagent | Arm | Criterion agreement | Cohen's kappa | Gated mean | Cross-check mean | Criterion pairs |
-|---|---|---|---|---|---|---|
-| query_rewriter | `claude_baseline` | 100.0% | 1.000 | 0.929 | 0.929 | 114 |
-| query_rewriter | `gemini_naive` | 99.1% | 0.966 | 0.846 | 0.837 | 110 |
-| query_rewriter | `gemini_tuned_v1` | 97.1% | 0.826 | 0.890 | 0.920 | 102 |
-| **query_rewriter** | **all arms** | **98.8%** | **0.936** | 0.889 | 0.895 | 326 |
-| chunk_summarizer | `claude_baseline` | 99.0% | 0.954 | 0.880 | 0.870 | 100 |
-| chunk_summarizer | `gemini_naive` | 98.9% | 0.946 | 0.875 | 0.886 | 88 |
-| chunk_summarizer | `gemini_tuned_v1` | 99.0% | 0.942 | 0.900 | 0.910 | 100 |
-| **chunk_summarizer** | **all arms** | **99.0%** | **0.948** | 0.885 | 0.889 | 288 |
-| feature_extractor | `claude_baseline` | 93.0% | 0.678 | 0.897 | 0.857 | 853 |
-| feature_extractor | `gemini_naive` | 92.6% | 0.763 | 0.823 | 0.791 | 856 |
-| feature_extractor | `gemini_tuned_v1` | 93.0% | 0.797 | 0.795 | 0.763 | 873 |
-| **feature_extractor** | **all arms** | **92.9%** | **0.758** | 0.838 | 0.803 | 2582 |
+The **Model** column is the model whose *outputs* were re-scored. Both judges are
+the same in every row: Gemini 2.5 Pro gated, Claude Sonnet 5 cross-check.
+
+!!! warning "This validation ran on the development-generation arms only"
+
+    The cross-check re-scored **Gemini 2.5 Flash** outputs, not the Gemini 3.6
+    Flash outputs the scorecard gates on. It was not re-run against the deployment
+    generation before freeze, and no result on this page is a claim about those
+    arms.
+
+    What it establishes is a property of the **instrument**, not of the arms: the
+    gated judge and a second vendor's judge, on the same rubrics, agree at
+    92.9–99.0%. The gated judge is the same model, same prompt version and same
+    k=2 configuration on every arm in this study, so that bound is the reason to
+    trust the instrument that produced the deployment-generation scores — but it
+    is not itself a measurement of them.
+
+| Subagent | Arm | Model scored | Criterion agreement | Cohen's kappa | Gated mean | Cross-check mean | Criterion pairs |
+|---|---|---|---|---|---|---|---|
+| query_rewriter | `claude_baseline` | **Claude Sonnet 5** | 100.0% | 1.000 | 0.929 | 0.929 | 114 |
+| query_rewriter | `gemini_naive` | **Gemini 2.5 Flash** | 99.1% | 0.966 | 0.846 | 0.837 | 110 |
+| query_rewriter | `gemini_tuned_v1` | **Gemini 2.5 Flash** | 97.1% | 0.826 | 0.890 | 0.920 | 102 |
+| **query_rewriter** | **all arms** | both | **98.8%** | **0.936** | 0.889 | 0.895 | 326 |
+| chunk_summarizer | `claude_baseline` | **Claude Sonnet 5** | 99.0% | 0.954 | 0.880 | 0.870 | 100 |
+| chunk_summarizer | `gemini_naive` | **Gemini 2.5 Flash** | 98.9% | 0.946 | 0.875 | 0.886 | 88 |
+| chunk_summarizer | `gemini_tuned_v1` | **Gemini 2.5 Flash** | 99.0% | 0.942 | 0.900 | 0.910 | 100 |
+| **chunk_summarizer** | **all arms** | both | **99.0%** | **0.948** | 0.885 | 0.889 | 288 |
+| feature_extractor | `claude_baseline` | **Claude Sonnet 5** | 93.0% | 0.678 | 0.897 | 0.857 | 853 |
+| feature_extractor | `gemini_naive` | **Gemini 2.5 Flash** | 92.6% | 0.763 | 0.823 | 0.791 | 856 |
+| feature_extractor | `gemini_tuned_v1` | **Gemini 2.5 Flash** | 93.0% | 0.797 | 0.795 | 0.763 | 873 |
+| **feature_extractor** | **all arms** | both | **92.9%** | **0.758** | 0.838 | 0.803 | 2582 |
 
 All three are **VALIDATED** against an 85% agreement threshold. Query Rewriter and
 Chunk Summarizer on a 20% stratified sample of the 70-item corpus (14 items each,
@@ -104,8 +121,9 @@ direction on both vendors' outputs — which is exactly why it does not overturn
 ranking.
 
 The cross-check also reproduces the finding that matters most: on Feature
-Extractor the Claude judge *also* ranks `claude_baseline` above `gemini_naive`
-above `gemini_tuned_v1`. The contested result is not an artefact of one judge.
+Extractor the Claude judge *also* ranks `claude_baseline` (Claude Sonnet 5) above
+`gemini_naive` above `gemini_tuned_v1` (both Gemini 2.5 Flash). The contested
+result is not an artefact of one judge.
 
 [Read the full cross-check report](../results/crosscheck.md){ .md-button }
 

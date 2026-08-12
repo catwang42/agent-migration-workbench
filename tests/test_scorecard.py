@@ -355,9 +355,12 @@ def test_cost_cells_carry_no_number_until_one_is_computed(report: str) -> None:
     refusal as before for a different reason: still no digit, still no zero."""
     cost = cost_cell(prices_verified=True)
     assert cost == NOT_MEASURED
-    for label in ("Cost per call", "Monthly run rate", "Annual run rate",
-                  "Cost savings vs Claude"):
-        rows = [l for l in report.splitlines() if l.strip().startswith(f"| {label} |")]
+    # The savings label names the incumbent *model* ("Cost savings vs Claude
+    # Sonnet 5"), not the vendor, so it is matched as a prefix — a variant name
+    # alone never identified which model a figure came from.
+    for label in ("Cost per call |", "Monthly run rate |", "Annual run rate |",
+                  "Cost savings vs "):
+        rows = [l for l in report.splitlines() if l.strip().startswith(f"| {label}")]
         assert rows, f"no {label} row rendered"
         for row in rows:
             value = row.strip().strip("|").split("|")[1].strip()

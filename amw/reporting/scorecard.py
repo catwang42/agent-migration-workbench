@@ -144,6 +144,31 @@ def _pretty(subagent: str) -> str:
     return _TITLE_CASE.get(subagent, subagent.replace("_", " ").title())
 
 
+def _model_name(card: "Scorecard", key: str) -> str:
+    """A model registry key as its human display name, or the key if unknown.
+
+    Falls back to the key rather than to a blank or a guess: an arm whose model
+    is not in the registry is a fact worth seeing in the table.
+    """
+    if not key:
+        return "—"
+    return (card.footer.get("model_display") or {}).get(key, f"`{key}`")
+
+
+def _arm_label(card: "Scorecard", model_key: str, variant: str) -> str:
+    """``Model name<br>prompt variant`` — the two halves of an arm's identity.
+
+    Both are needed and neither substitutes for the other. The variant says
+    which prompt ran; the model says what ran it. ``gemini_tuned_v1`` alone is
+    ambiguous across this study, because the same prompt was deliberately run
+    on three different models to show that it ports.
+    """
+    name = _model_name(card, model_key)
+    if not variant:
+        return name
+    return f"{name}<br><small>`{variant}`</small>"
+
+
 # --------------------------------------------------------------------------
 # verdicts, read out of gates.yaml
 # --------------------------------------------------------------------------
@@ -550,6 +575,14 @@ def build_scorecard(
             "pricing_sources": list(cfg.pricing.sources),
             "unverified_prices": len(cfg.pricing.unverified_keys()),
             "volumes": costs.volumes.source.footer_label(),
+            # Registry key -> display name, so every arm in the report can be
+            # named by the model it ran on and not only by its prompt variant.
+            # Resolved from config/models.yaml here, once, rather than at each
+            # render site: a display name typed into a table is a display name
+            # that can disagree with the registry.
+            "model_display": {
+                key: spec.display_name for key, spec in cfg.models.models.items()
+            },
         }
     )
     return Scorecard(
@@ -729,24 +762,34 @@ def _savings_cell(evidence: SubagentEvidence, fallback: str) -> str:
     )
 
 
-def _evidence_table(evidence: SubagentEvidence, *, prices_verified: bool) -> list[str]:
+def _evidence_table(
+    evidence: SubagentEvidence,
+    *,
+    prices_verified: bool,
+    card: "Scorecard | None" = None,
+) -> list[str]:
     claude_schema = evidence.claude_schema_validity
     cost = cost_cell(prices_verified=prices_verified)
+    # Row labels name the model, not the vendor. "Judge score — Gemini" was
+    # ambiguous the moment a second Gemini generation entered the study, and
+    # this table is the one a reader screenshots.
+    base = _model_name(card, evidence.baseline_model) if card else "Claude"
+    cand = _model_name(card, evidence.candidate_model) if card else "Gemini"
     rows = [
         (
-            f"Claude `json_schema_validity` (`{evidence.baseline_variant}`)",
+            f"{base} `json_schema_validity` (`{evidence.baseline_variant}`)",
             claude_schema.render() if claude_schema else "not measured",
         ),
         (
-            f"Gemini `json_schema_validity` (`{evidence.candidate_variant}`)",
+            f"{cand} `json_schema_validity` (`{evidence.candidate_variant}`)",
             estimate_text(evidence.candidate_schema_validity),
         ),
         (
-            "Judge score — Claude",
+            f"Judge score — {base} (incumbent)",
             evidence.judge_baseline.render() if evidence.judge_baseline else "not measured",
         ),
         (
-            "Judge score — Gemini",
+            f"Judge score — {cand} (candidate)",
             evidence.judge_candidate.render()
             if evidence.judge_candidate
             else "not measured",
@@ -755,7 +798,7 @@ def _evidence_table(evidence: SubagentEvidence, *, prices_verified: bool) -> lis
         ("Cost per call", cost),
         ("Monthly run rate", cost),
         ("Annual run rate", cost),
-        ("Cost savings vs Claude", _savings_cell(evidence, cost)),
+        (f"Cost savings vs {base}", _savings_cell(evidence, cost)),
     ]
     return ["| Evidence | Value |", "| --- | --- |"] + [
         f"| {label} | {value} |" for label, value in rows
@@ -972,7 +1015,7 @@ def render_markdown(card: Scorecard) -> str:
         "",
         "## Verdicts",
         "",
-        "| Subagent | Baseline | Candidate | Gates evaluated | Verdict | Why |",
+        "| Subagent | Incumbent | Candidate | Gates evaluated | Verdict | Why |",
         "| --- | --- | --- | --- | --- | --- |",
     ]
     for evidence in card.evidence:
@@ -981,20 +1024,32 @@ def render_markdown(card: Scorecard) -> str:
         if verdict.provisional:
             label += f" (provisional: {verdict.provisional})"
         lines.append(
-            f"| {_pretty(evidence.subagent)} | `{evidence.baseline_variant}` | "
-            f"`{evidence.candidate_variant}` | "
+            f"| {_pretty(evidence.subagent)} | "
+            f"{_arm_label(card, evidence.baseline_model, evidence.baseline_variant)} | "
+            f"{_arm_label(card, evidence.candidate_model, evidence.candidate_variant)} | "
             f"{verdict.evaluated} of {verdict.total_gates} | {label} | "
             f"{verdict.rationale} |"
         )
 
     for evidence in card.evidence:
         verdict = card.verdicts[evidence.subagent]
-        lines += ["", f"## {_pretty(evidence.subagent)}", ""]
+        lines += [
+            "",
+            f"## {_pretty(evidence.subagent)}",
+            "",
+            f"**{_model_name(card, evidence.candidate_model)}** "
+            f"(`{evidence.candidate_variant}`) measured against "
+            f"**{_model_name(card, evidence.baseline_model)}** "
+            f"(`{evidence.baseline_variant}`).",
+            "",
+        ]
         lines += _gate_table(
             evidence, verdict, card.gates, prices_verified=prices_verified
         )
         lines += ["", "### Evidence", ""]
-        lines += _evidence_table(evidence, prices_verified=prices_verified)
+        lines += _evidence_table(
+            evidence, prices_verified=prices_verified, card=card
+        )
         if evidence.unmeasured:
             lines += ["", "**Not evaluated, and why**", ""]
             lines += [

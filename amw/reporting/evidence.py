@@ -273,6 +273,13 @@ class SubagentEvidence(_Base):
     subagent: str
     baseline_variant: str
     candidate_variant: str
+    #: The registry keys of the two models the arms actually ran on, read off
+    #: the arm records rather than passed in. A variant name is a *prompt*
+    #: identity — ``gemini_tuned_v1`` ran on three different models across this
+    #: study — so a table that names only the variant cannot answer "which
+    #: model produced this number", which is the first thing a reader asks.
+    baseline_model: str = ""
+    candidate_model: str = ""
     #: gate name -> estimate, for gates this run measured. Only these are
     #: handed to check_gates(); the rest are surfaced by missing_gates().
     estimates: dict[str, Estimate] = Field(default_factory=dict)
@@ -723,6 +730,8 @@ def build_evidence(
                 subagent=subagent,
                 baseline_variant=baseline_variant,
                 candidate_variant=cand_variant,
+                baseline_model=getattr(base_arm, "model", "") or "",
+                candidate_model=getattr(cand_arm, "model", "") or "",
                 estimates=estimates,
                 unmeasured=unmeasured,
                 sentinel_values=sentinels,

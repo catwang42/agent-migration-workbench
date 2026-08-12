@@ -6,13 +6,15 @@ Gates are checked against 95% confidence-range bounds, so a passing gate license
 
 ## Verdicts
 
-| Subagent | Baseline | Candidate | Gates evaluated | Verdict | Why |
+| Subagent | Incumbent | Candidate | Gates evaluated | Verdict | Why |
 | --- | --- | --- | --- | --- | --- |
-| Chunk Summarizer | `claude_baseline` | `gemini_tuned_v1` | 6 of 6 | **UNDETERMINED** | gate(s) latency_p95, quality_delta_pp failed. That pattern matches no verdict rule in gates.yaml — they are neither quality gates nor blocking gates — so no verdict is issued and the gates file needs a rule for it. |
-| Feature Extractor | `claude_baseline` | `gemini_optimizer_v1` | 6 of 6 | **UNDETERMINED** | gate(s) latency_p95, quality_delta_pp failed. That pattern matches no verdict rule in gates.yaml — they are neither quality gates nor blocking gates — so no verdict is issued and the gates file needs a rule for it. shadow_agreement missed its confidence-range bound (ci_lower = 0.8857 vs 0.9) and cleared on the alt clause pre-registered in gates.yaml ("on disagreements, judge-adjudicated wins >= losses"), measured at 31W/16L overall; 28W/16L excluding structurally malformed `claude_baseline` emissions; passes on either figure. |
-| Query Rewriter | `claude_baseline` | `gemini_targeted_v1` | 5 of 6 | **INCOMPLETE** (provisional: MIGRATE) | 5 of 6 pre-agreed gates were measured; groundedness_delta_pp were not. A verdict over a subset of the gates is not the verdict that was agreed, so none is issued. Were every unmeasured gate to pass, it would be MIGRATE. shadow_agreement missed its confidence-range bound (ci_lower = 0.4714 vs 0.9) and cleared on the alt clause pre-registered in gates.yaml ("on disagreements, judge-adjudicated wins >= losses"), measured at 16W/2L overall; 10W/2L excluding structurally malformed `claude_baseline` emissions; passes on either figure. |
+| Chunk Summarizer | Claude Sonnet 5<br><small>`claude_baseline`</small> | Gemini 3.6 Flash (capped thinking)<br><small>`gemini_tuned_v1`</small> | 6 of 6 | **UNDETERMINED** | gate(s) latency_p95, quality_delta_pp failed. That pattern matches no verdict rule in gates.yaml — they are neither quality gates nor blocking gates — so no verdict is issued and the gates file needs a rule for it. |
+| Feature Extractor | Claude Sonnet 5<br><small>`claude_baseline`</small> | Gemini 3.6 Flash (capped thinking)<br><small>`gemini_optimizer_v1`</small> | 6 of 6 | **UNDETERMINED** | gate(s) latency_p95, quality_delta_pp failed. That pattern matches no verdict rule in gates.yaml — they are neither quality gates nor blocking gates — so no verdict is issued and the gates file needs a rule for it. shadow_agreement missed its confidence-range bound (ci_lower = 0.8857 vs 0.9) and cleared on the alt clause pre-registered in gates.yaml ("on disagreements, judge-adjudicated wins >= losses"), measured at 31W/16L overall; 28W/16L excluding structurally malformed `claude_baseline` emissions; passes on either figure. |
+| Query Rewriter | Claude Sonnet 5<br><small>`claude_baseline`</small> | Gemini 3.6 Flash (capped thinking)<br><small>`gemini_targeted_v1`</small> | 5 of 6 | **INCOMPLETE** (provisional: MIGRATE) | 5 of 6 pre-agreed gates were measured; groundedness_delta_pp were not. A verdict over a subset of the gates is not the verdict that was agreed, so none is issued. Were every unmeasured gate to pass, it would be MIGRATE. shadow_agreement missed its confidence-range bound (ci_lower = 0.4714 vs 0.9) and cleared on the alt clause pre-registered in gates.yaml ("on disagreements, judge-adjudicated wins >= losses"), measured at 16W/2L overall; 10W/2L excluding structurally malformed `claude_baseline` emissions; passes on either figure. |
 
 ## Chunk Summarizer
+
+**Gemini 3.6 Flash (capped thinking)** (`gemini_tuned_v1`) measured against **Claude Sonnet 5** (`claude_baseline`).
 
 | Gate | Bound (gates.yaml) | Measured (95% confidence range) | Bound tested | Result |
 | --- | --- | --- | --- | --- |
@@ -29,21 +31,23 @@ A `quality_delta_pp` failure marked *parity not demonstrated* means the confiden
 
 | Evidence | Value |
 | --- | --- |
-| Claude `json_schema_validity` (`claude_baseline`) | 0.971 [0.929, 1.000] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
-| Gemini `json_schema_validity` (`gemini_tuned_v1`) | 1.000 [1.000, 1.000] |
-| Judge score — Claude | 0.918 [0.879, 0.954] (judged n=70, split=all) |
-| Judge score — Gemini | 0.893 [0.857, 0.925] (judged n=70, split=all) |
+| Claude Sonnet 5 `json_schema_validity` (`claude_baseline`) | 0.971 [0.929, 1.000] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
+| Gemini 3.6 Flash (capped thinking) `json_schema_validity` (`gemini_tuned_v1`) | 1.000 [1.000, 1.000] |
+| Judge score — Claude Sonnet 5 (incumbent) | 0.918 [0.879, 0.954] (judged n=70, split=all) |
+| Judge score — Gemini 3.6 Flash (capped thinking) (candidate) | 0.893 [0.857, 0.925] (judged n=70, split=all) |
 | Latency p95 | 7,388 ms [5,998 ms, 7,600 ms] (same-region probe, global) |
 | Cost per call | not measured |
 | Monthly run rate | not measured |
 | Annual run rate | not measured |
-| Cost savings vs Claude | 56.1% [54.5%, 57.5%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis |
+| Cost savings vs Claude Sonnet 5 | 56.1% [54.5%, 57.5%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis |
 
 - groundedness_delta_pp is measured here as **citation coverage** — the share of key points citing at least one chunk that was actually supplied. A point citing a chunk that was never supplied is a fabricated citation and does not count as grounded.
 - citation_coverage scored an identical 1.000 on every item of both arms (68 and 70 scored items), so the paired delta and its interval are a single point rather than a tight measurement. The gate passes because neither arm did what the metric counts, not because the instrument resolved a difference between them.
 - shadow_agreement counts **structured fields only** — the fields with a defined right answer. Prose fields are excluded here and adjudicated separately in the disagreement triage; this figure is not a claim that the prose matched.
 
 ## Feature Extractor
+
+**Gemini 3.6 Flash (capped thinking)** (`gemini_optimizer_v1`) measured against **Claude Sonnet 5** (`claude_baseline`).
 
 | Gate | Bound (gates.yaml) | Measured (95% confidence range) | Bound tested | Result |
 | --- | --- | --- | --- | --- |
@@ -62,21 +66,23 @@ A `quality_delta_pp` failure marked *parity not demonstrated* means the confiden
 
 | Evidence | Value |
 | --- | --- |
-| Claude `json_schema_validity` (`claude_baseline`) | 0.957 [0.900, 1.000] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
-| Gemini `json_schema_validity` (`gemini_optimizer_v1`) | 1.000 [1.000, 1.000] |
-| Judge score — Claude | 0.900 [0.868, 0.929] (judged n=70, split=all) |
-| Judge score — Gemini | 0.903 [0.880, 0.924] (judged n=70, split=all) |
+| Claude Sonnet 5 `json_schema_validity` (`claude_baseline`) | 0.957 [0.900, 1.000] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
+| Gemini 3.6 Flash (capped thinking) `json_schema_validity` (`gemini_optimizer_v1`) | 1.000 [1.000, 1.000] |
+| Judge score — Claude Sonnet 5 (incumbent) | 0.900 [0.868, 0.929] (judged n=70, split=all) |
+| Judge score — Gemini 3.6 Flash (capped thinking) (candidate) | 0.903 [0.880, 0.924] (judged n=70, split=all) |
 | Latency p95 | 8,906 ms [6,767 ms, 9,554 ms] (same-region probe, global) |
 | Cost per call | not measured |
 | Monthly run rate | not measured |
 | Annual run rate | not measured |
-| Cost savings vs Claude | 64.8% [63.8%, 65.7%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis |
+| Cost savings vs Claude Sonnet 5 | 64.8% [63.8%, 65.7%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis |
 
 - groundedness_delta_pp is measured here as **source-supported claim rate**, not citation coverage: Feature Extractor emits field values rather than citations, so groundedness is the share of the fields the model chose to assert for which the source states something. Asserting a value the source never mentions is the extraction equivalent of a fabricated citation. Reading a wrong-but-in-source value counts as grounded and is scored by quality_delta_pp instead.
 - supported_claim_rate scored an identical 1.000 on every item of both arms (66 and 68 scored items), so the paired delta and its interval are a single point rather than a tight measurement. The gate passes because neither arm did what the metric counts, not because the instrument resolved a difference between them.
 - shadow_agreement counts **structured fields only** — the fields with a defined right answer. Prose fields are excluded here and adjudicated separately in the disagreement triage; this figure is not a claim that the prose matched.
 
 ## Query Rewriter
+
+**Gemini 3.6 Flash (capped thinking)** (`gemini_targeted_v1`) measured against **Claude Sonnet 5** (`claude_baseline`).
 
 | Gate | Bound (gates.yaml) | Measured (95% confidence range) | Bound tested | Result |
 | --- | --- | --- | --- | --- |
@@ -93,15 +99,15 @@ A `quality_delta_pp` failure marked *parity not demonstrated* means the confiden
 
 | Evidence | Value |
 | --- | --- |
-| Claude `json_schema_validity` (`claude_baseline`) | 0.814 [0.714, 0.900] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
-| Gemini `json_schema_validity` (`gemini_targeted_v1`) | 1.000 [1.000, 1.000] |
-| Judge score — Claude | 0.886 [0.838, 0.932] (judged n=70, split=all) |
-| Judge score — Gemini | 0.959 [0.934, 0.982] (judged n=70, split=all) |
+| Claude Sonnet 5 `json_schema_validity` (`claude_baseline`) | 0.814 [0.714, 0.900] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling. |
+| Gemini 3.6 Flash (capped thinking) `json_schema_validity` (`gemini_targeted_v1`) | 1.000 [1.000, 1.000] |
+| Judge score — Claude Sonnet 5 (incumbent) | 0.886 [0.838, 0.932] (judged n=70, split=all) |
+| Judge score — Gemini 3.6 Flash (capped thinking) (candidate) | 0.959 [0.934, 0.982] (judged n=70, split=all) |
 | Latency p95 | 6,471 ms [4,024 ms, 6,602 ms] (same-region probe, global) |
 | Cost per call | not measured |
 | Monthly run rate | not measured |
 | Annual run rate | not measured |
-| Cost savings vs Claude | 42.7% [40.3%, 45.3%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis |
+| Cost savings vs Claude Sonnet 5 | 42.7% [40.3%, 45.3%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis |
 
 **Not evaluated, and why**
 

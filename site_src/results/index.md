@@ -15,6 +15,28 @@ procedure.
     UTC: `2026-08-09T16:07:15+00:00` → `2026-08-12T12:58:33+00:00`
     { .amw-provenance }
 
+## Which models are in which artifact
+
+Every result on this site belongs to one of these arms. A prompt-variant name
+(`gemini_tuned_v1`, `gemini_targeted_v1`, `gemini_optimizer_v1`) is a **prompt**
+identity, not a model identity — the same variant was run against three different
+models in this study — so read the model column, never the variant alone.
+
+| Artifact | Incumbent | Candidate | Recommended? |
+|---|---|---|---|
+| [Migration Readiness Scorecard](scorecard.md) | **Claude Sonnet 5** | **Gemini 3.6 Flash, reasoning budget minimised** | **Yes — this is the deployment answer** |
+| [How we got here](scorecard_development_generation.md) | **Claude Sonnet 5** | **Gemini 2.5 Flash** | No — development generation |
+| [Selection table](selection_table.md) | **Claude Sonnet 5** | **Gemini 2.5 Flash**, per rung | No — ladder rungs only |
+| [Judge cross-check](crosscheck.md) | outputs from **Claude Sonnet 5** and **Gemini 2.5 Flash** | judged by **Gemini 2.5 Pro** (gated) and **Claude Sonnet 5** (cross-check) | n/a — validates the instrument |
+| [Charts](charts.md) | **Claude Sonnet 5** | **Gemini 2.5 Flash** ladder rungs | No — development generation |
+
+Two further models were measured and are **not** the recommendation: Gemini 3.6
+Flash at its default reasoning budget (fails the cost gate on all three
+subagents) and Gemini 3.5 Flash. Both appear in
+[module 05](../modules/05-adaptation-ladder.md#what-ships-the-deployment-generation).
+Full registry, with provider IDs, regions and recording windows:
+[Models in this study](../models-in-this-study.md).
+
 ## The artifacts
 
 <ul class="amw-cards">
@@ -40,7 +62,10 @@ procedure.
 <li><div class="amw-card">
   <p class="amw-card__title">Selection table</p>
   <p>Every ladder rung and gated arm, per subagent, grouped by split, with all
-  deterministic metrics beside the judged score.</p>
+  deterministic metrics beside the judged score. Incumbent <strong>Claude Sonnet
+  5</strong>; candidate rungs on <strong>Gemini 2.5 Flash</strong>. The
+  deployment-generation rungs are tabulated in
+  <a href="../../modules/05-adaptation-ladder/#what-ships-the-deployment-generation">module 05</a>.</p>
   <p class="amw-card__meta"><span class="amw-card__readtime">source: <code>artifacts/reports/selection_table.md</code></span>
   <a class="md-button" href="../selection_table/">Open</a></p>
 </div></li>
@@ -55,7 +80,8 @@ procedure.
 <li><div class="amw-card">
   <p class="amw-card__title">Charts</p>
   <p>Interval charts exported from the executed notebooks — point estimates with
-  95% confidence ranges and the gate bound marked.</p>
+  95% confidence ranges and the gate bound marked. Arms: <strong>Claude Sonnet
+  5</strong> against <strong>Gemini 2.5 Flash</strong> ladder rungs.</p>
   <p class="amw-card__meta"><span class="amw-card__readtime">source: <code>artifacts/notebooks/*.out.ipynb</code></span>
   <a class="md-button" href="../charts/">Open</a></p>
 </div></li>
@@ -66,6 +92,12 @@ procedure.
 - **Every figure came from an executed call.** No number in any artifact is a
   placeholder, an estimate or a projection. Where a value could not be measured,
   the cell says so and names the reason.
+- **Read the model, not the variant.** `gemini_tuned_v1` names a set of prompt
+  bytes, and those exact bytes were run against Gemini 2.5 Flash, Gemini 3.5
+  Flash, Gemini 3.6 Flash and Gemini 3.6 Flash with the reasoning budget
+  minimised. Every table on this site now carries a model column or a model
+  header for exactly that reason; a figure quoted by variant alone is
+  unattributed.
 - **Every gate is a 95% confidence range bound, not a point estimate.** 10,000
   resamples, seed `20260812`. Lower bound for `min` gates, upper for `max`.
 - **Every judge score carries its n and its split.** Two judge scores at

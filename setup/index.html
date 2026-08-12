@@ -1183,34 +1183,35 @@ recording window on screen — it never generates a number.</p>
 <p>That is the point of doing setup first: you are not taking the results on trust,
 you are re-deriving them on your own laptop.</p>
 <h2 id="1-clone-and-create-the-environment">1. Clone and create the environment<a class="headerlink" href="#1-clone-and-create-the-environment" title="Permanent link">&para;</a></h2>
-<p>```bash
-git clone https://github.com/catwang42/agent-migration-workbench.git
-cd agent-migration-workbench</p>
-<p>python3.11 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/catwang42/agent-migration-workbench.git
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>agent-migration-workbench
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
 <p>Python 3.11 is expected. Every schema in the repo — traces, dataset items,
 metrics, gate results — is a <code>pydantic</code> model, so a mismatched Python will fail
 loudly at import rather than quietly at runtime.</p>
 <h2 id="2-configure-the-environment-file">2. Configure the environment file<a class="headerlink" href="#2-configure-the-environment-file" title="Permanent link">&para;</a></h2>
-<p><code>bash
-cp .env.example .env</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>cp<span class="w"> </span>.env.example<span class="w"> </span>.env
+</code></pre></div>
 <p>For the offline path, the only value that matters is:</p>
-<p><code>bash
-CLAUDE_PATH=replay</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">CLAUDE_PATH</span><span class="o">=</span>replay
+</code></pre></div>
 <p><code>PROJECT_ID</code> and <code>REGION</code> are only read when you ask for a live or hybrid run.
 Leave them as they are for now.</p>
 <h2 id="3-run-the-pipeline-with-zero-credentials">3. Run the pipeline with zero credentials<a class="headerlink" href="#3-run-the-pipeline-with-zero-credentials" title="Permanent link">&para;</a></h2>
-<p><code>bash
-python cli.py e2e --mode replay</code></p>
-<p>This is the CI gate for the whole repository. It regenerates the dataset from its
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>e2e<span class="w"> </span>--mode<span class="w"> </span>replay
+</code></pre></div>
+<p>This is the continuous-integration gate for the whole repository (a different CI
+from the confidence ranges the modules quote). It regenerates the dataset from its
 seed, replays the recorded baseline, ablation, shadow and judge calls, evaluates
 the gates in <code>config/gates.yaml</code>, and renders the Migration Readiness Scorecard.
 A green exit means the evidence on this site reproduces on your machine.</p>
 <p>Then run the metric tests:</p>
-<p><code>bash
-pytest tests/ -q</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pytest<span class="w"> </span>tests/<span class="w"> </span>-q
+</code></pre></div>
 <p>1,012 tests collected; 1,010 pass and 2 skip on the offline path.</p>
 <div class="admonition note">
 <p class="admonition-title">What replay mode is, precisely</p>
@@ -1223,9 +1224,9 @@ the site was actually sent to a model and every output actually came back.</p>
 <h2 id="4-optional-the-live-path">4. Optional — the live path<a class="headerlink" href="#4-optional-the-live-path" title="Permanent link">&para;</a></h2>
 <p>You only need this for the ADK delegation exercise and for re-running anything
 against a live endpoint.</p>
-<p><code>bash
-gcloud auth application-default login    # a human does this, interactively
-python cli.py smoke --mode live -n 2     # two calls, both backends</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gcloud<span class="w"> </span>auth<span class="w"> </span>application-default<span class="w"> </span>login<span class="w">    </span><span class="c1"># a human does this, interactively</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>python<span class="w"> </span>cli.py<span class="w"> </span>smoke<span class="w"> </span>--mode<span class="w"> </span>live<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w">     </span><span class="c1"># two calls, both backends</span>
+</code></pre></div>
 <p>Set <code>PROJECT_ID</code> and <code>REGION</code> in <code>.env</code> first. Two regional facts to know before
 you read any latency number:</p>
 <ul>

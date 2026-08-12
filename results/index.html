@@ -1042,9 +1042,10 @@ file. Re-running the pipeline and re-running the copier is the entire refresh
 procedure.</p>
 <div class="admonition warning">
 <p class="admonition-title">Pre-freeze run</p>
-<p>These artifacts come from the run recorded 2026-08-09T16:07:15+00:00 →
-2026-08-11T06:20:37+00:00. They are measurements, not placeholders. They are
-replaced wholesale by the freeze-v1 run.</p>
+<p>These artifacts come from the run recorded 10 Aug 2026, 12:07 AM →
+11 Aug 2026, 2:20 PM (SGT, Singapore time). They are measurements, not
+placeholders. They are replaced wholesale by the freeze-v1 run.</p>
+<p class="amw-provenance">UTC: <code>2026-08-09T16:07:15+00:00</code> → <code>2026-08-11T06:20:37+00:00</code></p>
 </div>
 <h2 id="the-four-artifacts">The four artifacts<a class="headerlink" href="#the-four-artifacts" title="Permanent link">&para;</a></h2>
 <ul class="amw-cards">
@@ -1084,7 +1085,7 @@ replaced wholesale by the freeze-v1 run.</p>
 <li><strong>Every figure came from an executed call.</strong> No number in any artifact is a
   placeholder, an estimate or a projection. Where a value could not be measured,
   the cell says so and names the reason.</li>
-<li><strong>Every gate is a CI bound, not a point estimate.</strong> 95% bootstrap, 10,000
+<li><strong>Every gate is a 95% confidence range (CI) bound, not a point estimate.</strong> 10,000
   resamples, seed <code>20260812</code>. Lower bound for <code>min</code> gates, upper for <code>max</code>.</li>
 <li><strong>Every judge score carries its n and its split.</strong> Two judge scores at
   different n are not directly comparable, and the number alone does not say so.
@@ -1095,10 +1096,10 @@ replaced wholesale by the freeze-v1 run.</p>
 <li><strong>Latency is not comparable.</strong> Claude in <code>global</code>, Gemini in <code>us-central1</code>.</li>
 </ul>
 <h2 id="regenerate-them">Regenerate them<a class="headerlink" href="#regenerate-them" title="Permanent link">&para;</a></h2>
-<p><code>bash
-python cli.py e2e --mode replay      # rebuild every artifact from recordings
-python scripts/build_site.py         # copy the whitelist into site_src/results/
-mkdocs build --strict                # verify, including the leak check</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>e2e<span class="w"> </span>--mode<span class="w"> </span>replay<span class="w">      </span><span class="c1"># rebuild every artifact from recordings</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python<span class="w"> </span>scripts/build_site.py<span class="w">         </span><span class="c1"># copy the whitelist into site_src/results/</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>mkdocs<span class="w"> </span>build<span class="w"> </span>--strict<span class="w">                </span><span class="c1"># verify, including the leak check</span>
+</code></pre></div>
 
 
 

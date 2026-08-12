@@ -1175,8 +1175,8 @@
 <p>A shadow run puts both arms on the same inputs and asks a narrower question than
 the eval does: <strong>where do these two models actually produce different answers, and
 when they differ, who is right?</strong></p>
-<p><code>bash
-python cli.py shadow --mode replay      # shadow run + disagreement triage</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>shadow<span class="w"> </span>--mode<span class="w"> </span>replay<span class="w">      </span><span class="c1"># shadow run + disagreement triage</span>
+</code></pre></div>
 <h2 id="two-agreement-numbers-and-why-they-differ-so-much">Two agreement numbers, and why they differ so much<a class="headerlink" href="#two-agreement-numbers-and-why-they-differ-so-much" title="Permanent link">&para;</a></h2>
 <p>The same run yields two very different figures, and confusing them is the fastest
 way to misread this whole section.</p>
@@ -1377,28 +1377,36 @@ not a prose artefact.</p>
 </div>
 </div>
 <h2 id="adjudication-two-arms-same-subagent-opposite-verdicts">Adjudication: two arms, same subagent, opposite verdicts<a class="headerlink" href="#adjudication-two-arms-same-subagent-opposite-verdicts" title="Permanent link">&para;</a></h2>
+<p>Where the two models gave different answers, a judge ruled on every
+disagreement: win, loss, or tie.</p>
 <p>Query Rewriter fails the primary <code>shadow_agreement</code> bound on both candidate arms.
 So the <a href="../03-gates-as-contract/#the-alt-clause-on-shadow_agreement"><code>alt</code> clause</a>
 applies: on the disagreements, adjudicated wins must be at least losses. Verdicts
 are from the <strong>candidate's</strong> point of view, and the scores are the recorded phase-2
 judge scores for those exact outputs, replayed — no judge call was made to build
 these tables.</p>
-<div class="amw-cards">
-<div class="amw-card">
-<p class="amw-card__title">gemini_targeted_v1 — passes the alt clause</p>
-<p>51 disagreements · <strong>15W / 3L</strong> / 33 ties overall.<br>
-  <strong>9W / 3L</strong> excluding structurally malformed baseline emissions.<br>
-  <strong>Passes on either figure.</strong></p>
-<p>Structured agreement 0.643 [0.529, 0.757].</p>
+<div class="amw-compare">
+<div class="amw-compare__card">
+<p class="amw-compare__title">gemini_targeted_v1</p>
+<p class="amw-compare__verdict amw-compare__verdict--pass">Passes the alt clause</p>
+<div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">51</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">15W</span><span class="amw-wl amw-wl--loss">3L</span><span class="amw-wl amw-wl--tie">33T</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Excluding malformed baseline emissions</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">9W</span><span class="amw-wl amw-wl--loss">3L</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.643 [0.529, 0.757]</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Passes on either figure</span></div>
 </div>
-<div class="amw-card">
-<p class="amw-card__title">gemini_tuned_v1 — the arm it replaced</p>
-<p>60 disagreements · <strong>14W / 20L</strong> / 26 ties overall.<br>
-  <strong>8W / 15L</strong> excluding structurally malformed baseline emissions.<br>
-  <strong>Fails on either figure.</strong></p>
-<p>Structured agreement 0.557 [0.443, 0.671].</p>
+<div class="amw-compare__card">
+<p class="amw-compare__title">gemini_tuned_v1 — the arm it replaced</p>
+<p class="amw-compare__verdict amw-compare__verdict--fail">Fails the alt clause</p>
+<div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">60</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">14W</span><span class="amw-wl amw-wl--loss">20L</span><span class="amw-wl amw-wl--tie">26T</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Excluding malformed baseline emissions</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">8W</span><span class="amw-wl amw-wl--loss">15L</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.557 [0.443, 0.671]</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Fails on either figure</span></div>
 </div>
 </div>
+<p class="amw-legend">15W / 3L / 33T = 15 wins, 3 losses, 33 ties, judged from the new model's point of
+view. Bracketed pairs are the 95% confidence range (CI).</p>
 <p>Both arms have <code>json_schema_validity</code> 1.000 [1.000, 1.000]. Both are Gemini Flash
 on the same corpus. The difference is three prompt rules written from the <em>measured</em>
 loss clusters in the n=70 adjudication — and the adjudication flips from 14W/20L to
@@ -1446,6 +1454,7 @@ figures, which is the only reason a single verdict can be stated at all.</p>
 </tr>
 </tbody>
 </table>
+<p class="amw-legend">W / L / T = wins / losses / ties, judged from the new model's point of view.</p>
 <p>Neither needs the <code>alt</code> clause — both clear the primary <code>shadow_agreement</code> bound
 (0.957 and 0.971). Their adjudication tables are published anyway, because a
 passing gate is not a reason to stop showing the disagreements underneath it.</p>

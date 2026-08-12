@@ -1238,8 +1238,8 @@
 <h1 id="module-08-the-scorecard">Module 08 — The scorecard<a class="headerlink" href="#module-08-the-scorecard" title="Permanent link">&para;</a></h1>
 <p><em>~5 min read · <a href="../07-shadow-and-adjudication/">07 Shadow &amp; adjudication</a> → </em><em>08</em><em> → <a href="../../results/">Results</a></em></p>
 <hr />
-<p><code>bash
-python cli.py scorecard        # gates → verdicts → markdown report</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>scorecard<span class="w">        </span><span class="c1"># gates → verdicts → markdown report</span>
+</code></pre></div>
 <p>The scorecard is the gates evaluated. Nothing more is added to it, and nothing is
 taken out of it.</p>
 <h2 id="the-verdicts-this-run-produced">The verdicts this run produced<a class="headerlink" href="#the-verdicts-this-run-produced" title="Permanent link">&para;</a></h2>
@@ -1287,7 +1287,8 @@ is issued.</p>
 TUNE_FIRST" — is printed beside it, clearly marked as conditional. That is a
 different sentence from a verdict, and the report keeps them different.</p>
 <h3 id="why-query-rewriter-is-hold">Why Query Rewriter is HOLD<a class="headerlink" href="#why-query-rewriter-is-hold" title="Permanent link">&para;</a></h3>
-<p><code>shadow_agreement</code> failed on the CI bound: 0.557 [0.443, 0.671] against a 0.90
+<p><code>shadow_agreement</code> failed on the <strong>95% confidence range</strong> (CI) bound: 0.557
+[0.443, 0.671] against a 0.90
 minimum, and the <code>alt</code> clause also fails for this arm (14W/20L, or 8W/15L
 excluding structurally malformed baseline emissions). <code>shadow_agreement</code> is a
 <strong>blocking</strong> gate, so the rule in <code>gates.yaml</code> produces HOLD without discretion:</p>
@@ -1344,7 +1345,7 @@ the widened data, and that is the number that ships.</p>
 <h2 id="what-is-not-evaluated-and-why-that-is-not-a-pass">What is not evaluated, and why that is not a pass<a class="headerlink" href="#what-is-not-evaluated-and-why-that-is-not-a-pass" title="Permanent link">&para;</a></h2>
 <p>Three cells recur across every subagent:</p>
 <ul>
-<li><strong><code>cost_savings_pct</code></strong> — not computable. <code>config/pricing.yaml</code> has 13 rates still
+<li><strong><code>cost_savings_pct</code></strong> — not computable. <code>config/pricing.yaml</code> has 19 rates still
   reading <code>VERIFY</code> and <code>verified_on</code> is null; the customer profile's volume block
   is illustrative (<code>volumes_confirmed: false</code>). Two independent gates, each of
   which a human has to clear. Every cost cell is an em dash — not a zero.</li>
@@ -1391,7 +1392,7 @@ the measured ones. It never quietly becomes a pass.</p>
 </tr>
 <tr>
 <td>Recording window</td>
-<td>2026-08-09T16:07:15+00:00 → 2026-08-11T06:20:37+00:00</td>
+<td>10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM (SGT) — UTC <code>2026-08-09T16:07:15+00:00</code> → <code>2026-08-11T06:20:37+00:00</code></td>
 </tr>
 <tr>
 <td>Region(s)</td>
@@ -1399,7 +1400,7 @@ the measured ones. It never quietly becomes a pass.</p>
 </tr>
 <tr>
 <td>Prices verified on</td>
-<td>UNVERIFIED — 13 rates still read <code>VERIFY</code></td>
+<td>UNVERIFIED — 19 rates still read <code>VERIFY</code></td>
 </tr>
 <tr>
 <td>Volumes</td>

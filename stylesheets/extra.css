@@ -682,3 +682,359 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* --------------------------------------------------------------------------
+   14. Polish pass (T21-SITE-POLISH) — projector readability, generated
+       charts, and the components the design review asked for.
+
+   Original to this repo, like section 13. Nothing here comes from the
+   reference site; it exists because this site shows measurements and a
+   measurement needs affordances a workshop brochure does not — a confidence
+   range that fits on one line, a legend under a table of win/loss counts, a
+   provenance timestamp that does not shout.
+   -------------------------------------------------------------------------- */
+
+/* 14.1 Projector floor.
+   Material's defaults put tables, admonitions and footnotes at 0.64rem — about
+   12.8px at this theme's root size. That is fine on a laptop at arm's length
+   and unreadable from the fourth row of a workshop room. Everything that
+   carries content is lifted to the 0.8rem (16px) body size. Where a table then
+   overflows, it scrolls: shrinking the type to fit is the trade this rule
+   exists to refuse. */
+.md-typeset table:not([class]),
+.md-typeset .admonition,
+.md-typeset details,
+.md-typeset .footnote,
+.md-typeset .tabbed-content {
+  font-size: 0.8rem;
+}
+
+.md-typeset .md-typeset__scrollwrap,
+.md-typeset .md-typeset__table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.md-typeset table:not([class]) {
+  min-width: max-content;
+}
+
+/* 14.2 Provenance line.
+   The muted small print under a human-readable timestamp, holding the ISO/UTC
+   original. Deliberately quiet and deliberately present: the reader who is
+   reconciling a page against artifacts/ needs the exact string, and the reader
+   who is not should not have to read it. */
+.md-typeset .amw-provenance {
+  margin: 0.15rem 0 0;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: var(--amw-muted);
+}
+
+.md-typeset .amw-provenance code {
+  font-size: 0.92em;
+  background: transparent;
+  padding: 0;
+}
+
+/* 14.3 Generated charts.
+   The SVG has no intrinsic width (amw/reporting/charts.py strips it), so it
+   scales to the column. Labels are recoloured here rather than baked in,
+   because the same figure has to be legible on the navy canvas and on white —
+   `!important` because matplotlib writes `fill` as an inline style. */
+.md-typeset .amw-chart {
+  margin: 1.4rem 0 0.4rem;
+  padding: 0;
+}
+
+.amw-chart__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.amw-chart svg text {
+  fill: var(--md-default-fg-color--light) !important;
+}
+
+.amw-chart svg .amw-chart__svg,
+.amw-chart svg path[stroke="#64748b"] {
+  stroke: var(--md-default-fg-color--lighter);
+}
+
+.md-typeset .amw-chart__caption {
+  margin: 0.2rem 0 0.1rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--md-default-fg-color--light);
+}
+
+.md-typeset .amw-chart__source {
+  margin: 0 0 1.8rem;
+  font-size: 0.68rem;
+  color: var(--amw-muted);
+}
+
+.md-typeset .amw-chart__source code {
+  font-size: 0.94em;
+}
+
+/* 14.4 The single-figure callout.
+   One number, its confidence range, the condition it holds under, and where it
+   came from — in that order, because that is the order the number is safe to
+   read in. Used for a headline measurement that a skinny table cell mangles. */
+.md-typeset .amw-callout {
+  display: block;
+  margin: 1.4rem 0 1.6rem;
+  padding: 1.6rem 1.4rem 1.3rem;
+  border: 1px solid var(--amw-card-border);
+  border-radius: var(--amw-radius);
+  background: var(--amw-card-bg);
+  text-align: center;
+}
+
+.md-typeset .amw-callout__value {
+  display: block;
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset .amw-callout__range {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--amw-indigo);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .amw-callout__range {
+  color: var(--amw-indigo-bright);
+}
+
+.md-typeset .amw-callout__note {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--md-default-fg-color--light);
+}
+
+.md-typeset .amw-callout__source {
+  display: block;
+  margin-top: 0.55rem;
+  font-size: 0.68rem;
+  color: var(--amw-muted);
+}
+
+.md-typeset .amw-callout__source code {
+  font-size: 0.95em;
+}
+
+/* 14.5 Win / loss / tie badges and the legend that decodes them.
+   `15W / 3L / 33T` is unreadable to anyone who has not been in the room, so it
+   never appears without the legend directly beneath it. The colours are
+   semantic — green for the candidate's wins, red for its losses, neutral for
+   ties — and each badge repeats the count in words for a screen reader. */
+.amw-wl {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  padding: 0.1rem 0.5rem;
+  margin-right: 0.3rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.amw-wl--win {
+  border: 1px solid rgba(22, 163, 74, 0.45);
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+}
+
+.amw-wl--loss {
+  border: 1px solid rgba(220, 38, 38, 0.45);
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+}
+
+.amw-wl--tie {
+  border: 1px solid var(--amw-card-border);
+  background: var(--amw-chip-bg);
+  color: var(--amw-muted);
+}
+
+[data-md-color-scheme="slate"] .amw-wl--win {
+  border-color: rgba(74, 222, 128, 0.45);
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+}
+
+[data-md-color-scheme="slate"] .amw-wl--loss {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}
+
+.md-typeset .amw-legend {
+  margin: 0.5rem 0 1.6rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--amw-card-border);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--amw-muted);
+}
+
+/* 14.6 Aligned comparison cards.
+   Two arms, the same fields, in the same order, on the same rows — so the eye
+   compares values instead of hunting for which card mentions what. The label
+   column is fixed so the value columns line up across both cards. */
+.amw-compare {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1.2rem 0 0.6rem;
+}
+
+.md-typeset .amw-compare__card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.1rem 1.2rem 0.9rem;
+  border: 1px solid var(--amw-card-border);
+  border-radius: var(--amw-radius);
+  background: var(--amw-card-bg);
+}
+
+.md-typeset .amw-compare__title {
+  margin: 0 0 0.15rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.md-typeset .amw-compare__verdict {
+  margin: 0 0 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.amw-compare__verdict--pass {
+  color: #15803d;
+}
+
+.amw-compare__verdict--fail {
+  color: #b91c1c;
+}
+
+[data-md-color-scheme="slate"] .amw-compare__verdict--pass {
+  color: #4ade80;
+}
+
+[data-md-color-scheme="slate"] .amw-compare__verdict--fail {
+  color: #f87171;
+}
+
+.amw-compare__row {
+  display: grid;
+  grid-template-columns: 8.4rem 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.42rem 0;
+  border-top: 1px solid var(--amw-card-border);
+  font-size: 0.8rem;
+}
+
+.amw-compare__row:first-of-type {
+  border-top: 0;
+}
+
+.amw-compare__key {
+  color: var(--amw-muted);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.amw-compare__val {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 14.7 Home stat band.
+   The counters are a glance, not a citation: a big number and a short label,
+   nothing else, all five the same height. Everything that used to sit inside
+   a tile — seeds, file paths, ok/error splits — moved to the collapsible
+   provenance block under the band, where it is one click away and cannot make
+   one tile three lines taller than its neighbours. */
+.amw-stats--band .amw-stat {
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 9.4rem;
+  padding: 1.3rem 0.9rem 1.2rem;
+  text-align: center;
+}
+
+.amw-stats--band .amw-stat__num {
+  font-size: 2.1rem;
+}
+
+.amw-stats--band .amw-stat__label {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  max-width: 9.5rem;
+}
+
+/* The provenance the tiles no longer carry. Closed by default: it is the
+   answer to "where did that come from", and that question is asked after the
+   number is read, not before. */
+.md-typeset details.amw-provenance-block {
+  margin: -1.2rem 0 2.6rem;
+  border-color: var(--amw-card-border);
+  border-radius: var(--amw-radius);
+  background: var(--amw-card-bg);
+  font-size: 0.78rem;
+}
+
+.md-typeset details.amw-provenance-block > summary {
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: transparent;
+}
+
+.md-typeset details.amw-provenance-block > summary::before {
+  display: none;
+}
+
+.md-typeset details.amw-provenance-block table:not([class]) {
+  font-size: 0.76rem;
+  min-width: 0;
+}
+
+/* 14.8 Differentiator cards: headline, at most two short sentences, and the
+   link out. Fixed link position so four cards of unequal prose still line up. */
+.md-typeset .amw-diff__more {
+  margin: auto 0 0;
+  padding-top: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+@media screen and (max-width: 59.9375em) {
+  .amw-compare {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 44.9375em) {
+  .amw-compare__row {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+
+  .md-typeset .amw-callout__value {
+    font-size: 2.4rem;
+  }
+}

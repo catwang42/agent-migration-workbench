@@ -1136,9 +1136,9 @@ the recorded trace corpus. The third needs Google Cloud ADC.</p>
 <h2 id="exercise-1-replay-the-whole-pipeline">Exercise 1 — Replay the whole pipeline<a class="headerlink" href="#exercise-1-replay-the-whole-pipeline" title="Permanent link">&para;</a></h2>
 <p><strong>Goal:</strong> convince yourself that every figure on this site reproduces on your
 machine, from recordings, offline.</p>
-<p><code>bash
-source .venv/bin/activate
-python cli.py e2e --mode replay</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python<span class="w"> </span>cli.py<span class="w"> </span>e2e<span class="w"> </span>--mode<span class="w"> </span>replay
+</code></pre></div>
 <p>This regenerates the dataset from seed <code>20260812</code>, replays the recorded baseline,
 ablation, shadow and judge calls, evaluates the gates, and renders the scorecard.</p>
 <p><strong>What to look for while it runs</strong></p>
@@ -1147,31 +1147,32 @@ ablation, shadow and judge calls, evaluates the gates, and renders the scorecard
    — it never presents a recorded call as a fresh one.</li>
 <li>The dataset counts: 70 items per subagent, 28 in the core split, every item
    <code>provenance: synthetic</code>.</li>
-<li>The gate evaluation lines. Each gate prints the bound it tested (a CI bound,
+<li>The gate evaluation lines. Each gate prints the bound it tested (a 95%
+   confidence-range bound,
    not a point estimate) and the result.</li>
 <li>The unmeasured gates. <code>cost_savings_pct</code> and <code>latency_p95</code> print a reason, not
    a value.</li>
 </ol>
 <p><strong>Then break it on purpose.</strong> Move one file out of <code>artifacts/replay/</code> and re-run:</p>
-<p><code>bash
-mv artifacts/replay/query_rewriter.jsonl /tmp/
-python cli.py e2e --mode replay          # expect a failure
-mv /tmp/query_rewriter.jsonl artifacts/replay/</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mv<span class="w"> </span>artifacts/replay/query_rewriter.jsonl<span class="w"> </span>/tmp/
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python<span class="w"> </span>cli.py<span class="w"> </span>e2e<span class="w"> </span>--mode<span class="w"> </span>replay<span class="w">          </span><span class="c1"># expect a failure</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>mv<span class="w"> </span>/tmp/query_rewriter.jsonl<span class="w"> </span>artifacts/replay/
+</code></pre></div>
 <p>You should get a <code>ReplayMissError</code> naming the exact <code>(subagent, model, input_sha)</code>
 key it wanted. That is the property worth internalising: a missing recording is a
 loud failure, never a quietly substituted nearby trace and never a synthesised
 response.</p>
 <p><strong>Also run the metric tests:</strong></p>
-<p><code>bash
-pytest tests/ -q</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pytest<span class="w"> </span>tests/<span class="w"> </span>-q
+</code></pre></div>
 <p>1,012 collected, 1,010 pass, 2 skip.</p>
 <hr />
 <h2 id="exercise-2-re-render-the-scorecard-locally">Exercise 2 — Re-render the scorecard locally<a class="headerlink" href="#exercise-2-re-render-the-scorecard-locally" title="Permanent link">&para;</a></h2>
 <p><strong>Goal:</strong> see that the report is a pure function of the recorded results plus
 <code>config/gates.yaml</code>, and watch a threshold change propagate.</p>
-<p><code>bash
-python cli.py scorecard --out /tmp/scorecard_mine.md
-diff /tmp/scorecard_mine.md artifacts/results/scorecard_widened.md</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>scorecard<span class="w"> </span>--out<span class="w"> </span>/tmp/scorecard_mine.md
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>diff<span class="w"> </span>/tmp/scorecard_mine.md<span class="w"> </span>artifacts/results/scorecard_widened.md
+</code></pre></div>
 <p><strong>Then experiment — on a copy of the config, never on the committed one.</strong></p>
 <p>The interesting experiment is to see how little discretion the verdict logic has.
 Try each of these and re-render:</p>
@@ -1200,8 +1201,8 @@ Try each of these and re-render:</p>
 <p>That last row is the one worth sitting with. Two independent human-cleared gates
 protect every cost cell, and clearing one of them changes nothing.</p>
 <p><strong>Restore the real config before moving on:</strong></p>
-<p><code>bash
-git checkout config/gates.yaml</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>config/gates.yaml
+</code></pre></div>
 <p>Compare the footer hash against <code>92f9d018432f</code> to confirm you are back.</p>
 <hr />
 <h2 id="exercise-3-run-the-adk-app-and-read-the-delegation-trace">Exercise 3 — Run the ADK app and read the delegation trace<a class="headerlink" href="#exercise-3-run-the-adk-app-and-read-the-delegation-trace" title="Permanent link">&para;</a></h2>
@@ -1209,8 +1210,8 @@ git checkout config/gates.yaml</code></p>
 multi-agent app — and see why the orchestrator around them gets no verdict.</p>
 <p>Needs ADC (<code>gcloud auth application-default login</code>) and <code>PROJECT_ID</code> / <code>REGION</code>
 in <code>.env</code>.</p>
-<p><code>bash
-python cli.py adk-demo --mode live</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>adk-demo<span class="w"> </span>--mode<span class="w"> </span>live
+</code></pre></div>
 <p>The reference app is a root orchestrator delegating to the three leaf subagents.
 Each leaf loads its own shipping prompt arm (<code>adk_app.SHIPPING_VARIANTS</code>) — the
 same files, byte for byte, that the bench harness measured.</p>
@@ -1227,9 +1228,9 @@ same files, byte for byte, that the bench harness measured.</p>
 </ol>
 <p><strong>Pin one prompt pack across all three leaves</strong> to see the ablation rungs move
 inside a running app:</p>
-<p><code>bash
-python cli.py adk-demo --mode live --variant gemini_naive
-python cli.py adk-demo --mode live --variant gemini_tuned_v1</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>adk-demo<span class="w"> </span>--mode<span class="w"> </span>live<span class="w"> </span>--variant<span class="w"> </span>gemini_naive
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>python<span class="w"> </span>cli.py<span class="w"> </span>adk-demo<span class="w"> </span>--mode<span class="w"> </span>live<span class="w"> </span>--variant<span class="w"> </span>gemini_tuned_v1
+</code></pre></div>
 <p><strong>The point of the exercise:</strong> the leaves are Level 1 and are measured in full.
 The root is Level 3 — when to loop, when to delegate, when to stop — and a
 single-call bench harness cannot see any of that. Migrating the root on the

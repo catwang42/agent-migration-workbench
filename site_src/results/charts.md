@@ -6,18 +6,20 @@
 <span class="amw-draft">Draft — refreshes at freeze-v1</span>
 
 Interval charts exported from the two executed notebooks. Each shows point
-estimates with 95% bootstrap CIs (10,000 resamples, seed `20260812`) and the
-relevant gate bound. Gates are decided on the CI bound, not on the point.
+estimates with 95% bootstrap confidence ranges (10,000 resamples, seed
+`20260812`) and the
+relevant gate bound. Gates are decided on the confidence-range bound, not
+on the point estimate.
 
-## `json_schema_validity` — 95% CI, gate bound marked
+## `json_schema_validity` — 95% confidence range, gate bound marked
 
-![`json_schema_validity` — 95% CI, gate bound marked](charts/json_schema_validity.png)
+![`json_schema_validity` — 95% confidence range, gate bound marked](charts/json_schema_validity.png)
 
 All nine gated arms at n=70. The 0.99 gate bound is the dashed line. Claude's `query_rewriter` point at 0.814 [0.714, 0.900] is a **mechanism** finding, not a model finding — see module 04.
 
-## `shadow_agreement` (structured) — 95% CI, gate bound marked
+## `shadow_agreement` (structured) — 95% confidence range, gate bound marked
 
-![`shadow_agreement` (structured) — 95% CI, gate bound marked](charts/shadow_agreement_structured.png)
+![`shadow_agreement` (structured) — 95% confidence range, gate bound marked](charts/shadow_agreement_structured.png)
 
 Structured-field agreement between `claude_baseline` and `gemini_tuned_v1`, n=70, with the 0.90 gate bound marked. Structured fields only; prose is adjudicated separately.
 

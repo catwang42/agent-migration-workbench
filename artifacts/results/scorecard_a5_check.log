@@ -1,0 +1,3 @@
+note: judged on the FULL corpus, not the registered core split: chunk_summarizer, feature_extractor, query_rewriter. Every other subagent is judged on core only, so judged n differs across subagents — see each arm's judge.split and judge.items_scored before comparing judge scores.
+scorecard written to artifacts/results/scorecard_a5_check.md
+SC_EXIT=0

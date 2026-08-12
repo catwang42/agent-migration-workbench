@@ -2,11 +2,13 @@
 
 Two kinds of test here, and the first kind matters more:
 
-1. **Refusals.** With ``config/pricing.yaml`` unverified and the customer's
-   volumes illustrative, neither module may emit a dollar figure. Not a zero,
-   not a rounded placeholder — an explicit not-computable state naming both
-   gates. The live volume override clears exactly one of those gates and is
-   tested to leave the other closed.
+1. **Refusals.** With prices unverified and the customer's volumes
+   illustrative, neither module may emit a dollar figure. Not a zero, not a
+   rounded placeholder — an explicit not-computable state naming both gates.
+   The live volume override clears exactly one of those gates and is tested to
+   leave the other closed. ``config/pricing.yaml`` was stamped on 2026-08-12,
+   so the unverified side of that is now built by the ``unpriced`` fixture
+   rather than read off the shipped file; the gate outlives this customer.
 2. **Arithmetic**, against ``tests/fixtures/reporting/pricing_fixture.yaml`` —
    a table of round, obviously-synthetic prices whose expected outputs are
    hand-computed in the docstrings below. No real price appears in this file.
@@ -20,7 +22,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from amw.config import AppConfig, ConfigError, PricingConfig, load_all
+from amw.config import VERIFY, AppConfig, ConfigError, PricingConfig, load_all
 from amw.economics.cache_breakeven import HOURS_PER_DAY, breakeven_curve, cache_breakeven
 from amw.economics.cost_model import (
     DAYS_PER_MONTH,
@@ -54,6 +56,26 @@ def priced(cfg: AppConfig) -> AppConfig:
 
 
 @pytest.fixture()
+def unpriced(cfg: AppConfig) -> AppConfig:
+    """The real config with every rate wound back to ``VERIFY``.
+
+    The shipped ``config/pricing.yaml`` was stamped by a human on 2026-08-12,
+    so it no longer exercises the pricing gate — but the gate is ground rule 3
+    and still guards the next customer profile, whose rates start at VERIFY
+    again. The fixture table is the one wound back, not the real file, so the
+    rule this module opens with holds: no real price appears in here.
+    """
+    data = yaml.safe_load((FIXTURES / "pricing_fixture.yaml").read_text(encoding="utf-8"))
+    for slot in data["models"].values():
+        for field in slot:
+            slot[field] = VERIFY
+    data["cache_storage"]["per_1m_token_hour"] = VERIFY
+    data["verified_on"] = None
+    data["verified_by"] = None
+    return cfg.model_copy(update={"pricing": PricingConfig.model_validate(data)})
+
+
+@pytest.fixture()
 def customer_volumes(cfg: AppConfig) -> VolumeSet:
     """Volumes as if the customer had read them out in the workshop."""
     return confirm_volumes(
@@ -69,18 +91,20 @@ def customer_volumes(cfg: AppConfig) -> VolumeSet:
 # --------------------------------------------------------------------------
 
 
-def test_today_no_dollar_figure_exists_at_all(cfg: AppConfig) -> None:
-    result = cost_model(cfg)
+def test_with_both_gates_closed_no_dollar_figure_exists_at_all(
+    unpriced: AppConfig,
+) -> None:
+    result = cost_model(unpriced)
     assert result.computable is False
     assert result.rows == []
     assert result.state == f"{NOT_COMPUTABLE} — pricing unverified / volumes unconfirmed"
     assert {b.gate for b in result.blockers} == {"pricing", "volumes"}
 
 
-def test_a_blocked_cost_model_returns_no_zeros(cfg: AppConfig) -> None:
+def test_a_blocked_cost_model_returns_no_zeros(unpriced: AppConfig) -> None:
     # The failure mode this guards: a "safe" default of 0.0 in a cost column
     # reads as "migrating is free", which is a fabricated result (ground rule 1).
-    result = cost_model(cfg)
+    result = cost_model(unpriced)
     assert result.rows == []
     assert result.prices_verified_on is None
     assert NOT_COMPUTABLE in result.state
@@ -94,11 +118,11 @@ def test_unconfirmed_volumes_alone_still_block(priced: AppConfig) -> None:
 
 
 def test_the_volume_override_does_not_bypass_the_pricing_gate(
-    cfg: AppConfig, customer_volumes: VolumeSet
+    unpriced: AppConfig, customer_volumes: VolumeSet
 ) -> None:
     # The owner's constraint, and the most dangerous number this repo could
     # produce: the customer's real call rate times a placeholder price.
-    result = cost_model(cfg, volumes=customer_volumes)
+    result = cost_model(unpriced, volumes=customer_volumes)
     assert result.computable is False
     assert [b.gate for b in result.blockers] == ["pricing"]
     assert result.rows == []
@@ -277,8 +301,10 @@ def test_negative_volumes_are_refused() -> None:
 # --------------------------------------------------------------------------
 
 
-def test_breakeven_is_not_computable_on_unverified_prices(cfg: AppConfig) -> None:
-    result = cache_breakeven(cfg, cached_tokens=100_000, ttl_hours=1.0)
+def test_breakeven_is_not_computable_on_unverified_prices(
+    unpriced: AppConfig,
+) -> None:
+    result = cache_breakeven(unpriced, cached_tokens=100_000, ttl_hours=1.0)
     assert result.computable is False
     assert result.breakeven_calls_per_day is None
     assert result.write_usd is None and result.storage_usd is None

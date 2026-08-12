@@ -3193,6 +3193,817 @@
           }
         }
       }
+    },
+    {
+      "rung": "A0-35",
+      "label": "Generation only: A0's prompt bytes, unchanged, on gemini-flash-35 (second deployment candidate)",
+      "variant": "gemini_naive",
+      "output_mode": "tool",
+      "model": "gemini-flash-35",
+      "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+      "branches_from": "A0",
+      "status": "measured",
+      "unmeasured_reason": null,
+      "judged_n": 70,
+      "judged_split": "all",
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 70,
+        "split": "all",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-flash-35": "replay via replay",
+          "gemini-flash-current": "replay via replay",
+          "gemini-pro": "replay via replay",
+          "gemini-pro-current": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": "2026-08-12T09:46:17+00:00",
+        "recorded_to": "2026-08-12T09:53:04+00:00",
+        "written_at": "2026-08-12T12:04:45+00:00"
+      },
+      "arm": {
+        "subagent": "feature_extractor",
+        "variant": "gemini_naive",
+        "model": "gemini-flash-35",
+        "output_mode": "tool",
+        "prompt_sha": "2c6cec4d07cb679d165c0b2a1b57343b2d0a310a6b0bb3b2590350d84544f07c",
+        "items": 70,
+        "calls_ok": 70,
+        "calls_error": 0,
+        "error_kinds": {},
+        "metrics": {
+          "answered_precision": {
+            "metric": "answered_precision",
+            "point": 1.0,
+            "estimate": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          },
+          "extraction_accuracy": {
+            "metric": "extraction_accuracy",
+            "point": 1.0,
+            "estimate": {
+              "metric": "extraction_accuracy",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "hallucination_rate": {
+            "metric": "hallucination_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 33,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 33,
+            "n_excluded": 37,
+            "excluded": {
+              "not_applicable": 37
+            }
+          },
+          "json_schema_validity": {
+            "metric": "json_schema_validity",
+            "point": 1.0,
+            "estimate": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "omission_rate": {
+            "metric": "omission_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "omission_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          }
+        },
+        "judge": {
+          "point": 0.7806802721088435,
+          "estimate": {
+            "metric": "judge_score",
+            "point": 0.7806802721088435,
+            "lo": 0.7437414965986395,
+            "hi": 0.8153775510204081,
+            "n": 70,
+            "unit": "fraction",
+            "confidence": 0.95,
+            "resamples": 10000,
+            "seed": 20260812,
+            "method": "percentile_bootstrap",
+            "paired_n": null,
+            "dropped_unpaired": 0
+          },
+          "split": "all",
+          "items_scored": 70,
+          "expected_repeats": 2,
+          "failed_repeats": 0,
+          "items_short_of_k": [],
+          "dropped_items": [],
+          "mean_within_item_sd": 0.015873825700106165,
+          "full_agreement_rate": 0.8571428571428571,
+          "failure_clusters": {
+            "novelty_statement_correct": [
+              "fe-0000",
+              "fe-0001",
+              "fe-0002",
+              "fe-0003",
+              "fe-0004",
+              "fe-0005",
+              "fe-0006",
+              "fe-0007",
+              "fe-0008",
+              "fe-0009",
+              "fe-0010",
+              "fe-0011",
+              "fe-0013",
+              "fe-0014",
+              "fe-0015",
+              "fe-0016",
+              "fe-0017",
+              "fe-0018",
+              "fe-0020",
+              "fe-0021",
+              "fe-0022",
+              "fe-0023",
+              "fe-0024",
+              "fe-0025",
+              "fe-0026",
+              "fe-0030",
+              "fe-0031",
+              "fe-0032",
+              "fe-0034",
+              "fe-0035",
+              "fe-0036",
+              "fe-0037",
+              "fe-0038",
+              "fe-0039",
+              "fe-0040",
+              "fe-0041",
+              "fe-0043",
+              "fe-0044",
+              "fe-0046",
+              "fe-0047",
+              "fe-0048",
+              "fe-0050",
+              "fe-0051",
+              "fe-0052",
+              "fe-0053",
+              "fe-0055",
+              "fe-0056",
+              "fe-0058",
+              "fe-0060",
+              "fe-0061",
+              "fe-0063",
+              "fe-0064",
+              "fe-0065",
+              "fe-0067",
+              "fe-0068",
+              "fe-0069"
+            ],
+            "technical_field_correct": [
+              "fe-0000",
+              "fe-0001",
+              "fe-0002",
+              "fe-0003",
+              "fe-0004",
+              "fe-0006",
+              "fe-0007",
+              "fe-0009",
+              "fe-0010",
+              "fe-0011",
+              "fe-0014",
+              "fe-0015",
+              "fe-0016",
+              "fe-0020",
+              "fe-0025",
+              "fe-0031",
+              "fe-0033",
+              "fe-0034",
+              "fe-0035",
+              "fe-0036",
+              "fe-0038",
+              "fe-0040",
+              "fe-0041",
+              "fe-0043",
+              "fe-0044",
+              "fe-0048",
+              "fe-0051",
+              "fe-0053",
+              "fe-0054",
+              "fe-0058",
+              "fe-0060",
+              "fe-0061",
+              "fe-0063",
+              "fe-0064",
+              "fe-0065",
+              "fe-0067"
+            ],
+            "technical_field_inferred": [
+              "fe-0001",
+              "fe-0006",
+              "fe-0031",
+              "fe-0041",
+              "fe-0048",
+              "fe-0053",
+              "fe-0058",
+              "fe-0060",
+              "fe-0065"
+            ],
+            "technical_field_short": [
+              "fe-0030"
+            ],
+            "technical_field_still_extracted": [
+              "fe-0019"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "rung": "ship-35",
+      "label": "Generation only: the shipping arm's prompt bytes, unchanged, on gemini-flash-35 (second deployment candidate)",
+      "variant": "gemini_optimizer_v1",
+      "output_mode": "tool",
+      "model": "gemini-flash-35",
+      "prompt_sha": "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf",
+      "branches_from": null,
+      "status": "measured",
+      "unmeasured_reason": null,
+      "judged_n": 70,
+      "judged_split": "all",
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 70,
+        "split": "all",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-flash-35": "replay via replay",
+          "gemini-flash-current": "replay via replay",
+          "gemini-pro": "replay via replay",
+          "gemini-pro-current": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": "2026-08-12T09:53:10+00:00",
+        "recorded_to": "2026-08-12T09:59:56+00:00",
+        "written_at": "2026-08-12T12:27:32+00:00"
+      },
+      "arm": {
+        "subagent": "feature_extractor",
+        "variant": "gemini_optimizer_v1",
+        "model": "gemini-flash-35",
+        "output_mode": "tool",
+        "prompt_sha": "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf",
+        "items": 70,
+        "calls_ok": 70,
+        "calls_error": 0,
+        "error_kinds": {},
+        "metrics": {
+          "answered_precision": {
+            "metric": "answered_precision",
+            "point": 1.0,
+            "estimate": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          },
+          "extraction_accuracy": {
+            "metric": "extraction_accuracy",
+            "point": 1.0,
+            "estimate": {
+              "metric": "extraction_accuracy",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "hallucination_rate": {
+            "metric": "hallucination_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 33,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 33,
+            "n_excluded": 37,
+            "excluded": {
+              "not_applicable": 37
+            }
+          },
+          "json_schema_validity": {
+            "metric": "json_schema_validity",
+            "point": 1.0,
+            "estimate": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "omission_rate": {
+            "metric": "omission_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "omission_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          }
+        },
+        "judge": {
+          "point": 0.9511904761904761,
+          "estimate": {
+            "metric": "judge_score",
+            "point": 0.9511904761904764,
+            "lo": 0.9273809523809522,
+            "hi": 0.9726190476190476,
+            "n": 70,
+            "unit": "fraction",
+            "confidence": 0.95,
+            "resamples": 10000,
+            "seed": 20260812,
+            "method": "percentile_bootstrap",
+            "paired_n": null,
+            "dropped_unpaired": 0
+          },
+          "split": "all",
+          "items_scored": 70,
+          "expected_repeats": 2,
+          "failed_repeats": 0,
+          "items_short_of_k": [],
+          "dropped_items": [],
+          "mean_within_item_sd": 0.008417937871268424,
+          "full_agreement_rate": 0.9285714285714286,
+          "failure_clusters": {
+            "novelty_from_fragment": [
+              "fe-0019",
+              "fe-0040"
+            ],
+            "novelty_statement_correct": [
+              "fe-0008",
+              "fe-0013",
+              "fe-0015",
+              "fe-0018",
+              "fe-0019",
+              "fe-0022",
+              "fe-0024",
+              "fe-0030",
+              "fe-0040",
+              "fe-0046",
+              "fe-0049",
+              "fe-0050",
+              "fe-0055",
+              "fe-0056",
+              "fe-0064",
+              "fe-0069"
+            ],
+            "technical_field_correct": [
+              "fe-0049",
+              "fe-0055",
+              "fe-0058"
+            ],
+            "technical_field_inferred": [
+              "fe-0058"
+            ],
+            "technical_field_still_extracted": [
+              "fe-0019"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "rung": "ship-current-capped",
+      "label": "Recommended deployment configuration: the shipping arm on the headline candidate with the reasoning budget minimised",
+      "variant": "gemini_optimizer_v1",
+      "output_mode": "tool",
+      "model": "gemini-flash-current-capped",
+      "prompt_sha": "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf",
+      "branches_from": "ship-current",
+      "status": "measured",
+      "unmeasured_reason": null,
+      "judged_n": 70,
+      "judged_split": "all",
+      "leaked_example_items": [],
+      "provenance": {
+        "customer": "demo_patents",
+        "mode": "replay",
+        "region": "us-central1",
+        "dataset_provenance": "synthetic",
+        "dataset_seed": 20260812,
+        "generator_version": "t06.1",
+        "items": 70,
+        "split": "all",
+        "bootstrap_seed": 20260812,
+        "judge_repeats": 2,
+        "judge_model": "Gemini 2.5 Pro",
+        "judge_prompt_version": "v1",
+        "adapters": {
+          "claude-opus": "replay via replay",
+          "claude-sonnet": "replay via replay",
+          "gemini-flash": "replay via replay",
+          "gemini-flash-35": "replay via replay",
+          "gemini-flash-current": "replay via replay",
+          "gemini-flash-current-capped": "replay via replay",
+          "gemini-pro": "replay via replay",
+          "gemini-pro-current": "replay via replay"
+        },
+        "run_started": null,
+        "recorded_from": "2026-08-12T12:57:00+00:00",
+        "recorded_to": "2026-08-12T12:58:33+00:00",
+        "written_at": "2026-08-12T14:22:33+00:00"
+      },
+      "arm": {
+        "subagent": "feature_extractor",
+        "variant": "gemini_optimizer_v1",
+        "model": "gemini-flash-current-capped",
+        "output_mode": "tool",
+        "prompt_sha": "bc07745f69e93b497bde1e07a7c0652aee219c317d337df57445720bddf443bf",
+        "items": 70,
+        "calls_ok": 70,
+        "calls_error": 0,
+        "error_kinds": {},
+        "metrics": {
+          "answered_precision": {
+            "metric": "answered_precision",
+            "point": 1.0,
+            "estimate": {
+              "metric": "answered_precision",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          },
+          "extraction_accuracy": {
+            "metric": "extraction_accuracy",
+            "point": 0.9404761904761908,
+            "estimate": {
+              "metric": "extraction_accuracy",
+              "point": 0.9404761904761906,
+              "lo": 0.9214285714285714,
+              "hi": 0.9595238095238093,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "hallucination_rate": {
+            "metric": "hallucination_rate",
+            "point": 0.0,
+            "estimate": {
+              "metric": "hallucination_rate",
+              "point": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "n": 33,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 33,
+            "n_excluded": 37,
+            "excluded": {
+              "not_applicable": 37
+            }
+          },
+          "json_schema_validity": {
+            "metric": "json_schema_validity",
+            "point": 1.0,
+            "estimate": {
+              "metric": "json_schema_validity",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 70,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 70,
+            "n_excluded": 0,
+            "excluded": {}
+          },
+          "omission_rate": {
+            "metric": "omission_rate",
+            "point": 0.06568627450980392,
+            "estimate": {
+              "metric": "omission_rate",
+              "point": 0.06568627450980392,
+              "lo": 0.045588235294117645,
+              "hi": 0.08676470588235295,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          },
+          "supported_claim_rate": {
+            "metric": "supported_claim_rate",
+            "point": 1.0,
+            "estimate": {
+              "metric": "supported_claim_rate",
+              "point": 1.0,
+              "lo": 1.0,
+              "hi": 1.0,
+              "n": 68,
+              "unit": "fraction",
+              "confidence": 0.95,
+              "resamples": 10000,
+              "seed": 20260812,
+              "method": "percentile_bootstrap",
+              "paired_n": null,
+              "dropped_unpaired": 0
+            },
+            "n": 68,
+            "n_excluded": 2,
+            "excluded": {
+              "not_applicable": 2
+            }
+          }
+        },
+        "judge": {
+          "point": 0.9028571428571426,
+          "estimate": {
+            "metric": "judge_score",
+            "point": 0.9028571428571429,
+            "lo": 0.8803061224489798,
+            "hi": 0.9240833333333333,
+            "n": 70,
+            "unit": "fraction",
+            "confidence": 0.95,
+            "resamples": 10000,
+            "seed": 20260812,
+            "method": "percentile_bootstrap",
+            "paired_n": null,
+            "dropped_unpaired": 0
+          },
+          "split": "all",
+          "items_scored": 70,
+          "expected_repeats": 2,
+          "failed_repeats": 0,
+          "items_short_of_k": [],
+          "dropped_items": [],
+          "mean_within_item_sd": 0.014526955640703222,
+          "full_agreement_rate": 0.8714285714285714,
+          "failure_clusters": {
+            "assignee_is_applicant": [
+              "fe-0005",
+              "fe-0029",
+              "fe-0045",
+              "fe-0062",
+              "fe-0066"
+            ],
+            "assignee_verbatim": [
+              "fe-0009",
+              "fe-0014",
+              "fe-0017",
+              "fe-0023",
+              "fe-0028",
+              "fe-0044",
+              "fe-0047",
+              "fe-0052",
+              "fe-0067"
+            ],
+            "bibliographic_correct": [
+              "fe-0001",
+              "fe-0048",
+              "fe-0058",
+              "fe-0065"
+            ],
+            "inventors_not_assignee": [
+              "fe-0007",
+              "fe-0010",
+              "fe-0061"
+            ],
+            "novelty_from_fragment": [
+              "fe-0019",
+              "fe-0040"
+            ],
+            "novelty_null_or_hedged": [
+              "fe-0033",
+              "fe-0054"
+            ],
+            "novelty_statement_correct": [
+              "fe-0002",
+              "fe-0008",
+              "fe-0013",
+              "fe-0015",
+              "fe-0018",
+              "fe-0019",
+              "fe-0022",
+              "fe-0024",
+              "fe-0026",
+              "fe-0030",
+              "fe-0032",
+              "fe-0038",
+              "fe-0040",
+              "fe-0046",
+              "fe-0050",
+              "fe-0055",
+              "fe-0064",
+              "fe-0068",
+              "fe-0069"
+            ],
+            "technical_field_correct": [
+              "fe-0049",
+              "fe-0055"
+            ],
+            "technical_field_still_extracted": [
+              "fe-0019"
+            ]
+          }
+        }
+      }
     }
   ],
   "notes": [

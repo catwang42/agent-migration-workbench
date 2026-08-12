@@ -263,6 +263,26 @@ def test_no_module_level_adk_or_genai_import():
         ), f"{names} imported at module scope; ADK/genai imports must be lazy"
 
 
+def test_the_demo_runs_the_deployment_candidate_not_the_measured_arms():
+    """What the customer sees demoed is what the scorecard tells them to ship.
+
+    The measured arms were recorded on the development generation; pointing the
+    demo at those would show a model the recommendation is not about. The two
+    are decoupled through a role of the demo's own, so this asserts the
+    decoupling holds in both directions: the demo follows ``adk_demo``, and
+    ``adk_demo`` is not the role any measured arm resolves through.
+    """
+    from amw.agents.prompt_packs import resolve_model
+    from amw.config import load_all
+
+    cfg = load_all()
+    key, spec = cfg.models.for_role(adk_app.DEMO_ROLE)
+    assert adk_app.resolve_demo_model(cfg=cfg) == spec.id_for("vertex")
+    assert "deployment candidate (headline)" in " ".join(spec.study_roles)
+    measured = {resolve_model(v, cfg.models) for v in adk_app.SHIPPING_VARIANTS.values()}
+    assert key not in measured
+
+
 def test_demo_is_gemini_only():
     """A Claude-backed variant is refused with a message that says why."""
     from amw.config import ConfigError

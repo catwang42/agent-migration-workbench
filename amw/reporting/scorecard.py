@@ -80,6 +80,10 @@ __all__ = [
     "VerdictRules",
     "SubagentVerdict",
     "Scorecard",
+    "ConfigurationCost",
+    "CostPanel",
+    "ProjectionRow",
+    "Projection",
     "decide_verdict",
     "build_scorecard",
     "render_markdown",
@@ -107,9 +111,20 @@ TAXONOMY_LINE = (
     "in the follow-on and receive no verdict today."
 )
 
+#: Where a reader finds out which models these verdicts are about.
+#:
+#: The path is relative to the published page (``results/scorecard.md``), which
+#: is where this report is read; in the raw ``artifacts/results/`` copy the link
+#: does not resolve, so the sentence names what is on the other end rather than
+#: relying on the reader following it.
+MODELS_PAGE_LINK = (
+    "[Models in this study](../models-in-this-study.md) — every arm's exact "
+    "model ID, access path, part in the study, and recording window"
+)
+
 #: Ground rule 7. The only parity claim this repo makes.
 PARITY_SENTENCE = (
-    "Gates are checked against 95% CI bounds, so a passing gate licenses "
+    "Gates are checked against 95% confidence-range bounds, so a passing gate licenses "
     '"quality parity within measurement under pre-agreed gates" — never "zero '
     'quality drop".'
 )
@@ -233,7 +248,7 @@ ALT_EVALUATORS: dict[str, str] = {
 #: and the gate stands failed on its CI bound.
 ALT_UNEVALUATED = (
     "the pre-registered alt clause was not evaluated: no {source} in this "
-    "artifact set. The gate stands on its CI bound."
+    "artifact set. The gate stands on its confidence-range bound."
 )
 
 
@@ -308,7 +323,7 @@ def decide_verdict(
     alt_note = ""
     if by_alt:
         routes = "; ".join(
-            f"{name} missed its CI bound "
+            f"{name} missed its confidence-range bound "
             f"({checks[name].compared_bound} = {checks[name].compared_value:.4g} "
             f"vs {checks[name].bound:g}) and cleared on the alt clause "
             f'pre-registered in gates.yaml ("{checks[name].alt}"), '
@@ -329,7 +344,7 @@ def decide_verdict(
             passed_by_alt=by_alt,
             missing=missing,
             rationale=(
-                f"blocking gate(s) {', '.join(blocking_failed)} failed on the CI "
+                f"blocking gate(s) {', '.join(blocking_failed)} failed on the confidence-range "
                 f"bound. {rules.descriptions.get(rules.any_blocking_gate_fails, '')}"
                 f"{alt_note}"
             ).strip(),
@@ -385,6 +400,62 @@ def decide_verdict(
 # --------------------------------------------------------------------------
 
 
+class ConfigurationCost(_Base):
+    """One model *configuration's* measured economics for one subagent.
+
+    Not a candidate row — a configuration row. The capped and default arms are
+    the same provider model ID on the same prompt bytes, one setting apart, so
+    putting them in the candidate table would invite a reader to compare them
+    as if they were different models. They are the same model answering the
+    question "what does the reasoning budget cost".
+    """
+
+    subagent: str
+    #: Reader-facing configuration name, e.g. "reasoning budget minimised".
+    configuration: str
+    savings_text: str
+    baseline_usd: float
+    candidate_usd: float
+    output_tokens: int
+    baseline_output_tokens: int
+    #: True for the configuration the scorecard recommends deploying.
+    recommended: bool = False
+
+
+class CostPanel(_Base):
+    """The configurations compared, plus the findings that explain the gap."""
+
+    rows: list[ConfigurationCost] = Field(default_factory=list)
+    #: Prose that must appear under the table — the thinking-tax finding and
+    #: the market-context line. Carried as text because both are conclusions a
+    #: human drew from the audit, not values this module can recompute.
+    notes: list[str] = Field(default_factory=list)
+
+
+class ProjectionRow(_Base):
+    """One arithmetic projection onto a model that was never measured."""
+
+    subagent: str
+    projected_usd: float
+    measured_usd: float
+    delta_pct: float
+
+
+class Projection(_Base):
+    """A cost projection onto a priced-but-unmeasured model.
+
+    Exists so the panel cannot be mistaken for a measurement: it carries no
+    quality field, no gate result and no verdict, and :func:`_projection_section`
+    prints its ``basis`` and ``disclaimer`` above the numbers rather than
+    below them.
+    """
+
+    model_display: str
+    basis: str
+    disclaimer: str
+    rows: list[ProjectionRow] = Field(default_factory=list)
+
+
 class Scorecard(_Base):
     """Everything the Markdown render needs, and nothing it computes itself.
 
@@ -408,6 +479,12 @@ class Scorecard(_Base):
     #: scored — a scorecard with no ladder section is a scorecard that was not
     #: given one, not a subagent whose prompt was never tuned.
     ladders: dict[str, Ladder] = Field(default_factory=dict)
+    #: Measured economics per model configuration. None when only one
+    #: configuration was run, which is the case for every scorecard rendered
+    #: before 2026-08-12.
+    cost_panel: CostPanel | None = None
+    #: Cost projections onto priced-but-unmeasured models. Never a verdict.
+    projections: list[Projection] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
     #: One line from the second-judge cross-check
     #: (:func:`amw.eval.crosscheck.crosscheck_footer_line`), or None when no
@@ -562,7 +639,7 @@ def _alt_clause_note(check: GateCheck, evidence: SubagentEvidence) -> str:
     replaced arm's tally as the control.
     """
     return (
-        f"`{check.gate}` did not clear its CI bound "
+        f"`{check.gate}` did not clear its confidence-range bound "
         f"({check.compared_bound} = {check.compared_value:.4g}, bound "
         f"{'≥' if check.direction == 'min' else '≤'} {check.bound:g}). It passes on "
         f'the alternative route pre-registered in gates.yaml — "{check.alt}" — '
@@ -581,7 +658,8 @@ def _gate_table(
     prices_verified: bool,
 ) -> list[str]:
     lines = [
-        "| Gate | Bound (gates.yaml) | Measured (95% CI) | Bound tested | Result |",
+        "| Gate | Bound (gates.yaml) | Measured (95% confidence range) | Bound tested "
+        "| Result |",
         "| --- | --- | --- | --- | --- |",
     ]
     imprecise: list[str] = []
@@ -631,6 +709,26 @@ def _gate_table(
     return lines
 
 
+def _savings_cell(evidence: SubagentEvidence, fallback: str) -> str:
+    """The savings row, kept consistent with the gate row above it.
+
+    The other three cost rows are run-rate figures and stay "not measured"
+    while customer volumes are unconfirmed. A savings *ratio* does not need
+    volumes, so when one has been measured from recorded tokens it appears
+    here — printing "not measured" directly beneath a gate row carrying
+    ``-16.5%`` reads as a rendering bug, and a reader resolves that
+    contradiction by guessing. The basis is named because it is **not** the
+    profile-volume basis ``gates.yaml`` registers.
+    """
+    estimate = evidence.estimates.get(GATE_COST)
+    if estimate is None:
+        return fallback
+    return (
+        f"{estimate_text(estimate)} — measured per-call tokens over this corpus "
+        f"at list prices, not the registered profile-volume basis"
+    )
+
+
 def _evidence_table(evidence: SubagentEvidence, *, prices_verified: bool) -> list[str]:
     claude_schema = evidence.claude_schema_validity
     cost = cost_cell(prices_verified=prices_verified)
@@ -657,11 +755,67 @@ def _evidence_table(evidence: SubagentEvidence, *, prices_verified: bool) -> lis
         ("Cost per call", cost),
         ("Monthly run rate", cost),
         ("Annual run rate", cost),
-        ("Cost savings vs Claude", cost),
+        ("Cost savings vs Claude", _savings_cell(evidence, cost)),
     ]
     return ["| Evidence | Value |", "| --- | --- |"] + [
         f"| {label} | {value} |" for label, value in rows
     ]
+
+
+def _cost_panel_section(panel: CostPanel) -> list[str]:
+    """Both measured configurations, recommended one first.
+
+    Order is the argument. The capped configuration is what the scorecard
+    recommends deploying, so it is the row a reader meets first; the default
+    configuration renders beneath it, labelled, because it is what every arm
+    measured before 2026-08-12 ran on and removing it would delete a
+    measurement to make a recommendation look tidier.
+    """
+    lines = [
+        "## Cost — configurations compared",
+        "",
+        "Same model, same prompt bytes, same corpus. One setting apart.",
+        "",
+        "| Configuration | Subagent | Savings vs Claude | Corpus cost | "
+        "Output tokens (vs Claude) |",
+        "| --- | --- | --- | --- | --- |",
+    ]
+    for row in sorted(panel.rows, key=lambda r: (not r.recommended, r.subagent)):
+        name = row.configuration
+        if row.recommended:
+            name = f"**{name}** — recommended"
+        ratio = (
+            f"{row.output_tokens:,} ({row.output_tokens / row.baseline_output_tokens:.2f}x)"
+            if row.baseline_output_tokens
+            else f"{row.output_tokens:,}"
+        )
+        lines.append(
+            f"| {name} | {_pretty(row.subagent)} | {row.savings_text} | "
+            f"${row.baseline_usd:.4f} → ${row.candidate_usd:.4f} | {ratio} |"
+        )
+    if panel.notes:
+        lines += [""] + [f"- {note}" for note in panel.notes]
+    return lines
+
+
+def _projection_section(projection: Projection) -> list[str]:
+    """A labelled projection. The label goes above the numbers, not below."""
+    lines = [
+        f"## Cost projection — {projection.model_display}",
+        "",
+        f"**Projection, not a measurement.** {projection.disclaimer}",
+        "",
+        f"Basis: {projection.basis}",
+        "",
+        "| Subagent | Measured (as run) | Projected | Difference |",
+        "| --- | --- | --- | --- |",
+    ]
+    for row in projection.rows:
+        lines.append(
+            f"| {_pretty(row.subagent)} | ${row.measured_usd:.4f} | "
+            f"${row.projected_usd:.4f} | {row.delta_pct:+.1f}% |"
+        )
+    return lines
 
 
 def _economics_section(card: Scorecard) -> list[str]:
@@ -778,7 +932,7 @@ def _footer(card: Scorecard) -> list[str]:
         f"| Customer | {card.display_name} (`{card.customer}`) |",
         f"| Provenance | {footer['provenance']}, generator `{footer['generator_version']}`, "
         f"dataset seed `{footer['seed']}` |",
-        f"| Bootstrap | 95% CI, seed `{footer['bootstrap_seed']}` |",
+        f"| Bootstrap | 95% confidence range, seed `{footer['bootstrap_seed']}` |",
         f"| Judge | {footer['judge_model']}, prompt `{footer['judge_prompt_version']}`, "
         f"k={footer['judge_repeats']} repeats |",
         f"| Mode | `{footer['mode']}` |",
@@ -790,6 +944,11 @@ def _footer(card: Scorecard) -> list[str]:
         f"| Pricing sources | {', '.join(footer['pricing_sources'])} |",
         f"| Volumes | {footer['volumes']} |",
         f"| Gates | version {card.gates.version}, hash `{card.gates.version_hash}` |",
+        # Every arm's exact model ID, access path, part in the study and
+        # recording window. A scorecard that names "Gemini" without a version
+        # is not re-checkable, and the footer is where a reader goes to find
+        # out what they are looking at.
+        f"| Models | {MODELS_PAGE_LINK} |",
     ]
     if card.notes:
         lines += ["", "**Run notes**", ""] + [f"- {note}" for note in card.notes]
@@ -849,7 +1008,11 @@ def render_markdown(card: Scorecard) -> str:
             lines += ["", "### Ablation ladder", ""]
             lines += render_ladder(ladder)
 
+    if card.cost_panel is not None and card.cost_panel.rows:
+        lines += [""] + _cost_panel_section(card.cost_panel)
     lines += [""] + _economics_section(card)
+    for projection in card.projections:
+        lines += [""] + _projection_section(projection)
     lines += [""] + _footer(card)
     return "\n".join(lines) + "\n"
 

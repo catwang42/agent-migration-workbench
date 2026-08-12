@@ -11,8 +11,8 @@
 #
 # Units: USD per 1,000,000 tokens.
 
-verified_on: null
-verified_by: null
+verified_on: 2026-08-12
+verified_by: "Catherine Wang"
 
 # Exactly the pages these rates were read from, and nothing else. The
 # first-party Anthropic pricing page is deliberately absent: this platform runs
@@ -31,20 +31,73 @@ sources:
 # and is what belongs in the gemini-pro / gemini-pro-current rows below. A
 # long-context workload would be re-priced on the other tier.
 #
-# Two generations are priced. The 2.5-class rows price the measured campaign;
-# the `-current` rows price the migration target the workshop actually
-# recommends. See config/models.yaml for why both exist.
+# Two generations are priced. The 2.5-class rows price the development
+# generation the tuning ladder was built on; the deployment-candidate rows
+# price the models the workshop actually recommends migrating to. See
+# config/models.yaml for why both exist.
 models:
-  gemini-flash:  {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
-  gemini-pro:    {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
-  claude-sonnet: {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
-  claude-opus:   {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
-  # Current generation. gemini-pro-current is a PREVIEW SKU that no arm runs
-  # on — these rates cost the escalation rung, they do not price a measurement.
-  gemini-flash-current: {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
-  gemini-pro-current:   {input_per_1m: VERIFY, output_per_1m: VERIFY, cached_input_per_1m: VERIFY}
+  gemini-flash:  {input_per_1m: 0.3, output_per_1m: 2.5, cached_input_per_1m: 0.03}
+  gemini-pro:    {input_per_1m: 1.25, output_per_1m: 10, cached_input_per_1m: 0.125}
+  claude-sonnet: {input_per_1m: 2, output_per_1m: 10, cached_input_per_1m: 0.2}
+  claude-opus:   {input_per_1m: 5, output_per_1m: 25, cached_input_per_1m: 0.5}
+  # Deployment candidates — the two models the scorecard recommends between.
+  # Both are measured, so both of these rows turn into customer-facing cost
+  # numbers; neither may be left at VERIFY on freeze day.
+  gemini-flash-current: {input_per_1m: 1.5, output_per_1m: 7.5, cached_input_per_1m: 0.15}
+  # SAME SKU as gemini-flash-current — same provider model ID, same table, same
+  # row. The separate key exists because the capped configuration is a separate
+  # model key in config/models.yaml (see thinking_budget there), not because
+  # the rates differ. If the 3.6 Flash rates are ever corrected, BOTH rows move
+  # together; they are not independently verifiable numbers.
+  gemini-flash-current-capped: {input_per_1m: 1.5, output_per_1m: 7.5, cached_input_per_1m: 0.15}
+  gemini-flash-35:      {input_per_1m: 1.5, output_per_1m: 9, cached_input_per_1m: 0.15}
+  # gemini-pro-current is a PREVIEW SKU that no arm runs on — these rates cost
+  # the follow-on escalation rung, they do not price a measurement.
+  gemini-pro-current:   {input_per_1m: 2, output_per_1m: 12, cached_input_per_1m: 0.2}
+
+# WHERE EACH RATE IS READ FROM. Not prices — the citations that make the
+# prices checkable. `scripts/refresh_pricing.py` reads the matching line aloud
+# at every prompt, beside the concrete provider model ID it resolves out of
+# config/models.yaml and the unit the slot expects, so an operator typing
+# rates under freeze-day time pressure can see they are on the right table
+# before a number lands in the file. Nothing here is used in a calculation.
+#
+# Keys are model keys from `models:` above, plus the reserved key
+# `cache_storage` for the storage-rent slot.
+#
+# UNIT TRAP, called out because it is the one that would silently corrupt
+# every cost figure: this file is USD per 1,000,000 tokens. If a table on the
+# page quotes a rate per 1,000 characters, per 1,000 tokens, or per image,
+# that number is NOT what goes in the slot — convert it first, or leave the
+# slot at VERIFY.
+page_sections:
+  gemini-flash: >-
+    "Gemini models" → the "Gemini 2.5 Flash" table → text input / output rows
+  gemini-pro: >-
+    "Gemini models" → the "Gemini 2.5 Pro" table → text rows, SHORT-CONTEXT
+    tier (prompts <= 200k tokens; see the tier note above)
+  gemini-flash-current: >-
+    "Gemini models" → the "Gemini 3.6 Flash" table → text input / output rows
+  gemini-flash-current-capped: >-
+    "Gemini models" → the "Gemini 3.6 Flash" table → text input / output rows
+    (the SAME row as gemini-flash-current: capping the reasoning budget changes
+    how many output tokens are billed, not the price of one)
+  gemini-flash-35: >-
+    "Gemini models" → the "Gemini 3.5 Flash" table → text input / output rows
+  gemini-pro-current: >-
+    "Gemini models" → the "Gemini 3.1 Pro" table, PREVIEW pricing → text rows,
+    SHORT-CONTEXT tier
+  claude-sonnet: >-
+    "Anthropic Claude models" (partner models, NOT the anthropic.com price
+    list) → the "Claude Sonnet 5" row
+  claude-opus: >-
+    "Anthropic Claude models" (partner models, NOT the anthropic.com price
+    list) → the "Claude Opus 5" row
+  cache_storage: >-
+    "Context caching" → the storage row, billed per 1M cached tokens per hour
+    of retention — an hourly rent, not a per-call charge
 
 # Context-caching storage rent, USD per 1M cached tokens per hour.
 # Feeds the caching breakeven calculator.
 cache_storage:
-  per_1m_token_hour: VERIFY
+  per_1m_token_hour: 1

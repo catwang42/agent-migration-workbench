@@ -1,0 +1,19 @@
+[2026-08-12T10:23:30+00:00] === A4 same-region latency probe: region=us-central1, n=10 ===
+[2026-08-12T10:23:30+00:00]   incumbent  claude-sonnet (claude_baseline)
+[2026-08-12T10:23:30+00:00]   candidate  gemini-flash-current (shipping arm per subagent)
+[2026-08-12T10:23:30+00:00]   recordings -> artifacts/latency_probe (main corpus untouched)
+[2026-08-12T10:23:31+00:00] --- query_rewriter: claude_baseline vs gemini_targeted_v1, 10 items ---
+[2026-08-12T10:24:27+00:00]   ... 5/10 items
+[2026-08-12T10:25:20+00:00]   ... 10/10 items
+[2026-08-12T10:25:20+00:00]   UNMEASURED — every incumbent call in us-central1 came back status!=ok; error kinds: ["error"]
+[2026-08-12T10:25:20+00:00] --- chunk_summarizer: claude_baseline vs gemini_tuned_v1, 10 items ---
+[2026-08-12T10:26:12+00:00]   ... 5/10 items
+[2026-08-12T10:27:05+00:00]   ... 10/10 items
+[2026-08-12T10:27:05+00:00]   UNMEASURED — every incumbent call in us-central1 came back status!=ok; error kinds: ["error"]
+[2026-08-12T10:27:05+00:00] --- feature_extractor: claude_baseline vs gemini_optimizer_v1, 10 items ---
+[2026-08-12T10:27:58+00:00]   ... 5/10 items
+[2026-08-12T10:28:50+00:00]   ... 10/10 items
+[2026-08-12T10:28:50+00:00]   UNMEASURED — every incumbent call in us-central1 came back status!=ok; error kinds: ["error"]
+[2026-08-12T10:28:50+00:00] wrote artifacts/results/latency_probe.json
+[2026-08-12T10:28:50+00:00] gate-eligible subagents: none — latency_p95 stays unmeasured
+A4_EXIT=0

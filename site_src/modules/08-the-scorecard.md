@@ -11,7 +11,13 @@ python cli.py scorecard        # gates → verdicts → markdown report
 The scorecard is the gates evaluated. Nothing more is added to it, and nothing is
 taken out of it.
 
-## The verdicts this run produced
+Two scorecards ship, and the difference between them is the whole story of this
+workshop. This module walks the **development-generation** card — Gemini 2.5
+Flash, the run the adaptation ladder was built on — because that is the one whose
+failures taught the method. The card the migration recommendation actually rests
+on is the **deployment** card, and its verdicts are at the bottom of this page.
+
+## The verdicts the development-generation run produced
 
 | Subagent | Candidate | Gates evaluated | Verdict |
 |---|---|---|---|
@@ -19,8 +25,9 @@ taken out of it.
 | Feature Extractor | `gemini_tuned_v1` | 3 of 6 | **INCOMPLETE** (provisional: TUNE_FIRST) |
 | Query Rewriter | `gemini_tuned_v1` | 3 of 6 | **HOLD** |
 
-No MIGRATE. That is the honest output of this corpus under these gates, and it is
-the strongest evidence available that the instrument is not decorative.
+No MIGRATE on Gemini 2.5 Flash. That is the honest output of this corpus under
+these gates, and it is the strongest evidence available that the instrument is
+not decorative.
 
 ### Why two rows say INCOMPLETE rather than TUNE_FIRST
 
@@ -37,7 +44,7 @@ different sentence from a verdict, and the report keeps them different.
 
 ### Why Query Rewriter is HOLD
 
-`shadow_agreement` failed on the **95% confidence range** (CI) bound: 0.557
+`shadow_agreement` failed on the **95% confidence range** bound: 0.557
 [0.443, 0.671] against a 0.90
 minimum, and the `alt` clause also fails for this arm (14W/20L, or 8W/15L
 excluding structurally malformed baseline emissions). `shadow_agreement` is a
@@ -59,9 +66,9 @@ across a deck, a report and this site.
 |---|---|---|
 | Chunk Summarizer | −2.32 pp [−5.00, +0.36], paired n=70 | **not demonstrated at this sample size** |
 | Feature Extractor | −10.44 pp [−13.78, −7.12], paired n=70 | **measured regression, recovered by tuning** |
-| Query Rewriter | −0.64 pp [−5.50, +4.32], paired n=70 | fails on the CI lower bound (−5.501 against a −2.0 bound) |
+| Query Rewriter | −0.64 pp [−5.50, +4.32], paired n=70 | fails on the confidence-range lower bound (−5.501 against a −2.0 bound) |
 
-All three **FAIL** `quality_delta_pp`, because the gate tests the CI lower bound
+All three **FAIL** `quality_delta_pp`, because the gate tests the confidence-range lower bound
 and all three lower bounds sit below −2.0. Chunk Summarizer's interval straddles
 zero; that is why its row says the delta was not demonstrated at this sample size
 rather than claiming a drop was measured. Feature Extractor's interval does not
@@ -83,14 +90,17 @@ the widened data, and that is the number that ships.
 
 Three cells recur across every subagent:
 
-- **`cost_savings_pct`** — not computable. `config/pricing.yaml` has 19 rates still
-  reading `VERIFY` and `verified_on` is null; the customer profile's volume block
-  is illustrative (`volumes_confirmed: false`). Two independent gates, each of
-  which a human has to clear. Every cost cell is an em dash — not a zero.
+- **`cost_savings_pct`** — not computable *on this run*. Two independent gates,
+  each of which a human has to clear, and at the time this card was rendered
+  neither had: no price was verified and the customer profile's volume block is
+  illustrative (`volumes_confirmed: false`). Prices cleared on 2026-08-12 —
+  `config/pricing.yaml` now has 0 rates still read `VERIFY` — which is why the
+  deployment card below carries measured corpus costs and this one does not.
+  Volumes are still open on both.
 - **`latency_p95`** — not comparable, region split disclosed. Claude ran in
   `global`, Gemini in `us-central1`. The `claude_baseline_p95` sentinel resolves
   only from a same-region probe.
-- **`groundedness_delta_pp`** (QR and FE) — those subagents have no
+- **`groundedness_delta_pp`** (Query Rewriter and Feature Extractor) — those subagents have no
   `citation_coverage` instrument, so it was not measured for them.
 
 An unmeasured gate is printed as unmeasured, with its reason, in the same table as
@@ -102,13 +112,13 @@ the measured ones. It never quietly becomes a pass.
 |---|---|
 | Customer | Demo — Patents RAG (`demo_patents`) |
 | Provenance | synthetic, generator `t06.1`, dataset seed `20260812` |
-| Bootstrap | 95% CI, seed `20260812` |
+| Bootstrap | 95% confidence range, seed `20260812` |
 | Judge | Gemini 2.5 Pro, prompt `v1`, k=2 repeats |
 | Mode | `replay` |
 | Run date | no live run — assembled from recordings |
 | Recording window | 10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM (SGT) — UTC `2026-08-09T16:07:15+00:00` → `2026-08-11T06:20:37+00:00` |
 | Region(s) | Claude `global`, Gemini + judge `us-central1` |
-| Prices verified on | UNVERIFIED — 19 rates still read `VERIFY` |
+| Prices verified on | UNVERIFIED at render time — every rate still read `VERIFY` |
 | Volumes | volumes: illustrative |
 | Gates | version 1, hash `92f9d018432f` |
 
@@ -119,13 +129,53 @@ And the scope line that outranks every verdict above it:
 > behaviors are evaluated with their own instruments in the follow-on and receive
 > no verdict today.
 
-## Read the report itself
+## And then the deployment card
+
+Everything above is the development generation. The recommendation rests on
+**Gemini 3.6 Flash with the reasoning budget minimised** — the same three
+shipping prompts, unchanged, on the model a customer would actually deploy:
+
+| Subagent | Candidate | Gates evaluated | Verdict |
+|---|---|---|---|
+| Query Rewriter | `gemini_targeted_v1` | 5 of 6 | **INCOMPLETE** (provisional: MIGRATE) |
+| Chunk Summarizer | `gemini_tuned_v1` | 6 of 6 | **UNDETERMINED** |
+| Feature Extractor | `gemini_optimizer_v1` | 6 of 6 | **UNDETERMINED** |
+
+Four things moved, and none of them was the gates file — it is still version 1,
+hash `92f9d018432f`:
+
+- **Schema validity is 1.000 [1.000, 1.000] on all three arms.** The gate that
+  produced HOLD above is passed outright here.
+- **Query Rewriter passes `quality_delta_pp` rather than merely failing to fail
+  it**: +7.32 pp [+2.86, +12.14]. The candidate is measurably better than the
+  incumbent on this subagent, on the lower bound.
+- **Cost is measured**, because prices cleared — and it depends entirely on one
+  setting. The same model on the same prompt bytes saves 42.7% to 64.8% with the
+  reasoning budget minimised, and *loses* 6.6% to 23.1% at the default budget.
+  Reasoning tokens are billed as output and cannot be separated after the fact.
+- **`latency_p95` is evaluated**, because both arms were pinned to `global`.
+  Query Rewriter passes; the other two fail. At n=10 per arm, with the
+  incumbent's own p95 moving between probes, treat these as directional.
+
+Two subagents land on **UNDETERMINED** — `quality_delta_pp` and `latency_p95`
+both failed, and that combination matches no rule in `gates.yaml`. The engine
+issues no verdict rather than inventing one. That is a gap in the gates file, and
+it ships named as a gap.
+
+Query Rewriter's **INCOMPLETE** is a different thing again: nothing failed.
+`groundedness_delta_pp` is inapplicable to it by instrument design — its output
+is a search plan, which makes no claim about the input that could be supported or
+unsupported — so five of six gates were measured, and a verdict over five of six
+is not the verdict that was agreed.
+
+## Read the reports themselves
 
 Every caveat above is welded into the report, not appended to it — each one sits in
 the same cell as the figure it qualifies, so a screenshot of a row carries its own
 context.
 
 [Open the Migration Readiness Scorecard](../results/scorecard.md){ .md-button .md-button--primary }
+[The development-generation card](../results/scorecard_development_generation.md){ .md-button }
 
 ---
 

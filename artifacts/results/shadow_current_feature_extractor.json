@@ -1,0 +1,1307 @@
+{
+  "shadow_version": "1",
+  "customer": "demo_patents",
+  "mode": "replay",
+  "judge_mode": "replay",
+  "region": "us-central1",
+  "provenance": "synthetic",
+  "dataset_seed": 20260812,
+  "generator_version": "t06.1",
+  "bootstrap_seed": 20260812,
+  "judge_repeats": 2,
+  "baseline_arm": "claude_baseline",
+  "candidate_arm": "gemini_optimizer_v1",
+  "candidate_model_override": "gemini-flash-current",
+  "similarity_metric": "token_jaccard_lexical_proxy",
+  "prose_threshold": 0.6,
+  "live_slice": 0,
+  "run_started": null,
+  "recorded_from": "2026-08-09T17:33:16+00:00",
+  "recorded_to": "2026-08-12T04:28:21+00:00",
+  "adapters": {
+    "claude-opus": "replay via replay",
+    "claude-sonnet": "replay via replay",
+    "gemini-flash": "replay via replay",
+    "gemini-flash-35": "replay via replay",
+    "gemini-flash-current": "replay via replay",
+    "gemini-pro": "replay via replay",
+    "gemini-pro-current": "replay via replay"
+  },
+  "judge_model": "Gemini 2.5 Pro",
+  "judge_prompt_version": "v1",
+  "subagents": [
+    {
+      "subagent": "feature_extractor",
+      "items": 70,
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "claude_baseline",
+          "model": "claude-sonnet",
+          "region": "global",
+          "region_source": "env:CLAUDE_REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 1236.0,
+          "ttft_p95_ms": 2462.8999999999996,
+          "total_p50_ms": 4488.0,
+          "total_p95_ms": 6896.65,
+          "disclosure": "Same region (global) for both arms, per configuration — traces carry no region field, so this label describes how the run was configured, not something recorded in the trace."
+        }
+      },
+      "candidate": {
+        "arm": "gemini_optimizer_v1",
+        "model": "gemini-flash-current",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "gemini_optimizer_v1",
+          "model": "gemini-flash-current",
+          "region": "global",
+          "region_source": "config/models.yaml:gemini-flash-current.region",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 5868.0,
+          "ttft_p95_ms": 9524.949999999997,
+          "total_p50_ms": 5920.5,
+          "total_p95_ms": 9586.199999999997,
+          "disclosure": "Same region (global) for both arms, per configuration — traces carry no region field, so this label describes how the run was configured, not something recorded in the trace."
+        }
+      },
+      "agreement": {
+        "subagent": "feature_extractor",
+        "baseline_arm": "claude_baseline",
+        "candidate_arm": "gemini_optimizer_v1",
+        "n_items": 70,
+        "n_compared": 70,
+        "n_agreed": 4,
+        "excluded": {},
+        "n_one_arm_empty": 0,
+        "agreement": {
+          "metric": "shadow_agreement",
+          "point": 0.05714285714285714,
+          "lo": 0.014285714285714285,
+          "hi": 0.11428571428571428,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "point": 0.05714285714285714,
+        "structured_agreement": {
+          "metric": "shadow_agreement_structured",
+          "point": 0.9428571428571428,
+          "lo": 0.8857142857142857,
+          "hi": 0.9857142857142858,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "structured_point": 0.9428571428571428,
+        "field_rates": [
+          {
+            "field": "title",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 66,
+            "rate": 0.9428571428571428,
+            "mean_similarity": null
+          },
+          {
+            "field": "assignee",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "filing_date",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "jurisdiction",
+            "kind": "code",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "cpc_codes",
+            "kind": "code_set",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "independent_claim_count",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          },
+          {
+            "field": "technical_field",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 15,
+            "rate": 0.21428571428571427,
+            "mean_similarity": 0.3842980828695114
+          },
+          {
+            "field": "novelty_statement",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 27,
+            "rate": 0.38571428571428573,
+            "mean_similarity": 0.5286370173169441
+          }
+        ],
+        "similarity_metric": "token_jaccard_lexical_proxy",
+        "prose_threshold": 0.6,
+        "no_interval_reason": null
+      },
+      "triage": [
+        {
+          "item_id": "fe-0000",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracted all required fields from the source document, passing all criteria.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0001",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 scored lower; judge said: The candidate output correctly extracts all requested fields, including the bibliographic data, independent claim count, and an accur…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.9166666666666667,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0002",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate's value for technical_field, 'machine-learning model training', is too broad and omits the key privacy-preserving …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7142857142857143,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0003",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output passed all criteria, correctly extracting all required information from the source document.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0004",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate output for `technical_field` is null, but the source text clearly indicates the technical field is related to posi…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7142857142857143,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0005",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts all required information from the source text, satisfying all criteria.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0006",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_inferred]: The candidate's `technical_field` of \"lithium secondary battery negative electrodes\" is a broader category and not equivalent t…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8333333333333333,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0007",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The candidate output provides `null` for `novelty_statement`, but the source text contains the novelty in Claim 1, which begin…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0009",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The novelty statement incorrectly claims that the specified iridium loading 'limits deployment of terawatt-scale electrolysers…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0010",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output is a perfect match to the reference output and correctly extracts all required information from the source document acco…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0011",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The `technical_field` \"tandem photovoltaic devices\" is too broad, as the source specifically describes a perovskite-on-silicon d…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8333333333333334,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0013",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 failed [novelty_statement_correct]: The `novelty_statement` omits the part of the abstract that describes the advantage of the system, namely that it \"addresse…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0014",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate's `technical_field` of 'machine-learning model training' is too broad and misses the key aspects of privacy and di…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7142857142857143,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0015",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output is mostly correct, but it fails on the novelty statement by omitting the final clause from the source text which explain…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8333333333333334,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0016",
+          "subagent": "feature_extractor",
+          "fields": [
+            "title",
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The value 'vapour-compression heat pumps' is too broad to correctly identify the specific subject matter of the invention, which…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7857142857142857,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0017",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts and formats all requested information from the source document, passing all criteria. The `technical_…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0018",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` omits the second part of the abstract which explains the benefit of the process (\"addr…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0019",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_from_fragment]: The `novelty_statement` omits the performance characteristic \"a range of 260 m\" which is present in the source text.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.5833333333333333,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0020",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate's 'technical_field' of 'positive electrode active materials' is too broad, as the invention relates specifically t…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7142857142857143,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0021",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The candidate's novelty_statement describes the advantage of the invention ('prevents a backlog') rather than the invention it…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0022",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` omits the part of the abstract that explains the benefit of the invention, specificall…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0023",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate's `technical_field` 'tandem photovoltaic devices' is too broad, as it omits the specific perovskite-on-silicon nat…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7142857142857143,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0024",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The `novelty_statement` omits the key feature that the protein is \"configured for addressing off-target deamination\", whic…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0026",
+          "subagent": "feature_extractor",
+          "fields": [
+            "title",
+            "assignee",
+            "filing_date",
+            "jurisdiction",
+            "cpc_codes",
+            "independent_claim_count",
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate's `technical_field` of 'lithium secondary battery negative electrodes' is too broad to identify the specific subje…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7857142857142857,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 1 validation error for PatentFeatures ($PARAMETER_NAME Extra inputs are not permitted [type=extra_forbidden, input_value={'title': 'Negative elect...licon upon lithiation.'}, input_type=dict])"
+        },
+        {
+          "item_id": "fe-0027",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate's `technical_field` of 'water electrolysis' is too broad, as the source specifies 'proton-exchange-membrane water …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8333333333333334,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0028",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The candidate's 'novelty_statement' describes the advantage of the invention, not the invention itself, which is the heat pump…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0029",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts all requested information from the source text. All fields are populated accurately and unsupported i…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0030",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The `novelty_statement` omits the key part of the disclosed advance, which is that the configuration \"addresses lithium de…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0031",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_inferred]: The candidate's technical_field 'quantum processor control systems' is not equivalent to 'surface-code quantum error correction…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.6666666666666666,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0032",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output is a perfect match for the source data, correctly extracting all fields as required by the rubric.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0033",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline scored lower; judge said: The candidate output correctly extracts all header information, correctly identifies that the claim count and novelty cannot be determine…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0034",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracted all fields from the source document, resulting in a pass for all criteria.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0035",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate's value for `technical_field`, 'positive electrode active materials', is too broad to identify the specific subjec…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0036",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The `technical_field` is \"federated machine learning\", which is too broad as it omits the central privacy-preserving aspect of t…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0037",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output is correct. It successfully extracts all available fields, correctly abstains on fields where information is not present…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0038",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts all requested information from the source document, passing all criteria.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0039",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The candidate's `novelty_statement` describes the problem the invention solves ('addresses poor endosomal escape') rather than…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0040",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_from_fragment]: The `novelty_statement` omits the performance characteristic \"a cell voltage of 1.72 V at a current density of 2 A/cm2\" which …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.6666666666666666,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0041",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [technical_field_correct]: The value for technical_field, 'silicon-photonic optical phased arrays for coherent optical ranging', is too narrow as it de…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0042",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts all the requested information from the source text, including the assignee, CPC code, filing date, ju…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0043",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The candidate's `novelty_statement` is null, failing to extract the substance of the independent claim which is present in the…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7857142857142857,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0044",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The candidate's `novelty_statement` incorrectly includes the purpose of the invention ('to address the steam consumption...') …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0045",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts all available information from the source text, including the applicant, CPC code, and the specific d…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0046",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` omits the key feature that the fusion protein is \"configured to address off-target dea…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0047",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts and formats all required information from the source document, passing all criteria.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0048",
+          "subagent": "feature_extractor",
+          "fields": [
+            "title",
+            "assignee",
+            "filing_date",
+            "jurisdiction",
+            "cpc_codes",
+            "independent_claim_count",
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_inferred]: The candidate's `technical_field` of 'federated machine learning' is not equivalent to 'privacy-preserving federated learning' …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5833333333333333,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 1 validation error for PatentFeatures (features Extra inputs are not permitted [type=extra_forbidden, input_value={'title': 'Method of trai... centralised training.'}, input_type=dict])"
+        },
+        {
+          "item_id": "fe-0049",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 scored lower; judge said: The candidate output correctly extracts all requested fields from the source document. All criteria are met.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.9166666666666667,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0050",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` omits the key advantage of the method, which is that it 'addresses the defect rate enc…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0051",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The `technical_field` \"tandem photovoltaic devices\" is too broad to identify the subject matter, which is specifically a perovsk…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.7142857142857143,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0052",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output successfully passed all criteria, accurately extracting and formatting all required fields from the source document.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0053",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_inferred]: The candidate's `technical_field` of \"positive electrode active materials\" is a broader category and not equivalent to the more…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.6666666666666666,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0054",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate output sets `technical_field` to `null`, failing to identify the subject matter which can be inferred from the tit…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0055",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [technical_field_correct]: The candidate output's `technical_field` is \"propane refrigerant heat pumps\", but the source document explicitly states the …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.6666666666666666,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0057",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts all required fields from the source text, including the assignee, novelty statement, and technical fi…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0058",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The candidate's technical_field 'carbon dioxide capture from flue gas' is too broad because it omits the key 'amine-based' aspec…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0059",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracted all fields from the source document, providing accurate and well-supported values for each.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0060",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_inferred]: The candidate's technical_field 'positive electrode active materials' is a broader category and not equivalent to the more spec…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0061",
+          "subagent": "feature_extractor",
+          "fields": [
+            "title",
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The candidate's `novelty_statement` is null, failing to extract the substance of Claim 1 which defines the novel aspects of th…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0062",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output is fully correct, accurately extracting all required fields from the source document. The technical field and novelty st…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0063",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The candidate's `novelty_statement` describes the advantage of the invention ('addresses the accuracy cost of noise addition')…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 1 validation error for PatentFeatures (feature Extra inputs are not permitted [type=extra_forbidden, input_value={}, input_type=dict])"
+        },
+        {
+          "item_id": "fe-0064",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` omits the stated advantage of the method, 'addressing the pilot overhead and latency o…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0065",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [technical_field_correct]: The `technical_field` 'tandem photovoltaic devices' is too broad as it omits the key materials 'perovskite' and 'silicon' which …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5833333333333333,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0066",
+          "subagent": "feature_extractor",
+          "fields": [
+            "novelty_statement"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_optimizer_v1: The candidate output correctly extracts all requested fields from the source document, including accurately paraphrasing the novelty and tech…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0067",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field",
+            "novelty_statement"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [novelty_statement_correct]: The `novelty_statement` omits key elements of the invention defined in claim 1, such as the 'control system' itself and its im…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.8571428571428571,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0068",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The `novelty_statement` includes the problem being solved ('for addressing cost and reliability penalties...') rather than…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.9166666666666667,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "fe-0069",
+          "subagent": "feature_extractor",
+          "fields": [
+            "technical_field"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_optimizer_v1 lost on [novelty_statement_correct]: The candidate's `novelty_statement` omits the part of the abstract that explains the purpose of the invention, 'The disclo…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.8333333333333334,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        }
+      ],
+      "triage_summary": {
+        "subagent": "feature_extractor",
+        "disagreements": 66,
+        "wins": 31,
+        "losses": 16,
+        "ties": 19,
+        "not_adjudicated": 0,
+        "not_adjudicated_reasons": {},
+        "wins_baseline_malformed": 3,
+        "losses_baseline_malformed": 0
+      },
+      "judged_split": "all",
+      "judged_items": 70
+    }
+  ],
+  "notes": [
+    "item-level agreement counts an item as agreeing only if EVERY field matches, and prose fields are matched with token_jaccard_lexical_proxy >= 0.6 — a lexical proxy, not an embedding cosine and not a semantic judgement. Two faithful paraphrases score as a disagreement. Read `structured_agreement` (prose fields dropped) as the proxy-free sensitivity, and the judge-adjudicated triage as the authoritative verdict on prose."
+  ]
+}

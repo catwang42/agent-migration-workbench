@@ -261,19 +261,31 @@ def instruction_for(subagent: str, variant: str | None = None) -> str:
     return load_pack(subagent, variant_for(subagent, variant)).system
 
 
+#: The registry role the demo's backend comes from.
+#:
+#: Deliberately *not* ``gemini_candidate``. The measured arms answer "does the
+#: prompt work hold up", and they were recorded on the development generation;
+#: this app answers "what would we deploy", and the answer the scorecard gives
+#: is the headline deployment candidate. Routing the demo through its own role
+#: means the workshop can re-point the demo without touching a single model a
+#: number was measured on — and cannot accidentally do the reverse either.
+DEMO_ROLE = "adk_demo"
+
+
 def resolve_demo_model(variant: str | None = None, cfg: "AppConfig | None" = None) -> str:
     """Provider model ID for the demo, from ``config/models.yaml``.
 
     No model ID literal appears in this module (CLAUDE.md conventions): the
-    variant names a role, the registry names the model, and the ``vertex``
-    access path names the ID. Non-Google providers are refused here rather
-    than failing obscurely inside ADK — the constraint is "Gemini backend
-    only", so it should read as a constraint.
+    :data:`DEMO_ROLE` role names the model and the ``vertex`` access path names
+    the ID. Non-Google providers are refused here rather than failing obscurely
+    inside ADK — the constraint is "Gemini backend only", so it should read as
+    a constraint.
 
-    With no explicit variant the three shipping arms are resolved together and
-    required to agree. They do today — all three are ``gemini_candidate`` — but
-    the root and its three leaves share one ``model``, so an arm that moved to
-    a different role would silently run on the wrong one. Better to say so.
+    ``variant`` no longer chooses the backend, because the demo's backend is a
+    deployment decision and a variant is a prompt. It is still checked: the
+    shipping arms have to keep resolving to a single model, since the root and
+    its three leaves share one ``model`` and an arm that quietly moved to
+    another role would mean the demo is showing prompts from a mixed set.
     """
     from amw.adapters.gemini import ACCESS_PATH
     from amw.config import ConfigError, load_all
@@ -288,13 +300,24 @@ def resolve_demo_model(variant: str | None = None, cfg: "AppConfig | None" = Non
             f"the shipping arms resolve to different models: {roles}. Pin one "
             f"with --variant, or reconcile config/models.yaml."
         )
-    key = next(iter(roles.values()))
-    spec = cfg.models.spec(key)
+    # The variant no longer picks the backend, so it has to be refused on its
+    # own account: running the Claude arm's prompt bytes on a Gemini backend
+    # and calling the result a reference app would show the customer something
+    # no gate was evaluated against, which is the drift this module exists to
+    # prevent.
+    for name, key in roles.items():
+        if cfg.models.spec(key).provider != "google":
+            raise ConfigError(
+                f"the ADK reference app is Gemini-only, but variant {name!r} "
+                f"belongs to {key!r} (provider "
+                f"{cfg.models.spec(key).provider!r}). The incumbent is measured "
+                f"through the adapter harness, not re-implemented here."
+            )
+    key, spec = cfg.models.for_role(DEMO_ROLE)
     if spec.provider != "google":
         raise ConfigError(
-            f"the ADK reference app is Gemini-only, but {wanted!r} "
-            f"resolves to {key!r} (provider {spec.provider!r}). The incumbent is "
-            f"measured through the adapter harness, not re-implemented here."
+            f"the ADK reference app is Gemini-only, but the {DEMO_ROLE!r} role "
+            f"resolves to {key!r} (provider {spec.provider!r})."
         )
     return spec.id_for(ACCESS_PATH)
 
@@ -732,7 +755,7 @@ def build_app(*, variant: str | None = None, cfg: "AppConfig | None" = None):
 # --------------------------------------------------------------------------
 
 
-def _export_vertex_env() -> tuple[str, str]:
+def _export_vertex_env(cfg: "AppConfig | None" = None) -> tuple[str, str]:
     """Point ADK's genai client at the same project/region the adapters use.
 
     ADK reads ``GOOGLE_GENAI_USE_VERTEXAI`` / ``GOOGLE_CLOUD_PROJECT`` /
@@ -740,14 +763,27 @@ def _export_vertex_env() -> tuple[str, str]:
     Bridged here, at invocation time, so importing this module still touches no
     credentials. Note the demo pins Gemini's region, not ``CLAUDE_REGION`` —
     there is no Claude in this path.
+
+    A registry ``region`` on the demo model wins over ``$REGION``, exactly as
+    it does in :mod:`amw.adapters.gemini`. The deployment candidates are not
+    served in ``us-central1``, so before this precedence existed here the demo
+    sent ``gemini-3.6-flash`` to ``$REGION`` and got a 404 — a live demo that
+    fails in front of the customer for a reason the registry already knew.
     """
     from amw.adapters.gemini import _require_env
+    from amw.config import load_all
+
+    if cfg is None:
+        cfg = load_all()
+    _key, spec = cfg.models.for_role(DEMO_ROLE)
 
     project = _require_env("PROJECT_ID", os.environ.get("PROJECT_ID"))
-    location = _require_env("REGION", os.environ.get("REGION"))
+    location = spec.region or _require_env("REGION", os.environ.get("REGION"))
     os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "1")
     os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project)
-    os.environ.setdefault("GOOGLE_CLOUD_LOCATION", location)
+    # `=` not `setdefault`: GOOGLE_CLOUD_LOCATION may already be exported to
+    # $REGION by the shell, and a stale value here is the 404 above.
+    os.environ["GOOGLE_CLOUD_LOCATION"] = location
     return project, location
 
 
@@ -790,7 +826,7 @@ def run_demo(
     import asyncio
 
     _require_adk()
-    _export_vertex_env()
+    _export_vertex_env(cfg)
     return asyncio.run(_run_once_async(query, variant=variant, cfg=cfg))
 
 

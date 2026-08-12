@@ -15,7 +15,10 @@ gate                          source
 ``json_schema_validity``      the candidate arm's ``MetricReport.estimate``
                               straight out of ``phase2.json``
 ``quality_delta_pp``          paired bootstrap of per-item judge scores
-``groundedness_delta_pp``     paired bootstrap of per-item citation coverage
+``groundedness_delta_pp``     paired bootstrap of per-item groundedness, on
+                              whichever instrument the subagent has: citation
+                              coverage (Chunk Summarizer) or source-supported
+                              claim rate (Feature Extractor)
 ``shadow_agreement``          supplied by ``amw.shadow.agreement`` (T11)
 ``cost_savings_pct``          the economics model — blocked while
                               ``pricing.yaml`` is unverified
@@ -77,6 +80,7 @@ __all__ = [
     "GATE_LATENCY",
     "SHADOW_METRIC_NOTES",
     "UNLABELLED_SHADOW_NOTE",
+    "GROUNDEDNESS_INSTRUMENT_NOTES",
     "EvidenceMismatchError",
     "ArmSamples",
     "SameRegionLatencyProbe",
@@ -133,12 +137,52 @@ UNLABELLED_SHADOW_NOTE = (
 )
 
 #: gate -> the per-item metric whose paired delta answers it.
-#: ``groundedness`` is only defined where a citation instrument exists, i.e.
-#: Chunk Summarizer. QR and FE have no groundedness measurement at all, and
-#: that shows up as a *missing* gate rather than as a pass.
 _DELTA_METRIC: dict[str, str] = {
     GATE_QUALITY: "judge_score",
     GATE_GROUNDEDNESS: "citation_coverage",
+}
+
+#: subagent -> the groundedness instrument that subagent actually has.
+#:
+#: Groundedness is one *question* — "is this claim supported by what the model
+#: was given?" — asked of three different output shapes, so it cannot be one
+#: metric. Chunk Summarizer emits citations, so the question is answered by
+#: attribution (:func:`~amw.eval.metrics.citation_coverage`). Feature Extractor
+#: emits field values with no citations, so it is answered by
+#: ``supported_claim_rate``: of the fields the model asserted, the share the
+#: source states something about. Query Rewriter emits a search plan, which
+#: makes no claim *about* the input at all — there is nothing for it to be
+#: grounded in, so it has no instrument and the gate stays unmeasured for it
+#: rather than passing by default.
+#:
+#: Both instruments draw the attribution/accuracy line in the same place (see
+#: ``supported_claim_rate`` in ``amw.eval.metrics``), which is what makes the
+#: two subagents' groundedness rows comparable in kind. They are still
+#: different instruments, and :data:`GROUNDEDNESS_INSTRUMENT_NOTES` puts the
+#: name of the one in play beside every number so a reader is never invited to
+#: read an extraction rate as a citation rate.
+_GROUNDEDNESS_METRIC: dict[str, str] = {
+    "chunk_summarizer": "citation_coverage",
+    "feature_extractor": "supported_claim_rate",
+}
+
+#: instrument -> the sentence that must travel with any gate cell using it.
+GROUNDEDNESS_INSTRUMENT_NOTES: dict[str, str] = {
+    "citation_coverage": (
+        "groundedness_delta_pp is measured here as **citation coverage** — the "
+        "share of key points citing at least one chunk that was actually "
+        "supplied. A point citing a chunk that was never supplied is a "
+        "fabricated citation and does not count as grounded."
+    ),
+    "supported_claim_rate": (
+        "groundedness_delta_pp is measured here as **source-supported claim "
+        "rate**, not citation coverage: Feature Extractor emits field values "
+        "rather than citations, so groundedness is the share of the fields the "
+        "model chose to assert for which the source states something. "
+        "Asserting a value the source never mentions is the extraction "
+        "equivalent of a fabricated citation. Reading a wrong-but-in-source "
+        "value counts as grounded and is scored by quality_delta_pp instead."
+    ),
 }
 
 
@@ -277,7 +321,7 @@ def collect_samples(
     *,
     mode: str = "replay",
     dataset_dir: Any = None,
-    arms: Sequence[tuple[str, str]] | None = None,
+    arms: Sequence[tuple[str, ...]] | None = None,
     verify_against_artifact: bool = True,
 ) -> dict[tuple[str, str], ArmSamples]:
     """Re-execute arms in ``mode`` to recover per-item vectors.
@@ -285,6 +329,14 @@ def collect_samples(
     Imports of the runner/adapter stack are deferred to call time so that
     merely importing the reporting package costs nothing — the scorecard is
     also rendered from pre-built samples in tests and from notebooks.
+
+    An ``arms`` entry is ``(subagent, variant)`` or ``(subagent, variant,
+    model)``. The third element matters for the deployment candidates: the
+    ladder ran ``gemini_tuned_v1`` on both ``gemini-flash`` and
+    ``gemini-flash-current``, and without a model the variant's own role lookup
+    resolves to the first of those. Replaying the wrong model would recover a
+    real per-item vector belonging to the wrong arm — which ``_verify`` then
+    rejects, but only after the mistake has been made.
 
     :param verify_against_artifact: cross-check every recomputed arm mean
         against ``phase2.json``. On by default; the only reason to switch it
@@ -311,14 +363,17 @@ def collect_samples(
     items_by_subagent: dict[str, list] = {}
     out: dict[tuple[str, str], ArmSamples] = {}
 
-    for subagent, variant in arms:
+    for subagent, variant, *rest in arms:
+        model = rest[0] if rest else None
         if subagent not in items_by_subagent:
             items_by_subagent[subagent] = list(read_items(dataset_dir / f"{subagent}.jsonl"))
         items = items_by_subagent[subagent]
         published = _arm(phase2, subagent, variant)
 
         requests = [
-            build_request(subagent, variant, prompt_view(item), item_id=item.item_id)
+            build_request(
+                subagent, variant, prompt_view(item), item_id=item.item_id, model=model
+            )
             for item in items
         ]
         traces = router.complete_many(requests)
@@ -438,6 +493,43 @@ def _judge_cell(arm: ArmResult | None) -> JudgeScoreCell | None:
     )
 
 
+def _gate_metric(gate: str, subagent: str) -> str:
+    """Which per-item metric answers ``gate`` for ``subagent``; "" if none has."""
+    if gate == GATE_GROUNDEDNESS:
+        return _GROUNDEDNESS_METRIC.get(subagent, "")
+    return _DELTA_METRIC[gate]
+
+
+def _ceiling_note(
+    metric: str, baseline: ArmSamples, candidate: ArmSamples
+) -> str | None:
+    """Flag a delta whose interval is narrow because nothing varied.
+
+    A paired bootstrap over two constant samples returns ``+0.00 pp
+    [+0.00, +0.00]``. Read straight off the table that looks like the tightest
+    measurement on the page; it is the opposite. The two arms scored
+    identically on every item, so the resample distribution is a single point
+    and the interval carries no information about precision. The *pass* is
+    real — neither arm did the thing the metric counts — but the interval is
+    not evidence that the arms are equivalent, only that this instrument could
+    not tell them apart on this corpus.
+    """
+    base = baseline.metrics.get(metric)
+    cand = candidate.metrics.get(metric)
+    if base is None or cand is None:
+        return None
+    values = [*base.values, *cand.values]
+    if not values or len(set(values)) != 1:
+        return None
+    return (
+        f"{metric} scored an identical {values[0]:.3f} on every item of both "
+        f"arms ({base.n} and {cand.n} scored items), so the paired delta and "
+        f"its interval are a single point rather than a tight measurement. The "
+        f"gate passes because neither arm did what the metric counts, not "
+        f"because the instrument resolved a difference between them."
+    )
+
+
 def _paired_delta(
     gate: str,
     baseline: ArmSamples,
@@ -446,7 +538,18 @@ def _paired_delta(
     seed: int,
 ) -> tuple[Estimate | None, str | None]:
     """``(estimate, reason it is absent)`` — exactly one of the two is set."""
-    metric = _DELTA_METRIC[gate]
+    metric = _gate_metric(gate, baseline.subagent)
+    if not metric:
+        return None, (
+            f"{gate} is inapplicable to {baseline.subagent} by instrument design, "
+            f"not unmeasured by omission. Its output is a search plan, which makes "
+            f"no claim about the input that could be supported or unsupported by "
+            f"it, so there is nothing for a groundedness instrument to score. The "
+            f"gate is therefore not measured — and specifically not passed. No "
+            f"substitute rule is invented for it: a verdict over five of the six "
+            f"pre-agreed gates is not the verdict that was agreed, so the engine "
+            f"issues none"
+        )
     base = baseline.metrics.get(metric)
     cand = candidate.metrics.get(metric)
     if base is None or cand is None:
@@ -474,7 +577,7 @@ def build_evidence(
     latency_probes: Mapping[str, SameRegionLatencyProbe] | None = None,
     regions: Regions | None = None,
     baseline_variant: str = BASELINE_VARIANT,
-    candidate_variant: str = CANDIDATE_VARIANT,
+    candidate_variant: str | Mapping[str, str] = CANDIDATE_VARIANT,
     subagents: Iterable[str] | None = None,
     cost_savings: Mapping[str, Estimate] | None = None,
     cost_reason: str | None = None,
@@ -485,6 +588,15 @@ def build_evidence(
     ``unmeasured`` (with a reason). Nothing is left implicit, because
     :func:`amw.eval.stats.missing_gates` reads the difference and the verdict
     depends on it.
+
+    ``candidate_variant`` may be one variant name for all three subagents, or a
+    ``{subagent: variant}`` mapping. The mapping exists because the ladder does
+    not converge on one winning prompt: Query Rewriter ships
+    ``gemini_targeted_v1``, Chunk Summarizer ``gemini_tuned_v1``, Feature
+    Extractor ``gemini_optimizer_v1``. Scoring all three against whichever one
+    happens to be the global default compares two of them to a prompt they were
+    never going to deploy. A subagent absent from the mapping gets no candidate
+    arm, which is reported as such rather than defaulted.
     """
     regions = regions or Regions.from_env(cfg)
     shadow = shadow or {}
@@ -499,8 +611,13 @@ def build_evidence(
 
     out: list[SubagentEvidence] = []
     for subagent in names:
+        cand_variant = (
+            candidate_variant
+            if isinstance(candidate_variant, str)
+            else candidate_variant.get(subagent, "")
+        )
         base_arm = _arm(phase2, subagent, baseline_variant)
-        cand_arm = _arm(phase2, subagent, candidate_variant)
+        cand_arm = _arm(phase2, subagent, cand_variant) if cand_variant else None
         estimates: dict[str, Estimate] = {}
         unmeasured: dict[str, str] = {}
         notes: list[str] = []
@@ -515,7 +632,7 @@ def build_evidence(
             estimates[GATE_SCHEMA] = cand_schema
         else:
             unmeasured[GATE_SCHEMA] = (
-                f"no {GATE_SCHEMA} estimate on arm {candidate_variant} in the artifact"
+                f"no {GATE_SCHEMA} estimate on arm {cand_variant!r} in the artifact"
             )
 
         claude_schema = None
@@ -528,7 +645,7 @@ def build_evidence(
 
         # --- the two paired deltas ---
         base_samples = (samples or {}).get((subagent, baseline_variant))
-        cand_samples = (samples or {}).get((subagent, candidate_variant))
+        cand_samples = (samples or {}).get((subagent, cand_variant))
         for gate in (GATE_QUALITY, GATE_GROUNDEDNESS):
             if base_samples is None or cand_samples is None:
                 unmeasured[gate] = (
@@ -543,6 +660,19 @@ def build_evidence(
                 unmeasured[gate] = reason or "not measured"
             else:
                 estimates[gate] = estimate
+                if gate == GATE_GROUNDEDNESS:
+                    # Two subagents answer this gate with two instruments. An
+                    # unlabelled "+0.4 pp" row invites the reader to compare
+                    # them as if they were one measurement.
+                    metric = _GROUNDEDNESS_METRIC.get(subagent, "")
+                    note = GROUNDEDNESS_INSTRUMENT_NOTES.get(metric)
+                    if note:
+                        notes.append(note)
+                ceiling = _ceiling_note(
+                    _gate_metric(gate, subagent), base_samples, cand_samples
+                )
+                if ceiling:
+                    notes.append(ceiling)
 
         # --- shadow agreement (T11) ---
         if subagent in shadow:
@@ -583,7 +713,7 @@ def build_evidence(
 
         if cand_arm is None:
             notes.append(
-                f"no {candidate_variant} arm for {subagent} in this artifact"
+                f"no {cand_variant!r} arm for {subagent} in this artifact"
             )
         if base_arm is None:
             notes.append(f"no {baseline_variant} arm for {subagent} in this artifact")
@@ -592,7 +722,7 @@ def build_evidence(
             SubagentEvidence(
                 subagent=subagent,
                 baseline_variant=baseline_variant,
-                candidate_variant=candidate_variant,
+                candidate_variant=cand_variant,
                 estimates=estimates,
                 unmeasured=unmeasured,
                 sentinel_values=sentinels,

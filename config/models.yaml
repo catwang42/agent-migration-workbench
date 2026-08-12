@@ -42,10 +42,19 @@ roles:
   gemini_candidate_alt: gemini-pro    # escalation rung when Flash misses a gate
   judge: gemini-pro                   # local rubric-anchored judge (the guaranteed lane)
   judge_crosscheck: claude-sonnet     # P1 dual-judge cross-check, 20% sample
+  # The ADK reference app is a demo, never an instrument, so it is the one
+  # place that does NOT follow `gemini_candidate`. Its job is to show what the
+  # customer would actually deploy, and that is the headline deployment
+  # candidate — not the development generation the tuning ladder was built on.
+  # Pinned as its own role so moving it can never move a measured arm.
+  adk_demo: gemini-flash-current
 
 models:
   claude-sonnet:
     provider: anthropic
+    study_roles:
+      - "incumbent — the production model the migration is measured against"
+      - "cross-check judge — re-scores a sample of the gated judge's verdicts"
     display_name: Claude Sonnet 5
     ids:
       anthropic: claude-sonnet-5
@@ -59,6 +68,8 @@ models:
 
   claude-opus:
     provider: anthropic
+    study_roles:
+      - "priced only — no arm runs on it, no metric is attributed to it"
     display_name: Claude Opus 5
     ids:
       anthropic: claude-opus-5
@@ -72,6 +83,10 @@ models:
 
   gemini-flash:
     provider: google
+    study_roles:
+      - >-
+        development generation — where the tuning ladder and the optimizer work
+        were done
     display_name: Gemini 2.5 Flash
     ids:
       vertex: gemini-2.5-flash
@@ -82,6 +97,9 @@ models:
 
   gemini-pro:
     provider: google
+    study_roles:
+      - "gated judge — registered before any result was seen, never changed"
+      - "escalation rung for subagents the development-generation Flash could not carry"
     display_name: Gemini 2.5 Pro
     ids:
       vertex: gemini-2.5-pro
@@ -92,6 +110,8 @@ models:
 
   gemini-flash-current:
     provider: google
+    study_roles:
+      - "deployment candidate (headline) — the model the scorecard recommends"
     display_name: Gemini 3.6 Flash
     ids:
       vertex: gemini-3.6-flash
@@ -111,8 +131,65 @@ models:
       confirmed 2026-08-12 by an executed round trip in `global`, 6/6 ok; the
       same calls returned 404 NOT_FOUND in us-central1.
 
+  gemini-flash-current-capped:
+    provider: google
+    study_roles:
+      - >-
+        recommended deployment configuration — the headline candidate with the
+        reasoning budget minimised
+    display_name: Gemini 3.6 Flash (capped thinking)
+    ids:
+      vertex: gemini-3.6-flash
+    region: global
+    # The whole point of this key. Everything else is byte-identical to
+    # gemini-flash-current, including the provider model ID: this is not a
+    # different model, it is the same model in the configuration the scorecard
+    # recommends deploying.
+    thinking_budget: 0
+    context_window: 1048576
+    supports_json_schema: true
+    supports_tools: true
+    notes: >-
+      Added 2026-08-12 after the cost audit (artifacts/results/cost_audit.md)
+      showed the headline candidate being billed for 2.08-2.63x Claude's output
+      tokens while emitting the same or fewer characters — a floor of 14-61% of
+      billed output was reasoning the caller never received. Every arm recorded
+      before this date ran at the model's DEFAULT budget; those recordings keep
+      the `gemini-flash-current` key and are not re-run, relabelled or
+      superseded. Separate key, so the two configurations cannot collide in the
+      replay store and every rendered cell can say which one produced it.
+
+  gemini-flash-35:
+    provider: google
+    study_roles:
+      - "deployment candidate (second column)"
+    display_name: Gemini 3.5 Flash
+    ids:
+      vertex: gemini-3.5-flash
+    # Same story as gemini-flash-current: not served in us-central1. The
+    # preflight called it in both regions on 2026-08-12 — 404 NOT_FOUND in
+    # us-central1, 6/6 ok in global — so it is pinned here rather than by
+    # moving $REGION, which would drag the gated judge out of the region it
+    # was registered in.
+    region: global
+    context_window: 1048576
+    supports_json_schema: true
+    supports_tools: true
+    notes: >-
+      Second deployment candidate, added 2026-08-12 on the owner's commit. The
+      key is version-numbered rather than suffixed `-current` because
+      `gemini-flash-current` already names Gemini 3.6 Flash in recorded
+      artifacts that are immutable; renaming it would orphan them. ID
+      confirmed 2026-08-12 by an executed 2-item availability preflight in
+      `global`, 6/6 ok across all three subagents; the same calls returned 404
+      NOT_FOUND in us-central1 (see artifacts/results/preflight_35.log).
+
   gemini-pro-current:
     provider: google
+    study_roles:
+      - >-
+        follow-on candidate — documented, never run; a preview SKU is a
+        different claim from a production migration recommendation
     display_name: Gemini 3.1 Pro (preview)
     ids:
       vertex: gemini-3.1-pro-preview

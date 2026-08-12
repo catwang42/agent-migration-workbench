@@ -27,20 +27,25 @@ Verbatim from `config/gates.yaml`, version hash `92f9d018432f`.
 ## The six gates
 
 Every "basis" below is a **95% confidence range** — the span the true value is
-likely to sit in, given how few items were measured. Written **CI** from here on.
-Gates are checked against the *worst* end of that range, never the middle: the
-lower bound where the gate is a floor, the upper bound where it is a ceiling.
+likely to sit in, given how few items were measured. Gates are checked against
+the *worst* end of that range, never the middle: the lower bound where the gate
+is a floor, the upper bound where it is a ceiling.
+
+The `basis` strings inside `config/gates.yaml` write "confidence interval" in its
+abbreviated form. That file is quoted verbatim here and its version hash is
+printed in every report footer, so its wording is left exactly as it was signed
+off; everywhere this site writes in its own voice, it says *confidence range*.
 
 | Gate | Bound | Basis |
 |---|---|---|
-| `quality_delta_pp` | `min: -2.0` | 95% CI lower bound of (Gemini − Claude) judged score, in percentage points |
-| `json_schema_validity` | `min: 0.99` | 95% CI lower bound of the fraction of responses parsing against the subagent `response_schema` |
-| `groundedness_delta_pp` | `min: -1.0` | 95% CI lower bound of (Gemini − Claude) citation-supported-claim rate, in percentage points |
-| `shadow_agreement` | `min: 0.90` | 95% CI lower bound of task-level agreement between Claude and Gemini on shadow traffic |
+| `quality_delta_pp` | `min: -2.0` | 95% confidence-range lower bound of (Gemini − Claude) judged score, in percentage points |
+| `json_schema_validity` | `min: 0.99` | 95% confidence-range lower bound of the fraction of responses parsing against the subagent `response_schema` |
+| `groundedness_delta_pp` | `min: -1.0` | 95% confidence-range lower bound of (Gemini − Claude) citation-supported-claim rate, in percentage points |
+| `shadow_agreement` | `min: 0.90` | 95% confidence-range lower bound of task-level agreement between Claude and Gemini on shadow traffic |
 | `cost_savings_pct` | `min: 30` | Customer volumes from the profile, uncached list prices; caching upside reported separately |
 | `latency_p95` | `max: claude_baseline_p95` | Same region, same load profile; the sentinel resolves to the measured Claude p95 for this subagent |
 
-## Why CI bounds and not point estimates
+## Why confidence-range bounds and not point estimates
 
 Every gate is tested against the 95% bootstrap confidence-interval bound — the
 lower bound for `min` gates, the upper bound for `max` gates. 10,000 resamples,
@@ -52,7 +57,7 @@ sentence this project is allowed to write:
 
 > quality parity within measurement under pre-agreed gates
 
-Not a stronger sentence than that. A passing CI bound says the data cannot
+Not a stronger sentence than that. A passing confidence-range bound says the data cannot
 distinguish the arms at this sample size under this threshold. It does not say the
 arms are identical, and no report here claims that.
 
@@ -74,7 +79,7 @@ disagreeing and being wrong, and one number cannot carry both.
 
 So the gate has two ways to be satisfied:
 
-1. **The primary bound.** Agreement's 95% CI lower bound is at or above 0.90.
+1. **The primary bound.** Agreement's 95% confidence-range lower bound is at or above 0.90.
 2. **The `alt` clause.** Where the arms disagree, the recorded judge scores are
    adjudicated item by item, and the candidate's wins must be at least its losses.
 
@@ -103,7 +108,7 @@ verdicts:
     blocking: [json_schema_validity, shadow_agreement]
 ```
 
-- **MIGRATE** — all gates pass on their CI bound.
+- **MIGRATE** — all gates pass on their confidence-range bound.
 - **TUNE_FIRST** — schema and agreement hold; quality is short. Prompt or tuning
   work, then re-run.
 - **HOLD** — a blocking gate failed. Structural failure. Do not migrate this
@@ -123,10 +128,11 @@ A `min` or `max` may be a sentinel instead of a number, resolved at scorecard ti
 against measured baseline statistics. **An unresolved sentinel is a hard error,
 never a skipped gate.**
 
-That rule is what produces the most-misread cell on the scorecard. Claude ran in
-region `global` (the `us-central1` partner quota was exhausted); Gemini and the
-judge ran in `us-central1`. The `claude_baseline_p95` sentinel resolves only from
-a same-region probe, so `latency_p95` renders as:
+That rule is what produces the most-misread cell on the scorecard. On the
+development-generation runs, Claude ran in region `global` (the `us-central1`
+partner quota was exhausted) while Gemini and the judge ran in `us-central1`. The
+`claude_baseline_p95` sentinel resolves only from a same-region probe, so on
+those runs `latency_p95` renders as:
 
 > not comparable — region split disclosed
 
@@ -134,19 +140,32 @@ That is **not evaluated**. It is emphatically not *passed*. Quality and cost gat
 are unaffected by the region split; the latency gate simply has no measurement
 behind it and says so.
 
-## The gate that no measurement can open today
+The deployment candidates were probed later with both arms pinned to `global`, so
+their scorecards do resolve the sentinel and do evaluate the gate. The probe
+carries a validator that refuses to produce a record if the two arms landed in
+different regions, which is what stops "same region" from being an assertion
+somebody typed.
 
-`cost_savings_pct` has two independent human-cleared preconditions, and neither is
-clear:
+## The gate with two human-cleared preconditions
 
-| Gate | Why it is closed | Clears when |
+`cost_savings_pct` has two independent preconditions that no measurement can
+open. One has cleared since this workshop was written; one has not.
+
+| Gate | State | Clears when |
 |---|---|---|
-| pricing | `config/pricing.yaml` has 19 rates still reading `VERIFY` and `verified_on` is null | a human runs `scripts/refresh_pricing.py` |
-| volumes | the customer profile's volume block is illustrative (`volumes_confirmed: false`) | the customer states their call volumes |
+| pricing | **cleared 2026-08-12** — `config/pricing.yaml` has 0 rates still reading `VERIFY`, and `verified_on` plus the source URLs are stamped | a human runs `scripts/refresh_pricing.py` |
+| volumes | **still closed** — the customer profile's volume block is illustrative (`volumes_confirmed: false`) | the customer states their call volumes |
 
-Until both clear, every cost cell renders an em dash. Not a zero, not a
-placeholder, not a range — because a placeholder in a cost cell is the single
-easiest number on a scorecard to mistake for a measurement.
+With prices cleared, the scorecard can report what this 70-item corpus actually
+cost on each arm: measured token counts at uncached list rates. It still cannot
+report a monthly bill, an annual run rate, or a saving at customer scale, because
+that requires a call volume nobody has confirmed. Those cells render an em dash —
+not a zero, not a placeholder, not a range, because a placeholder in a cost cell
+is the single easiest number on a scorecard to mistake for a measurement.
+
+The two are kept in separate columns and separate sections of the report. A
+corpus cost is a measurement; a run rate is a multiplication against an
+assumption.
 
 ## Read it yourself
 

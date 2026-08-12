@@ -339,10 +339,22 @@ def test_a_paired_delta_states_how_many_pairs_it_used() -> None:
     assert "paired n=" not in paired_delta_text(plain)
 
 
-def test_cost_cells_are_em_dashes_with_no_digits(report: str) -> None:
+def test_the_unverified_price_cell_is_an_em_dash_with_no_digits() -> None:
+    """Ground rule 3's cell, tested at the unit even though the shipped file
+    is now stamped. The next customer profile starts at VERIFY again, and a
+    reason carrying a number is a number somebody will screenshot."""
     cost = cost_cell(prices_verified=False)
     assert cost.startswith(EM_DASH)
     assert not re.search(r"\d", cost), "a reason with a number in it is a number"
+
+
+def test_cost_cells_carry_no_number_until_one_is_computed(report: str) -> None:
+    """Prices were stamped on 2026-08-12, so the cells are no longer blocked on
+    ground rule 3 — but a verified rate is not a measurement. Until the cost
+    model produces a figure the cells say "not measured", which is the same
+    refusal as before for a different reason: still no digit, still no zero."""
+    cost = cost_cell(prices_verified=True)
+    assert cost == NOT_MEASURED
     for label in ("Cost per call", "Monthly run rate", "Annual run rate",
                   "Cost savings vs Claude"):
         rows = [l for l in report.splitlines() if l.strip().startswith(f"| {label} |")]
@@ -362,15 +374,17 @@ def test_the_cost_gate_is_unevaluated_not_zero(report: str) -> None:
     for row in rows:
         cells = [c.strip() for c in row.strip().strip("|").split("|")]
         measured, tested, result = cells[2], cells[3], cells[4]
-        # The measured cell is the em-dash cost cell — no savings percentage,
-        # not even a zero, is invented to fill it.
-        assert measured == cost_cell(prices_verified=False)
+        # No savings percentage, not even a zero, is invented to fill it.
+        assert measured == cost_cell(prices_verified=True) == NOT_MEASURED
         assert tested == result == "not evaluated"
 
 
 def test_the_economics_section_refuses_rather_than_zeroes(report: str) -> None:
     assert "not computable" in report
-    assert "pricing unverified" in report and "volumes unconfirmed" in report
+    # Pricing cleared on 2026-08-12; volumes are still illustrative, and one
+    # open gate refuses the section exactly as firmly as two did.
+    assert "pricing unverified" not in report
+    assert "volumes unconfirmed" in report
     assert "volumes: illustrative" in report
     assert "$0" not in report
 
@@ -418,10 +432,17 @@ def test_both_regions_and_where_they_came_from_are_printed(report: str) -> None:
     assert "us-central1" in report
 
 
-def test_unverified_prices_are_named_as_such(cfg: AppConfig, report: str) -> None:
-    assert "UNVERIFIED" in report
-    assert str(len(cfg.pricing.unverified_keys())) in report
-    assert "VERIFY" in report
+def test_the_footer_dates_the_prices_rather_than_asserting_them(
+    cfg: AppConfig, report: str
+) -> None:
+    """A price is only checkable if the reader knows when it was read.
+
+    This asserted "UNVERIFIED" until a human walked the rates on 2026-08-12;
+    the footer now has to carry the date instead, and must not still be
+    claiming the file is unverified once it is not."""
+    assert cfg.pricing.is_verified
+    assert str(cfg.pricing.verified_on) in report
+    assert "UNVERIFIED" not in report
 
 
 # --------------------------------------------------------------------------
@@ -628,7 +649,7 @@ def test_forced_tune_first_renders(cfg: AppConfig, phase2: Phase2Result) -> None
     # Even a rendered pass keeps the structural rules.
     assert TAXONOMY_LINE in markdown
     assert CLAUDE_SCHEMA_CAVEAT in markdown
-    assert cost_cell(prices_verified=False) in markdown
+    assert cost_cell(prices_verified=True) in markdown
 
 
 def test_forced_hold_renders(cfg: AppConfig, phase2: Phase2Result) -> None:
@@ -737,7 +758,7 @@ def test_the_footnote_carries_both_figures_and_the_mechanism(cfg, phase2) -> Non
     assert "15W/3L overall" in markdown
     assert "9W/3L excluding structurally malformed" in markdown
     assert MALFORMED_CAVEAT in markdown
-    assert "did not clear its CI bound" in markdown
+    assert "did not clear its confidence-range bound" in markdown
     assert "pre-agreed second route, not a threshold chosen after seeing" in markdown
 
 

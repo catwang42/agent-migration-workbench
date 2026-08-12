@@ -1,0 +1,18 @@
+[2026-08-12T13:20:50+00:00] === A4 same-region latency probe: region=global, n=10 ===
+[2026-08-12T13:20:50+00:00]   incumbent  claude-sonnet (claude_baseline)
+[2026-08-12T13:20:50+00:00]   candidate  gemini-flash-current-capped (shipping arm per subagent)
+[2026-08-12T13:20:50+00:00]   recordings -> artifacts/latency_probe (main corpus untouched)
+[2026-08-12T13:20:51+00:00] --- query_rewriter: claude_baseline vs gemini_targeted_v1, 10 items ---
+[2026-08-12T13:21:29+00:00]   ... 5/10 items
+[2026-08-12T13:22:07+00:00]   ... 10/10 items
+[2026-08-12T13:22:07+00:00]   baseline p50 2438.5 p95 6893.449999999999 ms  |  candidate p50 3890.5 p95 6470.599999999999 ms
+[2026-08-12T13:22:07+00:00] --- chunk_summarizer: claude_baseline vs gemini_tuned_v1, 10 items ---
+[2026-08-12T13:22:55+00:00]   ... 5/10 items
+[2026-08-12T13:23:47+00:00]   ... 10/10 items
+[2026-08-12T13:23:47+00:00]   baseline p50 3904.0 p95 5354.999999999998 ms  |  candidate p50 5978.5 p95 7388.499999999999 ms
+[2026-08-12T13:23:47+00:00] --- feature_extractor: claude_baseline vs gemini_optimizer_v1, 10 items ---
+[2026-08-12T13:24:45+00:00]   ... 5/10 items
+[2026-08-12T13:25:40+00:00]   ... 10/10 items
+[2026-08-12T13:25:40+00:00]   baseline p50 4732.0 p95 6063.199999999999 ms  |  candidate p50 6440.0 p95 8906.449999999999 ms
+[2026-08-12T13:25:40+00:00] wrote artifacts/results/latency_probe_global_gemini-flash-current-capped.json
+[2026-08-12T13:25:40+00:00] gate-eligible subagents: ['query_rewriter', 'chunk_summarizer', 'feature_extractor']

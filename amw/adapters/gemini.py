@@ -124,12 +124,23 @@ class GeminiAdapter(ModelAdapter):
         location: str | None = None,
         client: Any | None = None,
         sleep=time.sleep,
+        thinking_budget: int | None = None,
     ) -> None:
         self._models = models
         self._project = project
         self._location = location
         self._client = client
         self._sleep = sleep
+        #: Cap on thinking tokens, or ``None`` for the model's default.
+        #:
+        #: ``None`` is the default and is what every eval, ladder and shadow
+        #: run uses — setting a budget would change measurements that are
+        #: already recorded. It exists for the capped-thinking probe, which
+        #: needs to show that the knob is reachable: the 2026-08-12 cost audit
+        #: found the candidate billed for 14-61% more output tokens than it
+        #: returned characters, at the model's *default* budget, and a reader
+        #: is entitled to ask whether that is adjustable.
+        self._thinking_budget = thinking_budget
 
     # -- lazy wiring ------------------------------------------------------
 
@@ -228,6 +239,14 @@ class GeminiAdapter(ModelAdapter):
         if request.response_schema is not None:
             kwargs["response_mime_type"] = "application/json"
             kwargs["response_schema"] = request.response_schema
+        if self._thinking_budget is not None:
+            # include_thoughts stays False: the probe is about what the budget
+            # does to the bill and the clock, and streaming thought text back
+            # would put reasoning traces into a recorded corpus that gets shown
+            # to a customer.
+            kwargs["thinking_config"] = types.ThinkingConfig(
+                thinking_budget=self._thinking_budget, include_thoughts=False
+            )
         return types.GenerateContentConfig(**kwargs)
 
     # -- response assembly -------------------------------------------------

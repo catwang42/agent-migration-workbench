@@ -1,0 +1,1198 @@
+{
+  "shadow_version": "1",
+  "customer": "demo_patents",
+  "mode": "replay",
+  "judge_mode": "replay",
+  "region": "us-central1",
+  "provenance": "synthetic",
+  "dataset_seed": 20260812,
+  "generator_version": "t06.1",
+  "bootstrap_seed": 20260812,
+  "judge_repeats": 2,
+  "baseline_arm": "claude_baseline",
+  "candidate_arm": "gemini_targeted_v1",
+  "candidate_model_override": "gemini-flash-35",
+  "similarity_metric": "token_jaccard_lexical_proxy",
+  "prose_threshold": 0.6,
+  "live_slice": 0,
+  "run_started": null,
+  "recorded_from": "2026-08-09T16:07:15+00:00",
+  "recorded_to": "2026-08-12T09:28:48+00:00",
+  "adapters": {
+    "claude-opus": "replay via replay",
+    "claude-sonnet": "replay via replay",
+    "gemini-flash": "replay via replay",
+    "gemini-flash-35": "replay via replay",
+    "gemini-flash-current": "replay via replay",
+    "gemini-pro": "replay via replay",
+    "gemini-pro-current": "replay via replay"
+  },
+  "judge_model": "Gemini 2.5 Pro",
+  "judge_prompt_version": "v1",
+  "subagents": [
+    {
+      "subagent": "query_rewriter",
+      "items": 70,
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "claude_baseline",
+          "model": "claude-sonnet",
+          "region": "global",
+          "region_source": "env:CLAUDE_REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 1030.5,
+          "ttft_p95_ms": 2313.2999999999997,
+          "total_p50_ms": 2245.0,
+          "total_p95_ms": 5967.65,
+          "disclosure": "Same region (global) for both arms, per configuration — traces carry no region field, so this label describes how the run was configured, not something recorded in the trace."
+        }
+      },
+      "candidate": {
+        "arm": "gemini_targeted_v1",
+        "model": "gemini-flash-35",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "gemini_targeted_v1",
+          "model": "gemini-flash-35",
+          "region": "global",
+          "region_source": "config/models.yaml:gemini-flash-35.region",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 3435.5,
+          "ttft_p95_ms": 10584.249999999998,
+          "total_p50_ms": 3977.5,
+          "total_p95_ms": 11018.249999999998,
+          "disclosure": "Same region (global) for both arms, per configuration — traces carry no region field, so this label describes how the run was configured, not something recorded in the trace."
+        }
+      },
+      "agreement": {
+        "subagent": "query_rewriter",
+        "baseline_arm": "claude_baseline",
+        "candidate_arm": "gemini_targeted_v1",
+        "n_items": 70,
+        "n_compared": 70,
+        "n_agreed": 11,
+        "excluded": {},
+        "n_one_arm_empty": 0,
+        "agreement": {
+          "metric": "shadow_agreement",
+          "point": 0.15714285714285714,
+          "lo": 0.07142857142857142,
+          "hi": 0.24285714285714285,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "point": 0.15714285714285714,
+        "structured_agreement": {
+          "metric": "shadow_agreement_structured",
+          "point": 0.6428571428571429,
+          "lo": 0.5285714285714286,
+          "hi": 0.7571428571428571,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "structured_point": 0.6428571428571429,
+        "field_rates": [
+          {
+            "field": "query",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 15,
+            "rate": 0.21428571428571427,
+            "mean_similarity": 0.4606794649910014
+          },
+          {
+            "field": "intent",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 50,
+            "rate": 0.7142857142857143,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.date_from",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 59,
+            "rate": 0.8428571428571429,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.date_to",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 65,
+            "rate": 0.9285714285714286,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.assignees",
+            "kind": "scalar_set",
+            "n": 70,
+            "n_agreed": 60,
+            "rate": 0.8571428571428571,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.jurisdictions",
+            "kind": "code_set",
+            "n": 70,
+            "n_agreed": 64,
+            "rate": 0.9142857142857143,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.cpc_codes",
+            "kind": "code_set",
+            "n": 70,
+            "n_agreed": 63,
+            "rate": 0.9,
+            "mean_similarity": null
+          }
+        ],
+        "similarity_metric": "token_jaccard_lexical_proxy",
+        "prose_threshold": 0.6,
+        "no_interval_reason": null
+      },
+      "triage": [
+        {
+          "item_id": "qr-0000",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0001",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output successfully parsed all entities from the user query, correctly populating the assignee, date filter, query string, and i…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0002",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate correctly identifies the assignee and intent, but it fails for fabricating a concrete start date for the relative time period re…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0003",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly parsed all aspects of the user's request, including the specific CPC code, the lack of a date range, and the 'l…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0004",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0005",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0006",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.date_from",
+            "filters.date_to"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0007",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0008",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0009",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: All criteria passed. The candidate correctly identified the intent, the publication number, the CPC code filter, and correctly left the assign…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0010",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_targeted_v1 lost on [intent_landscape]: The candidate output set the intent to \"prior_art\" instead of \"landscape\".",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0011",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0012",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracts all filterable entities from the search brief into the appropriate fields, passing all criteria.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0013",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0015",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0016",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0017",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0018",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0019",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0020",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0021",
+          "subagent": "query_rewriter",
+          "fields": [
+            "intent"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_landscape]: The candidate output sets the intent to \"prior_art\" when the user's request to survey a company's activity implies a \"landscape\" intent.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0022",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0023",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0024",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0025",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent, constructs a relevant query from the user's product description, and correctly sets the …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0027",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0028",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0029",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.jurisdictions"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [jurisdiction_only]: The candidate output does not contain a filters object, and therefore fails to set filters.jurisdictions to ['EP'] as requested by the…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0031",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly parsed all entities from the user's request, placing the assignee and date in the filters, setting the correct …",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0032",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0033",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracted all filters and the intent from the user's request, passing all criteria.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0035",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0038",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly interprets the conversational request, replacing the assignee while carrying forward the classification code an…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0039",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent, retains the publication number in the query, and applies the specified CPC code filter w…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0040",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly interprets all aspects of the task input, setting the intent and filters correctly and expanding the query with…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0041",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the assignee, date filter, intent, and creates a query string with only technical terms, fully satis…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0042",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0043",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0044",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0045",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_to"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0046",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracts all filterable entities from the search brief into the appropriate fields, passing all criteria.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 3 validation errors for QueryPlan (query Field required [type=missing, input_value={'query_plan': {'query': ... 'intent': 'landscape'}}, input_type=dict])"
+        },
+        {
+          "item_id": "qr-0047",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_landscape]: The candidate output sets the intent to 'prior_art' when the rubric specifies 'landscape' for this type of user query.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0050",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0051",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the inventor and subject matter from the user's request, placing them in the query string, and corre…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0052",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees",
+            "filters.jurisdictions"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0053",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0056",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly updates the assignee as requested in the second turn of the conversation, while successfully carrying forward t…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0057",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0058",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [no_invented_dates]: The candidate output sets `filters.date_from` to \"2023-01-01\", which is a fabricated date not present in the input.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0059",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0060",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0061",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0062",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.date_from",
+            "filters.assignees",
+            "filters.jurisdictions"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [assignee_from_turn_1]: The candidate output does not contain a `filters` field, and therefore does not include 'The Broad Institute, Inc.' in `filters.ass…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0063",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0064",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0066",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent and date filter from the user's question, does not invent any filters, and provides a wel…",
+          "judged_split": "core split (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0067",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.assignees",
+            "filters.cpc_codes"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [assignee_replaced]: The candidate output is missing the `filters.assignees` field entirely.",
+          "judged_split": "core split (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0068",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.cpc_codes"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0069",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "not_adjudicated",
+          "rationale": "",
+          "judged_split": "outside judged split",
+          "baseline_score": null,
+          "candidate_score": null,
+          "baseline_repeats": 0,
+          "candidate_repeats": 0,
+          "reason": "outside judged split: phase 2 judged query_rewriter on the core split, which does not include this item, so there is no recorded verdict to read",
+          "baseline_malformed": null
+        }
+      ],
+      "triage_summary": {
+        "subagent": "query_rewriter",
+        "disagreements": 59,
+        "wins": 6,
+        "losses": 1,
+        "ties": 16,
+        "not_adjudicated": 36,
+        "not_adjudicated_reasons": {
+          "outside judged split": 36
+        },
+        "wins_baseline_malformed": 0,
+        "losses_baseline_malformed": 0
+      },
+      "judged_split": "core",
+      "judged_items": 28
+    }
+  ],
+  "notes": [
+    "item-level agreement counts an item as agreeing only if EVERY field matches, and prose fields are matched with token_jaccard_lexical_proxy >= 0.6 — a lexical proxy, not an embedding cosine and not a semantic judgement. Two faithful paraphrases score as a disagreement. Read `structured_agreement` (prose fields dropped) as the proxy-free sensitivity, and the judge-adjudicated triage as the authoritative verdict on prose."
+  ]
+}

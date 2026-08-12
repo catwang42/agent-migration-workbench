@@ -4,6 +4,8 @@
 
 ---
 
+--8<-- "_includes/development-generation.md"
+
 "Adapt the prompt" is not one action, so it cannot be one number. The ladder runs
 each adaptation as its own rung against the same corpus, so you can see which
 change bought what — and, on one subagent here, which change **cost** something.
@@ -19,11 +21,11 @@ python cli.py ablate --subagent query_rewriter
 | `baseline` | Incumbent: the customer's XML prompt on Claude, `emit_*` tool | `tool` |
 | `A0` | Naive endpoint swap: the same prompt bytes on Gemini, same tool | `tool` |
 | `A1-A3` | Bundled: Markdown restructure + system/user split + enforced `response_schema` + two recalibrated few-shots | `response_schema` |
-| `A0-schema` *(FE)* | **Mode only**: A0's prompt, enforced `response_schema` instead of the tool | `response_schema` |
-| `A4-novelty-tool` *(FE)* | **Prompt only**: A0 plus the `novelty_statement` rule (claim 1 is the point of novelty; numeric limits survive) and one worked example | `tool` |
-| `A4-novelty-schema` *(FE)* | **Both**: the novelty prompt under the enforced `response_schema` | `response_schema` |
-| `A4-optimizer` *(FE)* | Optimizer: a VAIPO-suggested instruction over `gemini_naive`, read against `judge_score` | `tool` |
-| `A4-targeted` *(QR)* | A1-A3 plus three bundled rules for the three measured loss clusters — publication numbers verbatim in `query`, explicit `date_to` copied not expanded, landscape vs ownership by which side of the question is unknown (per-rule credit is **not** isolated) | `response_schema` |
+| `A0-schema` *(Feature Extractor)* | **Mode only**: A0's prompt, enforced `response_schema` instead of the tool | `response_schema` |
+| `A4-novelty-tool` *(Feature Extractor)* | **Prompt only**: A0 plus the `novelty_statement` rule (claim 1 is the point of novelty; numeric limits survive) and one worked example | `tool` |
+| `A4-novelty-schema` *(Feature Extractor)* | **Both**: the novelty prompt under the enforced `response_schema` | `response_schema` |
+| `A4-optimizer` *(Feature Extractor)* | Optimizer: a VAIPO-suggested instruction over `gemini_naive`, read against `judge_score` | `tool` |
+| `A4-targeted` *(Query Rewriter)* | A1-A3 plus three bundled rules for the three measured loss clusters — publication numbers verbatim in `query`, explicit `date_to` copied not expanded, landscape vs ownership by which side of the question is unknown (per-rule credit is **not** isolated) | `response_schema` |
 
 `A0-schema`, `A4-novelty-tool` and `A4-novelty-schema` exist as a 2×2: prompt
 change alone, mode change alone, and both. Bundling them would have made "the
@@ -40,11 +42,11 @@ enforced schema helped" unfalsifiable.
     other.** A rung measured at n=70 and compared to 0.903 is being scored
     against a corpus it did not run on.
 
-Bracketed pairs in every table below are the **95% confidence range** (CI) — the
+Bracketed pairs in every table below are the **95% confidence range** — the
 span the true value is likely to sit in at this sample size. Wide brackets mean a
 small sample, not a shaky measurement.
 
-The comparison column below is the rung's 95% CI lower bound against the
+The comparison column below is the rung's 95% confidence-range lower bound against the
 incumbent's point estimate *on the same split*. It is **unpaired**, and it is not
 the `quality_delta_pp` gate — that gate is a paired bootstrap over per-item
 differences, and it is what the verdict is decided on. This table informs the
@@ -54,7 +56,7 @@ selection; it does not make it.
 
 **Core 28** — incumbent `baseline` 0.911 [0.839, 0.964]
 
-| Rung | Mode | Judged score (95% CI) | vs incumbent |
+| Rung | Mode | Judged score (95% confidence range) | vs incumbent |
 |---|---|---|---|
 | `baseline` | `tool` | 0.911 [0.839, 0.964] | incumbent |
 | `A0` | `tool` | 0.836 [0.787, 0.886] | below incumbent (hi 0.886 < 0.911) |
@@ -62,7 +64,7 @@ selection; it does not make it.
 
 **Full 70** — incumbent `gated:claude_baseline` 0.886 [0.838, 0.932]
 
-| Rung / arm | Mode | Judged score (95% CI) | `exact_match_intent` | `json_schema_validity` | vs incumbent |
+| Rung / arm | Mode | Judged score (95% confidence range) | `exact_match_intent` | `json_schema_validity` | vs incumbent |
 |---|---|---|---|---|---|
 | `A4-targeted` | `response_schema` | 0.963 [0.934, 0.986] | 0.957 [0.900, 1.000] | 1.000 [1.000, 1.000] | **clears** (lo 0.934 > 0.886) |
 | `gated:claude_baseline` | `tool` | 0.886 [0.838, 0.932] | 0.729 [0.629, 0.829] | 0.814 [0.714, 0.900] | incumbent |
@@ -76,7 +78,7 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.
 
 **Core 28** — incumbent `baseline` 0.902 [0.830, 0.956]
 
-| Rung | Mode | Judged score (95% CI) | `citation_coverage` | vs incumbent |
+| Rung | Mode | Judged score (95% confidence range) | `citation_coverage` | vs incumbent |
 |---|---|---|---|---|
 | `baseline` | `tool` | 0.902 [0.830, 0.956] | 1.000 [1.000, 1.000] | incumbent |
 | `A0` | `tool` | 0.897 [0.830, 0.955] | 0.963 [0.889, 1.000] | **recovery to parity** |
@@ -86,7 +88,7 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.
 
 **Core 28** — incumbent `baseline` 0.903 [0.857, 0.946]
 
-| Rung | Mode | Judged score (95% CI) | vs incumbent |
+| Rung | Mode | Judged score (95% confidence range) | vs incumbent |
 |---|---|---|---|
 | `baseline` | `tool` | 0.903 [0.857, 0.946] | incumbent |
 | `A0` | `tool` | 0.837 [0.791, 0.882] | below incumbent (hi 0.882 < 0.903) |

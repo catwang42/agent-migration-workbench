@@ -1,0 +1,1165 @@
+{
+  "shadow_version": "1",
+  "customer": "demo_patents",
+  "mode": "replay",
+  "judge_mode": "replay",
+  "region": "us-central1",
+  "provenance": "synthetic",
+  "dataset_seed": 20260812,
+  "generator_version": "t06.1",
+  "bootstrap_seed": 20260812,
+  "judge_repeats": 2,
+  "baseline_arm": "claude_baseline",
+  "candidate_arm": "gemini_targeted_v1",
+  "candidate_model_override": "gemini-flash-current",
+  "similarity_metric": "token_jaccard_lexical_proxy",
+  "prose_threshold": 0.6,
+  "live_slice": 0,
+  "run_started": null,
+  "recorded_from": "2026-08-09T16:07:15+00:00",
+  "recorded_to": "2026-08-12T04:00:07+00:00",
+  "adapters": {
+    "claude-opus": "replay via replay",
+    "claude-sonnet": "replay via replay",
+    "gemini-flash": "replay via replay",
+    "gemini-flash-35": "replay via replay",
+    "gemini-flash-current": "replay via replay",
+    "gemini-pro": "replay via replay",
+    "gemini-pro-current": "replay via replay"
+  },
+  "judge_model": "Gemini 2.5 Pro",
+  "judge_prompt_version": "v1",
+  "subagents": [
+    {
+      "subagent": "query_rewriter",
+      "items": 70,
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "claude_baseline",
+          "model": "claude-sonnet",
+          "region": "global",
+          "region_source": "env:CLAUDE_REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 1030.5,
+          "ttft_p95_ms": 2313.2999999999997,
+          "total_p50_ms": 2245.0,
+          "total_p95_ms": 5967.65,
+          "disclosure": "Same region (global) for both arms, per configuration — traces carry no region field, so this label describes how the run was configured, not something recorded in the trace."
+        }
+      },
+      "candidate": {
+        "arm": "gemini_targeted_v1",
+        "model": "gemini-flash-current",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "gemini_targeted_v1",
+          "model": "gemini-flash-current",
+          "region": "global",
+          "region_source": "config/models.yaml:gemini-flash-current.region",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 2621.0,
+          "ttft_p95_ms": 6054.149999999998,
+          "total_p50_ms": 2943.5,
+          "total_p95_ms": 6505.349999999998,
+          "disclosure": "Same region (global) for both arms, per configuration — traces carry no region field, so this label describes how the run was configured, not something recorded in the trace."
+        }
+      },
+      "agreement": {
+        "subagent": "query_rewriter",
+        "baseline_arm": "claude_baseline",
+        "candidate_arm": "gemini_targeted_v1",
+        "n_items": 70,
+        "n_compared": 70,
+        "n_agreed": 13,
+        "excluded": {},
+        "n_one_arm_empty": 0,
+        "agreement": {
+          "metric": "shadow_agreement",
+          "point": 0.18571428571428572,
+          "lo": 0.1,
+          "hi": 0.2714285714285714,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "point": 0.18571428571428572,
+        "structured_agreement": {
+          "metric": "shadow_agreement_structured",
+          "point": 0.5857142857142857,
+          "lo": 0.4714285714285714,
+          "hi": 0.7,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "structured_point": 0.5857142857142857,
+        "field_rates": [
+          {
+            "field": "query",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 20,
+            "rate": 0.2857142857142857,
+            "mean_similarity": 0.46724482775819426
+          },
+          {
+            "field": "intent",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 46,
+            "rate": 0.6571428571428571,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.date_from",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 59,
+            "rate": 0.8428571428571429,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.date_to",
+            "kind": "scalar",
+            "n": 70,
+            "n_agreed": 65,
+            "rate": 0.9285714285714286,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.assignees",
+            "kind": "scalar_set",
+            "n": 70,
+            "n_agreed": 60,
+            "rate": 0.8571428571428571,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.jurisdictions",
+            "kind": "code_set",
+            "n": 70,
+            "n_agreed": 64,
+            "rate": 0.9142857142857143,
+            "mean_similarity": null
+          },
+          {
+            "field": "filters.cpc_codes",
+            "kind": "code_set",
+            "n": 70,
+            "n_agreed": 63,
+            "rate": 0.9,
+            "mean_similarity": null
+          }
+        ],
+        "similarity_metric": "token_jaccard_lexical_proxy",
+        "prose_threshold": 0.6,
+        "no_interval_reason": null
+      },
+      "triage": [
+        {
+          "item_id": "qr-0002",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate correctly identifies the assignee and intent, but it fails by inventing a specific start date for the filter, which is not ancho…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0003",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly parsed the single CPC code, did not add any others, left the date filters null, and correctly identified the in…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0004",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate correctly identified the intent and returned a single plan, but it failed by incorrectly filtering the first query by an assigne…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0005",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: All filter fields were correctly populated from the search brief, and the query string correctly excluded any filter values.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0006",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.date_from",
+            "filters.date_to"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [date_to_set]: The candidate sets 'filters.date_from' to '2019-06-01' and 'filters.date_to' to null, which is the inverse of what is required for a prior a…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0007",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identified the intent, jurisdiction, and query terms from the user's request, and correctly structured the filt…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0008",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly parsed all entities from the user's request into the appropriate fields, resulting in a pass for all criteria.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 3 validation errors for QueryPlan (query Field required [type=missing, input_value={'query_plan': {'query': ... 'intent': 'landscape'}}, input_type=dict])"
+        },
+        {
+          "item_id": "qr-0009",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identified the intent, the publication number, the CPC code filter, and correctly left the assignee filter empt…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0010",
+          "subagent": "query_rewriter",
+          "fields": [
+            "intent"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_targeted_v1 lost on [intent_landscape]: The candidate output set the intent to 'prior_art' instead of 'landscape' for a broad search.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0011",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identified the intent and all filters from the user's request, passing all criteria.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0012",
+          "subagent": "query_rewriter",
+          "fields": [
+            "intent"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracted all filter values from the search brief into the appropriate fields and did not include any of them i…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0013",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent, sets the date filter, avoids inventing filters, and expands the query with relevant syno…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0015",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly interpreted the multi-turn request, carrying over the assignee from the first turn while updating the subject m…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0016",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly translates the user's request into a query string, including both the inventor's name and the subject matter, w…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0017",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [all_cpc_codes]: The candidate output does not contain a `filters.cpc_codes` field, as the entire intended output has been nested inside the `query` field …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0018",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly interpreted the follow-up question, replacing the assignee while carrying over the CPC code and subject matter …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0019",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identified the intent, publication number, and CPC filter from the user's request, and correctly left the assig…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0020",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the user's intent, extracts appropriate keywords for the query, and sets the filters correctly for a…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0021",
+          "subagent": "query_rewriter",
+          "fields": [
+            "intent"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_landscape]: The candidate output sets the intent to \"prior_art\" when the user's request to survey a company's activity implies a \"landscape\" intent.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0022",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.cpc_codes"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracted the single CPC code, did not add any others, left the date filters null, and correctly identified the…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0023",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracts all entities from the multi-turn input, including the assignee from the first turn and the subject mat…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0024",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_landscape]: The candidate output sets the `intent` to \"ownership\" instead of \"landscape\", which is what the user's request to \"run the same classif…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0025",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent, jurisdiction, and technical keywords from the user's request, resulting in a well-formed…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0027",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly updates the assignee as requested while carrying forward all other relevant parameters (CPC code, subject, inte…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0028",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent, applies the date filter as requested, avoids inventing filters, and expands the query wi…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0029",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.jurisdictions"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [jurisdiction_only]: The candidate output does not contain a filters object, and therefore fails to set filters.jurisdictions to ['EP'] as requested by the…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0032",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_landscape]: The candidate output sets the `intent` to \"prior_art\" instead of \"landscape\".",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 5 validation errors for QueryPlan (query Field required [type=missing, input_value={'filters': {'query': 'pe...: [], 'cpc_codes': []}}}, input_type=dict])"
+        },
+        {
+          "item_id": "qr-0033",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly parsed all aspects of the user's request, including the intent, the specific CPC code, and the absence of other…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0034",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly populates all filter fields (assignees, CPC codes, jurisdictions, and dates) and provides a query string that i…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0035",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the user's intent, applies the date filter, avoids inventing filters, and expands the query with rel…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0038",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly updated the assignee while carrying forward the classification code and subject matter from the previous turn, …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0039",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly parsed the intent, the publication number, the CPC code filter, and correctly left the assignee filter empty, p…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0040",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent, sets the date filter as requested, avoids inventing filters, and provides a well-expande…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0041",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly parses all entities from the user's request, lifting the assignee and date to the filters, setting the correct …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0042",
+          "subagent": "query_rewriter",
+          "fields": [
+            "intent"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_ownership]: The candidate output has `intent: \"landscape\"`, not \"ownership\".",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0043",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracted the CPC code, the intent, and the lack of date filters from the user's request, passing all criteria.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0044",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the user's intent as freedom-to-operate, extracts all relevant technical terms for the query, and co…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0045",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_to"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_prior_art]: The candidate output does not have a top-level `intent` field; it is incorrectly nested inside the `filters` object as `filters.intent`.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.625,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 4 validation errors for QueryPlan (query Field required [type=missing, input_value={'filters': {'query': 'io... 'intent': 'prior_art'}}, input_type=dict])"
+        },
+        {
+          "item_id": "qr-0046",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.date_to",
+            "filters.assignees",
+            "filters.jurisdictions",
+            "filters.cpc_codes"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracted all filter values from the search brief and placed them in the appropriate fields, and the query stri…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 3 validation errors for QueryPlan (query Field required [type=missing, input_value={'query_plan': {'query': ... 'intent': 'landscape'}}, input_type=dict])"
+        },
+        {
+          "item_id": "qr-0047",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_landscape]: The candidate output sets the intent to 'prior_art' when the rubric specifies 'landscape' for this type of user query.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0050",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_targeted_v1 lost on [intent_landscape]: The candidate output incorrectly set the `intent` to `prior_art` when the request for a 'comprehensive search' implies a `landscape`…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0051",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly translates the user's request into a query string containing both the subject and the inventor, and correctly l…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0052",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees",
+            "filters.jurisdictions"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [assignee_from_turn_1]: The candidate output does not have a `filters` field at the top level; the required information is incorrectly nested inside a stri…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0053",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracted all filter values from the search brief and did not include any of them in the query string.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0055",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent, retains the publication number in the query, and correctly populates the CPC code and as…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0056",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly updates the assignee as requested in the second turn, while successfully carrying over the CPC code and subject…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0057",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from",
+            "filters.assignees"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [assignee_lifted]: The candidate output has no top-level `filters` field; instead, the entire intended JSON output is incorrectly stringified and placed in…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0058",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.date_from"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [intent_landscape]: The candidate output sets `intent` to \"prior_art\" instead of \"landscape\".",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0059",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "intent",
+            "filters.cpc_codes"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [cpc_exact]: The candidate output does not contain a `filters` object at the top level, as the entire intended JSON payload is incorrectly nested as a stri…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'query' field"
+        },
+        {
+          "item_id": "qr-0060",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: All criteria passed. The candidate correctly interpreted the user's request for a prior art search, setting the intent and date filters approp…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0061",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the user's intent, extracts relevant technical terms for the query, and applies the correct jurisdic…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0062",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.date_from",
+            "filters.assignees",
+            "filters.jurisdictions"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [assignee_from_turn_1]: The candidate output does not contain a `filters` field, and therefore does not include 'The Broad Institute, Inc.' in `filters.ass…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0063",
+          "subagent": "query_rewriter",
+          "fields": [
+            "intent"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly extracted all filter values from the search brief and placed them in the correct fields, and the query string d…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0066",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate output correctly identifies the intent, sets the date filter as requested, avoids inventing filters, and provides a well-expande…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0067",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query",
+            "filters.assignees",
+            "filters.cpc_codes"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [assignee_replaced]: The candidate output is missing the `filters.assignees` field entirely.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0068",
+          "subagent": "query_rewriter",
+          "fields": [
+            "filters.cpc_codes"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [cpc_filter]: The candidate output does not contain a `filters` field, so it fails to apply the CPC code filter for 'G01S17/34'.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.625,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "qr-0069",
+          "subagent": "query_rewriter",
+          "fields": [
+            "query"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_targeted_v1: The candidate failed because it misinterpreted the user's request. It set the intent to 'landscape' instead of 'ownership' and incorrectly fil…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        }
+      ],
+      "triage_summary": {
+        "subagent": "query_rewriter",
+        "disagreements": 57,
+        "wins": 16,
+        "losses": 2,
+        "ties": 39,
+        "not_adjudicated": 0,
+        "not_adjudicated_reasons": {},
+        "wins_baseline_malformed": 6,
+        "losses_baseline_malformed": 0
+      },
+      "judged_split": "all",
+      "judged_items": 70
+    }
+  ],
+  "notes": [
+    "item-level agreement counts an item as agreeing only if EVERY field matches, and prose fields are matched with token_jaccard_lexical_proxy >= 0.6 — a lexical proxy, not an embedding cosine and not a semantic judgement. Two faithful paraphrases score as a disagreement. Read `structured_agreement` (prose fields dropped) as the proxy-free sensitivity, and the judge-adjudicated triage as the authoritative verdict on prose."
+  ]
+}

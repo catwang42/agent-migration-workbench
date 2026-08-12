@@ -1,0 +1,14 @@
+[2026-08-12T10:19:27+00:00] candidate: gemini-flash-current  rungs: A0-current,ship-current
+[2026-08-12T10:19:27+00:00] phases requested: 3
+[2026-08-12T10:19:27+00:00] === PHASE 3/3  shadow adjudication vs claude_baseline ===
+[2026-08-12T10:19:27+00:00]   query_rewriter: gemini_targeted_v1 on gemini-flash-current vs claude_baseline
+[2026-08-12T10:19:28+00:00]     judge calls: 0 live, 228 from recordings (0 live = phase 2's verdicts covered the adjudication)
+[2026-08-12T10:19:28+00:00]     agreement 0.586 [0.471, 0.700] n=70 (gated: structured fields); 0.186 [0.100, 0.271] n=70 (item-level, NOT the gated metric); adjudication 16W/2L/39T (0 not adjudicated of 57 disagreements)
+[2026-08-12T10:19:28+00:00]   chunk_summarizer: gemini_tuned_v1 on gemini-flash-current vs claude_baseline
+[2026-08-12T10:19:28+00:00]     judge calls: 0 live, 248 from recordings (0 live = phase 2's verdicts covered the adjudication)
+[2026-08-12T10:19:28+00:00]     agreement 0.971 [0.929, 1.000] n=70 (gated: structured fields); 0.114 [0.043, 0.200] n=70 (item-level, NOT the gated metric); adjudication 2W/8L/52T (0 not adjudicated of 62 disagreements)
+[2026-08-12T10:19:28+00:00]   feature_extractor: gemini_optimizer_v1 on gemini-flash-current vs claude_baseline
+[2026-08-12T10:19:29+00:00]     judge calls: 0 live, 264 from recordings (0 live = phase 2's verdicts covered the adjudication)
+[2026-08-12T10:19:29+00:00]     agreement 0.943 [0.886, 0.986] n=70 (gated: structured fields); 0.057 [0.014, 0.114] n=70 (item-level, NOT the gated metric); adjudication 31W/16L/19T (0 not adjudicated of 66 disagreements)
+[2026-08-12T10:19:29+00:00] done. marker: /home/catwangzz_google_com/agent-migration-workbench/artifacts/results/current_gen.done
+PHASE3_RERUN_EXIT=0

@@ -87,12 +87,26 @@ class DocEntry:
 #: that directory is internal presenter material (see the leak check below).
 DOC_WHITELIST: tuple[DocEntry, ...] = (
     DocEntry(
-        source="artifacts/results/scorecard_widened.md",
+        source="artifacts/results/scorecard_current-capped.md",
         dest="scorecard.md",
         note=(
-            "The gates in `config/gates.yaml` evaluated against the widened n=70 run. "
-            "Copied verbatim — every caveat below sits in the same cell as the figure "
-            "it qualifies."
+            "The gates in `config/gates.yaml` evaluated against the **deployment "
+            "configuration** — Gemini 3.6 Flash with the reasoning budget minimised, "
+            "the arms the scorecard recommends. Copied verbatim — every caveat below "
+            "sits in the same cell as the figure it qualifies."
+        ),
+    ),
+    # The development-generation card stays published beneath the headline. It is
+    # how the shipping prompts were arrived at, and deleting it would delete the
+    # evidence that the instruction rules transfer across a model generation.
+    DocEntry(
+        source="artifacts/results/scorecard_widened.md",
+        dest="scorecard_development_generation.md",
+        note=(
+            "**How we got here — not the recommendation.** The same six gates on the "
+            "*development generation*, Gemini 2.5 Flash, at n=70. This is the run the "
+            "adaptation ladder was built on; the prompts it produced were then run "
+            "unchanged on the deployment generation above."
         ),
     ),
     DocEntry(
@@ -140,7 +154,7 @@ CHART_WHITELIST: tuple[ChartEntry, ...] = (
         notebook="artifacts/notebooks/01_baseline_and_tuning.out.ipynb",
         index=0,
         dest="json_schema_validity.png",
-        title="`json_schema_validity` — 95% CI, gate bound marked",
+        title="`json_schema_validity` — 95% confidence range, gate bound marked",
         caption=(
             "All nine gated arms at n=70. The 0.99 gate bound is the dashed line. "
             "Claude's `query_rewriter` point at 0.814 [0.714, 0.900] is a **mechanism** "
@@ -151,7 +165,7 @@ CHART_WHITELIST: tuple[ChartEntry, ...] = (
         notebook="artifacts/notebooks/02_shadow_scorecard.out.ipynb",
         index=0,
         dest="shadow_agreement_structured.png",
-        title="`shadow_agreement` (structured) — 95% CI, gate bound marked",
+        title="`shadow_agreement` (structured) — 95% confidence range, gate bound marked",
         caption=(
             "Structured-field agreement between `claude_baseline` and "
             "`gemini_tuned_v1`, n=70, with the 0.90 gate bound marked. Structured "
@@ -504,6 +518,185 @@ def copy_docs(verbose: bool = True) -> list[str]:
     return copied
 
 
+MODELS_PAGE = SITE_SRC / "models-in-this-study.md"
+
+#: Order the roles are presented in — incumbent first, then the things it is
+#: compared against, then the instruments, then the models nothing was measured
+#: on. Matching is a substring test against the first ``study_roles`` entry.
+_ROLE_ORDER = (
+    "incumbent",
+    "development generation",
+    # Ranked above the headline candidate it is a configuration of, and above
+    # the "priced only" cut line: it carries the shipping scorecard's measured
+    # arms, so printing it as an availability check would deny a measurement
+    # that the Results page leads with.
+    "recommended deployment configuration",
+    "deployment candidate (headline)",
+    "deployment candidate",
+    "gated judge",
+    "cross-check",
+    "priced only",
+    "follow-on",
+)
+
+
+def _role_rank(spec) -> int:
+    first = (spec.study_roles or [""])[0]
+    for rank, needle in enumerate(_ROLE_ORDER):
+        if needle in first:
+            return rank
+    return len(_ROLE_ORDER)
+
+
+def _recorded_windows() -> dict[str, tuple[str, str, int]]:
+    """``model key -> (first ts, last ts, call count)`` over the replay corpus.
+
+    Read off the recordings rather than written by hand, so the windows on the
+    page are the windows the calls actually happened in and a new run cannot
+    land without the page moving with it.
+    """
+    windows: dict[str, tuple[str, str, int]] = {}
+    for path in sorted((REPO / "artifacts" / "replay").glob("*.jsonl")):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            try:
+                trace = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            key, ts = trace.get("model"), trace.get("ts")
+            if not key or not ts:
+                continue
+            first, last, count = windows.get(key, (ts, ts, 0))
+            windows[key] = (min(first, ts), max(last, ts), count + 1)
+    return windows
+
+
+def _window_text(spec, key: str, windows: dict[str, tuple[str, str, int]]) -> str:
+    entry = windows.get(key)
+    if entry is None:
+        return "— never called"
+    first, last, count = entry
+    span = first[:10] if first[:10] == last[:10] else f"{first[:10]} → {last[:10]}"
+    if _role_rank(spec) >= _ROLE_ORDER.index("priced only"):
+        # These models were called only to confirm the ID resolves. Printing a
+        # bare call count next to the measured arms would read as a measurement
+        # and quietly contradict the "priced, never measured" claim.
+        trips = "trip" if count == 1 else "trips"
+        return f"{span} — availability check only, {count} round {trips}; no measurement"
+    calls = "call" if count == 1 else "calls"
+    return f"{span} ({count:,} recorded {calls})"
+
+
+def generate_models_page(verbose: bool = True) -> str:
+    """Write the published "Models in this study" page from the registry.
+
+    Generated, not hand-written, for the reason the page exists at all: a
+    reader has to be able to answer "which models were compared" from the site,
+    and a hand-maintained table drifts from ``config/models.yaml`` the first
+    time a run lands late. Identity comes from the registry, recorded windows
+    come from the replay corpus, and neither is retyped here.
+    """
+    from amw.config import load_all
+    from amw.shadow.runner import arm_region
+
+    # The region column resolves through the environment for models the
+    # registry does not pin (Claude reads $CLAUDE_REGION), so the page has to
+    # see the same .env the runs were configured with or it would print an
+    # "unverified" caveat for an arm that was in fact pinned. `override=False`,
+    # so a real environment variable always wins; a build with no .env still
+    # renders, and honestly says the region is unverified.
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv(REPO / ".env", override=False)
+    except ImportError:  # pragma: no cover - dotenv is in requirements.txt
+        pass
+
+    cfg = load_all(customer="demo_patents")
+    windows = _recorded_windows()
+    specs = sorted(cfg.models.models.items(), key=lambda kv: (_role_rank(kv[1]), kv[0]))
+
+    lines = [
+        GENERATED_MARKER,
+        "",
+        "# Models in this study",
+        "",
+        "Every model this workshop calls, what part it plays, and the window its",
+        "calls were recorded in. Nothing on this site is produced by a model that",
+        "is not on this page.",
+        "",
+        "| Model | Provider model ID | Access path | Region | Part it plays | Recorded |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for key, spec in specs:
+        # Claude is registered for both access paths; this study ran every arm
+        # through Vertex, so the Vertex ID is the one that was actually called
+        # and naming the direct-API ID would misstate the SKU.
+        model_id = spec.ids.get("vertex") or "—"
+        # Same resolver the shadow runner labels its arms with, so the region
+        # printed here cannot disagree with the region printed beside a result.
+        region, region_src = arm_region(
+            key, models=cfg.models, customer_region=cfg.customer.region
+        )
+        roles = "<br>".join(spec.study_roles) or "—"
+        lines.append(
+            f"| **{spec.display_name}** | `{model_id}` | Vertex AI | "
+            f"`{region}`<br><small>{region_src}</small> | "
+            f"{roles} | {_window_text(spec, key, windows)} |"
+        )
+
+    lines += [
+        "",
+        "## Why two generations appear",
+        "",
+        "The tuning ladder and the prompt-optimizer work were done on **Gemini 2.5",
+        "Flash** — the *development generation*. The migration the scorecard",
+        "recommends is to a **deployment generation**: Gemini 3.6 Flash, with Gemini",
+        "3.5 Flash as a second candidate column.",
+        "",
+        "Prompts were tuned on the development generation and then validated,",
+        "unchanged, on the deployment generations. That portability is itself a",
+        "finding: the instruction rules written from measured failures kept working",
+        "across a model generation, which is what makes the adaptation work an asset",
+        "rather than a per-model tax.",
+        "",
+        "## What never moved",
+        "",
+        "The **gated judge is Gemini 2.5 Pro in every generation**. It was registered",
+        "before any result was seen. An instrument that changes on freeze day is not",
+        "the instrument the comparison was agreed on, so it stays put even where a",
+        "newer judge exists. Claude Sonnet 5 cross-checks it on a sample; the two are",
+        "never averaged and one is never substituted for the other.",
+        "",
+        "## Models that were priced but never measured",
+        "",
+        "Claude Opus 5 and Gemini 3.1 Pro (preview) carry rates in",
+        "`config/pricing.yaml` so a customer running those tiers can be costed",
+        "without a code change. **No arm runs on either and no metric is attributed",
+        "to either.** Gemini 3.1 Pro is a preview SKU: it is named here as the",
+        "follow-on candidate, and a preview SKU is a different claim from a",
+        "production migration recommendation.",
+        "",
+        "Claude Opus 5 specifically: **priced for customers running Opus subagents;",
+        "not measured, not projected.** An earlier draft carried a panel re-pricing",
+        "the incumbent's measured tokens at Opus rates. It was cut before freeze: a",
+        "projection sitting beside measured panels blurs the one line this build",
+        "exists to hold, which is that every number a customer sees came from a call",
+        "that was made.",
+        "",
+    ]
+
+    out = "\n".join(lines)
+    previous = MODELS_PAGE.read_text(encoding="utf-8") if MODELS_PAGE.is_file() else None
+    MODELS_PAGE.write_text(out, encoding="utf-8")
+    if verbose:
+        state = "unchanged" if previous == out else "written"
+        print(f"  page   config/models.yaml + artifacts/replay/ -> "
+              f"site_src/{MODELS_PAGE.name}  [{state}]")
+    return out
+
+
 def _notebook_images(path: Path) -> list[tuple[str, bytes]]:
     """Every image output in a notebook, in cell order, as (mime, bytes)."""
     nb = json.loads(path.read_text(encoding="utf-8"))
@@ -576,8 +769,10 @@ def _charts_page(charts: list[ChartEntry]) -> str:
         DRAFT_BADGE,
         "",
         "Interval charts exported from the two executed notebooks. Each shows point",
-        "estimates with 95% bootstrap CIs (10,000 resamples, seed `20260812`) and the",
-        "relevant gate bound. Gates are decided on the CI bound, not on the point.",
+        "estimates with 95% bootstrap confidence ranges (10,000 resamples, seed",
+        "`20260812`) and the",
+        "relevant gate bound. Gates are decided on the confidence-range bound, not",
+        "on the point estimate.",
         "",
     ]
     for chart in charts:
@@ -882,6 +1077,7 @@ def main(argv: list[str] | None = None) -> int:
         copy_docs()
         copy_charts()
         generate_figures()
+        generate_models_page()
 
     drifted = check_live_figures()
 

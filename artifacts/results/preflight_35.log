@@ -1,0 +1,17 @@
+[2026-08-12T08:50:28+00:00] --- CENTRAL1 ---
+warning: Claude runs in global, Gemini in us-central1. Quality and cost gates are unaffected, but latency_p95 becomes a cross-region comparison — the scorecard must disclose this, not present it as a same-region measurement.
+
+smoke FAILED: 6 call(s). Per WORKSHOP_RUNBOOK, fall back to `--mode replay` and say on screen that the numbers are the recorded run.
+gemini   query_rewriter       0/2 ok  — AdapterError: gemini call failed after retries: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/vital-octagon-19612/locations/us-ce
+gemini   chunk_summarizer     0/2 ok  — AdapterError: gemini call failed after retries: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/vital-octagon-19612/locations/us-ce
+gemini   feature_extractor    0/2 ok  — AdapterError: gemini call failed after retries: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/vital-octagon-19612/locations/us-ce
+EXIT_CENTRAL1=5  WALL_CENTRAL1=26s
+[2026-08-12T08:50:54+00:00] --- GLOBAL ---
+warning: REGION=global but config/customers/demo_patents.yaml says region: us-central1. Gemini calls will run in global while report footers print us-central1. Align them before a customer run.
+gemini   query_rewriter       2/2 ok
+gemini   chunk_summarizer     2/2 ok
+gemini   feature_extractor    2/2 ok
+
+smoke OK
+EXIT_GLOBAL=0  WALL_GLOBAL=29s
+PREFLIGHT_DONE 2026-08-12T08:51:23+00:00

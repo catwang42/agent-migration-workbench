@@ -1,0 +1,44 @@
+{
+  "probed_on": "2026-08-12T12:06:45+00:00",
+  "kind": "probe \u2014 not a verdict, not a candidate arm",
+  "subagent": "query_rewriter",
+  "variant": "gemini_targeted_v1",
+  "model": "gemini-flash-current",
+  "thinking_budget": 0,
+  "n": 10,
+  "store": "artifacts/thinking_probe",
+  "capped": {
+    "arm": "thinking_budget=0",
+    "calls": 10,
+    "calls_ok": 10,
+    "input_tokens": 21740,
+    "output_tokens": 758,
+    "emitted_chars": 2753,
+    "usd": 0.038295,
+    "errors": [],
+    "unreturned_output_tokens_floor": 0,
+    "latency_p50_ms": 1475.5,
+    "json_schema_validity": 1.0,
+    "schema_scored_n": 10
+  },
+  "default": {
+    "arm": "default thinking budget (recorded)",
+    "calls": 10,
+    "calls_ok": 10,
+    "input_tokens": 21740,
+    "output_tokens": 6068,
+    "emitted_chars": 2641,
+    "usd": 0.07812,
+    "errors": [],
+    "unreturned_output_tokens_floor": 3427,
+    "latency_p50_ms": 3279.5,
+    "json_schema_validity": 1.0,
+    "schema_scored_n": 10
+  },
+  "caveat": "10 items on one subagent, unjudged. This says whether the thinking budget is reachable and what it costs; it does not say whether the capped answers are as good, and it re-decides no gate. The follow-on measurement is a capped-thinking arm across all three subagents on the full corpus, judged and shadow-compared.",
+  "deltas": {
+    "output_tokens_ratio": 0.12491760052735662,
+    "usd_ratio": 0.49020737327188946,
+    "latency_p50_ratio": 0.4499161457539259
+  }
+}

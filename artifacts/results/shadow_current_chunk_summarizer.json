@@ -1,0 +1,1172 @@
+{
+  "shadow_version": "1",
+  "customer": "demo_patents",
+  "mode": "replay",
+  "judge_mode": "replay",
+  "region": "us-central1",
+  "provenance": "synthetic",
+  "dataset_seed": 20260812,
+  "generator_version": "t06.1",
+  "bootstrap_seed": 20260812,
+  "judge_repeats": 2,
+  "baseline_arm": "claude_baseline",
+  "candidate_arm": "gemini_tuned_v1",
+  "candidate_model_override": "gemini-flash-current",
+  "similarity_metric": "token_jaccard_lexical_proxy",
+  "prose_threshold": 0.6,
+  "live_slice": 0,
+  "run_started": null,
+  "recorded_from": "2026-08-09T16:41:43+00:00",
+  "recorded_to": "2026-08-12T04:12:44+00:00",
+  "adapters": {
+    "claude-opus": "replay via replay",
+    "claude-sonnet": "replay via replay",
+    "gemini-flash": "replay via replay",
+    "gemini-flash-35": "replay via replay",
+    "gemini-flash-current": "replay via replay",
+    "gemini-pro": "replay via replay",
+    "gemini-pro-current": "replay via replay"
+  },
+  "judge_model": "Gemini 2.5 Pro",
+  "judge_prompt_version": "v1",
+  "subagents": [
+    {
+      "subagent": "chunk_summarizer",
+      "items": 70,
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "claude_baseline",
+          "model": "claude-sonnet",
+          "region": "global",
+          "region_source": "env:CLAUDE_REGION",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 1152.5,
+          "ttft_p95_ms": 2220.0999999999995,
+          "total_p50_ms": 4727.0,
+          "total_p95_ms": 7867.549999999998,
+          "disclosure": "Same region (global) for both arms, per configuration — traces carry no region field, so this label describes how the run was configured, not something recorded in the trace."
+        }
+      },
+      "candidate": {
+        "arm": "gemini_tuned_v1",
+        "model": "gemini-flash-current",
+        "calls_ok": 70,
+        "calls_error": 0,
+        "latency": {
+          "arm": "gemini_tuned_v1",
+          "model": "gemini-flash-current",
+          "region": "global",
+          "region_source": "config/models.yaml:gemini-flash-current.region",
+          "n_traces": 70,
+          "n_with_total": 70,
+          "n_with_ttft": 70,
+          "ttft_p50_ms": 4292.0,
+          "ttft_p95_ms": 6447.549999999999,
+          "total_p50_ms": 5339.0,
+          "total_p95_ms": 7798.299999999999,
+          "disclosure": "Same region (global) for both arms, per configuration — traces carry no region field, so this label describes how the run was configured, not something recorded in the trace."
+        }
+      },
+      "agreement": {
+        "subagent": "chunk_summarizer",
+        "baseline_arm": "claude_baseline",
+        "candidate_arm": "gemini_tuned_v1",
+        "n_items": 70,
+        "n_compared": 70,
+        "n_agreed": 8,
+        "excluded": {},
+        "n_one_arm_empty": 0,
+        "agreement": {
+          "metric": "shadow_agreement",
+          "point": 0.11428571428571428,
+          "lo": 0.04285714285714286,
+          "hi": 0.2,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "point": 0.11428571428571428,
+        "structured_agreement": {
+          "metric": "shadow_agreement_structured",
+          "point": 0.9714285714285714,
+          "lo": 0.9285714285714286,
+          "hi": 1.0,
+          "n": 70,
+          "unit": "fraction",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": null,
+          "dropped_unpaired": 0
+        },
+        "structured_point": 0.9714285714285714,
+        "field_rates": [
+          {
+            "field": "summary",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 9,
+            "rate": 0.12857142857142856,
+            "mean_similarity": 0.47266806890163654
+          },
+          {
+            "field": "key_points.text",
+            "kind": "prose",
+            "n": 70,
+            "n_agreed": 56,
+            "rate": 0.8,
+            "mean_similarity": 0.6709696272105696
+          },
+          {
+            "field": "key_points.chunk_ids",
+            "kind": "scalar_set",
+            "n": 70,
+            "n_agreed": 68,
+            "rate": 0.9714285714285714,
+            "mean_similarity": null
+          }
+        ],
+        "similarity_metric": "token_jaccard_lexical_proxy",
+        "prose_threshold": 0.6,
+        "no_interval_reason": null
+      },
+      "triage": [
+        {
+          "item_id": "cs-0000",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts and cites the key information from all three passages without adding any unsupported facts, passing al…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0001",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [conflict_flagged]: The output lists the two figures but does not explicitly state that they differ or are in conflict.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0002",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully passes all criteria by accurately summarizing the source material, preserving important details like claim lang…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0003",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts the key information from each of the three provided passages, cites them correctly, and synthesizes th…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0004",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly identifies that the context does not answer the question, refrains from fabricating information, and properly grou…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0005",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts all measured values and the associated measurement caveat, reproduces them verbatim, and correctly cites …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0006",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [difference_cites_both]: The candidate output does not have a key point that explicitly states the difference between the two claims while citing both of t…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0007",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all key information, preserves the specific language of the claim, correctly hedges the purpose of the…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0008",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts and cites the key information from all three passages and synthesizes them into an accurate summary wi…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0009",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all specified values and the measurement caveat, reproducing them verbatim and citing the correct sour…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0010",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output fails because it does not synthesize the information from two separate passages into a single comparative key point, instead…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0011",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully passed all criteria by accurately extracting and citing all key information from the provided passages.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0012",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [no_added_facts]: The summary claims the electrode achieves 'high first-cycle coulombic efficiency', but the word 'high' is an interpretation not present i…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0013",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is excellent, accurately summarizing the source material while correctly preserving specific claim language, hedges, and cit…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0014",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly separates and attributes the claims from the two sources and avoids making unsupported judgments about novelty. Ho…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0015",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "key_points.text"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [hedge_preserved]: The candidate output fails this criterion because the second key point states that the configuration 'reduces' degradation, removing the…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.25,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0016",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all required values and the measurement caveat, reproducing them verbatim and citing the correct sourc…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0017",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [conflict_flagged]: The output presents the two figures sequentially but does not explicitly state that they differ or conflict.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0018",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text",
+            "key_points.chunk_ids"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all three measured values and the caveat about the measurement method, reproducing them verbatim and c…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the whole payload was re-encoded as a JSON string inside the 'key_points' field"
+        },
+        {
+          "item_id": "cs-0019",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts all specified values, reproduces them verbatim, attributes them to the correct source chunks, and include…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0020",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all specified values and the measurement caveat, reproduces them verbatim, and correctly attributes th…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0021",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully meets all criteria by accurately summarizing the information from the three provided passages, citing them corr…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0022",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output accurately extracts and reports the individual facts from the source passages. However, it fails to synthesize information f…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0023",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output passes all criteria by accurately paraphrasing the source material, preserving important details like hedging language and s…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0024",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts and cites the key information from all three passages, including the specific numerical value, without ad…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0025",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts all measured values and the associated measurement caveat, reproducing them verbatim and citing the corre…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0026",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly identifies that the question cannot be answered from the source text, refrains from inventing an answer, and prope…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0027",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all requested values and the associated measurement caveat, reproduces them verbatim, and correctly at…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0028",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all measured values verbatim, correctly attributes them to their source chunks, and includes the impor…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0029",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate correctly summarizes the relevant information and preserves the source's hedge, but it fails by including a key point that both cit…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0030",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output passes all criteria by accurately paraphrasing the source material, correctly citing the provided chunks for each key point,…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0032",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [difference_cites_both]: The key point stating the difference, \"EP3162570A1 differs by requiring...\", only cites the chunk_id for EP3162570A1, not for both…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0033",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output fails on one criterion because it separates the information about the two examples into separate key points, each with a sin…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0034",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The output correctly separates and attributes the claims from the two sources and avoids making unsupported judgments. However, it fails to creat…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0035",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate fails to synthesize information from two different chunks into a single key point making a comparison, but it accurately reports al…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0036",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts and cites the key information from all three passages, correctly states the numerical value, and synth…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0037",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [difference_cites_both]: The candidate output does not have a key point that describes the difference between the claims while citing both source passages;…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0038",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate correctly reports the specific values and hedges the \"approximately half\" claim as required. However, it fails to create a single k…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0039",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The output correctly separates and attributes the information from the different sources and avoids making unsupported judgments about novelty. H…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0040",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output accurately extracts the key facts from the passages but fails to synthesize the information from two separate passages into …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0041",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts the key details from the patent claim and description, preserves the hedged language about the inventi…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0042",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly extracts all measured values and the associated caveat, reproducing them verbatim and citing them to the correct s…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0043",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all required values verbatim, correctly attributes them to their source chunks, and includes the measu…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0044",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts and cites the key information from all three passages, reporting the numerical value exactly and witho…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0045",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output passes all criteria by accurately reproducing the claim language, correctly reporting the purpose of the configuration, and …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0046",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts, cites, and summarizes the key information from all three source passages without adding unsupported f…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0050",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts and summarizes the key information from the provided context chunks, preserving important details and …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0051",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text",
+            "key_points.chunk_ids"
+          ],
+          "verdict": "win",
+          "rationale": "claude_baseline lost on [relative_claim_hedged]: The candidate output does not mention the figure for Comparative Example C1 at all, so it does not describe it as 'approximately h…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.25,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": "the payload does not validate: 1 validation error for ChunkSummary (key_points Input should be a valid list [type=list_type, input_value='\\n<parameter name=\"chunk...926365B2::desc::p0035\"]', input_type=str])"
+        },
+        {
+          "item_id": "cs-0052",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [conflict_flagged]: The output lists the two different values but does not explicitly state that the figures differ or are in conflict.",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.875,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0053",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "loss",
+          "rationale": "gemini_tuned_v1 lost on [difference_cites_both]: The key point that describes how the second claim \"differs\" from the first only cites `EP3953732A1::claims::p0001` and omits the c…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0054",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts, cites, and summarizes the key information from all three source passages without introducing errors o…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0055",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracted all key information, preserved the specific language from the source passages, and correctly cited th…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0056",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output correctly identifies that the source material does not answer the question and states this clearly. It refrains from fabrica…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0057",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts all requested values, reproduces them verbatim, cites them to the correct source passages, and include…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0058",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output accurately extracts and reports all the key information from the source passages. Its only failure is that it does not synth…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0059",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts the key information from each of the three provided passages, cites them correctly, and synthesizes th…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0061",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The output correctly separates and attributes the information from the sources and avoids making unsupported judgments. However, it fails to crea…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.75,
+          "candidate_score": 0.75,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0062",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary",
+            "key_points.text"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate correctly summarized the relevant passages and preserved the hedge, but it failed to ignore the distractor passage, instead creatin…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 0.5,
+          "candidate_score": 0.5,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0064",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is a high-quality summary that correctly extracts and cites the key information from all three source passages without addin…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0066",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output is excellent, passing all criteria by accurately summarizing the source material, preserving specific details and purpose, a…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0067",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully extracts and summarizes the key information from all three passages, correctly citing each point and reporting …",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        },
+        {
+          "item_id": "cs-0068",
+          "subagent": "chunk_summarizer",
+          "fields": [
+            "summary"
+          ],
+          "verdict": "tie",
+          "rationale": "equal scores; on gemini_tuned_v1: The candidate output successfully passes all criteria by accurately paraphrasing the source material, preserving the original intent and language…",
+          "judged_split": "full corpus (judged)",
+          "baseline_score": 1.0,
+          "candidate_score": 1.0,
+          "baseline_repeats": 2,
+          "candidate_repeats": 2,
+          "reason": null,
+          "baseline_malformed": null
+        }
+      ],
+      "triage_summary": {
+        "subagent": "chunk_summarizer",
+        "disagreements": 62,
+        "wins": 2,
+        "losses": 8,
+        "ties": 52,
+        "not_adjudicated": 0,
+        "not_adjudicated_reasons": {},
+        "wins_baseline_malformed": 1,
+        "losses_baseline_malformed": 0
+      },
+      "judged_split": "all",
+      "judged_items": 70
+    }
+  ],
+  "notes": [
+    "item-level agreement counts an item as agreeing only if EVERY field matches, and prose fields are matched with token_jaccard_lexical_proxy >= 0.6 — a lexical proxy, not an embedding cosine and not a semantic judgement. Two faithful paraphrases score as a disagreement. Read `structured_agreement` (prose fields dropped) as the proxy-free sensitivity, and the judge-adjudicated triage as the authoritative verdict on prose."
+  ]
+}

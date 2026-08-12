@@ -9,6 +9,14 @@ It prompts once per price, shows the source URLs it expects you to be reading,
 rewrites the file in place (comments preserved), and stamps ``verified_on`` +
 ``verified_by``.
 
+Every prompt line carries the three things needed to know it is the right
+number: the **concrete provider model ID** (resolved out of config/models.yaml,
+not the logical key), the **section of the pricing page** the rate is printed
+in (from ``page_sections`` in pricing.yaml), and the **unit** the slot expects.
+Logical keys like ``gemini-flash-current`` do not appear on any vendor page, so
+a walkthrough that only named them would be asking an operator to do the
+mapping from memory, once, under time pressure.
+
 It deliberately will NOT stamp the file while any price still reads VERIFY —
 a half-verified table that claims to be verified is exactly the failure mode
 the VERIFY sentinel exists to prevent.
@@ -20,6 +28,7 @@ the VERIFY sentinel exists to prevent.
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from datetime import date
@@ -29,7 +38,12 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from amw.config import VERIFY, PricingConfig  # noqa: E402
+from amw.config import (  # noqa: E402
+    CACHE_STORAGE_SECTION_KEY,
+    VERIFY,
+    ModelsConfig,
+    PricingConfig,
+)
 
 PRICE_FIELDS = ("input_per_1m", "output_per_1m", "cached_input_per_1m")
 
@@ -114,11 +128,97 @@ def apply_updates(
 TOKEN_UNIT = "USD / 1M tokens"
 CACHE_STORAGE_UNIT = "USD / 1M cached tokens / hour"
 
+#: Printed when a slot has no ``page_sections`` entry or no resolvable ID.
+#: Loud on purpose: an uncited rate is one nobody can re-check next quarter.
+UNCITED = "!! not cited in pricing.yaml page_sections — add it before typing a rate"
+UNRESOLVED_ID = "!! no models.yaml beside this file — ID unresolved"
 
-def prompt_float(label: str, unit: str = TOKEN_UNIT) -> float | None:
-    """Ask for one price. Blank keeps VERIFY. Loops until valid."""
+
+def access_path(provider: str) -> str:
+    """Which vendor's ID (and therefore which price list) applies.
+
+    Claude is dual-path: the Vertex partner offering and the direct Anthropic
+    API are different SKUs on different pages. Printing the ID for the path
+    this platform does not call would point the operator at the wrong table.
+    """
+    if provider == "anthropic":
+        return os.environ.get("CLAUDE_PATH") or "vertex"
+    return "vertex"
+
+
+def load_models(pricing_path: Path) -> ModelsConfig | None:
+    """``models.yaml`` beside ``pricing.yaml``, or None if there is none.
+
+    None rather than an error, so ``--file`` aimed at a bare fixture still
+    runs; the walkthrough then says the ID is unresolved rather than printing
+    a logical key as though it were a provider ID.
+    """
+    path = pricing_path.parent / "models.yaml"
+    if not path.exists():
+        return None
+    return ModelsConfig.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
+def describe_model(model_key: str, models: ModelsConfig | None) -> str:
+    """The concrete provider model ID line for a pricing slot."""
+    if models is None:
+        return UNRESOLVED_ID
+    try:
+        spec = models.spec(model_key)
+    except Exception:
+        return (
+            f"!! {model_key} is priced here but absent from models.yaml — "
+            f"nothing runs on it"
+        )
+    path = access_path(spec.provider)
+    try:
+        model_id = spec.id_for(path)
+    except Exception as exc:
+        return f"!! {exc}"
+    if path == "anthropic":
+        where = "direct Anthropic API"
+    else:
+        where = f"vertex, region {_region_for(spec)}"
+    return f"{model_id}   ({spec.display_name}, {where})"
+
+
+def _region_for(spec) -> str:
+    """The region this model is actually called in.
+
+    Mirrors the adapters' own resolution order rather than guessing: Claude
+    reads ``$CLAUDE_REGION`` first (it runs in `global` while Gemini runs in
+    us-central1), and a per-model pin in models.yaml beats both.
+    """
+    candidates = [spec.region]
+    if spec.provider == "anthropic":
+        candidates.append(os.environ.get("CLAUDE_REGION"))
+    candidates.append(os.environ.get("REGION"))
+    return next((c for c in candidates if c), "unset")
+
+
+def prompt_float(
+    label: str,
+    unit: str = TOKEN_UNIT,
+    *,
+    identity: str = UNRESOLVED_ID,
+    section: str | None = None,
+) -> float | None:
+    """Ask for one price. Blank keeps VERIFY. Loops until valid.
+
+    The whole block below is the prompt string, so the three facts that decide
+    whether a typed number is the right number — concrete model ID, page
+    section, unit — are on screen at the moment of typing rather than scrolled
+    off above.
+    """
+    prompt = (
+        f"\n  {label}\n"
+        f"      model ID : {identity}\n"
+        f"      section  : {section or UNCITED}\n"
+        f"      unit     : {unit}\n"
+        f"    > "
+    )
     while True:
-        raw = input(f"  {label} ({unit}, blank = leave VERIFY): ").strip()
+        raw = input(prompt).strip()
         if not raw:
             return None
         try:
@@ -132,7 +232,23 @@ def prompt_float(label: str, unit: str = TOKEN_UNIT) -> float | None:
         return value
 
 
+def _load_env() -> None:
+    """PROJECT_ID / REGION / CLAUDE_PATH from .env, for the ID lines.
+
+    Called from ``main`` rather than at import: ``tests/test_refresh_pricing``
+    exec's this module to reach ``apply_updates``, and loading .env at import
+    time put CLAUDE_REGION into the whole pytest process, which quietly changed
+    what the Claude adapter's env tests were testing.
+    """
+    try:
+        from dotenv import load_dotenv
+    except ImportError:  # pragma: no cover - dotenv ships in requirements.txt
+        return
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env", override=False)
+
+
 def main(argv: list[str] | None = None) -> int:
+    _load_env()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--file",
@@ -152,25 +268,39 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  - {url}")
     if pricing.verified_on:
         print(f"\nLast verified {pricing.verified_on} by {pricing.verified_by}.")
-    print("\nEach prompt states its own unit. Token prices are USD per")
-    print("1,000,000 tokens; cache storage is rent, per 1M cached tokens/hour.\n")
+    print("\nEvery prompt names the concrete provider model ID the slot prices,")
+    print("the section of the page above to read it from, and the unit. Token")
+    print("prices are USD per 1,000,000 tokens; cache storage is rent, per 1M")
+    print("cached tokens per hour. A rate quoted per 1k characters or per 1k")
+    print("tokens must be converted before it goes in — leave VERIFY if unsure.")
+
+    models = load_models(path)
 
     updates: dict[str, float] = {}
     for model_key, prices in pricing.models.items():
+        identity = describe_model(model_key, models)
+        section = pricing.page_section(model_key)
         printed_header = False
         for field in PRICE_FIELDS:
             if getattr(prices, field) != VERIFY:
                 continue
             if not printed_header:
-                print(f"{model_key}:")
+                print(f"\n{'-' * 72}\n{model_key}:")
                 printed_header = True
-            value = prompt_float(field)
+            value = prompt_float(field, identity=identity, section=section)
             if value is not None:
                 updates[f"models.{model_key}.{field}"] = value
 
     if pricing.cache_storage.per_1m_token_hour == VERIFY:
-        print("cache_storage:")
-        value = prompt_float("per_1m_token_hour", CACHE_STORAGE_UNIT)
+        print(f"\n{'-' * 72}\ncache_storage:")
+        value = prompt_float(
+            "per_1m_token_hour",
+            CACHE_STORAGE_UNIT,
+            # Not a model rate: one shared retention price covers every cached
+            # model in the file, so there is no single ID to resolve.
+            identity="— storage rent, shared by every cached model above",
+            section=pricing.page_section(CACHE_STORAGE_SECTION_KEY),
+        )
         if value is not None:
             updates["cache_storage.per_1m_token_hour"] = value
 

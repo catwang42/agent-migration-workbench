@@ -137,6 +137,8 @@ copyright: >-
 nav:
   - Home: index.md
   - Setup: setup.md
+  - Models in this study: models-in-this-study.md
+  - Architecture & toolchain: architecture.md
   - Modules:
       - "01 — Why subagents migrate first": modules/01-why-subagents-first.md
       - "02 — The reference workload": modules/02-reference-workload.md
@@ -149,6 +151,7 @@ nav:
   - Results:
       - Overview: results/index.md
       - Migration Readiness Scorecard: results/scorecard.md
+      - "How we got here — development generation": results/scorecard_development_generation.md
       - Selection table: results/selection_table.md
       - Judge cross-check: results/crosscheck.md
       - Charts: results/charts.md

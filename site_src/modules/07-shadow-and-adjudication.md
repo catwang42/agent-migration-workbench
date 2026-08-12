@@ -4,6 +4,8 @@
 
 ---
 
+--8<-- "_includes/development-generation.md"
+
 A shadow run puts both arms on the same inputs and asks a narrower question than
 the eval does: **where do these two models actually produce different answers, and
 when they differ, who is right?**
@@ -92,8 +94,8 @@ judge scores for those exact outputs, replayed — no judge call was made to bui
 these tables.
 
 <div class="amw-compare" markdown="1">
-<div class="amw-compare__card" markdown="1">
-<p class="amw-compare__title">gemini_targeted_v1</p>
+<div class="amw-compare__card amw-compare__card--ships" markdown="1">
+<p class="amw-compare__title">gemini_targeted_v1 <span class="amw-compare__tag amw-compare__tag--ships">Ships</span></p>
 <p class="amw-compare__verdict amw-compare__verdict--pass">Passes the alt clause</p>
 <div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">51</span></div>
 <div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">15W</span><span class="amw-wl amw-wl--loss">3L</span><span class="amw-wl amw-wl--tie">33T</span></span></div>
@@ -101,8 +103,8 @@ these tables.
 <div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.643 [0.529, 0.757]</span></div>
 <div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Passes on either figure</span></div>
 </div>
-<div class="amw-compare__card" markdown="1">
-<p class="amw-compare__title">gemini_tuned_v1 — the arm it replaced</p>
+<div class="amw-compare__card amw-compare__card--replaced" markdown="1">
+<p class="amw-compare__title">gemini_tuned_v1 <span class="amw-compare__tag amw-compare__tag--replaced">Replaced — kept as the control</span></p>
 <p class="amw-compare__verdict amw-compare__verdict--fail">Fails the alt clause</p>
 <div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">60</span></div>
 <div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">14W</span><span class="amw-wl amw-wl--loss">20L</span><span class="amw-wl amw-wl--tie">26T</span></span></div>
@@ -112,14 +114,20 @@ these tables.
 </div>
 </div>
 
-15W / 3L / 33T = 15 wins, 3 losses, 33 ties, judged from the new model's point of
-view. Bracketed pairs are the 95% confidence range (CI).
+Reading both cards: **15W / 3L / 33T** means 15 wins, 3 losses and 33 ties,
+judged from the new model's point of view — a win is an item where the judge
+scored the Gemini answer above the Claude one. Bracketed pairs are the 95%
+confidence range. The left card is the arm the scorecard ships; the right card is
+the arm it replaced, kept on the page as the control that makes the difference
+readable.
 { .amw-legend }
 
-Both arms have `json_schema_validity` 1.000 [1.000, 1.000]. Both are Gemini Flash
-on the same corpus. The difference is three prompt rules written from the *measured*
-loss clusters in the n=70 adjudication — and the adjudication flips from 14W/20L to
-15W/3L.
+**Same model, same data — three instruction rules written from the measured
+failures moved the adjudication from 14W/20L to 15W/3L.** Both arms have
+`json_schema_validity` 1.000 [1.000, 1.000] and both are the same Gemini 2.5 Flash
+model on the same corpus. Nothing changed but the prompt, and the rules were not
+guessed: each one was written from a loss cluster counted in the n=70
+adjudication of the arm on the right.
 
 !!! note "Why 'excluding structurally malformed baseline emissions' is quoted too"
 
@@ -158,7 +166,7 @@ adjudicated** means no recorded verdict exists for it, and adjudicating it would
 require new judge calls. On the widened n=70 run, `not_adjudicated` is 0 for all
 three subagents — every disagreement has a recorded verdict behind it.
 
-## Latency, and why there is no number
+## Latency, and why this run has no number
 
 The shadow run does capture per-arm latency. It also captures why you cannot use
 it:
@@ -168,8 +176,18 @@ it:
 > p95; the `gates.yaml` basis for `latency_p95` asks for same region, same load
 > profile.
 
-So `latency_p95` renders throughout as **not comparable — region split
-disclosed**. Not evaluated, and specifically not passed.
+So on **this** run — the development-generation arms above — `latency_p95`
+renders as **not comparable — region split disclosed**. Not evaluated, and
+specifically not passed.
+
+That is a property of how these particular calls were routed, not a permanent
+hole in the method. The deployment candidates were later probed with both arms
+pinned to the same region, which is the only input that can open the gate; the
+probe refuses to record itself at all if the two arms end up in different
+regions. Whether the gate then passes or fails is a separate question, and the
+answer for each subagent is in the scorecard — where a probe exists it is
+evaluated on the confidence-range upper bound like any other ceiling, and where
+none exists the gate stays unevaluated rather than borrowing one.
 
 ---
 

@@ -4,6 +4,8 @@
 
 ---
 
+--8<-- "_includes/development-generation.md"
+
 The obvious objection to this whole exercise: a Gemini model is grading Gemini's
 output. That is a real methodological weakness, it is the biggest one on this
 scorecard, and the right response is not to deny it. It is to bound it, publish

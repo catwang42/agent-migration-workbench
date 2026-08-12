@@ -1,0 +1,207 @@
+[2026-08-12T12:51:36+00:00] === capped-thinking arms: Gemini 3.6 Flash (capped thinking) (gemini-3.6-flash) in 'global', thinking_budget=0 ===
+[2026-08-12T12:51:36+00:00] === PHASE 1/2  generations, n=70 x 3 subagents ===
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 0 replayed
+[2026-08-12T12:54:11+00:00]   query_rewriter: 70 live, 0 from recordings
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 0 replayed
+[2026-08-12T12:56:59+00:00]   chunk_summarizer: 70 live, 0 from recordings
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 0 replayed
+[2026-08-12T12:58:33+00:00]   feature_extractor: 70 live, 0 from recordings
+[2026-08-12T12:58:33+00:00] generations complete -> capped_arms_generations.done
+[2026-08-12T12:58:33+00:00] cost + schema validity are computable NOW; quality is not.
+[2026-08-12T12:58:33+00:00] 
+=== PHASE 2/2  judge the capped arms ===
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 2 replayed
+  ... 75 live judge calls, 2 replayed
+  ... 100 live judge calls, 2 replayed
+  ... 125 live judge calls, 2 replayed
+[2026-08-12T13:19:26+00:00]   baseline             claude_baseline            tool             claude-sonnet
+[2026-08-12T13:19:26+00:00]       Incumbent: the customer's XML prompt on Claude, emit_* tool
+[2026-08-12T13:19:26+00:00]       calls 28/28 ok
+[2026-08-12T13:19:26+00:00]       judge_score[core]            0.911  95% CI [0.839, 0.964]  n=28
+[2026-08-12T13:19:26+00:00]   A0                   gemini_naive               tool             gemini-flash
+[2026-08-12T13:19:26+00:00]       Naive endpoint swap: the same prompt bytes on Gemini, same tool
+[2026-08-12T13:19:26+00:00]       calls 28/28 ok
+[2026-08-12T13:19:26+00:00]       judge_score[core]            0.836  95% CI [0.787, 0.886]  n=28
+[2026-08-12T13:19:26+00:00]   A1-A3                gemini_tuned_v1            response_schema  gemini-flash
+[2026-08-12T13:19:26+00:00]       Bundled: Markdown restructure + system/user split + enforced response_schema + two recalibrated few-shots
+[2026-08-12T13:19:26+00:00]       calls 28/28 ok
+[2026-08-12T13:19:26+00:00]       judge_score[core]            0.852  95% CI [0.796, 0.905]  n=28
+[2026-08-12T13:19:26+00:00]   A4-targeted          gemini_targeted_v1         response_schema  gemini-flash
+[2026-08-12T13:19:26+00:00]       A1-A3 plus three bundled rules for the three measured loss clusters: publication numbers verbatim in query, explicit date_to copied not expanded, landscape vs ownership by which side of the question is unknown (per-rule credit not isolated)
+[2026-08-12T13:19:26+00:00]       calls 70/70 ok
+[2026-08-12T13:19:26+00:00]       judge_score[all]             0.963  95% CI [0.934, 0.986]  n=70
+[2026-08-12T13:19:26+00:00]   A0-current           gemini_naive               tool             gemini-flash-current
+[2026-08-12T13:19:26+00:00]       Generation only: A0's prompt bytes, unchanged, on the current-generation model
+[2026-08-12T13:19:26+00:00]       calls 70/70 ok
+[2026-08-12T13:19:26+00:00]       judge_score[all]             0.904  95% CI [0.871, 0.936]  n=70
+[2026-08-12T13:19:26+00:00]   ship-current         gemini_targeted_v1         response_schema  gemini-flash-current
+[2026-08-12T13:19:26+00:00]       Generation only: the shipping arm's prompt bytes, unchanged, on the current-generation model
+[2026-08-12T13:19:26+00:00]       calls 70/70 ok
+[2026-08-12T13:19:26+00:00]       judge_score[all]             0.964  95% CI [0.939, 0.986]  n=70
+[2026-08-12T13:19:26+00:00]   A0-35                gemini_naive               tool             gemini-flash-35
+[2026-08-12T13:19:26+00:00]       Generation only: A0's prompt bytes, unchanged, on gemini-flash-35 (second deployment candidate)
+[2026-08-12T13:19:26+00:00]       calls 70/70 ok
+[2026-08-12T13:19:26+00:00]       judge_score[all]             0.855  95% CI [0.820, 0.888]  n=70
+[2026-08-12T13:19:26+00:00]   ship-35              gemini_targeted_v1         response_schema  gemini-flash-35
+[2026-08-12T13:19:26+00:00]       Generation only: the shipping arm's prompt bytes, unchanged, on gemini-flash-35 (second deployment candidate)
+[2026-08-12T13:19:26+00:00]       calls 70/70 ok
+[2026-08-12T13:19:26+00:00]       judge_score[all]             0.968  95% CI [0.943, 0.989]  n=70
+[2026-08-12T13:19:26+00:00]   ship-current-capped  gemini_targeted_v1         response_schema  gemini-flash-current-capped
+[2026-08-12T13:19:26+00:00]       Recommended deployment configuration: the shipping arm on the headline candidate with the reasoning budget minimised
+[2026-08-12T13:19:26+00:00]       calls 70/70 ok
+[2026-08-12T13:19:26+00:00]       judge_score[all]             0.959  95% CI [0.934, 0.982]  n=70
+[2026-08-12T13:19:26+00:00]   query_rewriter: judge 138 live, 2 from recordings
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 0 replayed
+  ... 75 live judge calls, 0 replayed
+  ... 100 live judge calls, 0 replayed
+  ... 125 live judge calls, 0 replayed
+[2026-08-12T13:52:19+00:00]   baseline             claude_baseline            tool             claude-sonnet
+[2026-08-12T13:52:19+00:00]       Incumbent: the customer's XML prompt on Claude, emit_* tool
+[2026-08-12T13:52:19+00:00]       calls 28/28 ok
+[2026-08-12T13:52:19+00:00]       judge_score[core]            0.902  95% CI [0.830, 0.956]  n=28
+[2026-08-12T13:52:19+00:00]   A0                   gemini_naive               tool             gemini-flash
+[2026-08-12T13:52:19+00:00]       Naive endpoint swap: the same prompt bytes on Gemini, same tool
+[2026-08-12T13:52:19+00:00]       calls 28/28 ok
+[2026-08-12T13:52:19+00:00]       judge_score[core]            0.897  95% CI [0.830, 0.955]  n=28
+[2026-08-12T13:52:19+00:00]   A1-A3                gemini_tuned_v1            response_schema  gemini-flash
+[2026-08-12T13:52:19+00:00]       Bundled: Markdown restructure + system/user split + enforced response_schema + two recalibrated few-shots
+[2026-08-12T13:52:19+00:00]       calls 28/28 ok
+[2026-08-12T13:52:19+00:00]       judge_score[core]            0.915  95% CI [0.871, 0.955]  n=28
+[2026-08-12T13:52:19+00:00]   A0-current           gemini_naive               tool             gemini-flash-current
+[2026-08-12T13:52:19+00:00]       Generation only: A0's prompt bytes, unchanged, on the current-generation model
+[2026-08-12T13:52:19+00:00]       calls 70/70 ok
+[2026-08-12T13:52:19+00:00]       judge_score[all]             0.902  95% CI [0.864, 0.936]  n=70
+[2026-08-12T13:52:19+00:00]   ship-current         gemini_tuned_v1            response_schema  gemini-flash-current
+[2026-08-12T13:52:19+00:00]       Generation only: the shipping arm's prompt bytes, unchanged, on the current-generation model
+[2026-08-12T13:52:19+00:00]       calls 70/70 ok
+[2026-08-12T13:52:19+00:00]       judge_score[all]             0.902  95% CI [0.866, 0.936]  n=70
+[2026-08-12T13:52:19+00:00]   A0-35                gemini_naive               tool             gemini-flash-35
+[2026-08-12T13:52:19+00:00]       Generation only: A0's prompt bytes, unchanged, on gemini-flash-35 (second deployment candidate)
+[2026-08-12T13:52:19+00:00]       calls 70/70 ok
+[2026-08-12T13:52:19+00:00]       judge_score[all]             0.896  95% CI [0.868, 0.925]  n=70
+[2026-08-12T13:52:19+00:00]   ship-35              gemini_tuned_v1            response_schema  gemini-flash-35
+[2026-08-12T13:52:19+00:00]       Generation only: the shipping arm's prompt bytes, unchanged, on gemini-flash-35 (second deployment candidate)
+[2026-08-12T13:52:19+00:00]       calls 70/70 ok
+[2026-08-12T13:52:19+00:00]       judge_score[all]             0.896  95% CI [0.855, 0.934]  n=70
+[2026-08-12T13:52:19+00:00]   ship-current-capped  gemini_tuned_v1            response_schema  gemini-flash-current-capped
+[2026-08-12T13:52:19+00:00]       Recommended deployment configuration: the shipping arm on the headline candidate with the reasoning budget minimised
+[2026-08-12T13:52:19+00:00]       calls 70/70 ok
+[2026-08-12T13:52:19+00:00]       judge_score[all]             0.893  95% CI [0.857, 0.925]  n=70
+[2026-08-12T13:52:19+00:00]   chunk_summarizer: judge 140 live, 0 from recordings
+  ... 25 live judge calls, 0 replayed
+  ... 50 live judge calls, 4 replayed
+  ... 75 live judge calls, 12 replayed
+  ... 100 live judge calls, 18 replayed
+[2026-08-12T14:22:33+00:00]   baseline             claude_baseline            tool             claude-sonnet
+[2026-08-12T14:22:33+00:00]       Incumbent: the customer's XML prompt on Claude, emit_* tool
+[2026-08-12T14:22:33+00:00]       calls 28/28 ok
+[2026-08-12T14:22:33+00:00]       judge_score[core]            0.903  95% CI [0.857, 0.946]  n=28
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=25
+[2026-08-12T14:22:33+00:00]   A0                   gemini_naive               tool             gemini-flash
+[2026-08-12T14:22:33+00:00]       Naive endpoint swap: the same prompt bytes on Gemini, same tool
+[2026-08-12T14:22:33+00:00]       calls 28/28 ok
+[2026-08-12T14:22:33+00:00]       judge_score[core]            0.837  95% CI [0.791, 0.882]  n=28
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+[2026-08-12T14:22:33+00:00]   A1-A3                gemini_tuned_v1            response_schema  gemini-flash
+[2026-08-12T14:22:33+00:00]       Bundled: Markdown restructure + system/user split + enforced response_schema + two recalibrated few-shots
+[2026-08-12T14:22:33+00:00]       calls 28/28 ok
+[2026-08-12T14:22:33+00:00]       judge_score[core]            0.807  95% CI [0.756, 0.853]  n=28
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+[2026-08-12T14:22:33+00:00]   A0-schema            gemini_naive_schema        response_schema  gemini-flash
+[2026-08-12T14:22:33+00:00]       Mode only: A0's prompt, enforced response_schema instead of the tool
+[2026-08-12T14:22:33+00:00]       NOT MEASURED — replay mode has no recorded calls for variant 'gemini_naive_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='f2b73b6782f5d9bf') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+[2026-08-12T14:22:33+00:00]   A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+[2026-08-12T14:22:33+00:00]       Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+[2026-08-12T14:22:33+00:00]       NOT MEASURED — replay mode has no recorded calls for variant 'gemini_novelty_v1_tool' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='7c8cd0be466029ea') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+[2026-08-12T14:22:33+00:00]   A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+[2026-08-12T14:22:33+00:00]       Both: the novelty prompt under the enforced response_schema
+[2026-08-12T14:22:33+00:00]       NOT MEASURED — replay mode has no recorded calls for variant 'gemini_novelty_v1_schema' (replay miss for (subagent='feature_extractor', model='gemini-flash', input_sha='509c7b09a2aa84a1') — 147 trace(s) recorded for this model, none with that input_sha (prompt, messages, context or tools differ). Re-record with --mode live|hybrid). This rung is a hypothesis until it is run live; nothing was measured and no number is reported.
+[2026-08-12T14:22:33+00:00]   A4-optimizer         gemini_optimizer_v1        tool             gemini-flash
+[2026-08-12T14:22:33+00:00]       Optimizer: a VAIPO-suggested instruction over gemini_naive, read against judge_score
+[2026-08-12T14:22:33+00:00]       calls 28/28 ok
+[2026-08-12T14:22:33+00:00]       judge_score[core]            0.949  95% CI [0.911, 0.979]  n=28
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+[2026-08-12T14:22:33+00:00]   A0-schema            gemini_naive_schema        response_schema  gemini-flash
+[2026-08-12T14:22:33+00:00]       Mode only: A0's prompt, enforced response_schema instead of the tool
+[2026-08-12T14:22:33+00:00]       calls 28/28 ok
+[2026-08-12T14:22:33+00:00]       judge_score[core]            0.826  95% CI [0.773, 0.875]  n=28
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+[2026-08-12T14:22:33+00:00]   A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+[2026-08-12T14:22:33+00:00]       Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+[2026-08-12T14:22:33+00:00]       calls 28/28 ok
+[2026-08-12T14:22:33+00:00]       judge_score[core]            0.901  95% CI [0.859, 0.940]  n=28
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+[2026-08-12T14:22:33+00:00]   A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+[2026-08-12T14:22:33+00:00]       Both: the novelty prompt under the enforced response_schema
+[2026-08-12T14:22:33+00:00]       calls 28/28 ok
+[2026-08-12T14:22:33+00:00]       judge_score[core]            0.920  95% CI [0.878, 0.957]  n=28
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=14
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=27
+[2026-08-12T14:22:33+00:00]   A0-schema            gemini_naive_schema        response_schema  gemini-flash
+[2026-08-12T14:22:33+00:00]       Mode only: A0's prompt, enforced response_schema instead of the tool
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.831  95% CI [0.798, 0.862]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]   A4-novelty-tool      gemini_novelty_v1_tool     tool             gemini-flash
+[2026-08-12T14:22:33+00:00]       Prompt only: A0 plus the novelty_statement rule (claim 1 is the point of novelty; numeric limits survive) and one worked example
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.892  95% CI [0.864, 0.918]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]   A4-novelty-schema    gemini_novelty_v1_schema   response_schema  gemini-flash
+[2026-08-12T14:22:33+00:00]       Both: the novelty prompt under the enforced response_schema
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.903  95% CI [0.876, 0.929]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]   A4-optimizer         gemini_optimizer_v1        tool             gemini-flash
+[2026-08-12T14:22:33+00:00]       Optimizer: a VAIPO-suggested instruction over gemini_naive, read against judge_score
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.951  95% CI [0.929, 0.970]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]       few-shot overlap with scored items: fe-0004, fe-0021, fe-0029, fe-0032, fe-0037, fe-0041, fe-0046, fe-0051, fe-0056, fe-0060, fe-0064, fe-0067
+[2026-08-12T14:22:33+00:00]   A0-current           gemini_naive               tool             gemini-flash-current
+[2026-08-12T14:22:33+00:00]       Generation only: A0's prompt bytes, unchanged, on the current-generation model
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.827  95% CI [0.790, 0.861]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           0.997  95% CI [0.991, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]   ship-current         gemini_optimizer_v1        tool             gemini-flash-current
+[2026-08-12T14:22:33+00:00]       Generation only: the shipping arm's prompt bytes, unchanged, on the current-generation model
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.950  95% CI [0.926, 0.970]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]   A0-35                gemini_naive               tool             gemini-flash-35
+[2026-08-12T14:22:33+00:00]       Generation only: A0's prompt bytes, unchanged, on gemini-flash-35 (second deployment candidate)
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.781  95% CI [0.744, 0.815]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]   ship-35              gemini_optimizer_v1        tool             gemini-flash-35
+[2026-08-12T14:22:33+00:00]       Generation only: the shipping arm's prompt bytes, unchanged, on gemini-flash-35 (second deployment candidate)
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.951  95% CI [0.927, 0.973]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]   ship-current-capped  gemini_optimizer_v1        tool             gemini-flash-current-capped
+[2026-08-12T14:22:33+00:00]       Recommended deployment configuration: the shipping arm on the headline candidate with the reasoning budget minimised
+[2026-08-12T14:22:33+00:00]       calls 70/70 ok
+[2026-08-12T14:22:33+00:00]       judge_score[all]             0.903  95% CI [0.880, 0.924]  n=70
+[2026-08-12T14:22:33+00:00]       hallucination_rate           0.000  95% CI [0.000, 0.000]  n=33
+[2026-08-12T14:22:33+00:00]       answered_precision           1.000  95% CI [1.000, 1.000]  n=68
+[2026-08-12T14:22:33+00:00]   feature_extractor: judge 116 live, 24 from recordings
+[2026-08-12T14:22:33+00:00] judging complete -> capped_arms_judged.done

@@ -1,0 +1,8 @@
+[2026-08-12T12:06:22+00:00] === capped-thinking probe: query_rewriter/gemini_targeted_v1 on gemini-flash-current, thinking_budget=0, n=10 ===
+[2026-08-12T12:06:22+00:00]   recordings -> artifacts/thinking_probe (main corpus untouched)
+[2026-08-12T12:06:22+00:00]   region pin: 'global'
+[2026-08-12T12:06:31+00:00]   ... 5/10 items
+[2026-08-12T12:06:45+00:00]   ... 10/10 items
+[2026-08-12T12:06:45+00:00]   default thinking budget (recorded)     ok=10/10 out_tok=6,068 unreturned_floor=3,427 $0.0781 p50=3279.5ms schema=1.0
+[2026-08-12T12:06:45+00:00]   thinking_budget=0                      ok=10/10 out_tok=758 unreturned_floor=0 $0.0383 p50=1475.5ms schema=1.0
+[2026-08-12T12:06:45+00:00] wrote artifacts/results/capped_thinking_probe.json

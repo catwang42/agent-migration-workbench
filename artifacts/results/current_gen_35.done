@@ -1,0 +1,1 @@
+ok started=2026-08-12T09:17:37+00:00 finished=2026-08-12T12:27:34+00:00 phases=1,2,3 model=gemini-flash-35 rungs=A0-35,ship-35 subagents=query_rewriter,chunk_summarizer,feature_extractor split=all judge_repeats=2

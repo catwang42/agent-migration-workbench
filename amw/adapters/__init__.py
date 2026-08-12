@@ -276,7 +276,16 @@ def resolve(
         # region does not serve carries an override, and it carries it in the
         # registry rather than at the callsite, so every path that resolves
         # this model gets the same region.
-        return recorded(GeminiAdapter(models=registry, location=spec.region))
+        # spec.thinking_budget is None for every model but the capped
+        # deployment configuration, and None means "the model's default" —
+        # the setting every arm recorded before 2026-08-12 ran on.
+        return recorded(
+            GeminiAdapter(
+                models=registry,
+                location=spec.region,
+                thinking_budget=spec.thinking_budget,
+            )
+        )
 
     if spec.provider == "anthropic":
         if mode == "hybrid":

@@ -1,0 +1,91 @@
+# ADK reference app — live capture
+# recorded 2026-08-12T09:38:08+00:00
+# command: python cli.py adk-demo --mode live
+
+warning: Claude runs in global, Gemini in us-central1. Quality and cost gates are unaffected, but latency_p95 becomes a cross-region comparison — the scorecard must disclose this, not present it as a same-region measurement.
+/home/catwangzz_google_com/agent-migration-workbench/.venv/lib/python3.11/site-packages/google/adk/models/llm_request.py:273: UserWarning: [EXPERIMENTAL] feature FeatureName.JSON_SCHEMA_FOR_FUNC_DECL is enabled.
+  declaration = tool._get_declaration()
+
+==============================================================================
+query: Which companies filed solid-state battery separator patents in Japan between 2019 and 2021, and what do the filings claim?
+==============================================================================
+model gemini-3.6-flash · prompt packs query_rewriter=gemini_targeted_v1, chunk_summarizer=gemini_tuned_v1, feature_extractor=gemini_optimizer_v1 · live Gemini, not recorded
+
+[orchestration] root_orchestrator
+    model gemini-3.6-flash · no verdict on this scorecard (trajectory evaluation is the follow-on instrument)
+  [prompt-based] → query_rewriter
+      args: {"question": "Which companies filed solid-state battery separator patents in Japan between 2019 and 2021, and what do the filings claim?"}
+    [prompt-based] query_rewriter
+        prompt: amw/agents/prompts/query_rewriter/gemini_targeted_v1.txt (sha256 8bf8885e397d, mode response_schema)
+  ← query_rewriter
+      returned: {"filters": {"assignees": [], "cpc_codes": [], "date_from": "2019-01-01", "date_to": "2022-01-01", "jurisdictions": ["JP"]}, "intent": "landscape", "query": "solid-state battery separator solid electrolyte membrane inor…
+  [retrieval-augmented] → retrieve_chunks
+      args: {"query": "solid-state battery separator solid electrolyte membrane inorganic separator lithium secondary battery"}
+  ← retrieve_chunks
+      returned: {"chunks": [{"chunk_id": "US11564601B2::desc::p0042", "text": "In one embodiment, an all-solid-state lithium secondary battery is provided, comprising a solid electrolyte layer comprising an argyrodite-type Li6PS5Cl hav…
+  [prompt-based] → chunk_summarizer
+      args: {"chunks": [{"chunk_id": "US11564601B2::desc::p0042", "text": "In one embodiment, an all-solid-state lithium secondary battery is provided, comprising a solid electrolyte layer comprising an argyrodite-type Li6PS5Cl hav…
+    [prompt-based] chunk_summarizer
+        prompt: amw/agents/prompts/chunk_summarizer/gemini_tuned_v1.txt (sha256 83d8a4b41db7, mode response_schema)
+  ← chunk_summarizer
+      returned: {"key_points": [{"chunk_ids": ["US11564601B2::desc::p0042"], "text": "An all-solid-state lithium secondary battery embodiment features a solid electrolyte layer comprising argyrodite-type Li6PS5Cl with a median particle…
+  [prompt-based] → feature_extractor
+      args: {"document": "In one embodiment, an all-solid-state lithium secondary battery is provided, comprising a solid electrolyte layer comprising an argyrodite-type Li6PS5Cl having a median particle diameter D50 of 0.8 um to 2…
+    [prompt-based] feature_extractor
+        prompt: amw/agents/prompts/feature_extractor/gemini_optimizer_v1.txt (sha256 bc07745f69e9, mode tool)
+  ← feature_extractor
+      returned: {"cpc_codes": [], "novelty_statement": "An all-solid-state lithium secondary battery comprises a solid electrolyte layer comprising an argyrodite-type Li6PS5Cl having a median particle diameter D50 of 0.8 um to 2.5 um."…
+
+final answer:
+Intent: landscape.
+
+Summary:
+The retrieved passages describe an all-solid-state lithium secondary battery featuring an argyrodite-type Li6PS5Cl solid electrolyte layer with a median particle diameter D50 of 0.8 to 2.5 um [US11564601B2::desc::p0042]. Comparative Example C1 showed half the ionic conductivity [US11564601B2::desc::p0046], while Example 3 reached 3.2 mS/cm at 25°C and critical current density of 1.8 mA/cm² at 60°C [US11564601B2::desc::p0050]. The passages contain no information on Japanese filings or companies from 2019 to 2021.
+
+Extracted Features:
+- Technical Field: argyrodite-type solid electrolytes for lithium batteries
+- Novelty: An all-solid-state lithium secondary battery comprising a solid electrolyte layer comprising argyrodite-type Li6PS5Cl having a median particle diameter D50 of 0.8 um to 2.5 um.
+
+==============================================================================
+query: Summarise what is known about perovskite-silicon tandem photovoltaic efficiency, and pull the structured features out of the source document.
+==============================================================================
+model gemini-3.6-flash · prompt packs query_rewriter=gemini_targeted_v1, chunk_summarizer=gemini_tuned_v1, feature_extractor=gemini_optimizer_v1 · live Gemini, not recorded
+
+[orchestration] root_orchestrator
+    model gemini-3.6-flash · no verdict on this scorecard (trajectory evaluation is the follow-on instrument)
+  [prompt-based] → query_rewriter
+      args: {"question": "Summarise what is known about perovskite-silicon tandem photovoltaic efficiency, and pull the structured features out of the source document."}
+    [prompt-based] query_rewriter
+        prompt: amw/agents/prompts/query_rewriter/gemini_targeted_v1.txt (sha256 8bf8885e397d, mode response_schema)
+  ← query_rewriter
+      returned: {"filters": {"assignees": [], "cpc_codes": [], "jurisdictions": []}, "intent": "landscape", "query": "perovskite silicon tandem photovoltaic cell efficiency power conversion efficiency PCE monolithic two-terminal subcel…
+  [retrieval-augmented] → retrieve_chunks
+      args: {"query": "perovskite silicon tandem photovoltaic cell efficiency power conversion efficiency PCE monolithic two-terminal subcell"}
+  ← retrieve_chunks
+      returned: {"chunks": [{"chunk_id": "US10791298B2::desc::p0056", "text": "A recognized challenge in perovskite-silicon tandem photovoltaics is the susceptibility of the perovskite absorber to degradation driven by moisture and the…
+  [prompt-based] → chunk_summarizer
+      args: {"chunks": [{"chunk_id": "US10791298B2::desc::p0056", "text": "A recognized challenge in perovskite-silicon tandem photovoltaics is the susceptibility of the perovskite absorber to degradation driven by moisture and the…
+    [prompt-based] chunk_summarizer
+        prompt: amw/agents/prompts/chunk_summarizer/gemini_tuned_v1.txt (sha256 83d8a4b41db7, mode response_schema)
+  ← chunk_summarizer
+      returned: {"key_points": [{"chunk_ids": ["US10791298B2::desc::p0056"], "text": "Perovskite absorbers in perovskite-silicon tandem photovoltaics suffer from degradation driven by moisture and thermal stress under damp-heat testing…
+  [prompt-based] → feature_extractor
+      args: {"document": "A recognized challenge in perovskite-silicon tandem photovoltaics is the susceptibility of the perovskite absorber to degradation driven by moisture and thermal stress, particularly under damp-heat testing…
+    [prompt-based] feature_extractor
+        prompt: amw/agents/prompts/feature_extractor/gemini_optimizer_v1.txt (sha256 bc07745f69e9, mode tool)
+  ← feature_extractor
+      returned: {"cpc_codes": [], "novelty_statement": "A monolithic tandem photovoltaic device comprises a wide-bandgap perovskite top cell deposited on a textured silicon bottom cell.", "technical_field": "perovskite-silicon tandem p…
+
+final answer:
+**Intent:** landscape
+
+**Summary:**
+Perovskite absorbers face degradation from moisture and thermal stress [US10791298B2::desc::p0056]. A monolithic tandem photovoltaic device features a wide-bandgap perovskite top cell (1.66 eV to 1.72 eV) on a textured silicon bottom cell [US10791298B2::desc::p0059], achieving 31.2% power conversion efficiency under AM1.5G [US10791298B2::desc::p0062].
+
+**Structured Features:**
+* **Technical Field:** perovskite-silicon tandem photovoltaics
+* **Novelty Statement:** A monolithic tandem photovoltaic device comprises a wide-bandgap perovskite top cell deposited on a textured silicon bottom cell.
+
+adk-demo OK — demo-only path; no number here reaches a scorecard.
+ADK_EXIT=0
+ADK_DONE

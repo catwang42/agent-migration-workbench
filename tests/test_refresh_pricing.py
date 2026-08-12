@@ -8,6 +8,7 @@ not have.
 from __future__ import annotations
 
 import importlib.util
+import re
 from datetime import date
 from pathlib import Path
 
@@ -23,7 +24,30 @@ _spec = importlib.util.spec_from_file_location(
 refresh_pricing = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(refresh_pricing)
 
+VERIFY = refresh_pricing.VERIFY
+
 PRICING = default_config_dir() / "pricing.yaml"
+
+
+def unstamped_pricing_text() -> str:
+    """The shipped pricing file wound back to its pre-walkthrough state.
+
+    ``apply_updates`` only ever writes over the literal ``VERIFY``, so once a
+    human has run the walkthrough there is nothing left in the shipped file for
+    it to place. That happened on 2026-08-12. These tests still have to
+    exercise the real file's layout and comments — that is the whole point of
+    reading it rather than a hand-built fixture — so the values are wound back
+    here instead of the file being frozen into the test as a copy that would
+    stop tracking it.
+    """
+    text = PRICING.read_text()
+    for field in (*refresh_pricing.PRICE_FIELDS, "per_1m_token_hour"):
+        text = re.sub(
+            rf"(\b{re.escape(field)}:\s*)[0-9][0-9.]*", rf"\g<1>{VERIFY}", text
+        )
+    text = re.sub(r"(?m)^verified_on:.*$", "verified_on: null", text)
+    text = re.sub(r"(?m)^verified_by:.*$", "verified_by: null", text)
+    return text
 
 
 @pytest.mark.parametrize(
@@ -35,7 +59,7 @@ def test_format_price_never_uses_exponent(value: float, expected: str) -> None:
 
 
 def test_apply_updates_fills_prices_and_stamps() -> None:
-    text = PRICING.read_text()
+    text = unstamped_pricing_text()
     # Every model in the shipped file, not a hand-listed subset: the assertion
     # below is that a full walkthrough leaves nothing unverified, which is only
     # a real assertion if "full" tracks the file.
@@ -64,7 +88,7 @@ def test_apply_updates_fills_prices_and_stamps() -> None:
 
 
 def test_apply_updates_preserves_comments() -> None:
-    text = PRICING.read_text()
+    text = unstamped_pricing_text()
     new_text = refresh_pricing.apply_updates(
         text, {"models.gemini-flash.input_per_1m": 0.3}
     )
@@ -76,7 +100,7 @@ def test_apply_updates_preserves_comments() -> None:
 
 def test_partial_update_leaves_the_file_unstamped() -> None:
     new_text = refresh_pricing.apply_updates(
-        PRICING.read_text(), {"models.gemini-flash.input_per_1m": 0.3}
+        unstamped_pricing_text(), {"models.gemini-flash.input_per_1m": 0.3}
     )
     pricing = PricingConfig.model_validate(yaml.safe_load(new_text))
     assert pricing.verified_on is None

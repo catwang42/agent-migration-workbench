@@ -1,0 +1,117 @@
+{
+  "probe": "same_region_latency",
+  "probed_on": "2026-08-12T10:23:31+00:00",
+  "region": "us-central1",
+  "n_per_subagent": 10,
+  "candidate_model": "gemini-flash-current",
+  "baseline_model": "claude-sonnet",
+  "store": "artifacts/latency_probe",
+  "subagents": {
+    "query_rewriter": {
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "region": "us-central1",
+        "calls": 10,
+        "calls_ok": 0,
+        "calls_error": 10,
+        "total_ms_p50": null,
+        "total_ms_p95": null,
+        "ttft_ms_p50": null,
+        "ttft_ms_p95": null,
+        "total_ms": [],
+        "p95_estimate": null,
+        "no_interval_reason": "0 successful timed call(s); an interval needs at least 2"
+      },
+      "candidate": {
+        "arm": "gemini_targeted_v1",
+        "model": "gemini-flash-current",
+        "region": "us-central1",
+        "calls": 10,
+        "calls_ok": 0,
+        "calls_error": 10,
+        "total_ms_p50": null,
+        "total_ms_p95": null,
+        "ttft_ms_p50": null,
+        "ttft_ms_p95": null,
+        "total_ms": [],
+        "p95_estimate": null,
+        "no_interval_reason": "0 successful timed call(s); an interval needs at least 2"
+      },
+      "gate_eligible": false,
+      "blocked_reason": "every incumbent call in us-central1 came back status!=ok; error kinds: [\"error\"]",
+      "disposition": "latency_p95 stays UNMEASURED for query_rewriter. The incumbent could not be served in us-central1, and the existing global-region Claude recordings are deliberately NOT substituted: a cross-region p95 is two measurements, not a comparison."
+    },
+    "chunk_summarizer": {
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "region": "us-central1",
+        "calls": 10,
+        "calls_ok": 0,
+        "calls_error": 10,
+        "total_ms_p50": null,
+        "total_ms_p95": null,
+        "ttft_ms_p50": null,
+        "ttft_ms_p95": null,
+        "total_ms": [],
+        "p95_estimate": null,
+        "no_interval_reason": "0 successful timed call(s); an interval needs at least 2"
+      },
+      "candidate": {
+        "arm": "gemini_tuned_v1",
+        "model": "gemini-flash-current",
+        "region": "us-central1",
+        "calls": 10,
+        "calls_ok": 0,
+        "calls_error": 10,
+        "total_ms_p50": null,
+        "total_ms_p95": null,
+        "ttft_ms_p50": null,
+        "ttft_ms_p95": null,
+        "total_ms": [],
+        "p95_estimate": null,
+        "no_interval_reason": "0 successful timed call(s); an interval needs at least 2"
+      },
+      "gate_eligible": false,
+      "blocked_reason": "every incumbent call in us-central1 came back status!=ok; error kinds: [\"error\"]",
+      "disposition": "latency_p95 stays UNMEASURED for chunk_summarizer. The incumbent could not be served in us-central1, and the existing global-region Claude recordings are deliberately NOT substituted: a cross-region p95 is two measurements, not a comparison."
+    },
+    "feature_extractor": {
+      "baseline": {
+        "arm": "claude_baseline",
+        "model": "claude-sonnet",
+        "region": "us-central1",
+        "calls": 10,
+        "calls_ok": 0,
+        "calls_error": 10,
+        "total_ms_p50": null,
+        "total_ms_p95": null,
+        "ttft_ms_p50": null,
+        "ttft_ms_p95": null,
+        "total_ms": [],
+        "p95_estimate": null,
+        "no_interval_reason": "0 successful timed call(s); an interval needs at least 2"
+      },
+      "candidate": {
+        "arm": "gemini_optimizer_v1",
+        "model": "gemini-flash-current",
+        "region": "us-central1",
+        "calls": 10,
+        "calls_ok": 0,
+        "calls_error": 10,
+        "total_ms_p50": null,
+        "total_ms_p95": null,
+        "ttft_ms_p50": null,
+        "ttft_ms_p95": null,
+        "total_ms": [],
+        "p95_estimate": null,
+        "no_interval_reason": "0 successful timed call(s); an interval needs at least 2"
+      },
+      "gate_eligible": false,
+      "blocked_reason": "every incumbent call in us-central1 came back status!=ok; error kinds: [\"error\"]",
+      "disposition": "latency_p95 stays UNMEASURED for feature_extractor. The incumbent could not be served in us-central1, and the existing global-region Claude recordings are deliberately NOT substituted: a cross-region p95 is two measurements, not a comparison."
+    }
+  },
+  "gate_eligible_subagents": []
+}

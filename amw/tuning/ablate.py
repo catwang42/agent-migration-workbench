@@ -142,6 +142,7 @@ __all__ = [
     "SUBAGENT_RUNGS",
     "P1_RUNGS",
     "CURRENT_GEN_MODEL",
+    "CAPPED_GEN_MODEL",
     "SHIPPING_VARIANT",
     "RungSpec",
     "RungProvenance",
@@ -306,6 +307,20 @@ SUBAGENT_RUNGS: dict[str, tuple[RungSpec, ...]] = {
 #: generation change is a registry edit rather than a search-and-replace.
 CURRENT_GEN_MODEL = "gemini-flash-current"
 
+#: Every deployment candidate the scorecard compares, as
+#: ``model key -> rung-id suffix``. Two rungs are generated per candidate per
+#: subagent: ``A0-<suffix>`` and ``ship-<suffix>``.
+#:
+#: The suffix for Gemini 3.6 Flash stays the bare word ``current`` because
+#: rungs called ``A0-current`` / ``ship-current`` are already recorded in
+#: ``artifacts/results/ablation_*.json`` and in the 2026-08-12 replay corpus.
+#: Renaming them to something tidier would orphan those recordings, which is a
+#: worse outcome than an asymmetric pair of suffixes.
+DEPLOYMENT_CANDIDATES: dict[str, str] = {
+    CURRENT_GEN_MODEL: "current",
+    "gemini-flash-35": "35",
+}
+
 #: Each subagent's shipping arm — the variant the scorecard actually
 #: recommends. The current-generation rungs run exactly these prompts, so the
 #: pair (A0-current, <shipping>-current) answers "what does the model swap do
@@ -317,8 +332,10 @@ SHIPPING_VARIANT: dict[str, str] = {
 }
 
 
-def _current_gen_rungs(subagent: str) -> tuple[RungSpec, ...]:
-    """The two current-generation rungs for one subagent.
+def _candidate_rungs(
+    subagent: str, model_key: str, suffix: str
+) -> tuple[RungSpec, ...]:
+    """The two deployment-candidate rungs for one subagent on one model.
 
     Same prompt bytes as rungs already on the ladder, different model. That is
     the whole design: every existing rung holds the model fixed and varies the
@@ -328,30 +345,76 @@ def _current_gen_rungs(subagent: str) -> tuple[RungSpec, ...]:
     prompt and different models are not comparable to each other by default —
     they are comparable *because* the prompt is identical, and the reader has
     to be able to see that.
+
+    The ``current`` labels are worded exactly as they were when the 2026-08-12
+    Gemini 3.6 Flash rungs were recorded; a second candidate names its model
+    outright, because "the current-generation model" stops identifying anything
+    once there are two of them.
     """
     shipping = SHIPPING_VARIANT[subagent]
+    on_model = (
+        "the current-generation model"
+        if suffix == "current"
+        else f"{model_key} (second deployment candidate)"
+    )
     return (
         RungSpec(
-            rung="A0-current",
-            label=(
-                "Generation only: A0's prompt bytes, unchanged, on the "
-                "current-generation model"
-            ),
+            rung=f"A0-{suffix}",
+            label=f"Generation only: A0's prompt bytes, unchanged, on {on_model}",
             variant="gemini_naive",
             branches_from="A0",
-            model=CURRENT_GEN_MODEL,
+            model=model_key,
         ),
         RungSpec(
-            rung="ship-current",
+            rung=f"ship-{suffix}",
             label=(
-                "Generation only: the shipping arm's prompt bytes, unchanged, "
-                "on the current-generation model"
+                f"Generation only: the shipping arm's prompt bytes, unchanged, "
+                f"on {on_model}"
             ),
             variant=shipping,
             branches_from=None,
             few_shot_item_ids=FEW_SHOT_ITEM_IDS.get(shipping, ()),
-            model=CURRENT_GEN_MODEL,
+            model=model_key,
         ),
+    )
+
+
+def _current_gen_rungs(subagent: str) -> tuple[RungSpec, ...]:
+    """Every deployment candidate's rungs for ``subagent``, in registry order."""
+    return tuple(
+        rung
+        for model_key, suffix in DEPLOYMENT_CANDIDATES.items()
+        for rung in _candidate_rungs(subagent, model_key, suffix)
+    )
+
+
+#: The headline candidate with its reasoning budget minimised — the
+#: configuration the scorecard recommends deploying, registered 2026-08-12.
+CAPPED_GEN_MODEL = "gemini-flash-current-capped"
+
+
+def _capped_rung(subagent: str) -> RungSpec:
+    """The shipping arm on the capped deployment configuration.
+
+    Only the shipping arm, and deliberately no ``A0`` counterpart. The
+    candidate rungs come in pairs because their question is "what does the
+    generation change do", which needs a naive arm to separate the model from
+    the prompt. This rung's question is narrower — "what does the reasoning
+    budget do to the arm we are recommending" — and its control is the
+    ``ship-current`` rung directly above it, same prompt bytes, same provider
+    model ID, one setting apart.
+    """
+    shipping = SHIPPING_VARIANT[subagent]
+    return RungSpec(
+        rung="ship-current-capped",
+        label=(
+            "Recommended deployment configuration: the shipping arm on the "
+            "headline candidate with the reasoning budget minimised"
+        ),
+        variant=shipping,
+        branches_from="ship-current",
+        few_shot_item_ids=FEW_SHOT_ITEM_IDS.get(shipping, ()),
+        model=CAPPED_GEN_MODEL,
     )
 
 
@@ -379,6 +442,7 @@ def ladder_for(subagent: str) -> tuple[RungSpec, ...]:
         COMMON_RUNGS
         + SUBAGENT_RUNGS.get(subagent, ())
         + _current_gen_rungs(subagent)
+        + (_capped_rung(subagent),)
         + P1_RUNGS.get(subagent, ())
     )
     available = set(variants_for(subagent))

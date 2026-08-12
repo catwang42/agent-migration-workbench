@@ -25,11 +25,15 @@ itself would be an invented adjudication wearing the judge's clothes.
 The coverage hole, stated rather than hidden
 --------------------------------------------
 
-Phase 2 judged Query Rewriter and Chunk Summarizer on the **28-item core
-split** and Feature Extractor on the **full 70** (a registered deviation; see
-``notes/phase2_n70_validation.md``). A disagreement on an item outside its
-subagent's judged split therefore has *no recorded verdict to read*, and there
-is no honest way to produce one without issuing live judge calls.
+Phase 2 originally judged Query Rewriter and Chunk Summarizer on the **28-item
+core split** and Feature Extractor on the **full 70** (a registered deviation;
+see ``notes/phase2_n70_validation.md``). The 2026-08-11 widening re-judged all
+three on the full 70, so with ``phase2_n70_widened.json`` on disk the hole is
+closed. It is described rather than deleted because the split is read off
+whichever artifact the run points at, and a narrower one still labels
+correctly: a disagreement on an item outside its subagent's judged split has
+*no recorded verdict to read*, and there is no honest way to produce one
+without issuing live judge calls.
 
 Those items are labelled :data:`NOT_ADJUDICATED` with the reason, and counted
 separately in :class:`TriageSummary`. They must never fold into "tie": a tie is

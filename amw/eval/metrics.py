@@ -12,6 +12,11 @@ cheapest-first"). Four families live here:
   point cite at least one chunk, and only chunks that were actually supplied?
 * :func:`extraction_field_verdicts` / :func:`extraction_metrics` — Feature
   Extractor, scored three ways (right / wrong / abstained) rather than two.
+  Its ``supported_claim_rate`` is the groundedness instrument for a subagent
+  that emits no citations: the source-supported analogue of
+  :func:`citation_coverage`, measured over the fields the model chose to
+  assert. It is a *different instrument* from citation coverage, not a
+  substitute for it, and every report cell that shows it says so.
 
 Two rules shape every signature in this module.
 
@@ -862,6 +867,25 @@ def extraction_metrics(
         ``omission / (fields the gold does state)``. Undefined if the gold
         states nothing.
 
+    ``supported_claim_rate``
+        ``(correct + wrong) / answered`` — of the fields the model chose to
+        assert, the share the source actually states something about. This is
+        Feature Extractor's **groundedness** instrument, and it is deliberately
+        the attribution question rather than the accuracy one: a ``wrong``
+        value is a misread of a line that exists, a ``hallucination`` is a
+        value for a line that does not. Chunk Summarizer's ``citation_coverage``
+        draws the same line — a key point citing a supplied chunk counts as
+        grounded even if it summarises that chunk badly, while a point citing a
+        chunk that was never supplied does not. Reading ``correct / answered``
+        here instead (that is ``answered_precision``) would fold extraction
+        accuracy into the groundedness gate and double-count it against
+        ``quality_delta_pp``.
+
+        Undefined — not zero — when the model asserted nothing, including on a
+        failed call: silence makes no unsupported claim. The failure itself is
+        already measured by ``json_schema_validity`` and by
+        ``extraction_accuracy``, which does score a dead call.
+
     One number cannot separate an abstainer from a fabricator: both can land at
     the same accuracy. ``answered_precision`` and ``hallucination_rate`` split
     them — a fabricator answers everything with low precision and a high
@@ -910,12 +934,26 @@ def extraction_metrics(
             counts=counts_out,
             item_id=item_id,
         )
+        out["supported_claim_rate"] = _ok(
+            "supported_claim_rate",
+            (counts["correct"] + counts["wrong"]) / answered,
+            counts=counts_out,
+            item_id=item_id,
+        )
     else:
         out["answered_precision"] = _na(
             "answered_precision",
             "the response asserted no field values, so answered precision is "
             "undefined (0/0) — abstaining everywhere is measured by "
             "omission_rate, not by a precision of zero",
+            counts=counts_out,
+            item_id=item_id,
+        )
+        out["supported_claim_rate"] = _na(
+            "supported_claim_rate",
+            "the response asserted no field values, so it made no claim that "
+            "could be unsupported; a rate of zero here would score silence as "
+            "fabrication",
             counts=counts_out,
             item_id=item_id,
         )

@@ -138,7 +138,18 @@ LIVE_SLICE_MAX = 10
 #: Where the split each subagent was judged on is read from, in order. The
 #: split is a property of the *recorded run*, not a policy this module gets to
 #: assert, so it is read off the artifact rather than hardcoded here.
-PHASE2_ARTIFACTS: tuple[str, ...] = ("phase2_n70.json", "phase2.json")
+#:
+#: Widest first. ``phase2_n70_widened.json`` (2026-08-11) re-judged Query
+#: Rewriter and Chunk Summarizer on the full 70, closing the core-split
+#: coverage hole; ``phase2_n70.json`` still records those two at ``core``.
+#: Preferring the narrower file left real recorded verdicts unread and
+#: reported the items as ``not_adjudicated`` — a coverage gap this repo had
+#: already measured its way out of.
+PHASE2_ARTIFACTS: tuple[str, ...] = (
+    "phase2_n70_widened.json",
+    "phase2_n70.json",
+    "phase2.json",
+)
 
 
 def default_results_path() -> Path:
@@ -437,11 +448,12 @@ def load_items(
 def judged_splits(path: Path | None) -> dict[str, str]:
     """``subagent -> "core" | "all"`` as recorded in a phase-2 artifact.
 
-    Phase 2 judged QR and CS on the core split and FE on the full corpus, and
-    wrote that per arm into ``JudgeReport.split``. Triage has to know it to
-    label the items it cannot adjudicate, and reading it from the artifact
-    means the label follows the run rather than a constant in this file that
-    could quietly go stale.
+    Phase 2 first judged QR and CS on the core split and FE on the full
+    corpus; the 2026-08-11 widening re-judged all three on the full 70. Each
+    run wrote its own split per arm into ``JudgeReport.split``. Triage has to
+    know it to label the items it cannot adjudicate, and reading it from the
+    artifact means the label follows the run rather than a constant in this
+    file that could quietly go stale.
     """
     if path is None or not Path(path).is_file():
         return {}

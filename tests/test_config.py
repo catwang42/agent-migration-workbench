@@ -7,6 +7,7 @@ front of a customer.
 
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -123,28 +124,61 @@ def test_unknown_key_is_rejected() -> None:
 # --------------------------------------------------------------------------
 
 
-def test_shipped_prices_are_all_unverified(cfg: AppConfig) -> None:
-    assert cfg.pricing.verified_on is None
-    assert not cfg.pricing.is_verified
-    # 6 models x 3 fields + cache storage. Two generations are priced: the
-    # 2.5-class models the campaign was measured on, and the `-current` models
-    # the workshop recommends migrating to. The literal is deliberate — a human
-    # walks refresh_pricing.py rate by rate, so adding a model has to force a
-    # re-count here rather than silently lengthening that walkthrough.
-    assert len(cfg.pricing.unverified_keys()) == 19
-    # Nothing partially priced: every slot in the file is still VERIFY.
-    assert len(cfg.pricing.unverified_keys()) == 3 * len(cfg.pricing.models) + 1
+def unverified_pricing() -> PricingConfig:
+    """The shipped pricing file with every rate wound back to ``VERIFY``.
 
-
-def test_reading_an_unverified_price_raises(cfg: AppConfig) -> None:
-    with pytest.raises(UnverifiedPriceError, match="refresh_pricing"):
-        cfg.pricing.rate("gemini-flash", "input")
-    with pytest.raises(UnverifiedPriceError, match="refresh_pricing"):
-        cfg.pricing.cache_storage_rate()
-
-
-def test_verified_price_is_returned(cfg: AppConfig) -> None:
+    The shipped file was stamped by a human on 2026-08-12, so it can no longer
+    stand in for the unverified case. The refusal behaviour it used to exercise
+    is ground rule 3 and does not stop mattering once prices land — it is what
+    protects the *next* customer profile, whose rates start at VERIFY again —
+    so the state is reconstructed here rather than the tests being deleted.
+    """
     data = yaml.safe_load((default_config_dir() / "pricing.yaml").read_text())
+    for slot in data["models"].values():
+        for field in slot:
+            slot[field] = VERIFY
+    data["cache_storage"]["per_1m_token_hour"] = VERIFY
+    data["verified_on"] = None
+    data["verified_by"] = None
+    return PricingConfig.model_validate(data)
+
+
+def test_the_shipped_prices_are_verified_and_complete(cfg: AppConfig) -> None:
+    """Freeze-day state: the walkthrough was run and nothing was left behind.
+
+    Before 2026-08-12 this asserted the opposite — every slot still VERIFY.
+    A half-walked file is the dangerous state, because `is_verified` would be
+    False while some cells already carried real digits, so the count check
+    stays: verified *and* zero unverified slots, not just the stamp.
+    """
+    assert cfg.pricing.verified_on == date(2026, 8, 12)
+    assert cfg.pricing.verified_by
+    assert cfg.pricing.is_verified
+    assert cfg.pricing.unverified_keys() == []
+    # 8 models x 3 fields + cache storage. Two generations are priced: the
+    # 2.5-class development generation the tuning ladder was built on, and the
+    # deployment candidates the workshop recommends migrating to (Gemini 3.6
+    # Flash and Gemini 3.5 Flash), plus the preview Pro rung that is priced but
+    # never measured. The eighth slot is the capped deployment configuration,
+    # which is the SAME SKU as gemini-flash-current at the same rates — it has
+    # its own row only because it has its own model key. The literal is
+    # deliberate — a human walks refresh_pricing.py rate by rate, so adding a
+    # model has to force a re-count here rather than silently lengthening that
+    # walkthrough.
+    assert len(unverified_pricing().unverified_keys()) == 25
+    assert 25 == 3 * len(cfg.pricing.models) + 1
+
+
+def test_reading_an_unverified_price_raises() -> None:
+    pricing = unverified_pricing()
+    with pytest.raises(UnverifiedPriceError, match="refresh_pricing"):
+        pricing.rate("gemini-flash", "input")
+    with pytest.raises(UnverifiedPriceError, match="refresh_pricing"):
+        pricing.cache_storage_rate()
+
+
+def test_verified_price_is_returned() -> None:
+    data = unverified_pricing().model_dump()
     data["models"]["gemini-flash"]["input_per_1m"] = 0.3
     pricing = PricingConfig.model_validate(data)
     assert pricing.rate("gemini-flash", "input") == pytest.approx(0.3)
@@ -163,6 +197,26 @@ def test_price_lookup_errors_are_specific(cfg: AppConfig) -> None:
 
 def test_every_model_is_priceable(cfg: AppConfig) -> None:
     assert set(cfg.models.models) <= set(cfg.pricing.models)
+
+
+def test_every_shipped_rate_says_where_it_is_read_from(cfg: AppConfig) -> None:
+    """A price nobody can re-check is a price nobody should quote.
+
+    ``page_sections`` is optional in the schema so a two-model test fixture
+    stays writable, but the shipped file has to cite every slot: those are the
+    citations refresh_pricing.py reads aloud, once, on freeze morning.
+    """
+    assert cfg.pricing.uncited_keys() == []
+
+
+def test_no_shipped_citation_points_at_a_slot_that_does_not_exist(
+    cfg: AppConfig,
+) -> None:
+    """A misspelled key would silently leave the real slot uncited."""
+    assert cfg.pricing.stale_sections() == []
+    data = yaml.safe_load((default_config_dir() / "pricing.yaml").read_text())
+    data["page_sections"]["gemini-flsah"] = "typo"
+    assert PricingConfig.model_validate(data).stale_sections() == ["gemini-flsah"]
 
 
 def test_missing_price_entry_fails_cross_validation(tmp_path: Path) -> None:
@@ -285,7 +339,7 @@ def test_provenance_footer_carries_everything_a_report_must_print(
     assert footer["provenance"] == "synthetic"
     assert footer["region"] == cfg.customer.region
     assert footer["gates_version_hash"] == cfg.gates_version_hash
-    assert footer["prices_verified_on"] == "UNVERIFIED"
+    assert footer["prices_verified_on"] == "2026-08-12"
     assert footer["volumes_confirmed"] is False
 
 

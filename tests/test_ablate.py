@@ -38,6 +38,7 @@ from amw.tuning.ablate import (
     ABLATION_VERSION,
     COMMON_RUNGS,
     CURRENT_GEN_MODEL,
+    DEPLOYMENT_CANDIDATES,
     FEW_SHOT_ITEM_IDS,
     P1_RUNGS,
     SHIPPING_VARIANT,
@@ -45,6 +46,8 @@ from amw.tuning.ablate import (
     VAIPO_RUNG_ID,
     AblationResult,
     RungSpec,
+    CAPPED_GEN_MODEL,
+    _capped_rung,
     _current_gen_rungs,
     default_results_path,
     error_kinds,
@@ -113,10 +116,13 @@ def test_extra_rungs_exist_only_where_a_measurement_asked_for_them():
     """Two subagents carry *hand-written* extra rungs, for two different
     reasons, and the third carries none. Chunk Summarizer is the control: no
     prompt work was added to it, so its ladder must be exactly the common three
-    plus the current-generation pair every subagent gets."""
+    plus the rungs every subagent gets unconditionally — the current-generation
+    pair per deployment candidate, and the capped deployment configuration."""
     assert set(SUBAGENT_RUNGS) == {"feature_extractor", "query_rewriter"}
-    assert ladder_for("chunk_summarizer") == COMMON_RUNGS + _current_gen_rungs(
-        "chunk_summarizer"
+    assert ladder_for("chunk_summarizer") == (
+        COMMON_RUNGS
+        + _current_gen_rungs("chunk_summarizer")
+        + (_capped_rung("chunk_summarizer"),)
     )
     # Every extra rung is an extension of the common three, never a
     # replacement: a subagent-specific ladder still has to start with the
@@ -125,24 +131,39 @@ def test_extra_rungs_exist_only_where_a_measurement_asked_for_them():
         assert ladder_for(subagent)[: len(COMMON_RUNGS)] == COMMON_RUNGS
 
 
-def test_every_subagent_gets_the_same_two_current_generation_rungs():
-    """The current-generation pair is not subagent-specific work — it is the
+def test_every_subagent_gets_the_same_pair_per_deployment_candidate():
+    """A deployment candidate's pair is not subagent-specific work — it is the
     same question asked of all three (does the same prompt, unchanged, hold up
-    on the model the workshop actually recommends?). So unlike SUBAGENT_RUNGS
-    it is unconditional, it changes only the model, and it always sits at the
-    end of the hand-tuned rungs so the prompt-work story reads in order."""
+    on a model the workshop actually recommends?). So unlike SUBAGENT_RUNGS it
+    is unconditional, it changes only the model, and it always sits at the end
+    of the hand-tuned rungs so the prompt-work story reads in order.
+
+    Two candidates are registered as of 2026-08-12 — Gemini 3.6 Flash (the
+    headline) and Gemini 3.5 Flash (the second column) — and adding a third
+    must not need an edit here: the expectation is derived from the registry,
+    so a candidate cannot enter it without getting the identical pair.
+    """
+    assert CURRENT_GEN_MODEL in DEPLOYMENT_CANDIDATES
     for subagent in SUBAGENTS:
         rungs = ladder_for(subagent)
-        current = [spec for spec in rungs if spec.model == CURRENT_GEN_MODEL]
-        assert [spec.rung for spec in current] == ["A0-current", "ship-current"]
-        # Same prompt bytes as rungs already measured on the old generation:
-        # A0's variant, and the arm this subagent actually ships.
-        assert current[0].variant == "gemini_naive"
-        assert current[1].variant == SHIPPING_VARIANT[subagent]
-        # Nothing else on the ladder names a model — every other rung takes the
-        # model its variant's role resolves to.
-        assert [spec for spec in rungs if spec.model is not None] == current
-        assert rungs[-len(current) :] == tuple(current)
+        named = [spec for spec in rungs if spec.model is not None]
+        for model_key, suffix in DEPLOYMENT_CANDIDATES.items():
+            pair = [spec for spec in named if spec.model == model_key]
+            assert [spec.rung for spec in pair] == [f"A0-{suffix}", f"ship-{suffix}"]
+            # Same prompt bytes as rungs already measured on the development
+            # generation: A0's variant, and the arm this subagent ships.
+            assert pair[0].variant == "gemini_naive"
+            assert pair[1].variant == SHIPPING_VARIANT[subagent]
+        # The only other rung naming a model is the capped deployment
+        # configuration, which is a configuration of the headline candidate
+        # rather than a candidate of its own — hence one rung, not a pair.
+        # Every rung besides these takes the model its variant's role resolves
+        # to.
+        assert [spec.rung for spec in named if spec.model == CAPPED_GEN_MODEL] == [
+            "ship-current-capped"
+        ]
+        assert len(named) == 2 * len(DEPLOYMENT_CANDIDATES) + 1
+        assert rungs[-len(named) :] == tuple(named)
 
 
 def test_the_novelty_rungs_branch_from_naive_not_from_the_tuned_bundle():
@@ -486,10 +507,14 @@ def test_an_unmeasured_rung_carries_no_numbers_at_all(cfg):
         "A0-schema",
         "A4-novelty-tool",
         "A4-novelty-schema",
-        # The current-generation pair: the e2e fixture corpus was recorded on
-        # the 2.5-class models, so these two miss the replay store by design.
-        "A0-current",
-        "ship-current",
+        # Every deployment candidate's pair: the e2e fixture corpus was
+        # recorded on the development generation, so these miss the replay
+        # store by design.
+        *(f"A0-{s}" for s in DEPLOYMENT_CANDIDATES.values()),
+        *(f"ship-{s}" for s in DEPLOYMENT_CANDIDATES.values()),
+        # Same reason: the capped deployment configuration is its own model
+        # key, so the fixture corpus has nothing recorded under it.
+        "ship-current-capped",
     }
     for record in unmeasured:
         assert record.arm is None

@@ -4,6 +4,8 @@
 
 ---
 
+--8<-- "_includes/development-generation.md"
+
 The naive swap is the migration everybody actually tries first: point the same
 prompt bytes at a different endpoint and see what happens. In the ablation ladder
 it is rung **A0** — the customer's production prompt, unmodified, on Gemini,
@@ -15,7 +17,7 @@ plumbing.
 
 All figures below are n=70 on the full corpus, seed `20260812`, from
 `artifacts/results/phase2_n70_widened.json`. Bracketed pairs are the **95%
-confidence range** (CI) — the span the true value is likely to sit in at this
+confidence range** — the span the true value is likely to sit in at this
 sample size. Every call was executed live and recorded.
 
 Recorded 10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM (SGT) · UTC: `2026-08-09T16:07:15+00:00` → `2026-08-11T06:20:37+00:00`

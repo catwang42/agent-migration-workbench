@@ -42,6 +42,12 @@ CLAUDE_ENV_VARS = (
     "PROJECT_ID",
     "GOOGLE_CLOUD_PROJECT",
     "REGION",
+    # ClaudeVertexAdapter reads this one *first* (Claude runs in `global` while
+    # Gemini runs in us-central1). Leaving it out meant these tests only saw a
+    # missing region because nothing in the process happened to set it — an
+    # ambient CLAUDE_REGION, exported or loaded from .env, silently turned the
+    # "reports both missing" assertions into "reports one missing".
+    "CLAUDE_REGION",
     "CLOUD_ML_REGION",
 )
 

@@ -22,7 +22,7 @@ you check that it does?"
 | Provenance | `synthetic` on 210 of 210 items | per-item field |
 | Dataset seed | `20260812` | profile |
 | Generator version | `t06.1` | per-item field |
-| Distinct templates | 12 (QR) / 8 (CS) / 9 (FE) | `datasets/*.jsonl` |
+| Distinct templates | 12 Query Rewriter / 8 Chunk Summarizer / 9 Feature Extractor | `datasets/*.jsonl` |
 
 Every item carries `provenance`, `seed` and `generator_version` as fields, not as
 a note in a README. A provenance label that is not machine-readable is a label

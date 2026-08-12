@@ -1,0 +1,275 @@
+{
+  "computed_on": "2026-08-12T12:01:41+00:00",
+  "mode": "replay (zero live calls)",
+  "candidate": "gemini-flash-current",
+  "prices_verified_on": "2026-08-12",
+  "prices_verified_by": "Catherine Wang",
+  "gate_target_pct": 30.0,
+  "arms": [
+    {
+      "subagent": "query_rewriter",
+      "variant": "claude_baseline",
+      "model": "claude-sonnet",
+      "calls_ok": 70,
+      "input_rate_per_1m": 2.0,
+      "output_rate_per_1m": 10.0,
+      "input_tokens": 154557,
+      "output_tokens": 16318,
+      "cached_tokens": 0,
+      "emitted_chars": 17531,
+      "chars_per_output_token": 1.0743350900845692,
+      "calls_billed_over_emitted": 15,
+      "unreturned_output_tokens_floor": 2507,
+      "unreturned_share_floor": 0.15363402377742372,
+      "input_usd": 0.309114,
+      "output_usd": 0.16318,
+      "usd": 0.472294,
+      "median_output_tokens": 188.0
+    },
+    {
+      "subagent": "query_rewriter",
+      "variant": "gemini_targeted_v1",
+      "model": "gemini-flash-current",
+      "calls_ok": 70,
+      "input_rate_per_1m": 1.5,
+      "output_rate_per_1m": 7.5,
+      "input_tokens": 152356,
+      "output_tokens": 42891,
+      "cached_tokens": 0,
+      "emitted_chars": 18764,
+      "chars_per_output_token": 0.43748105663192743,
+      "calls_billed_over_emitted": 70,
+      "unreturned_output_tokens_floor": 24127,
+      "unreturned_share_floor": 0.5625189433680725,
+      "input_usd": 0.228534,
+      "output_usd": 0.3216825,
+      "usd": 0.5502165000000002,
+      "median_output_tokens": 531.0
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "variant": "claude_baseline",
+      "model": "claude-sonnet",
+      "calls_ok": 70,
+      "input_rate_per_1m": 2.0,
+      "output_rate_per_1m": 10.0,
+      "input_tokens": 162164,
+      "output_tokens": 39245,
+      "cached_tokens": 0,
+      "emitted_chars": 80484,
+      "chars_per_output_token": 2.0508090202573577,
+      "calls_billed_over_emitted": 0,
+      "unreturned_output_tokens_floor": 0,
+      "unreturned_share_floor": 0.0,
+      "input_usd": 0.324328,
+      "output_usd": 0.39245,
+      "usd": 0.7167780000000001,
+      "median_output_tokens": 535.0
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "variant": "gemini_tuned_v1",
+      "model": "gemini-flash-current",
+      "calls_ok": 70,
+      "input_rate_per_1m": 1.5,
+      "output_rate_per_1m": 7.5,
+      "input_tokens": 101593,
+      "output_tokens": 81549,
+      "cached_tokens": 0,
+      "emitted_chars": 73963,
+      "chars_per_output_token": 0.9069761738341365,
+      "calls_billed_over_emitted": 43,
+      "unreturned_output_tokens_floor": 11553,
+      "unreturned_share_floor": 0.14166942574403119,
+      "input_usd": 0.1523895,
+      "output_usd": 0.6116174999999999,
+      "usd": 0.7640070000000003,
+      "median_output_tokens": 1140.0
+    },
+    {
+      "subagent": "feature_extractor",
+      "variant": "claude_baseline",
+      "model": "claude-sonnet",
+      "calls_ok": 70,
+      "input_rate_per_1m": 2.0,
+      "output_rate_per_1m": 10.0,
+      "input_tokens": 160609,
+      "output_tokens": 35645,
+      "cached_tokens": 0,
+      "emitted_chars": 33735,
+      "chars_per_output_token": 0.946416047131435,
+      "calls_billed_over_emitted": 37,
+      "unreturned_output_tokens_floor": 5755,
+      "unreturned_share_floor": 0.16145321924533595,
+      "input_usd": 0.321218,
+      "output_usd": 0.35645000000000004,
+      "usd": 0.6776679999999998,
+      "median_output_tokens": 476.0
+    },
+    {
+      "subagent": "feature_extractor",
+      "variant": "gemini_optimizer_v1",
+      "model": "gemini-flash-current",
+      "calls_ok": 70,
+      "input_rate_per_1m": 1.5,
+      "output_rate_per_1m": 7.5,
+      "input_tokens": 103810,
+      "output_tokens": 90441,
+      "cached_tokens": 0,
+      "emitted_chars": 35079,
+      "chars_per_output_token": 0.3878661226656052,
+      "calls_billed_over_emitted": 70,
+      "unreturned_output_tokens_floor": 55362,
+      "unreturned_share_floor": 0.6121338773343948,
+      "input_usd": 0.155715,
+      "output_usd": 0.6783075,
+      "usd": 0.8340224999999996,
+      "median_output_tokens": 1215.5
+    }
+  ],
+  "rates": [
+    {
+      "model": "gemini-flash",
+      "input_per_1m": 0.3,
+      "output_per_1m": 2.5,
+      "cached_input_per_1m": 0.03,
+      "vs_sonnet_input": 0.15,
+      "vs_sonnet_output": 0.25,
+      "vs_pro_input": 0.24,
+      "vs_pro_output": 0.25,
+      "pro_tier": "gemini-pro"
+    },
+    {
+      "model": "gemini-pro",
+      "input_per_1m": 1.25,
+      "output_per_1m": 10.0,
+      "cached_input_per_1m": 0.125,
+      "vs_sonnet_input": 0.625,
+      "vs_sonnet_output": 1.0
+    },
+    {
+      "model": "gemini-flash-current",
+      "input_per_1m": 1.5,
+      "output_per_1m": 7.5,
+      "cached_input_per_1m": 0.15,
+      "vs_sonnet_input": 0.75,
+      "vs_sonnet_output": 0.75,
+      "vs_pro_input": 0.75,
+      "vs_pro_output": 0.625,
+      "pro_tier": "gemini-pro-current"
+    },
+    {
+      "model": "gemini-flash-35",
+      "input_per_1m": 1.5,
+      "output_per_1m": 9.0,
+      "cached_input_per_1m": 0.15,
+      "vs_sonnet_input": 0.75,
+      "vs_sonnet_output": 0.9,
+      "vs_pro_input": 0.75,
+      "vs_pro_output": 0.75,
+      "pro_tier": "gemini-pro-current"
+    },
+    {
+      "model": "gemini-pro-current",
+      "input_per_1m": 2.0,
+      "output_per_1m": 12.0,
+      "cached_input_per_1m": 0.2,
+      "vs_sonnet_input": 1.0,
+      "vs_sonnet_output": 1.2
+    },
+    {
+      "model": "claude-sonnet",
+      "input_per_1m": 2.0,
+      "output_per_1m": 10.0,
+      "cached_input_per_1m": 0.2,
+      "vs_sonnet_input": 1.0,
+      "vs_sonnet_output": 1.0
+    },
+    {
+      "model": "claude-opus",
+      "input_per_1m": 5.0,
+      "output_per_1m": 25.0,
+      "cached_input_per_1m": 0.5,
+      "vs_sonnet_input": 2.5,
+      "vs_sonnet_output": 2.5
+    }
+  ],
+  "comparison": [
+    {
+      "subagent": "query_rewriter",
+      "baseline_output_tokens": 16318,
+      "candidate_output_tokens": 42891,
+      "output_token_ratio": 2.628447113616865,
+      "input_token_ratio": 0.9857592991582393,
+      "baseline_chars_per_output_token": 1.0743350900845692,
+      "candidate_chars_per_output_token": 0.43748105663192743
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "baseline_output_tokens": 39245,
+      "candidate_output_tokens": 81549,
+      "output_token_ratio": 2.077946235189196,
+      "input_token_ratio": 0.6264830665252461,
+      "baseline_chars_per_output_token": 2.0508090202573577,
+      "candidate_chars_per_output_token": 0.9069761738341365
+    },
+    {
+      "subagent": "feature_extractor",
+      "baseline_output_tokens": 35645,
+      "candidate_output_tokens": 90441,
+      "output_token_ratio": 2.5372703043905176,
+      "input_token_ratio": 0.6463523214763806,
+      "baseline_chars_per_output_token": 0.946416047131435,
+      "candidate_chars_per_output_token": 0.3878661226656052
+    }
+  ],
+  "breakeven": [
+    {
+      "subagent": "query_rewriter",
+      "baseline_usd": 0.472294,
+      "candidate_usd": 0.5502165000000002,
+      "output_rate_stamped": 7.5,
+      "output_rate_needed": 2.3797952950502426,
+      "scale_needed": 0.6008649322584834
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "baseline_usd": 0.7167780000000001,
+      "candidate_usd": 0.7640070000000003,
+      "output_rate_stamped": 7.5,
+      "output_rate_needed": 4.283989993746093,
+      "scale_needed": 0.6567277524944142
+    },
+    {
+      "subagent": "feature_extractor",
+      "baseline_usd": 0.6776679999999998,
+      "candidate_usd": 0.8340224999999996,
+      "output_rate_stamped": 7.5,
+      "output_rate_needed": 3.5233201755840806,
+      "scale_needed": 0.5687707465925681
+    }
+  ],
+  "counterfactual": [
+    {
+      "subagent": "query_rewriter",
+      "baseline_usd": 0.472294,
+      "candidate_usd": 0.5502165000000002,
+      "counterfactual_usd": 0.350919,
+      "counterfactual_savings_pct": 25.699034923162273
+    },
+    {
+      "subagent": "chunk_summarizer",
+      "baseline_usd": 0.7167780000000001,
+      "candidate_usd": 0.7640070000000003,
+      "counterfactual_usd": 0.44672700000000004,
+      "counterfactual_savings_pct": 37.67568201032957
+    },
+    {
+      "subagent": "feature_extractor",
+      "baseline_usd": 0.6776679999999998,
+      "candidate_usd": 0.8340224999999996,
+      "counterfactual_usd": 0.4230525,
+      "counterfactual_savings_pct": 37.572306793296995
+    }
+  ]
+}

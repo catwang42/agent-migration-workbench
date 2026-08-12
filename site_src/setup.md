@@ -46,8 +46,8 @@ Leave them as they are for now.
 python cli.py e2e --mode replay
 ```
 
-This is the continuous-integration gate for the whole repository (a different CI
-from the confidence ranges the modules quote). It regenerates the dataset from its
+This is the continuous-integration gate for the whole repository (a different sense of the
+word from the confidence ranges the modules quote). It regenerates the dataset from its
 seed, replays the recorded baseline, ablation, shadow and judge calls, evaluates
 the gates in `config/gates.yaml`, and renders the Migration Readiness Scorecard.
 A green exit means the evidence on this site reproduces on your machine.
@@ -81,9 +81,15 @@ python cli.py smoke --mode live -n 2     # two calls, both backends
 Set `PROJECT_ID` and `REGION` in `.env` first. Two regional facts to know before
 you read any latency number:
 
-- Claude runs in region `global`; Gemini and the judge run in `us-central1`.
-- That makes `latency_p95` a cross-region comparison, and it renders throughout
-  as *"not comparable — region split disclosed"* rather than as a measurement.
+- The development-generation arms were recorded with Claude in region `global`
+  and Gemini and the judge in `us-central1`, because the `us-central1` partner
+  quota for Claude was exhausted. Every latency figure from those runs is a
+  cross-region comparison, and renders as *"not comparable — region split
+  disclosed"* rather than as a measurement.
+- The deployment candidates were probed separately with **both arms pinned to
+  `global`**. Those probes are the only input that opens the `latency_p95` gate,
+  and the probe script refuses to record a result if the two arms did not in
+  fact land in the same region.
 
 Record-on-live is always on and has no off switch: every live call appends a
 canonical trace to `artifacts/replay/`, which is how the replay corpus grew in
@@ -95,7 +101,7 @@ the first place.
 |---|---|
 | `config/gates.yaml` | The six thresholds. The only place a threshold exists. |
 | `config/models.yaml` | Every model ID, keyed by access path. No raw IDs in code. |
-| `config/pricing.yaml` | Prices. Currently `VERIFY` placeholders — see the note below. |
+| `config/pricing.yaml` | Prices. The only place a price exists — see the note below. |
 | `config/customers/` | Customer profiles: domain, seed, volume assumptions. |
 | `amw/` | All the logic — adapters, datasets, traces, eval, tuning, shadow, economics, reporting. |
 | `amw/eval/judge_prompts/` | The judge prompts, as versioned text files. Read them. |
@@ -105,11 +111,33 @@ the first place.
 
 !!! warning "No dollar figure exists yet"
 
-    `config/pricing.yaml` still holds `VERIFY` placeholders and the demo customer
-    profile's volumes are illustrative (`volumes_confirmed: false`). Both gates
-    have to be cleared by a human before any cost cell renders. Until then every
-    cost and savings cell on this site is an em dash — not a zero, not an
-    estimate, not a range.
+    Cost is behind two independent gates. **Prices** cleared on 2026-08-12, when a
+    human walked `scripts/refresh_pricing.py` rate by rate against the Vertex AI
+    pricing page and stamped `verified_on` + `verified_by`. **Volumes** are still
+    open: the demo customer profile's call rates are illustrative
+    (`volumes_confirmed: false`), and a real call rate multiplied by anything is
+    the most dangerous number this repo could print. Until a customer confirms
+    their volumes, every cost and savings cell on this site says *not measured* —
+    not a zero, not an estimate, not a range.
+
+## Models used in this workshop
+
+| Part it plays | Model |
+|---|---|
+| Incumbent — what the migration is measured against | **Claude Sonnet 5** (`claude-sonnet-5`, Vertex AI partner models) |
+| Development generation — where the tuning ladder and the prompt-optimizer work were done | **Gemini 2.5 Flash** (`gemini-2.5-flash`) |
+| Deployment candidate, headline — what the scorecard recommends | **Gemini 3.6 Flash** (`gemini-3.6-flash`) |
+| Deployment candidate, second column | **Gemini 3.5 Flash** (`gemini-3.5-flash`) |
+| Gated judge — registered before any result was seen, never changed | **Gemini 2.5 Pro** (`gemini-2.5-pro`) |
+| Cross-check judge — re-scores a sample of the gated judge's verdicts | **Claude Sonnet 5** (`claude-sonnet-5`) |
+| Follow-on candidate — priced, documented, never run | **Gemini 3.1 Pro (preview)** (`gemini-3.1-pro-preview`) |
+
+Prompts were tuned on the development generation and then validated, unchanged,
+on the deployment generations. That portability is itself a finding, and it is
+why both generations appear throughout this site.
+
+Full detail — access path, region, and the window each model's calls were
+recorded in — is on [Models in this study](models-in-this-study.md).
 
 ## Next
 

@@ -4,6 +4,8 @@
 
 ---
 
+--8<-- "_includes/development-generation.md"
+
 ## The one-sentence version
 
 Migrate the subagents that are cheap to measure and expensive to run, measure them

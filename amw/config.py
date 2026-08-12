@@ -93,7 +93,26 @@ class ModelSpec(_Base):
     #: exactly where it ran when it was registered; an instrument that moves
     #: region on freeze day is not the instrument the comparison was agreed on.
     region: str | None = None
+    #: Cap on the model's internal reasoning tokens. ``None`` means "the
+    #: model's default", which is what every arm recorded before 2026-08-12
+    #: ran on and therefore what must stay the default here.
+    #:
+    #: It lives on the model spec rather than on a rung or a callsite for the
+    #: same reason ``region`` does: the replay store is keyed on
+    #: ``(subagent, model, input_sha)`` and ``input_sha`` folds in the prompt
+    #: and the tools, not the sampling configuration. Two arms with the same
+    #: prompt and different budgets under one model key would collide in the
+    #: corpus and the later recording would silently supersede the earlier.
+    #: A capped configuration is therefore its own model key.
+    thinking_budget: int | None = None
     notes: str | None = None
+    #: What this model *is* in the study, in reader-facing words. Drives the
+    #: published "Models in this study" page, so a model cannot appear in a
+    #: result without the page being able to say what part it played. Free
+    #: text rather than an enum: a model can hold two roles at once (the
+    #: incumbent is also the cross-check judge) and the honest description of
+    #: a role is a phrase, not a token.
+    study_roles: list[str] = []
 
     def id_for(self, path: str) -> str:
         """Provider model ID for an access path (``vertex``/``anthropic``)."""
@@ -155,12 +174,46 @@ class CacheStoragePrice(_Base):
     per_1m_token_hour: PriceValue
 
 
+#: Reserved key in ``page_sections`` for the storage-rent slot, which is not a
+#: model.
+CACHE_STORAGE_SECTION_KEY = "cache_storage"
+
+
 class PricingConfig(_Base):
     verified_on: date | None = None
     verified_by: str | None = None
     sources: list[str]
     models: dict[str, ModelPrices]
     cache_storage: CacheStoragePrice
+    #: Slot key -> where on the source page that rate is printed. Citations,
+    #: not prices: nothing here reaches a calculation. ``refresh_pricing.py``
+    #: reads them aloud so an operator can see they are on the right table
+    #: before typing. Optional in the schema (test fixtures price a model or
+    #: two without a page), required of the shipped file by a test.
+    page_sections: dict[str, str] = {}
+
+    def uncited_keys(self) -> list[str]:
+        """Priced slots with no ``page_sections`` entry."""
+        missing = [key for key in self.models if not self.page_section(key)]
+        if not self.page_section(CACHE_STORAGE_SECTION_KEY):
+            missing.append(CACHE_STORAGE_SECTION_KEY)
+        return missing
+
+    def stale_sections(self) -> list[str]:
+        """Citations for slots this file does not price.
+
+        Not a validation error: a stale citation misleads nobody and cannot
+        reach a number, whereas raising here would mask the *missing price*
+        error that a removed model should actually produce. Caught by a test
+        over the shipped file instead, where a typo is worth failing on.
+        """
+        known = set(self.models) | {CACHE_STORAGE_SECTION_KEY}
+        return sorted(set(self.page_sections) - known)
+
+    def page_section(self, slot_key: str) -> str | None:
+        """Where to read ``slot_key``'s rate, or None if uncited."""
+        section = self.page_sections.get(slot_key)
+        return " ".join(section.split()) if section else None
 
     @property
     def is_verified(self) -> bool:

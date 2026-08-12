@@ -1,0 +1,1979 @@
+{
+  "computed_on": "2026-08-12T13:03:57+00:00",
+  "prices_verified_on": "2026-08-12",
+  "baseline_model": "claude-sonnet",
+  "baseline_variant": "claude_baseline",
+  "mode": "replay (zero live calls)",
+  "candidates": {
+    "gemini-flash-current-capped": {
+      "query_rewriter": {
+        "subagent": "query_rewriter",
+        "baseline_model": "claude-sonnet",
+        "candidate_model": "gemini-flash-current-capped",
+        "baseline_variant": "claude_baseline",
+        "candidate_variant": "gemini_targeted_v1",
+        "basis": "measured per-call tokens over this corpus, uncached list prices from config/pricing.yaml \u2014 NOT the registered profile-volume basis, which stays uncomputed while customer volumes are unconfirmed",
+        "paired": [
+          {
+            "item_id": "qr-0000",
+            "baseline_usd": 0.00802,
+            "candidate_usd": 0.0037725,
+            "baseline_input_tokens": 2190,
+            "baseline_output_tokens": 364,
+            "candidate_input_tokens": 2170,
+            "candidate_output_tokens": 69
+          },
+          {
+            "item_id": "qr-0001",
+            "baseline_usd": 0.00621,
+            "candidate_usd": 0.003756,
+            "baseline_input_tokens": 2185,
+            "baseline_output_tokens": 184,
+            "candidate_input_tokens": 2159,
+            "candidate_output_tokens": 69
+          },
+          {
+            "item_id": "qr-0002",
+            "baseline_usd": 0.007698,
+            "candidate_usd": 0.0037995,
+            "baseline_input_tokens": 2199,
+            "baseline_output_tokens": 330,
+            "candidate_input_tokens": 2163,
+            "candidate_output_tokens": 74
+          },
+          {
+            "item_id": "qr-0003",
+            "baseline_usd": 0.005978,
+            "candidate_usd": 0.0037424999999999997,
+            "baseline_input_tokens": 2179,
+            "baseline_output_tokens": 162,
+            "candidate_input_tokens": 2160,
+            "candidate_output_tokens": 67
+          },
+          {
+            "item_id": "qr-0004",
+            "baseline_usd": 0.010644,
+            "candidate_usd": 0.0036765,
+            "baseline_input_tokens": 2202,
+            "baseline_output_tokens": 624,
+            "candidate_input_tokens": 2166,
+            "candidate_output_tokens": 57
+          },
+          {
+            "item_id": "qr-0005",
+            "baseline_usd": 0.006416000000000001,
+            "candidate_usd": 0.0041400000000000005,
+            "baseline_input_tokens": 2243,
+            "baseline_output_tokens": 193,
+            "candidate_input_tokens": 2210,
+            "candidate_output_tokens": 110
+          },
+          {
+            "item_id": "qr-0006",
+            "baseline_usd": 0.0060680000000000005,
+            "candidate_usd": 0.0037335,
+            "baseline_input_tokens": 2179,
+            "baseline_output_tokens": 171,
+            "candidate_input_tokens": 2159,
+            "candidate_output_tokens": 66
+          },
+          {
+            "item_id": "qr-0007",
+            "baseline_usd": 0.006808,
+            "candidate_usd": 0.0038909999999999995,
+            "baseline_input_tokens": 2269,
+            "baseline_output_tokens": 227,
+            "candidate_input_tokens": 2214,
+            "candidate_output_tokens": 76
+          },
+          {
+            "item_id": "qr-0008",
+            "baseline_usd": 0.006246,
+            "candidate_usd": 0.003753,
+            "baseline_input_tokens": 2198,
+            "baseline_output_tokens": 185,
+            "candidate_input_tokens": 2162,
+            "candidate_output_tokens": 68
+          },
+          {
+            "item_id": "qr-0009",
+            "baseline_usd": 0.006065999999999999,
+            "candidate_usd": 0.0038355000000000004,
+            "baseline_input_tokens": 2188,
+            "baseline_output_tokens": 169,
+            "candidate_input_tokens": 2177,
+            "candidate_output_tokens": 76
+          },
+          {
+            "item_id": "qr-0010",
+            "baseline_usd": 0.0061400000000000005,
+            "candidate_usd": 0.0036225,
+            "baseline_input_tokens": 2170,
+            "baseline_output_tokens": 180,
+            "candidate_input_tokens": 2150,
+            "candidate_output_tokens": 53
+          },
+          {
+            "item_id": "qr-0011",
+            "baseline_usd": 0.006144,
+            "candidate_usd": 0.003714,
+            "baseline_input_tokens": 2172,
+            "baseline_output_tokens": 180,
+            "candidate_input_tokens": 2156,
+            "candidate_output_tokens": 64
+          },
+          {
+            "item_id": "qr-0012",
+            "baseline_usd": 0.006907999999999999,
+            "candidate_usd": 0.004128,
+            "baseline_input_tokens": 2244,
+            "baseline_output_tokens": 242,
+            "candidate_input_tokens": 2212,
+            "candidate_output_tokens": 108
+          },
+          {
+            "item_id": "qr-0013",
+            "baseline_usd": 0.0061459999999999996,
+            "candidate_usd": 0.003963,
+            "baseline_input_tokens": 2178,
+            "baseline_output_tokens": 179,
+            "candidate_input_tokens": 2157,
+            "candidate_output_tokens": 97
+          },
+          {
+            "item_id": "qr-0014",
+            "baseline_usd": 0.006204,
+            "candidate_usd": 0.0038504999999999998,
+            "baseline_input_tokens": 2197,
+            "baseline_output_tokens": 181,
+            "candidate_input_tokens": 2182,
+            "candidate_output_tokens": 77
+          },
+          {
+            "item_id": "qr-0015",
+            "baseline_usd": 0.006432,
+            "candidate_usd": 0.004153500000000001,
+            "baseline_input_tokens": 2236,
+            "baseline_output_tokens": 196,
+            "candidate_input_tokens": 2194,
+            "candidate_output_tokens": 115
+          },
+          {
+            "item_id": "qr-0016",
+            "baseline_usd": 0.0059359999999999994,
+            "candidate_usd": 0.003927,
+            "baseline_input_tokens": 2188,
+            "baseline_output_tokens": 156,
+            "candidate_input_tokens": 2153,
+            "candidate_output_tokens": 93
+          },
+          {
+            "item_id": "qr-0017",
+            "baseline_usd": 0.006662,
+            "candidate_usd": 0.004155,
+            "baseline_input_tokens": 2256,
+            "baseline_output_tokens": 215,
+            "candidate_input_tokens": 2215,
+            "candidate_output_tokens": 111
+          },
+          {
+            "item_id": "qr-0018",
+            "baseline_usd": 0.00885,
+            "candidate_usd": 0.0037755,
+            "baseline_input_tokens": 2235,
+            "baseline_output_tokens": 438,
+            "candidate_input_tokens": 2187,
+            "candidate_output_tokens": 66
+          },
+          {
+            "item_id": "qr-0019",
+            "baseline_usd": 0.00605,
+            "candidate_usd": 0.0037815,
+            "baseline_input_tokens": 2190,
+            "baseline_output_tokens": 167,
+            "candidate_input_tokens": 2176,
+            "candidate_output_tokens": 69
+          },
+          {
+            "item_id": "qr-0020",
+            "baseline_usd": 0.006732,
+            "candidate_usd": 0.0038415,
+            "baseline_input_tokens": 2271,
+            "baseline_output_tokens": 219,
+            "candidate_input_tokens": 2211,
+            "candidate_output_tokens": 70
+          },
+          {
+            "item_id": "qr-0021",
+            "baseline_usd": 0.006255999999999999,
+            "candidate_usd": 0.0040290000000000005,
+            "baseline_input_tokens": 2188,
+            "baseline_output_tokens": 188,
+            "candidate_input_tokens": 2161,
+            "candidate_output_tokens": 105
+          },
+          {
+            "item_id": "qr-0022",
+            "baseline_usd": 0.005806,
+            "candidate_usd": 0.0037229999999999997,
+            "baseline_input_tokens": 2183,
+            "baseline_output_tokens": 144,
+            "candidate_input_tokens": 2167,
+            "candidate_output_tokens": 63
+          },
+          {
+            "item_id": "qr-0023",
+            "baseline_usd": 0.006584,
+            "candidate_usd": 0.0038535000000000006,
+            "baseline_input_tokens": 2247,
+            "baseline_output_tokens": 209,
+            "candidate_input_tokens": 2194,
+            "candidate_output_tokens": 75
+          },
+          {
+            "item_id": "qr-0024",
+            "baseline_usd": 0.008428,
+            "candidate_usd": 0.0037979999999999997,
+            "baseline_input_tokens": 2234,
+            "baseline_output_tokens": 396,
+            "candidate_input_tokens": 2182,
+            "candidate_output_tokens": 70
+          },
+          {
+            "item_id": "qr-0025",
+            "baseline_usd": 0.006685999999999999,
+            "candidate_usd": 0.0040904999999999995,
+            "baseline_input_tokens": 2263,
+            "baseline_output_tokens": 216,
+            "candidate_input_tokens": 2212,
+            "candidate_output_tokens": 103
+          },
+          {
+            "item_id": "qr-0026",
+            "baseline_usd": 0.006376,
+            "candidate_usd": 0.003762,
+            "baseline_input_tokens": 2218,
+            "baseline_output_tokens": 194,
+            "candidate_input_tokens": 2183,
+            "candidate_output_tokens": 65
+          },
+          {
+            "item_id": "qr-0027",
+            "baseline_usd": 0.0060680000000000005,
+            "candidate_usd": 0.0037500000000000003,
+            "baseline_input_tokens": 2219,
+            "baseline_output_tokens": 163,
+            "candidate_input_tokens": 2180,
+            "candidate_output_tokens": 64
+          },
+          {
+            "item_id": "qr-0028",
+            "baseline_usd": 0.006174,
+            "candidate_usd": 0.003759,
+            "baseline_input_tokens": 2182,
+            "baseline_output_tokens": 181,
+            "candidate_input_tokens": 2161,
+            "candidate_output_tokens": 69
+          },
+          {
+            "item_id": "qr-0029",
+            "baseline_usd": 0.006042,
+            "candidate_usd": 0.0038504999999999993,
+            "baseline_input_tokens": 2276,
+            "baseline_output_tokens": 149,
+            "candidate_input_tokens": 2217,
+            "candidate_output_tokens": 70
+          },
+          {
+            "item_id": "qr-0030",
+            "baseline_usd": 0.00639,
+            "candidate_usd": 0.0040845,
+            "baseline_input_tokens": 2235,
+            "baseline_output_tokens": 192,
+            "candidate_input_tokens": 2188,
+            "candidate_output_tokens": 107
+          },
+          {
+            "item_id": "qr-0031",
+            "baseline_usd": 0.0062759999999999995,
+            "candidate_usd": 0.0037394999999999998,
+            "baseline_input_tokens": 2198,
+            "baseline_output_tokens": 188,
+            "candidate_input_tokens": 2163,
+            "candidate_output_tokens": 66
+          },
+          {
+            "item_id": "qr-0032",
+            "baseline_usd": 0.00875,
+            "candidate_usd": 0.0038325,
+            "baseline_input_tokens": 2190,
+            "baseline_output_tokens": 437,
+            "candidate_input_tokens": 2160,
+            "candidate_output_tokens": 79
+          },
+          {
+            "item_id": "qr-0033",
+            "baseline_usd": 0.00599,
+            "candidate_usd": 0.0037124999999999997,
+            "baseline_input_tokens": 2185,
+            "baseline_output_tokens": 162,
+            "candidate_input_tokens": 2165,
+            "candidate_output_tokens": 62
+          },
+          {
+            "item_id": "qr-0034",
+            "baseline_usd": 0.0068920000000000006,
+            "candidate_usd": 0.004143,
+            "baseline_input_tokens": 2251,
+            "baseline_output_tokens": 239,
+            "candidate_input_tokens": 2212,
+            "candidate_output_tokens": 110
+          },
+          {
+            "item_id": "qr-0035",
+            "baseline_usd": 0.0061059999999999994,
+            "candidate_usd": 0.0037515000000000005,
+            "baseline_input_tokens": 2178,
+            "baseline_output_tokens": 175,
+            "candidate_input_tokens": 2161,
+            "candidate_output_tokens": 68
+          },
+          {
+            "item_id": "qr-0036",
+            "baseline_usd": 0.006255999999999999,
+            "candidate_usd": 0.00378,
+            "baseline_input_tokens": 2188,
+            "baseline_output_tokens": 188,
+            "candidate_input_tokens": 2160,
+            "candidate_output_tokens": 72
+          },
+          {
+            "item_id": "qr-0037",
+            "baseline_usd": 0.0061459999999999996,
+            "candidate_usd": 0.0037185,
+            "baseline_input_tokens": 2188,
+            "baseline_output_tokens": 177,
+            "candidate_input_tokens": 2169,
+            "candidate_output_tokens": 62
+          },
+          {
+            "item_id": "qr-0038",
+            "baseline_usd": 0.00755,
+            "candidate_usd": 0.0038009999999999997,
+            "baseline_input_tokens": 2245,
+            "baseline_output_tokens": 306,
+            "candidate_input_tokens": 2189,
+            "candidate_output_tokens": 69
+          },
+          {
+            "item_id": "qr-0039",
+            "baseline_usd": 0.0060940000000000005,
+            "candidate_usd": 0.0038385,
+            "baseline_input_tokens": 2192,
+            "baseline_output_tokens": 171,
+            "candidate_input_tokens": 2174,
+            "candidate_output_tokens": 77
+          },
+          {
+            "item_id": "qr-0040",
+            "baseline_usd": 0.00631,
+            "candidate_usd": 0.0037395,
+            "baseline_input_tokens": 2180,
+            "baseline_output_tokens": 195,
+            "candidate_input_tokens": 2158,
+            "candidate_output_tokens": 67
+          },
+          {
+            "item_id": "qr-0041",
+            "baseline_usd": 0.006276,
+            "candidate_usd": 0.0037649999999999997,
+            "baseline_input_tokens": 2183,
+            "baseline_output_tokens": 191,
+            "candidate_input_tokens": 2160,
+            "candidate_output_tokens": 70
+          },
+          {
+            "item_id": "qr-0042",
+            "baseline_usd": 0.011200000000000002,
+            "candidate_usd": 0.0037215,
+            "baseline_input_tokens": 2200,
+            "baseline_output_tokens": 680,
+            "candidate_input_tokens": 2166,
+            "candidate_output_tokens": 63
+          },
+          {
+            "item_id": "qr-0043",
+            "baseline_usd": 0.005912000000000001,
+            "candidate_usd": 0.0037124999999999997,
+            "baseline_input_tokens": 2186,
+            "baseline_output_tokens": 154,
+            "candidate_input_tokens": 2165,
+            "candidate_output_tokens": 62
+          },
+          {
+            "item_id": "qr-0044",
+            "baseline_usd": 0.006798,
+            "candidate_usd": 0.0042195,
+            "baseline_input_tokens": 2264,
+            "baseline_output_tokens": 227,
+            "candidate_input_tokens": 2208,
+            "candidate_output_tokens": 121
+          },
+          {
+            "item_id": "qr-0045",
+            "baseline_usd": 0.005404000000000001,
+            "candidate_usd": 0.003723,
+            "baseline_input_tokens": 2177,
+            "baseline_output_tokens": 105,
+            "candidate_input_tokens": 2157,
+            "candidate_output_tokens": 65
+          },
+          {
+            "item_id": "qr-0046",
+            "baseline_usd": 0.006928,
+            "candidate_usd": 0.0042045,
+            "baseline_input_tokens": 2264,
+            "baseline_output_tokens": 240,
+            "candidate_input_tokens": 2218,
+            "candidate_output_tokens": 117
+          },
+          {
+            "item_id": "qr-0047",
+            "baseline_usd": 0.007812,
+            "candidate_usd": 0.0037515000000000005,
+            "baseline_input_tokens": 2186,
+            "baseline_output_tokens": 344,
+            "candidate_input_tokens": 2161,
+            "candidate_output_tokens": 68
+          },
+          {
+            "item_id": "qr-0048",
+            "baseline_usd": 0.0059900000000000005,
+            "candidate_usd": 0.0037935,
+            "baseline_input_tokens": 2180,
+            "baseline_output_tokens": 163,
+            "candidate_input_tokens": 2164,
+            "candidate_output_tokens": 73
+          },
+          {
+            "item_id": "qr-0049",
+            "baseline_usd": 0.006352,
+            "candidate_usd": 0.0039855,
+            "baseline_input_tokens": 2191,
+            "baseline_output_tokens": 197,
+            "candidate_input_tokens": 2177,
+            "candidate_output_tokens": 96
+          },
+          {
+            "item_id": "qr-0050",
+            "baseline_usd": 0.006229999999999999,
+            "candidate_usd": 0.0037845,
+            "baseline_input_tokens": 2175,
+            "baseline_output_tokens": 188,
+            "candidate_input_tokens": 2148,
+            "candidate_output_tokens": 75
+          },
+          {
+            "item_id": "qr-0051",
+            "baseline_usd": 0.00868,
+            "candidate_usd": 0.0036255000000000003,
+            "baseline_input_tokens": 2185,
+            "baseline_output_tokens": 431,
+            "candidate_input_tokens": 2157,
+            "candidate_output_tokens": 52
+          },
+          {
+            "item_id": "qr-0052",
+            "baseline_usd": 0.00827,
+            "candidate_usd": 0.0037739999999999996,
+            "baseline_input_tokens": 2235,
+            "baseline_output_tokens": 380,
+            "candidate_input_tokens": 2191,
+            "candidate_output_tokens": 65
+          },
+          {
+            "item_id": "qr-0053",
+            "baseline_usd": 0.00684,
+            "candidate_usd": 0.0041670000000000006,
+            "baseline_input_tokens": 2250,
+            "baseline_output_tokens": 234,
+            "candidate_input_tokens": 2213,
+            "candidate_output_tokens": 113
+          },
+          {
+            "item_id": "qr-0054",
+            "baseline_usd": 0.006084,
+            "candidate_usd": 0.0039765,
+            "baseline_input_tokens": 2172,
+            "baseline_output_tokens": 174,
+            "candidate_input_tokens": 2156,
+            "candidate_output_tokens": 99
+          },
+          {
+            "item_id": "qr-0055",
+            "baseline_usd": 0.005876,
+            "candidate_usd": 0.0038085000000000003,
+            "baseline_input_tokens": 2193,
+            "baseline_output_tokens": 149,
+            "candidate_input_tokens": 2174,
+            "candidate_output_tokens": 73
+          },
+          {
+            "item_id": "qr-0056",
+            "baseline_usd": 0.00911,
+            "candidate_usd": 0.0040335,
+            "baseline_input_tokens": 2240,
+            "baseline_output_tokens": 463,
+            "candidate_input_tokens": 2189,
+            "candidate_output_tokens": 100
+          },
+          {
+            "item_id": "qr-0057",
+            "baseline_usd": 0.005914,
+            "candidate_usd": 0.0040230000000000005,
+            "baseline_input_tokens": 2182,
+            "baseline_output_tokens": 155,
+            "candidate_input_tokens": 2157,
+            "candidate_output_tokens": 105
+          },
+          {
+            "item_id": "qr-0058",
+            "baseline_usd": 0.007724,
+            "candidate_usd": 0.003708,
+            "baseline_input_tokens": 2192,
+            "baseline_output_tokens": 334,
+            "candidate_input_tokens": 2162,
+            "candidate_output_tokens": 62
+          },
+          {
+            "item_id": "qr-0059",
+            "baseline_usd": 0.006045999999999999,
+            "candidate_usd": 0.003855,
+            "baseline_input_tokens": 2188,
+            "baseline_output_tokens": 167,
+            "candidate_input_tokens": 2170,
+            "candidate_output_tokens": 80
+          },
+          {
+            "item_id": "qr-0060",
+            "baseline_usd": 0.00613,
+            "candidate_usd": 0.0037574999999999996,
+            "baseline_input_tokens": 2180,
+            "baseline_output_tokens": 177,
+            "candidate_input_tokens": 2160,
+            "candidate_output_tokens": 69
+          },
+          {
+            "item_id": "qr-0061",
+            "baseline_usd": 0.006756,
+            "candidate_usd": 0.0037995000000000004,
+            "baseline_input_tokens": 2268,
+            "baseline_output_tokens": 222,
+            "candidate_input_tokens": 2213,
+            "candidate_output_tokens": 64
+          },
+          {
+            "item_id": "qr-0062",
+            "baseline_usd": 0.00544,
+            "candidate_usd": 0.003807,
+            "baseline_input_tokens": 2230,
+            "baseline_output_tokens": 98,
+            "candidate_input_tokens": 2183,
+            "candidate_output_tokens": 71
+          },
+          {
+            "item_id": "qr-0063",
+            "baseline_usd": 0.006676,
+            "candidate_usd": 0.0041595,
+            "baseline_input_tokens": 2238,
+            "baseline_output_tokens": 220,
+            "candidate_input_tokens": 2213,
+            "candidate_output_tokens": 112
+          },
+          {
+            "item_id": "qr-0064",
+            "baseline_usd": 0.006358000000000001,
+            "candidate_usd": 0.003861,
+            "baseline_input_tokens": 2194,
+            "baseline_output_tokens": 197,
+            "candidate_input_tokens": 2159,
+            "candidate_output_tokens": 83
+          },
+          {
+            "item_id": "qr-0065",
+            "baseline_usd": 0.006046,
+            "candidate_usd": 0.003996,
+            "baseline_input_tokens": 2183,
+            "baseline_output_tokens": 168,
+            "candidate_input_tokens": 2164,
+            "candidate_output_tokens": 100
+          },
+          {
+            "item_id": "qr-0066",
+            "baseline_usd": 0.006033999999999999,
+            "candidate_usd": 0.0037110000000000003,
+            "baseline_input_tokens": 2172,
+            "baseline_output_tokens": 169,
+            "candidate_input_tokens": 2154,
+            "candidate_output_tokens": 64
+          },
+          {
+            "item_id": "qr-0067",
+            "baseline_usd": 0.005478,
+            "candidate_usd": 0.003798,
+            "baseline_input_tokens": 2244,
+            "baseline_output_tokens": 99,
+            "candidate_input_tokens": 2192,
+            "candidate_output_tokens": 68
+          },
+          {
+            "item_id": "qr-0068",
+            "baseline_usd": 0.005476,
+            "candidate_usd": 0.004120499999999999,
+            "baseline_input_tokens": 2193,
+            "baseline_output_tokens": 109,
+            "candidate_input_tokens": 2172,
+            "candidate_output_tokens": 115
+          },
+          {
+            "item_id": "qr-0069",
+            "baseline_usd": 0.010916,
+            "candidate_usd": 0.0040035,
+            "baseline_input_tokens": 2203,
+            "baseline_output_tokens": 651,
+            "candidate_input_tokens": 2164,
+            "candidate_output_tokens": 101
+          }
+        ],
+        "dropped_unpaired": 0,
+        "estimate": {
+          "metric": "cost_savings_pct",
+          "point": 42.74456165015857,
+          "lo": 40.31761010814873,
+          "hi": 45.30490253262382,
+          "n": 70,
+          "unit": "percent",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": 70,
+          "dropped_unpaired": 0
+        },
+        "no_estimate_reason": null
+      },
+      "chunk_summarizer": {
+        "subagent": "chunk_summarizer",
+        "baseline_model": "claude-sonnet",
+        "candidate_model": "gemini-flash-current-capped",
+        "baseline_variant": "claude_baseline",
+        "candidate_variant": "gemini_tuned_v1",
+        "basis": "measured per-call tokens over this corpus, uncached list prices from config/pricing.yaml \u2014 NOT the registered profile-volume basis, which stays uncomputed while customer volumes are unconfirmed",
+        "paired": [
+          {
+            "item_id": "cs-0000",
+            "baseline_usd": 0.010732,
+            "candidate_usd": 0.004827,
+            "baseline_input_tokens": 2391,
+            "baseline_output_tokens": 595,
+            "candidate_input_tokens": 1493,
+            "candidate_output_tokens": 345
+          },
+          {
+            "item_id": "cs-0001",
+            "baseline_usd": 0.008166,
+            "candidate_usd": 0.003537,
+            "baseline_input_tokens": 2173,
+            "baseline_output_tokens": 382,
+            "candidate_input_tokens": 1368,
+            "candidate_output_tokens": 198
+          },
+          {
+            "item_id": "cs-0002",
+            "baseline_usd": 0.011832,
+            "candidate_usd": 0.0038865,
+            "baseline_input_tokens": 2256,
+            "baseline_output_tokens": 732,
+            "candidate_input_tokens": 1401,
+            "candidate_output_tokens": 238
+          },
+          {
+            "item_id": "cs-0003",
+            "baseline_usd": 0.010207999999999998,
+            "candidate_usd": 0.0043155,
+            "baseline_input_tokens": 2394,
+            "baseline_output_tokens": 542,
+            "candidate_input_tokens": 1482,
+            "candidate_output_tokens": 279
+          },
+          {
+            "item_id": "cs-0004",
+            "baseline_usd": 0.00762,
+            "candidate_usd": 0.004285499999999999,
+            "baseline_input_tokens": 2200,
+            "baseline_output_tokens": 322,
+            "candidate_input_tokens": 1367,
+            "candidate_output_tokens": 298
+          },
+          {
+            "item_id": "cs-0005",
+            "baseline_usd": 0.009118,
+            "candidate_usd": 0.0042975,
+            "baseline_input_tokens": 2254,
+            "baseline_output_tokens": 461,
+            "candidate_input_tokens": 1425,
+            "candidate_output_tokens": 288
+          },
+          {
+            "item_id": "cs-0006",
+            "baseline_usd": 0.014622,
+            "candidate_usd": 0.0046665000000000005,
+            "baseline_input_tokens": 2431,
+            "baseline_output_tokens": 976,
+            "candidate_input_tokens": 1516,
+            "candidate_output_tokens": 319
+          },
+          {
+            "item_id": "cs-0007",
+            "baseline_usd": 0.009115999999999999,
+            "candidate_usd": 0.003981,
+            "baseline_input_tokens": 2268,
+            "baseline_output_tokens": 458,
+            "candidate_input_tokens": 1414,
+            "candidate_output_tokens": 248
+          },
+          {
+            "item_id": "cs-0008",
+            "baseline_usd": 0.011392,
+            "candidate_usd": 0.0045375,
+            "baseline_input_tokens": 2411,
+            "baseline_output_tokens": 657,
+            "candidate_input_tokens": 1505,
+            "candidate_output_tokens": 304
+          },
+          {
+            "item_id": "cs-0009",
+            "baseline_usd": 0.008362,
+            "candidate_usd": 0.0043245,
+            "baseline_input_tokens": 2256,
+            "baseline_output_tokens": 385,
+            "candidate_input_tokens": 1428,
+            "candidate_output_tokens": 291
+          },
+          {
+            "item_id": "cs-0010",
+            "baseline_usd": 0.009588000000000001,
+            "candidate_usd": 0.004341,
+            "baseline_input_tokens": 2334,
+            "baseline_output_tokens": 492,
+            "candidate_input_tokens": 1464,
+            "candidate_output_tokens": 286
+          },
+          {
+            "item_id": "cs-0011",
+            "baseline_usd": 0.008414,
+            "candidate_usd": 0.0040725,
+            "baseline_input_tokens": 2247,
+            "baseline_output_tokens": 392,
+            "candidate_input_tokens": 1400,
+            "candidate_output_tokens": 263
+          },
+          {
+            "item_id": "cs-0012",
+            "baseline_usd": 0.011306,
+            "candidate_usd": 0.0049005,
+            "baseline_input_tokens": 2378,
+            "baseline_output_tokens": 655,
+            "candidate_input_tokens": 1482,
+            "candidate_output_tokens": 357
+          },
+          {
+            "item_id": "cs-0013",
+            "baseline_usd": 0.010360000000000001,
+            "candidate_usd": 0.004761,
+            "baseline_input_tokens": 2255,
+            "baseline_output_tokens": 585,
+            "candidate_input_tokens": 1404,
+            "candidate_output_tokens": 354
+          },
+          {
+            "item_id": "cs-0014",
+            "baseline_usd": 0.015602000000000001,
+            "candidate_usd": 0.0052245,
+            "baseline_input_tokens": 2456,
+            "baseline_output_tokens": 1069,
+            "candidate_input_tokens": 1518,
+            "candidate_output_tokens": 393
+          },
+          {
+            "item_id": "cs-0015",
+            "baseline_usd": 0.011124,
+            "candidate_usd": 0.0047205,
+            "baseline_input_tokens": 2387,
+            "baseline_output_tokens": 635,
+            "candidate_input_tokens": 1487,
+            "candidate_output_tokens": 332
+          },
+          {
+            "item_id": "cs-0016",
+            "baseline_usd": 0.00826,
+            "candidate_usd": 0.004713,
+            "baseline_input_tokens": 2250,
+            "baseline_output_tokens": 376,
+            "candidate_input_tokens": 1422,
+            "candidate_output_tokens": 344
+          },
+          {
+            "item_id": "cs-0017",
+            "baseline_usd": 0.008302,
+            "candidate_usd": 0.0033285,
+            "baseline_input_tokens": 2196,
+            "baseline_output_tokens": 391,
+            "candidate_input_tokens": 1379,
+            "candidate_output_tokens": 168
+          },
+          {
+            "item_id": "cs-0018",
+            "baseline_usd": 0.009272,
+            "candidate_usd": 0.003798,
+            "baseline_input_tokens": 2246,
+            "baseline_output_tokens": 478,
+            "candidate_input_tokens": 1422,
+            "candidate_output_tokens": 222
+          },
+          {
+            "item_id": "cs-0019",
+            "baseline_usd": 0.008646000000000001,
+            "candidate_usd": 0.004071,
+            "baseline_input_tokens": 2268,
+            "baseline_output_tokens": 411,
+            "candidate_input_tokens": 1439,
+            "candidate_output_tokens": 255
+          },
+          {
+            "item_id": "cs-0020",
+            "baseline_usd": 0.009164,
+            "candidate_usd": 0.0043395,
+            "baseline_input_tokens": 2252,
+            "baseline_output_tokens": 466,
+            "candidate_input_tokens": 1423,
+            "candidate_output_tokens": 294
+          },
+          {
+            "item_id": "cs-0021",
+            "baseline_usd": 0.009892000000000001,
+            "candidate_usd": 0.0050279999999999995,
+            "baseline_input_tokens": 2376,
+            "baseline_output_tokens": 514,
+            "candidate_input_tokens": 1487,
+            "candidate_output_tokens": 373
+          },
+          {
+            "item_id": "cs-0022",
+            "baseline_usd": 0.009804,
+            "candidate_usd": 0.0049425,
+            "baseline_input_tokens": 2337,
+            "baseline_output_tokens": 513,
+            "candidate_input_tokens": 1470,
+            "candidate_output_tokens": 365
+          },
+          {
+            "item_id": "cs-0023",
+            "baseline_usd": 0.008615999999999999,
+            "candidate_usd": 0.003702,
+            "baseline_input_tokens": 2248,
+            "baseline_output_tokens": 412,
+            "candidate_input_tokens": 1403,
+            "candidate_output_tokens": 213
+          },
+          {
+            "item_id": "cs-0024",
+            "baseline_usd": 0.009938,
+            "candidate_usd": 0.0045060000000000005,
+            "baseline_input_tokens": 2354,
+            "baseline_output_tokens": 523,
+            "candidate_input_tokens": 1474,
+            "candidate_output_tokens": 306
+          },
+          {
+            "item_id": "cs-0025",
+            "baseline_usd": 0.008884,
+            "candidate_usd": 0.0051660000000000005,
+            "baseline_input_tokens": 2262,
+            "baseline_output_tokens": 436,
+            "candidate_input_tokens": 1429,
+            "candidate_output_tokens": 403
+          },
+          {
+            "item_id": "cs-0026",
+            "baseline_usd": 0.00831,
+            "candidate_usd": 0.003861,
+            "baseline_input_tokens": 2230,
+            "baseline_output_tokens": 385,
+            "candidate_input_tokens": 1374,
+            "candidate_output_tokens": 240
+          },
+          {
+            "item_id": "cs-0027",
+            "baseline_usd": 0.009298,
+            "candidate_usd": 0.004066500000000001,
+            "baseline_input_tokens": 2279,
+            "baseline_output_tokens": 474,
+            "candidate_input_tokens": 1441,
+            "candidate_output_tokens": 254
+          },
+          {
+            "item_id": "cs-0028",
+            "baseline_usd": 0.009465999999999999,
+            "candidate_usd": 0.0043695,
+            "baseline_input_tokens": 2253,
+            "baseline_output_tokens": 496,
+            "candidate_input_tokens": 1423,
+            "candidate_output_tokens": 298
+          },
+          {
+            "item_id": "cs-0029",
+            "baseline_usd": 0.011265999999999998,
+            "candidate_usd": 0.0049185,
+            "baseline_input_tokens": 2343,
+            "baseline_output_tokens": 658,
+            "candidate_input_tokens": 1464,
+            "candidate_output_tokens": 363
+          },
+          {
+            "item_id": "cs-0030",
+            "baseline_usd": 0.013292,
+            "candidate_usd": 0.0039285,
+            "baseline_input_tokens": 2281,
+            "baseline_output_tokens": 873,
+            "candidate_input_tokens": 1414,
+            "candidate_output_tokens": 241
+          },
+          {
+            "item_id": "cs-0031",
+            "baseline_usd": 0.009988,
+            "candidate_usd": 0.004275,
+            "baseline_input_tokens": 2254,
+            "baseline_output_tokens": 548,
+            "candidate_input_tokens": 1425,
+            "candidate_output_tokens": 285
+          },
+          {
+            "item_id": "cs-0032",
+            "baseline_usd": 0.011869999999999999,
+            "candidate_usd": 0.005319,
+            "baseline_input_tokens": 2440,
+            "baseline_output_tokens": 699,
+            "candidate_input_tokens": 1531,
+            "candidate_output_tokens": 403
+          },
+          {
+            "item_id": "cs-0033",
+            "baseline_usd": 0.010709999999999999,
+            "candidate_usd": 0.004983,
+            "baseline_input_tokens": 2325,
+            "baseline_output_tokens": 606,
+            "candidate_input_tokens": 1472,
+            "candidate_output_tokens": 370
+          },
+          {
+            "item_id": "cs-0034",
+            "baseline_usd": 0.012410000000000001,
+            "candidate_usd": 0.005412,
+            "baseline_input_tokens": 2475,
+            "baseline_output_tokens": 746,
+            "candidate_input_tokens": 1538,
+            "candidate_output_tokens": 414
+          },
+          {
+            "item_id": "cs-0035",
+            "baseline_usd": 0.010192,
+            "candidate_usd": 0.0052035,
+            "baseline_input_tokens": 2351,
+            "baseline_output_tokens": 549,
+            "candidate_input_tokens": 1479,
+            "candidate_output_tokens": 398
+          },
+          {
+            "item_id": "cs-0036",
+            "baseline_usd": 0.009638,
+            "candidate_usd": 0.0041025,
+            "baseline_input_tokens": 2339,
+            "baseline_output_tokens": 496,
+            "candidate_input_tokens": 1465,
+            "candidate_output_tokens": 254
+          },
+          {
+            "item_id": "cs-0037",
+            "baseline_usd": 0.014164,
+            "candidate_usd": 0.0049770000000000005,
+            "baseline_input_tokens": 2447,
+            "baseline_output_tokens": 927,
+            "candidate_input_tokens": 1523,
+            "candidate_output_tokens": 359
+          },
+          {
+            "item_id": "cs-0038",
+            "baseline_usd": 0.009526,
+            "candidate_usd": 0.0046995,
+            "baseline_input_tokens": 2343,
+            "baseline_output_tokens": 484,
+            "candidate_input_tokens": 1473,
+            "candidate_output_tokens": 332
+          },
+          {
+            "item_id": "cs-0039",
+            "baseline_usd": 0.011756,
+            "candidate_usd": 0.0056715,
+            "baseline_input_tokens": 2478,
+            "baseline_output_tokens": 680,
+            "candidate_input_tokens": 1536,
+            "candidate_output_tokens": 449
+          },
+          {
+            "item_id": "cs-0040",
+            "baseline_usd": 0.010386,
+            "candidate_usd": 0.004455,
+            "baseline_input_tokens": 2343,
+            "baseline_output_tokens": 570,
+            "candidate_input_tokens": 1470,
+            "candidate_output_tokens": 300
+          },
+          {
+            "item_id": "cs-0041",
+            "baseline_usd": 0.009396,
+            "candidate_usd": 0.004044,
+            "baseline_input_tokens": 2278,
+            "baseline_output_tokens": 484,
+            "candidate_input_tokens": 1416,
+            "candidate_output_tokens": 256
+          },
+          {
+            "item_id": "cs-0042",
+            "baseline_usd": 0.010126,
+            "candidate_usd": 0.0039585,
+            "baseline_input_tokens": 2268,
+            "baseline_output_tokens": 559,
+            "candidate_input_tokens": 1439,
+            "candidate_output_tokens": 240
+          },
+          {
+            "item_id": "cs-0043",
+            "baseline_usd": 0.009744,
+            "candidate_usd": 0.0043289999999999995,
+            "baseline_input_tokens": 2247,
+            "baseline_output_tokens": 525,
+            "candidate_input_tokens": 1426,
+            "candidate_output_tokens": 292
+          },
+          {
+            "item_id": "cs-0044",
+            "baseline_usd": 0.010932,
+            "candidate_usd": 0.0042345,
+            "baseline_input_tokens": 2376,
+            "baseline_output_tokens": 618,
+            "candidate_input_tokens": 1483,
+            "candidate_output_tokens": 268
+          },
+          {
+            "item_id": "cs-0045",
+            "baseline_usd": 0.009994,
+            "candidate_usd": 0.0042450000000000005,
+            "baseline_input_tokens": 2262,
+            "baseline_output_tokens": 547,
+            "candidate_input_tokens": 1410,
+            "candidate_output_tokens": 284
+          },
+          {
+            "item_id": "cs-0046",
+            "baseline_usd": 0.010702,
+            "candidate_usd": 0.004671,
+            "baseline_input_tokens": 2356,
+            "baseline_output_tokens": 599,
+            "candidate_input_tokens": 1479,
+            "candidate_output_tokens": 327
+          },
+          {
+            "item_id": "cs-0047",
+            "baseline_usd": 0.011876,
+            "candidate_usd": 0.0050235,
+            "baseline_input_tokens": 2443,
+            "baseline_output_tokens": 699,
+            "candidate_input_tokens": 1534,
+            "candidate_output_tokens": 363
+          },
+          {
+            "item_id": "cs-0048",
+            "baseline_usd": 0.008534,
+            "candidate_usd": 0.00396,
+            "baseline_input_tokens": 2257,
+            "baseline_output_tokens": 402,
+            "candidate_input_tokens": 1405,
+            "candidate_output_tokens": 247
+          },
+          {
+            "item_id": "cs-0049",
+            "baseline_usd": 0.010166000000000001,
+            "candidate_usd": 0.004947,
+            "baseline_input_tokens": 2363,
+            "baseline_output_tokens": 544,
+            "candidate_input_tokens": 1473,
+            "candidate_output_tokens": 365
+          },
+          {
+            "item_id": "cs-0050",
+            "baseline_usd": 0.009219999999999999,
+            "candidate_usd": 0.004130999999999999,
+            "baseline_input_tokens": 2270,
+            "baseline_output_tokens": 468,
+            "candidate_input_tokens": 1414,
+            "candidate_output_tokens": 268
+          },
+          {
+            "item_id": "cs-0051",
+            "baseline_usd": 0.006692,
+            "candidate_usd": 0.004971,
+            "baseline_input_tokens": 2351,
+            "baseline_output_tokens": 199,
+            "candidate_input_tokens": 1479,
+            "candidate_output_tokens": 367
+          },
+          {
+            "item_id": "cs-0052",
+            "baseline_usd": 0.008366,
+            "candidate_usd": 0.004110000000000001,
+            "baseline_input_tokens": 2183,
+            "baseline_output_tokens": 400,
+            "candidate_input_tokens": 1375,
+            "candidate_output_tokens": 273
+          },
+          {
+            "item_id": "cs-0053",
+            "baseline_usd": 0.015700000000000002,
+            "candidate_usd": 0.0059325,
+            "baseline_input_tokens": 2480,
+            "baseline_output_tokens": 1074,
+            "candidate_input_tokens": 1545,
+            "candidate_output_tokens": 482
+          },
+          {
+            "item_id": "cs-0054",
+            "baseline_usd": 0.010506000000000001,
+            "candidate_usd": 0.005124,
+            "baseline_input_tokens": 2368,
+            "baseline_output_tokens": 577,
+            "candidate_input_tokens": 1491,
+            "candidate_output_tokens": 385
+          },
+          {
+            "item_id": "cs-0055",
+            "baseline_usd": 0.00791,
+            "candidate_usd": 0.003876,
+            "baseline_input_tokens": 2240,
+            "baseline_output_tokens": 343,
+            "candidate_input_tokens": 1399,
+            "candidate_output_tokens": 237
+          },
+          {
+            "item_id": "cs-0056",
+            "baseline_usd": 0.008364,
+            "candidate_usd": 0.00372,
+            "baseline_input_tokens": 2217,
+            "baseline_output_tokens": 393,
+            "candidate_input_tokens": 1385,
+            "candidate_output_tokens": 219
+          },
+          {
+            "item_id": "cs-0057",
+            "baseline_usd": 0.008728,
+            "candidate_usd": 0.0047205,
+            "baseline_input_tokens": 2289,
+            "baseline_output_tokens": 415,
+            "candidate_input_tokens": 1457,
+            "candidate_output_tokens": 338
+          },
+          {
+            "item_id": "cs-0058",
+            "baseline_usd": 0.012643999999999999,
+            "candidate_usd": 0.004554,
+            "baseline_input_tokens": 2317,
+            "baseline_output_tokens": 801,
+            "candidate_input_tokens": 1466,
+            "candidate_output_tokens": 314
+          },
+          {
+            "item_id": "cs-0059",
+            "baseline_usd": 0.009833999999999999,
+            "candidate_usd": 0.004798500000000001,
+            "baseline_input_tokens": 2362,
+            "baseline_output_tokens": 511,
+            "candidate_input_tokens": 1484,
+            "candidate_output_tokens": 343
+          },
+          {
+            "item_id": "cs-0060",
+            "baseline_usd": 0.010069999999999999,
+            "candidate_usd": 0.004455,
+            "baseline_input_tokens": 2260,
+            "baseline_output_tokens": 555,
+            "candidate_input_tokens": 1435,
+            "candidate_output_tokens": 307
+          },
+          {
+            "item_id": "cs-0061",
+            "baseline_usd": 0.01331,
+            "candidate_usd": 0.0058455,
+            "baseline_input_tokens": 2465,
+            "baseline_output_tokens": 838,
+            "candidate_input_tokens": 1537,
+            "candidate_output_tokens": 472
+          },
+          {
+            "item_id": "cs-0062",
+            "baseline_usd": 0.010020000000000001,
+            "candidate_usd": 0.004221,
+            "baseline_input_tokens": 2370,
+            "baseline_output_tokens": 528,
+            "candidate_input_tokens": 1479,
+            "candidate_output_tokens": 267
+          },
+          {
+            "item_id": "cs-0063",
+            "baseline_usd": 0.010564,
+            "candidate_usd": 0.004425,
+            "baseline_input_tokens": 2252,
+            "baseline_output_tokens": 606,
+            "candidate_input_tokens": 1400,
+            "candidate_output_tokens": 310
+          },
+          {
+            "item_id": "cs-0064",
+            "baseline_usd": 0.011042,
+            "candidate_usd": 0.0044174999999999996,
+            "baseline_input_tokens": 2356,
+            "baseline_output_tokens": 633,
+            "candidate_input_tokens": 1475,
+            "candidate_output_tokens": 294
+          },
+          {
+            "item_id": "cs-0065",
+            "baseline_usd": 0.010952,
+            "candidate_usd": 0.0049935,
+            "baseline_input_tokens": 2351,
+            "baseline_output_tokens": 625,
+            "candidate_input_tokens": 1479,
+            "candidate_output_tokens": 370
+          },
+          {
+            "item_id": "cs-0066",
+            "baseline_usd": 0.009292,
+            "candidate_usd": 0.003948,
+            "baseline_input_tokens": 2281,
+            "baseline_output_tokens": 473,
+            "candidate_input_tokens": 1417,
+            "candidate_output_tokens": 243
+          },
+          {
+            "item_id": "cs-0067",
+            "baseline_usd": 0.011023999999999999,
+            "candidate_usd": 0.004659,
+            "baseline_input_tokens": 2382,
+            "baseline_output_tokens": 626,
+            "candidate_input_tokens": 1496,
+            "candidate_output_tokens": 322
+          },
+          {
+            "item_id": "cs-0068",
+            "baseline_usd": 0.012036,
+            "candidate_usd": 0.004437,
+            "baseline_input_tokens": 2278,
+            "baseline_output_tokens": 748,
+            "candidate_input_tokens": 1413,
+            "candidate_output_tokens": 309
+          },
+          {
+            "item_id": "cs-0069",
+            "baseline_usd": 0.008422,
+            "candidate_usd": 0.003633,
+            "baseline_input_tokens": 2181,
+            "baseline_output_tokens": 406,
+            "candidate_input_tokens": 1372,
+            "candidate_output_tokens": 210
+          }
+        ],
+        "dropped_unpaired": 0,
+        "estimate": {
+          "metric": "cost_savings_pct",
+          "point": 56.067359768296456,
+          "lo": 54.53963833589527,
+          "hi": 57.51337408072735,
+          "n": 70,
+          "unit": "percent",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": 70,
+          "dropped_unpaired": 0
+        },
+        "no_estimate_reason": null
+      },
+      "feature_extractor": {
+        "subagent": "feature_extractor",
+        "baseline_model": "claude-sonnet",
+        "candidate_model": "gemini-flash-current-capped",
+        "baseline_variant": "claude_baseline",
+        "candidate_variant": "gemini_optimizer_v1",
+        "basis": "measured per-call tokens over this corpus, uncached list prices from config/pricing.yaml \u2014 NOT the registered profile-volume basis, which stays uncomputed while customer volumes are unconfirmed",
+        "paired": [
+          {
+            "item_id": "fe-0000",
+            "baseline_usd": 0.01332,
+            "candidate_usd": 0.0037785000000000006,
+            "baseline_input_tokens": 2365,
+            "baseline_output_tokens": 859,
+            "candidate_input_tokens": 1559,
+            "candidate_output_tokens": 192
+          },
+          {
+            "item_id": "fe-0001",
+            "baseline_usd": 0.010811999999999999,
+            "candidate_usd": 0.0033495,
+            "baseline_input_tokens": 2376,
+            "baseline_output_tokens": 606,
+            "candidate_input_tokens": 1528,
+            "candidate_output_tokens": 141
+          },
+          {
+            "item_id": "fe-0002",
+            "baseline_usd": 0.009498,
+            "candidate_usd": 0.0035069999999999997,
+            "baseline_input_tokens": 2349,
+            "baseline_output_tokens": 480,
+            "candidate_input_tokens": 1518,
+            "candidate_output_tokens": 164
+          },
+          {
+            "item_id": "fe-0003",
+            "baseline_usd": 0.011288,
+            "candidate_usd": 0.0037815,
+            "baseline_input_tokens": 2404,
+            "baseline_output_tokens": 648,
+            "candidate_input_tokens": 1581,
+            "candidate_output_tokens": 188
+          },
+          {
+            "item_id": "fe-0004",
+            "baseline_usd": 0.010764,
+            "candidate_usd": 0.003759,
+            "baseline_input_tokens": 2352,
+            "baseline_output_tokens": 606,
+            "candidate_input_tokens": 1561,
+            "candidate_output_tokens": 189
+          },
+          {
+            "item_id": "fe-0005",
+            "baseline_usd": 0.009219999999999999,
+            "candidate_usd": 0.0032925000000000003,
+            "baseline_input_tokens": 2250,
+            "baseline_output_tokens": 472,
+            "candidate_input_tokens": 1440,
+            "candidate_output_tokens": 151
+          },
+          {
+            "item_id": "fe-0006",
+            "baseline_usd": 0.008212,
+            "candidate_usd": 0.0034184999999999997,
+            "baseline_input_tokens": 2396,
+            "baseline_output_tokens": 342,
+            "candidate_input_tokens": 1544,
+            "candidate_output_tokens": 147
+          },
+          {
+            "item_id": "fe-0007",
+            "baseline_usd": 0.01055,
+            "candidate_usd": 0.0035445000000000003,
+            "baseline_input_tokens": 2340,
+            "baseline_output_tokens": 587,
+            "candidate_input_tokens": 1533,
+            "candidate_output_tokens": 166
+          },
+          {
+            "item_id": "fe-0008",
+            "baseline_usd": 0.008237999999999999,
+            "candidate_usd": 0.0032909999999999997,
+            "baseline_input_tokens": 2224,
+            "baseline_output_tokens": 379,
+            "candidate_input_tokens": 1419,
+            "candidate_output_tokens": 155
+          },
+          {
+            "item_id": "fe-0009",
+            "baseline_usd": 0.010574,
+            "candidate_usd": 0.0035340000000000002,
+            "baseline_input_tokens": 2402,
+            "baseline_output_tokens": 577,
+            "candidate_input_tokens": 1541,
+            "candidate_output_tokens": 163
+          },
+          {
+            "item_id": "fe-0010",
+            "baseline_usd": 0.011796000000000001,
+            "candidate_usd": 0.0036299999999999995,
+            "baseline_input_tokens": 2348,
+            "baseline_output_tokens": 710,
+            "candidate_input_tokens": 1550,
+            "candidate_output_tokens": 174
+          },
+          {
+            "item_id": "fe-0011",
+            "baseline_usd": 0.008914,
+            "candidate_usd": 0.0032955000000000003,
+            "baseline_input_tokens": 2227,
+            "baseline_output_tokens": 446,
+            "candidate_input_tokens": 1422,
+            "candidate_output_tokens": 155
+          },
+          {
+            "item_id": "fe-0012",
+            "baseline_usd": 0.00827,
+            "candidate_usd": 0.0031515000000000007,
+            "baseline_input_tokens": 2175,
+            "baseline_output_tokens": 392,
+            "candidate_input_tokens": 1396,
+            "candidate_output_tokens": 141
+          },
+          {
+            "item_id": "fe-0013",
+            "baseline_usd": 0.00985,
+            "candidate_usd": 0.003264,
+            "baseline_input_tokens": 2190,
+            "baseline_output_tokens": 547,
+            "candidate_input_tokens": 1401,
+            "candidate_output_tokens": 155
+          },
+          {
+            "item_id": "fe-0014",
+            "baseline_usd": 0.008336,
+            "candidate_usd": 0.0034185,
+            "baseline_input_tokens": 2348,
+            "baseline_output_tokens": 364,
+            "candidate_input_tokens": 1514,
+            "candidate_output_tokens": 153
+          },
+          {
+            "item_id": "fe-0015",
+            "baseline_usd": 0.007808000000000001,
+            "candidate_usd": 0.003231,
+            "baseline_input_tokens": 2174,
+            "baseline_output_tokens": 346,
+            "candidate_input_tokens": 1394,
+            "candidate_output_tokens": 152
+          },
+          {
+            "item_id": "fe-0016",
+            "baseline_usd": 0.011748,
+            "candidate_usd": 0.0036090000000000002,
+            "baseline_input_tokens": 2334,
+            "baseline_output_tokens": 708,
+            "candidate_input_tokens": 1536,
+            "candidate_output_tokens": 174
+          },
+          {
+            "item_id": "fe-0017",
+            "baseline_usd": 0.012344,
+            "candidate_usd": 0.003537,
+            "baseline_input_tokens": 2412,
+            "baseline_output_tokens": 752,
+            "candidate_input_tokens": 1538,
+            "candidate_output_tokens": 164
+          },
+          {
+            "item_id": "fe-0018",
+            "baseline_usd": 0.008747999999999999,
+            "candidate_usd": 0.0032684999999999997,
+            "baseline_input_tokens": 2224,
+            "baseline_output_tokens": 430,
+            "candidate_input_tokens": 1419,
+            "candidate_output_tokens": 152
+          },
+          {
+            "item_id": "fe-0019",
+            "baseline_usd": 0.008473999999999999,
+            "candidate_usd": 0.0028919999999999996,
+            "baseline_input_tokens": 2172,
+            "baseline_output_tokens": 413,
+            "candidate_input_tokens": 1388,
+            "candidate_output_tokens": 108
+          },
+          {
+            "item_id": "fe-0020",
+            "baseline_usd": 0.009008,
+            "candidate_usd": 0.0037094999999999997,
+            "baseline_input_tokens": 2354,
+            "baseline_output_tokens": 430,
+            "candidate_input_tokens": 1558,
+            "candidate_output_tokens": 183
+          },
+          {
+            "item_id": "fe-0021",
+            "baseline_usd": 0.009308,
+            "candidate_usd": 0.003552,
+            "baseline_input_tokens": 2354,
+            "baseline_output_tokens": 460,
+            "candidate_input_tokens": 1528,
+            "candidate_output_tokens": 168
+          },
+          {
+            "item_id": "fe-0022",
+            "baseline_usd": 0.00809,
+            "candidate_usd": 0.0033150000000000002,
+            "baseline_input_tokens": 2215,
+            "baseline_output_tokens": 366,
+            "candidate_input_tokens": 1415,
+            "candidate_output_tokens": 159
+          },
+          {
+            "item_id": "fe-0023",
+            "baseline_usd": 0.01093,
+            "candidate_usd": 0.0035055,
+            "baseline_input_tokens": 2390,
+            "baseline_output_tokens": 615,
+            "candidate_input_tokens": 1537,
+            "candidate_output_tokens": 160
+          },
+          {
+            "item_id": "fe-0024",
+            "baseline_usd": 0.007934,
+            "candidate_usd": 0.003156,
+            "baseline_input_tokens": 2162,
+            "baseline_output_tokens": 361,
+            "candidate_input_tokens": 1394,
+            "candidate_output_tokens": 142
+          },
+          {
+            "item_id": "fe-0025",
+            "baseline_usd": 0.01015,
+            "candidate_usd": 0.0037530000000000003,
+            "baseline_input_tokens": 2360,
+            "baseline_output_tokens": 543,
+            "candidate_input_tokens": 1557,
+            "candidate_output_tokens": 189
+          },
+          {
+            "item_id": "fe-0026",
+            "baseline_usd": 0.008226,
+            "candidate_usd": 0.0035129999999999996,
+            "baseline_input_tokens": 2363,
+            "baseline_output_tokens": 350,
+            "candidate_input_tokens": 1517,
+            "candidate_output_tokens": 165
+          },
+          {
+            "item_id": "fe-0027",
+            "baseline_usd": 0.008248,
+            "candidate_usd": 0.0033014999999999997,
+            "baseline_input_tokens": 2209,
+            "baseline_output_tokens": 383,
+            "candidate_input_tokens": 1406,
+            "candidate_output_tokens": 159
+          },
+          {
+            "item_id": "fe-0028",
+            "baseline_usd": 0.008864,
+            "candidate_usd": 0.003456,
+            "baseline_input_tokens": 2352,
+            "baseline_output_tokens": 416,
+            "candidate_input_tokens": 1524,
+            "candidate_output_tokens": 156
+          },
+          {
+            "item_id": "fe-0029",
+            "baseline_usd": 0.009214,
+            "candidate_usd": 0.0031230000000000003,
+            "baseline_input_tokens": 2207,
+            "baseline_output_tokens": 480,
+            "candidate_input_tokens": 1422,
+            "candidate_output_tokens": 132
+          },
+          {
+            "item_id": "fe-0030",
+            "baseline_usd": 0.008022,
+            "candidate_usd": 0.0032430000000000002,
+            "baseline_input_tokens": 2196,
+            "baseline_output_tokens": 363,
+            "candidate_input_tokens": 1407,
+            "candidate_output_tokens": 151
+          },
+          {
+            "item_id": "fe-0031",
+            "baseline_usd": 0.009614000000000001,
+            "candidate_usd": 0.0035145,
+            "baseline_input_tokens": 2392,
+            "baseline_output_tokens": 483,
+            "candidate_input_tokens": 1563,
+            "candidate_output_tokens": 156
+          },
+          {
+            "item_id": "fe-0032",
+            "baseline_usd": 0.012322,
+            "candidate_usd": 0.0036360000000000003,
+            "baseline_input_tokens": 2366,
+            "baseline_output_tokens": 759,
+            "candidate_input_tokens": 1549,
+            "candidate_output_tokens": 175
+          },
+          {
+            "item_id": "fe-0033",
+            "baseline_usd": 0.00911,
+            "candidate_usd": 0.003156,
+            "baseline_input_tokens": 2205,
+            "baseline_output_tokens": 470,
+            "candidate_input_tokens": 1429,
+            "candidate_output_tokens": 135
+          },
+          {
+            "item_id": "fe-0034",
+            "baseline_usd": 0.012286,
+            "candidate_usd": 0.0037560000000000002,
+            "baseline_input_tokens": 2368,
+            "baseline_output_tokens": 755,
+            "candidate_input_tokens": 1554,
+            "candidate_output_tokens": 190
+          },
+          {
+            "item_id": "fe-0035",
+            "baseline_usd": 0.008400000000000001,
+            "candidate_usd": 0.003333,
+            "baseline_input_tokens": 2170,
+            "baseline_output_tokens": 406,
+            "candidate_input_tokens": 1407,
+            "candidate_output_tokens": 163
+          },
+          {
+            "item_id": "fe-0036",
+            "baseline_usd": 0.007824000000000001,
+            "candidate_usd": 0.003159,
+            "baseline_input_tokens": 2192,
+            "baseline_output_tokens": 344,
+            "candidate_input_tokens": 1416,
+            "candidate_output_tokens": 138
+          },
+          {
+            "item_id": "fe-0037",
+            "baseline_usd": 0.007792,
+            "candidate_usd": 0.00315,
+            "baseline_input_tokens": 2161,
+            "baseline_output_tokens": 347,
+            "candidate_input_tokens": 1390,
+            "candidate_output_tokens": 142
+          },
+          {
+            "item_id": "fe-0038",
+            "baseline_usd": 0.010128,
+            "candidate_usd": 0.0037289999999999997,
+            "baseline_input_tokens": 2359,
+            "baseline_output_tokens": 541,
+            "candidate_input_tokens": 1551,
+            "candidate_output_tokens": 187
+          },
+          {
+            "item_id": "fe-0039",
+            "baseline_usd": 0.009049999999999999,
+            "candidate_usd": 0.0036029999999999994,
+            "baseline_input_tokens": 2400,
+            "baseline_output_tokens": 425,
+            "candidate_input_tokens": 1532,
+            "candidate_output_tokens": 174
+          },
+          {
+            "item_id": "fe-0040",
+            "baseline_usd": 0.009271999999999999,
+            "candidate_usd": 0.002961,
+            "baseline_input_tokens": 2191,
+            "baseline_output_tokens": 489,
+            "candidate_input_tokens": 1399,
+            "candidate_output_tokens": 115
+          },
+          {
+            "item_id": "fe-0041",
+            "baseline_usd": 0.009334,
+            "candidate_usd": 0.003441,
+            "baseline_input_tokens": 2372,
+            "baseline_output_tokens": 459,
+            "candidate_input_tokens": 1534,
+            "candidate_output_tokens": 152
+          },
+          {
+            "item_id": "fe-0042",
+            "baseline_usd": 0.008354,
+            "candidate_usd": 0.0032939999999999996,
+            "baseline_input_tokens": 2207,
+            "baseline_output_tokens": 394,
+            "candidate_input_tokens": 1406,
+            "candidate_output_tokens": 158
+          },
+          {
+            "item_id": "fe-0043",
+            "baseline_usd": 0.011751999999999999,
+            "candidate_usd": 0.0036975000000000003,
+            "baseline_input_tokens": 2356,
+            "baseline_output_tokens": 704,
+            "candidate_input_tokens": 1555,
+            "candidate_output_tokens": 182
+          },
+          {
+            "item_id": "fe-0044",
+            "baseline_usd": 0.008524,
+            "candidate_usd": 0.0035399999999999997,
+            "baseline_input_tokens": 2397,
+            "baseline_output_tokens": 373,
+            "candidate_input_tokens": 1540,
+            "candidate_output_tokens": 164
+          },
+          {
+            "item_id": "fe-0045",
+            "baseline_usd": 0.008974,
+            "candidate_usd": 0.0030930000000000003,
+            "baseline_input_tokens": 2207,
+            "baseline_output_tokens": 456,
+            "candidate_input_tokens": 1422,
+            "candidate_output_tokens": 128
+          },
+          {
+            "item_id": "fe-0046",
+            "baseline_usd": 0.008258,
+            "candidate_usd": 0.0032145,
+            "baseline_input_tokens": 2169,
+            "baseline_output_tokens": 392,
+            "candidate_input_tokens": 1398,
+            "candidate_output_tokens": 149
+          },
+          {
+            "item_id": "fe-0047",
+            "baseline_usd": 0.009844,
+            "candidate_usd": 0.0036405,
+            "baseline_input_tokens": 2392,
+            "baseline_output_tokens": 506,
+            "candidate_input_tokens": 1547,
+            "candidate_output_tokens": 176
+          },
+          {
+            "item_id": "fe-0048",
+            "baseline_usd": 0.008656,
+            "candidate_usd": 0.0035205,
+            "baseline_input_tokens": 2553,
+            "baseline_output_tokens": 355,
+            "candidate_input_tokens": 1642,
+            "candidate_output_tokens": 141
+          },
+          {
+            "item_id": "fe-0049",
+            "baseline_usd": 0.010838,
+            "candidate_usd": 0.0032595000000000002,
+            "baseline_input_tokens": 2219,
+            "baseline_output_tokens": 640,
+            "candidate_input_tokens": 1423,
+            "candidate_output_tokens": 150
+          },
+          {
+            "item_id": "fe-0050",
+            "baseline_usd": 0.010144,
+            "candidate_usd": 0.003351,
+            "baseline_input_tokens": 2202,
+            "baseline_output_tokens": 574,
+            "candidate_input_tokens": 1414,
+            "candidate_output_tokens": 164
+          },
+          {
+            "item_id": "fe-0051",
+            "baseline_usd": 0.010726,
+            "candidate_usd": 0.003666,
+            "baseline_input_tokens": 2373,
+            "baseline_output_tokens": 598,
+            "candidate_input_tokens": 1554,
+            "candidate_output_tokens": 178
+          },
+          {
+            "item_id": "fe-0052",
+            "baseline_usd": 0.011186,
+            "candidate_usd": 0.0035505,
+            "baseline_input_tokens": 2408,
+            "baseline_output_tokens": 637,
+            "candidate_input_tokens": 1537,
+            "candidate_output_tokens": 166
+          },
+          {
+            "item_id": "fe-0053",
+            "baseline_usd": 0.010842,
+            "candidate_usd": 0.0035310000000000003,
+            "baseline_input_tokens": 2391,
+            "baseline_output_tokens": 606,
+            "candidate_input_tokens": 1569,
+            "candidate_output_tokens": 157
+          },
+          {
+            "item_id": "fe-0054",
+            "baseline_usd": 0.011408000000000001,
+            "candidate_usd": 0.003147,
+            "baseline_input_tokens": 2219,
+            "baseline_output_tokens": 697,
+            "candidate_input_tokens": 1438,
+            "candidate_output_tokens": 132
+          },
+          {
+            "item_id": "fe-0055",
+            "baseline_usd": 0.010134,
+            "candidate_usd": 0.00324,
+            "baseline_input_tokens": 2207,
+            "baseline_output_tokens": 572,
+            "candidate_input_tokens": 1410,
+            "candidate_output_tokens": 150
+          },
+          {
+            "item_id": "fe-0056",
+            "baseline_usd": 0.008972,
+            "candidate_usd": 0.003249,
+            "baseline_input_tokens": 2186,
+            "baseline_output_tokens": 460,
+            "candidate_input_tokens": 1396,
+            "candidate_output_tokens": 154
+          },
+          {
+            "item_id": "fe-0057",
+            "baseline_usd": 0.008882000000000001,
+            "candidate_usd": 0.0033,
+            "baseline_input_tokens": 2221,
+            "baseline_output_tokens": 444,
+            "candidate_input_tokens": 1430,
+            "candidate_output_tokens": 154
+          },
+          {
+            "item_id": "fe-0058",
+            "baseline_usd": 0.011554,
+            "candidate_usd": 0.0035085,
+            "baseline_input_tokens": 2412,
+            "baseline_output_tokens": 673,
+            "candidate_input_tokens": 1564,
+            "candidate_output_tokens": 155
+          },
+          {
+            "item_id": "fe-0059",
+            "baseline_usd": 0.008993999999999999,
+            "candidate_usd": 0.003231,
+            "baseline_input_tokens": 2237,
+            "baseline_output_tokens": 452,
+            "candidate_input_tokens": 1429,
+            "candidate_output_tokens": 145
+          },
+          {
+            "item_id": "fe-0060",
+            "baseline_usd": 0.010738000000000001,
+            "candidate_usd": 0.0035985,
+            "baseline_input_tokens": 2399,
+            "baseline_output_tokens": 594,
+            "candidate_input_tokens": 1574,
+            "candidate_output_tokens": 165
+          },
+          {
+            "item_id": "fe-0061",
+            "baseline_usd": 0.009084,
+            "candidate_usd": 0.0035745000000000004,
+            "baseline_input_tokens": 2337,
+            "baseline_output_tokens": 441,
+            "candidate_input_tokens": 1533,
+            "candidate_output_tokens": 170
+          },
+          {
+            "item_id": "fe-0062",
+            "baseline_usd": 0.010322,
+            "candidate_usd": 0.0031799999999999997,
+            "baseline_input_tokens": 2201,
+            "baseline_output_tokens": 592,
+            "candidate_input_tokens": 1420,
+            "candidate_output_tokens": 140
+          },
+          {
+            "item_id": "fe-0063",
+            "baseline_usd": 0.009898,
+            "candidate_usd": 0.0035069999999999997,
+            "baseline_input_tokens": 2349,
+            "baseline_output_tokens": 520,
+            "candidate_input_tokens": 1518,
+            "candidate_output_tokens": 164
+          },
+          {
+            "item_id": "fe-0064",
+            "baseline_usd": 0.007978,
+            "candidate_usd": 0.0033015,
+            "baseline_input_tokens": 2184,
+            "baseline_output_tokens": 361,
+            "candidate_input_tokens": 1401,
+            "candidate_output_tokens": 160
+          },
+          {
+            "item_id": "fe-0065",
+            "baseline_usd": 0.011796000000000001,
+            "candidate_usd": 0.0034395,
+            "baseline_input_tokens": 2408,
+            "baseline_output_tokens": 698,
+            "candidate_input_tokens": 1553,
+            "candidate_output_tokens": 148
+          },
+          {
+            "item_id": "fe-0066",
+            "baseline_usd": 0.00842,
+            "candidate_usd": 0.0032835,
+            "baseline_input_tokens": 2235,
+            "baseline_output_tokens": 395,
+            "candidate_input_tokens": 1434,
+            "candidate_output_tokens": 151
+          },
+          {
+            "item_id": "fe-0067",
+            "baseline_usd": 0.01047,
+            "candidate_usd": 0.0034920000000000003,
+            "baseline_input_tokens": 2360,
+            "baseline_output_tokens": 575,
+            "candidate_input_tokens": 1528,
+            "candidate_output_tokens": 160
+          },
+          {
+            "item_id": "fe-0068",
+            "baseline_usd": 0.008213999999999999,
+            "candidate_usd": 0.0032145,
+            "baseline_input_tokens": 2162,
+            "baseline_output_tokens": 389,
+            "candidate_input_tokens": 1383,
+            "candidate_output_tokens": 152
+          },
+          {
+            "item_id": "fe-0069",
+            "baseline_usd": 0.010816,
+            "candidate_usd": 0.0033464999999999996,
+            "baseline_input_tokens": 2218,
+            "baseline_output_tokens": 638,
+            "candidate_input_tokens": 1421,
+            "candidate_output_tokens": 162
+          }
+        ],
+        "dropped_unpaired": 0,
+        "estimate": {
+          "metric": "cost_savings_pct",
+          "point": 64.792494259726,
+          "lo": 63.7818871317441,
+          "hi": 65.74182720416941,
+          "n": 70,
+          "unit": "percent",
+          "confidence": 0.95,
+          "resamples": 10000,
+          "seed": 20260812,
+          "method": "percentile_bootstrap",
+          "paired_n": 70,
+          "dropped_unpaired": 0
+        },
+        "no_estimate_reason": null
+      }
+    }
+  }
+}

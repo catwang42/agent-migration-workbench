@@ -247,6 +247,14 @@ class SubagentEvidence(_Base):
     #: ``alt`` clause and is the *only* thing that can turn that gate's missed
     #: CI bound into a pass; absent it, the gate fails as measured.
     adjudication: TriageSummary | None = None
+    #: The same adjudication for the arm this one replaced, when a prior shadow
+    #: run was supplied. It is the control: same gate, same corpus, same
+    #: baseline, different candidate prompt. Without it "the clause passes" is
+    #: a fact about the subagent; with it, it is a fact about the *rung*, which
+    #: is the claim the report actually wants to make.
+    adjudication_prior: TriageSummary | None = None
+    #: Which arm that prior adjudication belongs to. Empty when there is none.
+    adjudication_prior_arm: str = ""
     regions: Regions
     notes: list[str] = Field(default_factory=list)
 
@@ -461,6 +469,8 @@ def build_evidence(
     shadow: Mapping[str, Estimate] | None = None,
     shadow_metric: str | None = None,
     adjudications: Mapping[str, TriageSummary] | None = None,
+    prior_adjudications: Mapping[str, TriageSummary] | None = None,
+    prior_arm: str = "",
     latency_probes: Mapping[str, SameRegionLatencyProbe] | None = None,
     regions: Regions | None = None,
     baseline_variant: str = BASELINE_VARIANT,
@@ -479,6 +489,7 @@ def build_evidence(
     regions = regions or Regions.from_env(cfg)
     shadow = shadow or {}
     adjudications = adjudications or {}
+    prior_adjudications = prior_adjudications or {}
     latency_probes = latency_probes or {}
     cost_savings = cost_savings or {}
     seed = phase2.bootstrap_seed
@@ -591,6 +602,10 @@ def build_evidence(
                 judge_candidate=_judge_cell(cand_arm),
                 latency_probe=probe,
                 adjudication=adjudications.get(subagent),
+                adjudication_prior=prior_adjudications.get(subagent),
+                adjudication_prior_arm=(
+                    prior_arm if subagent in prior_adjudications else ""
+                ),
                 regions=regions,
                 notes=notes,
             )

@@ -553,11 +553,13 @@ def test_the_clause_is_evaluated_on_the_overall_tally_not_the_quality_one():
 
 def test_the_adjudication_wording_carries_both_figures():
     text = _summary(wins_baseline_malformed=6).adjudication_text(
-        baseline_label="the Claude baseline"
+        baseline_label="Claude baseline"
     )
+    # The owner-ruled wording, verbatim in shape: both tallies, then whether
+    # the clause holds on each of them.
     assert text.startswith("15W/3L overall")
-    assert "9W/3L excluding items" in text
-    assert "the Claude baseline's tool emission was structurally malformed" in text
+    assert "9W/3L excluding structurally malformed Claude baseline emissions" in text
+    assert text.endswith("passes on either figure")
 
 
 def test_the_wording_says_so_when_nothing_was_excluded():
@@ -586,7 +588,7 @@ def test_the_triage_table_names_the_mechanism_behind_the_exclusion(items):
     assert "[baseline emission malformed — the call failed: boom]" in table
     assert "constraints/vertexai.allowedPartnerModelFeatures" in table
     assert "merely answered worse" in table
-    assert "1W/0L overall; 0W/0L excluding items" in table
+    assert "1W/0L overall; 0W/0L excluding structurally malformed" in table
 
 
 def test_the_markdown_table_has_the_columns_the_card_asked_for(items):

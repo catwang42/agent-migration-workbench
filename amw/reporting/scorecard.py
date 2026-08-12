@@ -84,6 +84,7 @@ __all__ = [
     "build_scorecard",
     "render_markdown",
     "load_adjudications",
+    "shadow_candidate_arm",
     "load_ladders",
     "cmd_scorecard",
 ]
@@ -527,22 +528,46 @@ def _measured_cell(
     return paired_delta_text(check.estimate)
 
 
-def _alt_clause_note(check: GateCheck) -> str:
+def _prior_arm_sentence(evidence: SubagentEvidence) -> str:
+    """The control tally: the same clause, evaluated on the arm this replaced.
+
+    "The clause passes" on its own is a fact about the subagent — it is
+    consistent with the clause having passed all along, before any tuning. Put
+    the replaced arm's tally on the same corpus, same gate, same baseline
+    beside it and the sentence becomes a fact about the *rung*, which is the
+    claim the report is actually making. Rendered only when a prior shadow run
+    was supplied; there is no default and nothing is inferred.
+    """
+    prior = evidence.adjudication_prior
+    if prior is None:
+        return ""
+    arm = f"`{evidence.adjudication_prior_arm}`" if evidence.adjudication_prior_arm else "the arm it replaced"
+    return (
+        f" The clause is not passing on its own momentum: on the same corpus, "
+        f"the same gate and the same baseline, {arm} adjudicated "
+        f"{prior.adjudication_text(baseline_label='Claude baseline')} — so the "
+        f"pass is attributable to this rung, not to the subagent."
+    )
+
+
+def _alt_clause_note(check: GateCheck, evidence: SubagentEvidence) -> str:
     """The paragraph under the table for a gate that passed by its alt clause.
 
     The Result cell has room for the tally the clause was decided on and
     nothing else. Everything a reader needs to audit the pass goes here: the
     bound that was missed, the clause quoted from ``gates.yaml``, both
-    adjudication figures, and the mechanism behind the exclusion in the second
-    one — which is the same org-policy tool-emission artifact disclosed beside
-    the baseline everywhere else in this report.
+    adjudication figures, the mechanism behind the exclusion in the second one
+    — which is the same org-policy tool-emission artifact disclosed beside the
+    baseline everywhere else in this report — and, when it exists, the
+    replaced arm's tally as the control.
     """
     return (
         f"`{check.gate}` did not clear its CI bound "
         f"({check.compared_bound} = {check.compared_value:.4g}, bound "
         f"{'≥' if check.direction == 'min' else '≤'} {check.bound:g}). It passes on "
         f'the alternative route pre-registered in gates.yaml — "{check.alt}" — '
-        f"measured at {check.alt_evidence}. {MALFORMED_CAVEAT} The clause was "
+        f"measured at {check.alt_evidence}. {MALFORMED_CAVEAT}"
+        f"{_prior_arm_sentence(evidence)} The clause was "
         f"written before any of this was measured; it is the pre-agreed second "
         f"route, not a threshold chosen after seeing the result."
     )
@@ -591,7 +616,7 @@ def _gate_table(
             f"| {tested} | {result} |"
         )
     for gate_name in by_alt:
-        lines.extend(["", _alt_clause_note(verdict.checks[gate_name])])
+        lines.extend(["", _alt_clause_note(verdict.checks[gate_name], evidence)])
     for gate_name in imprecise:
         lines.extend(
             [
@@ -961,6 +986,21 @@ def load_adjudications(path: Path) -> dict[str, TriageSummary]:
     return out
 
 
+def shadow_candidate_arm(path: Path) -> str:
+    """Which candidate arm a shadow artifact was run against.
+
+    Needed so the prior-arm comparison can *name* the arm it is comparing
+    against instead of saying "the previous run". An artifact with no
+    ``candidate_arm`` yields ``""`` and the comparison renders without a name
+    rather than with a guessed one.
+    """
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        return ""
+    arm = data.get("candidate_arm")
+    return arm if isinstance(arm, str) else ""
+
+
 def load_ladders(results_dir: Path) -> list[Any]:
     """Every ``ablation_{subagent}.json`` sitting beside the scored artifact.
 
@@ -1063,6 +1103,21 @@ def cmd_scorecard(args, cfg) -> int:
     shadow_path = getattr(args, "shadow", None)
     shadow_metric = getattr(args, "shadow_metric", None) or DEFAULT_SHADOW_METRIC
 
+    # The control for an alt-clause pass. Refused loudly if the path is wrong:
+    # a missing prior silently degrades the note from "this rung earned it" to
+    # "the clause passed", which is a weaker claim rendered as if it were the
+    # only one available.
+    prior_path = getattr(args, "shadow_prior", None)
+    prior_adjudications = None
+    prior_arm = ""
+    if prior_path:
+        prior = Path(prior_path)
+        if not prior.is_file():
+            print(f"no shadow artifact at {prior}", file=sys.stderr)
+            return 4
+        prior_adjudications = load_adjudications(prior)
+        prior_arm = shadow_candidate_arm(prior)
+
     # Imported here rather than at module scope: the scorecard package is
     # imported on every cli.py invocation and must not drag the eval runner in
     # with it. Only text crosses this boundary — see Scorecard.crosscheck_line.
@@ -1099,6 +1154,8 @@ def cmd_scorecard(args, cfg) -> int:
         adjudications=(
             load_adjudications(Path(shadow_path)) if shadow_path else None
         ),
+        prior_adjudications=prior_adjudications,
+        prior_arm=prior_arm,
         regions=regions,
         baseline_variant=baseline,
         candidate_variant=candidate,

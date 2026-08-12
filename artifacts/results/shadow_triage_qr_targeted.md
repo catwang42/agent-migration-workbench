@@ -6,7 +6,7 @@
 
 Verdicts are from the **candidate's** point of view (win = the Gemini arm scored higher). Scores are the recorded phase-2 judge scores for these exact outputs, replayed — no judge call was made to build this table.
 
-**query_rewriter** adjudication: 15W/3L overall; 9W/3L excluding items where the Claude baseline's tool emission was structurally malformed. Under this demo organization's Vertex AI policy configuration (`constraints/vertexai.allowedPartnerModelFeatures`), partner-model structured outputs were unavailable, so the Claude baseline was measured using tool-call structured emission; the excluded items are ones where that emission was structurally broken (see `amw/shadow/emission.py`), not ones where the baseline merely answered worse.
+**query_rewriter** adjudication: 15W/3L overall; 9W/3L excluding structurally malformed Claude baseline emissions; passes on either figure. Under this demo organization's Vertex AI policy configuration (`constraints/vertexai.allowedPartnerModelFeatures`), partner-model structured outputs were unavailable, so the Claude baseline was measured using tool-call structured emission; the excluded items are ones where that emission was structurally broken (see `amw/shadow/emission.py`), not ones where the baseline merely answered worse.
 
 | item | subagent | disagreeing field(s) | verdict | judged split | recorded rationale (quoted) |
 |---|---|---|---|---|---|

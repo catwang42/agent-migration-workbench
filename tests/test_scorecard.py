@@ -555,6 +555,8 @@ def _forced(
     estimates,
     *,
     adjudication: TriageSummary | None = None,
+    adjudication_prior: TriageSummary | None = None,
+    adjudication_prior_arm: str = "",
 ) -> list:
     return [
         SubagentEvidence(
@@ -563,6 +565,8 @@ def _forced(
             candidate_variant="gemini_tuned_v1",
             estimates=estimates,
             adjudication=adjudication,
+            adjudication_prior=adjudication_prior,
+            adjudication_prior_arm=adjudication_prior_arm,
             unmeasured={
                 g: "not supplied by this fixture"
                 for g in cfg.gates.subagent_gates
@@ -690,13 +694,15 @@ def _triage(wins: int, losses: int, **kw) -> TriageSummary:
     )
 
 
-def _qr(cfg, phase2, summary, agreement=None):
+def _qr(cfg, phase2, summary, agreement=None, *, prior=None, prior_arm=""):
     evidence = _forced(
         cfg,
         phase2,
         "query_rewriter",
         _shadow_only(cfg, agreement or _failing_agreement()),
         adjudication=summary,
+        adjudication_prior=prior,
+        adjudication_prior_arm=prior_arm,
     )
     return evidence, decide_verdict(evidence[0], cfg.gates)
 
@@ -729,7 +735,7 @@ def test_the_footnote_carries_both_figures_and_the_mechanism(cfg, phase2) -> Non
     evidence, _ = _qr(cfg, phase2, _triage(15, 3, wins_baseline_malformed=6))
     markdown = render_markdown(build_scorecard(cfg, phase2, evidence=evidence))
     assert "15W/3L overall" in markdown
-    assert "9W/3L excluding items" in markdown
+    assert "9W/3L excluding structurally malformed" in markdown
     assert MALFORMED_CAVEAT in markdown
     assert "did not clear its CI bound" in markdown
     assert "pre-agreed second route, not a threshold chosen after seeing" in markdown
@@ -743,7 +749,36 @@ def test_the_clause_is_decided_on_the_tally_it_names(cfg, phase2) -> None:
     """
     _, verdict = _qr(cfg, phase2, _triage(4, 3, wins_baseline_malformed=3))
     assert verdict.checks["shadow_agreement"].alt_passed is True, "4 >= 3"
-    assert "1W/3L excluding items" in verdict.checks["shadow_agreement"].alt_evidence
+    evidence_text = verdict.checks["shadow_agreement"].alt_evidence
+    assert "1W/3L excluding structurally malformed" in evidence_text
+    # ... and the wording says out loud that the two figures disagree, rather
+    # than letting "passes" stand unqualified next to a tally that does not.
+    assert "the quality-only tally does not clear it" in evidence_text
+
+
+def test_the_replaced_arm_tally_renders_as_the_control(cfg, phase2) -> None:
+    """"The clause passes" is a fact about the subagent until the arm it
+    replaced is standing next to it; then it is a fact about the rung."""
+    evidence, _ = _qr(
+        cfg,
+        phase2,
+        _triage(15, 3, wins_baseline_malformed=6),
+        prior=_triage(14, 20, ties=36, wins_baseline_malformed=6, losses_baseline_malformed=5),
+        prior_arm="gemini_tuned_v1",
+    )
+    markdown = render_markdown(build_scorecard(cfg, phase2, evidence=evidence))
+    assert "`gemini_tuned_v1` adjudicated 14W/20L overall" in markdown
+    assert "8W/15L excluding structurally malformed" in markdown
+    assert "fails on either figure" in markdown
+    assert "attributable to this rung" in markdown
+
+
+def test_no_prior_arm_means_no_control_sentence(cfg, phase2) -> None:
+    """Absent evidence renders as absence. There is no default comparator."""
+    evidence, _ = _qr(cfg, phase2, _triage(15, 3, wins_baseline_malformed=6))
+    markdown = render_markdown(build_scorecard(cfg, phase2, evidence=evidence))
+    assert "attributable to this rung" not in markdown
+    assert "the arm it replaced" not in markdown
 
 
 def test_losing_the_clause_leaves_the_gate_failed(cfg, phase2) -> None:

@@ -224,31 +224,64 @@ class TriageSummary(_Strict):
             return None
         return self.quality_wins >= self.quality_losses
 
-    def adjudication_text(self, *, baseline_label: str = "the baseline") -> str:
+    @property
+    def clause_text(self) -> str:
+        """Whether the pre-registered alt clause holds — on each figure reported.
+
+        Stating this per figure is the point. "Passes on either figure" is a
+        much stronger claim than "passes", and where the two figures disagree
+        the sentence has to say which one carried it and which one did not,
+        rather than quietly reporting the flattering half.
+        """
+        overall = self.wins_ge_losses
+        if overall is None:
+            return "the alt clause cannot be evaluated"
+        quality = self.quality_wins_ge_losses
+        if not (self.wins_baseline_malformed or self.losses_baseline_malformed):
+            # One figure, so "either" would be an odd thing to say.
+            return (
+                "passes the pre-registered alt clause"
+                if overall
+                else "fails the pre-registered alt clause"
+            )
+        if overall == quality:
+            return "passes on either figure" if overall else "fails on either figure"
+        if overall:
+            return (
+                "passes on the overall tally, which is the figure the clause "
+                "names; the quality-only tally does not clear it"
+            )
+        return (
+            "fails on the overall tally, which is the figure the clause names, "
+            "though the quality-only tally would clear it"
+        )
+
+    def adjudication_text(self, *, baseline_label: str = "baseline") -> str:
         """The one wording used everywhere the adjudication is quoted.
 
-        Both figures, always, in the order the ruling fixed: overall first,
-        because that is what the pre-registered clause is evaluated on, then
-        the quality-only tally with the reason for the exclusion named.
+        Fixed by the 2026-08-12 ruling: overall tally first, because that is
+        the figure the pre-registered clause names; then the quality-only
+        tally with the reason for the exclusion; then whether the clause holds
+        on each. One method so the three cannot drift apart across the report.
         """
         if not self.adjudicated:
             return (
                 f"no disagreement was adjudicated "
                 f"({self.not_adjudicated} not adjudicated)"
             )
-        text = f"{self.wins}W/{self.losses}L overall"
+        parts = [f"{self.wins}W/{self.losses}L overall"]
         if self.wins_baseline_malformed or self.losses_baseline_malformed:
-            text += (
-                f"; {self.quality_wins}W/{self.quality_losses}L excluding items "
-                f"where {baseline_label}'s tool emission was structurally "
-                f"malformed"
+            parts.append(
+                f"{self.quality_wins}W/{self.quality_losses}L excluding "
+                f"structurally malformed {baseline_label} emissions"
             )
         else:
-            text += (
-                f"; no item was excluded — {baseline_label} emitted a "
+            parts.append(
+                f"no item was excluded — {baseline_label} emitted a "
                 f"well-formed payload on every adjudicated disagreement"
             )
-        return text
+        parts.append(self.clause_text)
+        return "; ".join(parts)
 
 
 # --------------------------------------------------------------------------
@@ -612,7 +645,7 @@ def triage_table_markdown(
                 continue
             lines.append(
                 f"**{summary.subagent}** adjudication: "
-                f"{summary.adjudication_text(baseline_label='the Claude baseline')}. "
+                f"{summary.adjudication_text(baseline_label='Claude baseline')}. "
                 + MALFORMED_CAVEAT
             )
             lines.append("")

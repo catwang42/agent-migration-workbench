@@ -410,6 +410,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="shadow agreement artifact from `cli.py shadow`",
     )
     scorecard.add_argument(
+        "--shadow-prior",
+        default=None,
+        help=(
+            "an earlier shadow artifact for the arm this run replaced; its "
+            "adjudication is printed beside any alt-clause pass as the control "
+            "(same corpus, same gate, same baseline, different candidate prompt)"
+        ),
+    )
+    scorecard.add_argument(
         "--crosscheck",
         default=None,
         help=(

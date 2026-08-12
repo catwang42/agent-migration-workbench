@@ -1,0 +1,117 @@
+# Public workshop companion — https://catwang42.github.io/agent-migration-workbench/
+#
+# docs_dir is `site_src`, NEVER `docs/`.
+# `docs/` holds internal presenter material (objection handling, the master
+# plan, the decision framework) that must not be published. Changing docs_dir
+# to `docs` would publish all of it in one commit. scripts/build_site.py greps
+# the BUILT output for distinctive phrases from every internal file and exits
+# non-zero if any of them leak.
+
+site_name: Agent Migration Workbench
+site_description: >-
+  A workshop companion for migrating high-volume RAG subagents from Claude to
+  Gemini on evidence: pre-registered gates, recorded calls, and a scorecard
+  that is allowed to say no.
+site_url: https://catwang42.github.io/agent-migration-workbench/
+site_author: Agent Migration Workbench
+
+repo_url: https://github.com/catwang42/agent-migration-workbench
+repo_name: catwang42/agent-migration-workbench
+edit_uri: ""
+
+docs_dir: site_src
+site_dir: site
+
+theme:
+  name: material
+  language: en
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/catwang42/agent-migration-workbench
+      name: agent-migration-workbench on GitHub
+  generator: false
+
+copyright: >-
+  Every figure on this site comes from an executed model call recorded in
+  <code>artifacts/replay/</code>. Corpus is synthetic (<code>demo_patents</code>,
+  seed <code>20260812</code>). Cost figures render as em dashes until
+  <code>config/pricing.yaml</code> is verified.
+
+nav:
+  - Home: index.md
+  - Setup: setup.md
+  - Modules:
+      - "01 — Why subagents migrate first": modules/01-why-subagents-first.md
+      - "02 — The reference workload": modules/02-reference-workload.md
+      - "03 — Gates as contract": modules/03-gates-as-contract.md
+      - "04 — The naive swap": modules/04-the-naive-swap.md
+      - "05 — The adaptation ladder": modules/05-adaptation-ladder.md
+      - "06 — The second judge": modules/06-the-second-judge.md
+      - "07 — Shadow & adjudication": modules/07-shadow-and-adjudication.md
+      - "08 — The scorecard": modules/08-the-scorecard.md
+  - Results:
+      - Overview: results/index.md
+      - Migration Readiness Scorecard: results/scorecard.md
+      - Selection table: results/selection_table.md
+      - Judge cross-check: results/crosscheck.md
+      - Charts: results/charts.md
+  - Exercises: exercises.md

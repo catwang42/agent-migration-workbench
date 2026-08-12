@@ -1,0 +1,15 @@
+# Docs-site dependencies ONLY — the public workshop companion at
+# https://catwang42.github.io/agent-migration-workbench/
+#
+# Deliberately kept out of requirements.txt: nothing in `amw/`, `cli.py` or
+# `tests/` imports any of this, and the zero-credential replay path
+# (`python cli.py e2e --mode replay`, CLAUDE.md ground rule 4) must not grow a
+# dependency on a static-site generator.
+#
+# Install:  .venv/bin/pip install -r requirements-docs.txt
+# Build:    mkdocs build --strict
+# Publish:  mkdocs gh-deploy --strict     (a human runs this, never the build)
+
+mkdocs==1.6.1
+mkdocs-material==9.7.7
+pymdown-extensions==10.16.1

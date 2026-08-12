@@ -41,3 +41,8 @@ artifacts/*
 !artifacts/optimizer/
 !artifacts/reports/
 !artifacts/backup/
+
+# The rendered public site. `mkdocs build` / `gh-deploy` regenerate it from
+# site_src/, and gh-deploy pushes it to the gh-pages branch — a copy on main
+# would only ever be stale.
+site/

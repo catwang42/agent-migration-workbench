@@ -798,6 +798,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-ships-the-deployment-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What ships: the deployment generation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What ships: the deployment generation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-capping-the-reasoning-budget-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What capping the reasoning budget costs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-rules-were-found-the-development-generation-ladder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the rules were found: the development-generation ladder
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How the rules were found: the development-generation ladder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#query-rewriter" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -807,8 +847,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#chunk-summarizer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -818,24 +858,12 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#feature-extractor-the-rung-that-went-backwards" class="md-nav__link">
     <span class="md-ellipsis">
       
         Feature Extractor — the rung that went backwards
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Feature Extractor — the rung that went backwards">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#the-optimizer-rung-and-its-contamination" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The optimizer rung and its contamination
       
     </span>
   </a>
@@ -1258,6 +1286,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-ships-the-deployment-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What ships: the deployment generation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What ships: the deployment generation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-capping-the-reasoning-budget-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What capping the reasoning budget costs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-rules-were-found-the-development-generation-ladder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the rules were found: the development-generation ladder
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How the rules were found: the development-generation ladder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#query-rewriter" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1267,8 +1335,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#chunk-summarizer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1278,24 +1346,12 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#feature-extractor-the-rung-that-went-backwards" class="md-nav__link">
     <span class="md-ellipsis">
       
         Feature Extractor — the rung that went backwards
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Feature Extractor — the rung that went backwards">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#the-optimizer-rung-and-its-contamination" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The optimizer rung and its contamination
       
     </span>
   </a>
@@ -1339,17 +1395,16 @@
 <p><em>~7 min read · <a href="../04-the-naive-swap/">04 The naive swap</a> → </em><em>05</em><em> → <a href="../06-the-second-judge/">06 The second judge</a></em></p>
 <hr />
 <div class="admonition info">
-<p class="admonition-title">Which model these figures are from</p>
-<p>The arm labelled "Gemini" on this page is <strong>Gemini 2.5 Flash</strong> — the
-<em>development generation</em>, where the adaptation ladder and the prompt-optimizer
-work were done. It is not what the scorecard recommends deploying.</p>
-<p>The prompts tuned here were then run <strong>unchanged</strong> on the deployment
-generation — Gemini 3.6 Flash, with Gemini 3.5 Flash as a second candidate
-column — and the instruction rules kept working across the generation gap.
-That portability is a finding in its own right: the adaptation work is an
-asset that survives a model upgrade, not a tax you pay again on every new
-model. It is also why both generations appear on this site rather than only
-the newest one — deleting the development generation would delete the
+<p class="admonition-title">Two model generations on this page — the deployment one leads</p>
+<p>The <strong>deployment generation</strong> is what the scorecard recommends and what every
+dollar figure on this site is summed from: <strong>Gemini 3.6 Flash with the
+reasoning budget minimised</strong> (<code>gemini-flash-current-capped</code>). Its figures come
+first in every table below.</p>
+<p>The <strong>development generation</strong> — Gemini 2.5 Flash — is where the adaptation
+ladder and the prompt-optimizer work were done. Those prompts were then run
+<strong>unchanged</strong> on the deployment generation and the instruction rules kept
+working. That portability is a finding in its own right, and it is why both
+generations stay on this page: deleting the older one would delete the
 evidence that the rules transfer.</p>
 <p>Every model, its provider ID, its region and the window its calls were
 recorded in: <a href="../../models-in-this-study/">Models in this study</a>.</p>
@@ -1364,6 +1419,7 @@ change bought what — and, on one subagent here, which change <strong>cost</str
 <thead>
 <tr>
 <th>Rung</th>
+<th>Model</th>
 <th>What changes</th>
 <th>Output mode</th>
 </tr>
@@ -1371,46 +1427,89 @@ change bought what — and, on one subagent here, which change <strong>cost</str
 <tbody>
 <tr>
 <td><code>baseline</code></td>
+<td><strong>Claude Sonnet 5</strong></td>
 <td>Incumbent: the customer's XML prompt on Claude, <code>emit_*</code> tool</td>
 <td><code>tool</code></td>
 </tr>
 <tr>
 <td><code>A0</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>Naive endpoint swap: the same prompt bytes on Gemini, same tool</td>
 <td><code>tool</code></td>
 </tr>
 <tr>
 <td><code>A1-A3</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>Bundled: Markdown restructure + system/user split + enforced <code>response_schema</code> + two recalibrated few-shots</td>
 <td><code>response_schema</code></td>
 </tr>
 <tr>
 <td><code>A0-schema</code> <em>(Feature Extractor)</em></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><strong>Mode only</strong>: A0's prompt, enforced <code>response_schema</code> instead of the tool</td>
 <td><code>response_schema</code></td>
 </tr>
 <tr>
 <td><code>A4-novelty-tool</code> <em>(Feature Extractor)</em></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><strong>Prompt only</strong>: A0 plus the <code>novelty_statement</code> rule (claim 1 is the point of novelty; numeric limits survive) and one worked example</td>
 <td><code>tool</code></td>
 </tr>
 <tr>
 <td><code>A4-novelty-schema</code> <em>(Feature Extractor)</em></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><strong>Both</strong>: the novelty prompt under the enforced <code>response_schema</code></td>
 <td><code>response_schema</code></td>
 </tr>
 <tr>
 <td><code>A4-optimizer</code> <em>(Feature Extractor)</em></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>Optimizer: a VAIPO-suggested instruction over <code>gemini_naive</code>, read against <code>judge_score</code></td>
 <td><code>tool</code></td>
 </tr>
 <tr>
 <td><code>A4-targeted</code> <em>(Query Rewriter)</em></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>A1-A3 plus three bundled rules for the three measured loss clusters — publication numbers verbatim in <code>query</code>, explicit <code>date_to</code> copied not expanded, landscape vs ownership by which side of the question is unknown (per-rule credit is <strong>not</strong> isolated)</td>
 <td><code>response_schema</code></td>
 </tr>
+<tr>
+<td><code>A0-current</code></td>
+<td><strong>Gemini 3.6 Flash</strong></td>
+<td>Generation only: A0's prompt bytes, unchanged, on the deployment-generation model</td>
+<td><code>tool</code></td>
+</tr>
+<tr>
+<td><code>A0-35</code></td>
+<td><strong>Gemini 3.5 Flash</strong></td>
+<td>Generation only: the same, on the second candidate</td>
+<td><code>tool</code></td>
+</tr>
+<tr>
+<td><code>ship-current</code></td>
+<td><strong>Gemini 3.6 Flash</strong></td>
+<td>The winning prompt from the ladder above, unchanged, on the deployment-generation model</td>
+<td>as selected</td>
+</tr>
+<tr>
+<td><code>ship-35</code></td>
+<td><strong>Gemini 3.5 Flash</strong></td>
+<td>The same winning prompt, on the second candidate</td>
+<td>as selected</td>
+</tr>
+<tr>
+<td><code>ship-current-capped</code></td>
+<td><strong>Gemini 3.6 Flash (capped thinking)</strong></td>
+<td><strong>Recommended.</strong> <code>ship-current</code> with <code>thinking_config.thinking_budget</code> minimised — same model ID, same prompt bytes, one setting apart</td>
+<td>as selected</td>
+</tr>
 </tbody>
 </table>
+<p>Every rung name above is a <strong>prompt</strong> identity, not a model identity. The last
+five rungs re-run <em>already-selected</em> prompts against different models, which is
+exactly why every result table names its model in its own column.</p>
+<p><code>A0-current</code> and <code>A0-35</code> exist so that "the newer model fixed it" and "the prompt
+work fixed it" can never be collapsed into one claim.</p>
 <p><code>A0-schema</code>, <code>A4-novelty-tool</code> and <code>A4-novelty-schema</code> exist as a 2×2: prompt
 change alone, mode change alone, and both. Bundling them would have made "the
 enforced schema helped" unfalsifiable.</p>
@@ -1432,12 +1531,238 @@ incumbent's point estimate <em>on the same split</em>. It is <strong>unpaired</s
 the <code>quality_delta_pp</code> gate — that gate is a paired bootstrap over per-item
 differences, and it is what the verdict is decided on. This table informs the
 selection; it does not make it.</p>
-<h2 id="query-rewriter">Query Rewriter<a class="headerlink" href="#query-rewriter" title="Permanent link">&para;</a></h2>
-<p><strong>Core 28</strong> — incumbent <code>baseline</code> 0.911 [0.839, 0.964]</p>
+<h2 id="what-ships-the-deployment-generation">What ships: the deployment generation<a class="headerlink" href="#what-ships-the-deployment-generation" title="Permanent link">&para;</a></h2>
+<p>These are the rungs the scorecard reads. All are <strong>n=70 on the full corpus</strong>, so
+they compare against the full-70 Claude incumbent, not the core-28 one. The
+recommended row is bold.</p>
+<p><strong>Query Rewriter</strong> — incumbent <code>claude_baseline</code> on <strong>Claude Sonnet 5</strong>, 0.886 [0.838, 0.932]</p>
 <table>
 <thead>
 <tr>
 <th>Rung</th>
+<th>Model</th>
+<th>Mode</th>
+<th>Judged score (95% confidence range)</th>
+<th><code>exact_match_intent</code></th>
+<th>vs incumbent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>ship-current-capped</code></strong></td>
+<td><strong>Gemini 3.6 Flash (capped thinking)</strong></td>
+<td><code>response_schema</code></td>
+<td><strong>0.959 [0.934, 0.982]</strong></td>
+<td>0.814 [0.714, 0.900]</td>
+<td><strong>clears</strong> (lo 0.934 &gt; 0.886)</td>
+</tr>
+<tr>
+<td><code>ship-current</code></td>
+<td>Gemini 3.6 Flash</td>
+<td><code>response_schema</code></td>
+<td>0.964 [0.939, 0.986]</td>
+<td>0.857 [0.771, 0.929]</td>
+<td><strong>clears</strong> (lo 0.939 &gt; 0.886)</td>
+</tr>
+<tr>
+<td><code>ship-35</code></td>
+<td>Gemini 3.5 Flash</td>
+<td><code>response_schema</code></td>
+<td>0.968 [0.943, 0.989]</td>
+<td>0.943 [0.886, 0.986]</td>
+<td><strong>clears</strong> (lo 0.943 &gt; 0.886)</td>
+</tr>
+<tr>
+<td><code>A0-current</code></td>
+<td>Gemini 3.6 Flash</td>
+<td><code>tool</code></td>
+<td>0.904 [0.871, 0.936]</td>
+<td>0.614 [0.500, 0.729]</td>
+<td>parity — unmodified prompt (lo 0.871 ≤ 0.886 ≤ hi 0.936)</td>
+</tr>
+<tr>
+<td><code>A0-35</code></td>
+<td>Gemini 3.5 Flash</td>
+<td><code>tool</code></td>
+<td>0.855 [0.820, 0.888]</td>
+<td>0.514 [0.400, 0.629]</td>
+<td>parity, at the margin (hi 0.888 clears 0.886 by 0.002)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Chunk Summarizer</strong> — incumbent <code>claude_baseline</code> on <strong>Claude Sonnet 5</strong>, 0.918 [0.879, 0.954]</p>
+<table>
+<thead>
+<tr>
+<th>Rung</th>
+<th>Model</th>
+<th>Mode</th>
+<th>Judged score (95% confidence range)</th>
+<th><code>citation_coverage</code></th>
+<th>vs incumbent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>ship-current-capped</code></strong></td>
+<td><strong>Gemini 3.6 Flash (capped thinking)</strong></td>
+<td><code>response_schema</code></td>
+<td><strong>0.893 [0.857, 0.925]</strong></td>
+<td>1.000 [1.000, 1.000]</td>
+<td>parity (lo 0.857 ≤ 0.918 ≤ hi 0.925)</td>
+</tr>
+<tr>
+<td><code>ship-current</code></td>
+<td>Gemini 3.6 Flash</td>
+<td><code>response_schema</code></td>
+<td>0.902 [0.866, 0.936]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td>parity</td>
+</tr>
+<tr>
+<td><code>ship-35</code></td>
+<td>Gemini 3.5 Flash</td>
+<td><code>response_schema</code></td>
+<td>0.896 [0.855, 0.934]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td>parity</td>
+</tr>
+<tr>
+<td><code>A0-current</code></td>
+<td>Gemini 3.6 Flash</td>
+<td><code>tool</code></td>
+<td>0.902 [0.864, 0.936]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td>parity — unmodified prompt</td>
+</tr>
+<tr>
+<td><code>A0-35</code></td>
+<td>Gemini 3.5 Flash</td>
+<td><code>tool</code></td>
+<td>0.896 [0.868, 0.925]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td>parity — unmodified prompt</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Feature Extractor</strong> — incumbent <code>claude_baseline</code> on <strong>Claude Sonnet 5</strong>, 0.900 [0.868, 0.929]</p>
+<table>
+<thead>
+<tr>
+<th>Rung</th>
+<th>Model</th>
+<th>Mode</th>
+<th>Judged score (95% confidence range)</th>
+<th><code>extraction_accuracy</code></th>
+<th><code>omission_rate</code></th>
+<th>vs incumbent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>ship-current-capped</code></strong></td>
+<td><strong>Gemini 3.6 Flash (capped thinking)</strong></td>
+<td><code>tool</code></td>
+<td><strong>0.903 [0.880, 0.924]</strong></td>
+<td>0.940 [0.921, 0.960]</td>
+<td>0.066 [0.046, 0.087]</td>
+<td>parity (lo 0.880 ≤ 0.900 ≤ hi 0.924)</td>
+</tr>
+<tr>
+<td><code>ship-current</code></td>
+<td>Gemini 3.6 Flash</td>
+<td><code>tool</code></td>
+<td>0.950 [0.926, 0.970]</td>
+<td>0.995 [0.988, 1.000]</td>
+<td>0.005 [0.000, 0.012]</td>
+<td><strong>clears</strong> (lo 0.926 &gt; 0.900)</td>
+</tr>
+<tr>
+<td><code>ship-35</code></td>
+<td>Gemini 3.5 Flash</td>
+<td><code>tool</code></td>
+<td>0.951 [0.927, 0.973]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td>0.000 [0.000, 0.000]</td>
+<td><strong>clears</strong> (lo 0.927 &gt; 0.900)</td>
+</tr>
+<tr>
+<td><code>A0-current</code></td>
+<td>Gemini 3.6 Flash</td>
+<td><code>tool</code></td>
+<td>0.827 [0.790, 0.861]</td>
+<td>0.998 [0.993, 1.000]</td>
+<td>0.000 [0.000, 0.000]</td>
+<td>below incumbent (hi 0.861 &lt; 0.900)</td>
+</tr>
+<tr>
+<td><code>A0-35</code></td>
+<td>Gemini 3.5 Flash</td>
+<td><code>tool</code></td>
+<td>0.781 [0.744, 0.815]</td>
+<td>1.000 [1.000, 1.000]</td>
+<td>0.000 [0.000, 0.000]</td>
+<td>below incumbent (hi 0.815 &lt; 0.900)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-capping-the-reasoning-budget-costs">What capping the reasoning budget costs<a class="headerlink" href="#what-capping-the-reasoning-budget-costs" title="Permanent link">&para;</a></h3>
+<p><code>ship-current</code> and <code>ship-current-capped</code> are the <strong>same provider model ID on the
+same prompt bytes over the same 70 items</strong>. The only difference is
+<code>thinking_config.thinking_budget</code>. So the gap between those two rows is the price
+of the setting, and it is measured, not argued:</p>
+<table>
+<thead>
+<tr>
+<th>Subagent</th>
+<th>Judged score, default budget</th>
+<th>Judged score, capped</th>
+<th>Cost savings vs Claude, capped</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query Rewriter</td>
+<td>0.964 [0.939, 0.986]</td>
+<td>0.959 [0.934, 0.982]</td>
+<td>+42.7% [+40.3, +45.3]</td>
+</tr>
+<tr>
+<td>Chunk Summarizer</td>
+<td>0.902 [0.866, 0.936]</td>
+<td>0.893 [0.857, 0.925]</td>
+<td>+56.1% [+54.5, +57.5]</td>
+</tr>
+<tr>
+<td>Feature Extractor</td>
+<td>0.950 [0.926, 0.970]</td>
+<td><strong>0.903 [0.880, 0.924]</strong></td>
+<td>+64.8% [+63.8, +65.7]</td>
+</tr>
+</tbody>
+</table>
+<p>Query Rewriter and Chunk Summarizer barely move. <strong>Feature Extractor pays for it:</strong>
+0.950 → 0.903, <code>extraction_accuracy</code> 0.995 → 0.940, and <code>omission_rate</code> from
+0.005 to 0.066 — the capped arm stops answering roughly one field in fifteen it
+would otherwise have filled. That is what the reasoning budget was buying on that
+subagent, and it is why the same configuration produces a <code>clears</code> on one row and
+a <code>parity</code> on another.</p>
+<p>The default-budget rows are <strong>not</strong> the recommendation: at default budget the
+cost gate fails on all three subagents (−6.6%, −23.1%, −16.5% — a cost
+<em>increase</em>). The trade is stated in full on the
+<a href="../../results/scorecard/#cost-configurations-compared">scorecard</a>.</p>
+<hr />
+<h2 id="how-the-rules-were-found-the-development-generation-ladder">How the rules were found: the development-generation ladder<a class="headerlink" href="#how-the-rules-were-found-the-development-generation-ladder" title="Permanent link">&para;</a></h2>
+<p>Everything below ran on <strong>Gemini 2.5 Flash</strong>. It is not the recommendation — it is
+where the instruction rules in the shipping prompts were written from, and the
+prompts it produced are the ones re-run unchanged in the tables above.</p>
+<h3 id="query-rewriter">Query Rewriter<a class="headerlink" href="#query-rewriter" title="Permanent link">&para;</a></h3>
+<p><strong>Core 28</strong> — incumbent <code>baseline</code> on <strong>Claude Sonnet 5</strong>, 0.911 [0.839, 0.964]</p>
+<table>
+<thead>
+<tr>
+<th>Rung</th>
+<th>Model</th>
 <th>Mode</th>
 <th>Judged score (95% confidence range)</th>
 <th>vs incumbent</th>
@@ -1446,29 +1771,33 @@ selection; it does not make it.</p>
 <tbody>
 <tr>
 <td><code>baseline</code></td>
+<td><strong>Claude Sonnet 5</strong></td>
 <td><code>tool</code></td>
 <td>0.911 [0.839, 0.964]</td>
 <td>incumbent</td>
 </tr>
 <tr>
 <td><code>A0</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>tool</code></td>
 <td>0.836 [0.787, 0.886]</td>
 <td>below incumbent (hi 0.886 &lt; 0.911)</td>
 </tr>
 <tr>
 <td><code>A1-A3</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>response_schema</code></td>
 <td>0.852 [0.796, 0.905]</td>
 <td>below incumbent (hi 0.905 &lt; 0.911)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Full 70</strong> — incumbent <code>gated:claude_baseline</code> 0.886 [0.838, 0.932]</p>
+<p><strong>Full 70</strong> — incumbent <code>gated:claude_baseline</code> on <strong>Claude Sonnet 5</strong>, 0.886 [0.838, 0.932]</p>
 <table>
 <thead>
 <tr>
 <th>Rung / arm</th>
+<th>Model</th>
 <th>Mode</th>
 <th>Judged score (95% confidence range)</th>
 <th><code>exact_match_intent</code></th>
@@ -1479,6 +1808,7 @@ selection; it does not make it.</p>
 <tbody>
 <tr>
 <td><code>A4-targeted</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>response_schema</code></td>
 <td>0.963 [0.934, 0.986]</td>
 <td>0.957 [0.900, 1.000]</td>
@@ -1487,6 +1817,7 @@ selection; it does not make it.</p>
 </tr>
 <tr>
 <td><code>gated:claude_baseline</code></td>
+<td><strong>Claude Sonnet 5</strong></td>
 <td><code>tool</code></td>
 <td>0.886 [0.838, 0.932]</td>
 <td>0.729 [0.629, 0.829]</td>
@@ -1495,6 +1826,7 @@ selection; it does not make it.</p>
 </tr>
 <tr>
 <td><code>gated:gemini_naive</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>tool</code></td>
 <td>0.831 [0.797, 0.865]</td>
 <td>0.571 [0.457, 0.686]</td>
@@ -1503,6 +1835,7 @@ selection; it does not make it.</p>
 </tr>
 <tr>
 <td><code>gated:gemini_tuned_v1</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>response_schema</code></td>
 <td>0.879 [0.843, 0.914]</td>
 <td>0.814 [0.714, 0.900]</td>
@@ -1513,12 +1846,13 @@ selection; it does not make it.</p>
 </table>
 <p>The <code>A4-targeted</code> rung was built from the <em>measured</em> loss clusters, not from
 intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
-<h2 id="chunk-summarizer">Chunk Summarizer<a class="headerlink" href="#chunk-summarizer" title="Permanent link">&para;</a></h2>
-<p><strong>Core 28</strong> — incumbent <code>baseline</code> 0.902 [0.830, 0.956]</p>
+<h3 id="chunk-summarizer">Chunk Summarizer<a class="headerlink" href="#chunk-summarizer" title="Permanent link">&para;</a></h3>
+<p><strong>Core 28</strong> — incumbent <code>baseline</code> on <strong>Claude Sonnet 5</strong>, 0.902 [0.830, 0.956]</p>
 <table>
 <thead>
 <tr>
 <th>Rung</th>
+<th>Model</th>
 <th>Mode</th>
 <th>Judged score (95% confidence range)</th>
 <th><code>citation_coverage</code></th>
@@ -1528,6 +1862,7 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
 <tbody>
 <tr>
 <td><code>baseline</code></td>
+<td><strong>Claude Sonnet 5</strong></td>
 <td><code>tool</code></td>
 <td>0.902 [0.830, 0.956]</td>
 <td>1.000 [1.000, 1.000]</td>
@@ -1535,6 +1870,7 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
 </tr>
 <tr>
 <td><code>A0</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>tool</code></td>
 <td>0.897 [0.830, 0.955]</td>
 <td>0.963 [0.889, 1.000]</td>
@@ -1542,6 +1878,7 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
 </tr>
 <tr>
 <td><code>A1-A3</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>response_schema</code></td>
 <td>0.915 [0.871, 0.955]</td>
 <td>1.000 [1.000, 1.000]</td>
@@ -1549,12 +1886,13 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="feature-extractor-the-rung-that-went-backwards">Feature Extractor — the rung that went backwards<a class="headerlink" href="#feature-extractor-the-rung-that-went-backwards" title="Permanent link">&para;</a></h2>
-<p><strong>Core 28</strong> — incumbent <code>baseline</code> 0.903 [0.857, 0.946]</p>
+<h3 id="feature-extractor-the-rung-that-went-backwards">Feature Extractor — the rung that went backwards<a class="headerlink" href="#feature-extractor-the-rung-that-went-backwards" title="Permanent link">&para;</a></h3>
+<p><strong>Core 28</strong> — incumbent <code>baseline</code> on <strong>Claude Sonnet 5</strong>, 0.903 [0.857, 0.946]</p>
 <table>
 <thead>
 <tr>
 <th>Rung</th>
+<th>Model</th>
 <th>Mode</th>
 <th>Judged score (95% confidence range)</th>
 <th>vs incumbent</th>
@@ -1563,42 +1901,49 @@ intuition. Its three rules were bundled, so no per-rule credit is claimed.</p>
 <tbody>
 <tr>
 <td><code>baseline</code></td>
+<td><strong>Claude Sonnet 5</strong></td>
 <td><code>tool</code></td>
 <td>0.903 [0.857, 0.946]</td>
 <td>incumbent</td>
 </tr>
 <tr>
 <td><code>A0</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>tool</code></td>
 <td>0.837 [0.791, 0.882]</td>
 <td>below incumbent (hi 0.882 &lt; 0.903)</td>
 </tr>
 <tr>
 <td><code>A1-A3</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>response_schema</code></td>
 <td>0.807 [0.756, 0.853]</td>
 <td>below incumbent (hi 0.853 &lt; 0.903)</td>
 </tr>
 <tr>
 <td><code>A0-schema</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>response_schema</code></td>
 <td>0.826 [0.773, 0.875]</td>
 <td>below incumbent (hi 0.875 &lt; 0.903)</td>
 </tr>
 <tr>
 <td><code>A4-novelty-tool</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>tool</code></td>
 <td>0.901 [0.859, 0.940]</td>
 <td><strong>recovery to parity</strong></td>
 </tr>
 <tr>
 <td><code>A4-novelty-schema</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>response_schema</code></td>
 <td>0.920 [0.878, 0.957]</td>
 <td><strong>recovery to parity</strong></td>
 </tr>
 <tr>
 <td><code>A4-optimizer</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td><code>tool</code></td>
 <td><strong>0.949 [0.911, 0.979]</strong></td>
 <td><strong>clears</strong> (lo 0.911 &gt; 0.903)</td>
@@ -1882,7 +2227,7 @@ ladder, it is a sales chart.</p>
 0.826 and <code>A4-novelty-tool</code> (prompt only) 0.901 against <code>A0</code> 0.837 — the
 <code>novelty_statement</code> rule carried the recovery, the enforced schema alone did not.
 <code>A4-novelty-schema</code> (both) reaches 0.920.</p>
-<h3 id="the-optimizer-rung-and-its-contamination">The optimizer rung and its contamination<a class="headerlink" href="#the-optimizer-rung-and-its-contamination" title="Permanent link">&para;</a></h3>
+<h4 id="the-optimizer-rung-and-its-contamination">The optimizer rung and its contamination<a class="headerlink" href="#the-optimizer-rung-and-its-contamination" title="Permanent link">&para;</a></h4>
 <p><code>A4-optimizer</code> is a Vertex AI Prompt Optimizer suggestion over <code>gemini_naive</code>,
 read against <code>judge_score</code>. It is the strongest rung in the workshop, and the
 figure that ships is the <strong>clean core-28 measurement</strong>:</p>

@@ -1284,17 +1284,21 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Which model these figures are from</p>
-<p>The arm labelled "Gemini" on this page is <strong>Gemini 2.5 Flash</strong> — the
-<em>development generation</em>, where the adaptation ladder and the prompt-optimizer
-work were done. It is not what the scorecard recommends deploying.</p>
-<p>The prompts tuned here were then run <strong>unchanged</strong> on the deployment
-generation — Gemini 3.6 Flash, with Gemini 3.5 Flash as a second candidate
-column — and the instruction rules kept working across the generation gap.
-That portability is a finding in its own right: the adaptation work is an
-asset that survives a model upgrade, not a tax you pay again on every new
-model. It is also why both generations appear on this site rather than only
-the newest one — deleting the development generation would delete the
-evidence that the rules transfer.</p>
+<p>Unless a table says otherwise, the Gemini arm on this page is <strong>Gemini 2.5
+Flash</strong> — the <em>development generation</em>, where the adaptation ladder, the
+prompt-optimizer work and the judge cross-check were done. It is <strong>not</strong> what
+the scorecard recommends deploying.</p>
+<p>The recommendation is <strong>Gemini 3.6 Flash with the reasoning budget minimised</strong>,
+and its measured results lead
+<a href="../04-the-naive-swap/">module 04</a>,
+<a href="../05-adaptation-ladder/">module 05</a>,
+<a href="../07-shadow-and-adjudication/">module 07</a> and the
+<a href="../../results/scorecard/">Results headline</a>.</p>
+<p>The prompts tuned on the development generation were run <strong>unchanged</strong> on the
+deployment generation and the instruction rules kept working. That portability
+is a finding in its own right — the adaptation work is an asset that survives a
+model upgrade, not a tax you pay again on every new model — and it is why both
+generations stay on this site.</p>
 <p>Every model, its provider ID, its region and the window its calls were
 recorded in: <a href="../../models-in-this-study/">Models in this study</a>.</p>
 </div>
@@ -1318,10 +1322,10 @@ the bound, and let a second vendor's judge check the work.</p>
   <code>shadow_agreement</code> — are deterministic.</li>
 </ul>
 <p>There is also an empirical check, and it is the uncomfortable kind that is worth
-more than an argument: on Feature Extractor the Gemini judge scored <strong>Claude
-higher</strong> — 0.900 [0.868, 0.929] against Gemini naive 0.821 [0.787, 0.854],
-non-overlapping at n=70. A judge with a thumb on the scale does not hand the
-contested row to the competitor.</p>
+more than an argument: on Feature Extractor the Gemini 2.5 Pro judge scored
+<strong>Claude Sonnet 5 higher</strong> — 0.900 [0.868, 0.929] against <strong>Gemini 2.5 Flash</strong>
+(<code>gemini_naive</code>) 0.821 [0.787, 0.854], non-overlapping at n=70. A judge with a
+thumb on the scale does not hand the contested row to the competitor.</p>
 <h2 id="the-cross-check">The cross-check<a class="headerlink" href="#the-cross-check" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>crosscheck
 </code></pre></div>
@@ -1329,11 +1333,27 @@ contested row to the competitor.</p>
 outputs</strong> against the <strong>same rubrics</strong>. Run 11 Aug 2026, 11:52 AM (SGT); the
 outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM (SGT).</p>
 <p class="amw-provenance">Run UTC: <code>2026-08-11T03:52:19+00:00</code> · outputs recorded <code>2026-08-09T16:07:18+00:00</code> → <code>2026-08-10T02:45:59+00:00</code></p>
+<p>The <strong>Model</strong> column is the model whose <em>outputs</em> were re-scored. Both judges are
+the same in every row: Gemini 2.5 Pro gated, Claude Sonnet 5 cross-check.</p>
+<div class="admonition warning">
+<p class="admonition-title">This validation ran on the development-generation arms only</p>
+<p>The cross-check re-scored <strong>Gemini 2.5 Flash</strong> outputs, not the Gemini 3.6
+Flash outputs the scorecard gates on. It was not re-run against the deployment
+generation before freeze, and no result on this page is a claim about those
+arms.</p>
+<p>What it establishes is a property of the <strong>instrument</strong>, not of the arms: the
+gated judge and a second vendor's judge, on the same rubrics, agree at
+92.9–99.0%. The gated judge is the same model, same prompt version and same
+k=2 configuration on every arm in this study, so that bound is the reason to
+trust the instrument that produced the deployment-generation scores — but it
+is not itself a measurement of them.</p>
+</div>
 <table>
 <thead>
 <tr>
 <th>Subagent</th>
 <th>Arm</th>
+<th>Model scored</th>
 <th>Criterion agreement</th>
 <th>Cohen's kappa</th>
 <th>Gated mean</th>
@@ -1345,6 +1365,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>query_rewriter</td>
 <td><code>claude_baseline</code></td>
+<td><strong>Claude Sonnet 5</strong></td>
 <td>100.0%</td>
 <td>1.000</td>
 <td>0.929</td>
@@ -1354,6 +1375,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>query_rewriter</td>
 <td><code>gemini_naive</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>99.1%</td>
 <td>0.966</td>
 <td>0.846</td>
@@ -1363,6 +1385,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>query_rewriter</td>
 <td><code>gemini_tuned_v1</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>97.1%</td>
 <td>0.826</td>
 <td>0.890</td>
@@ -1372,6 +1395,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td><strong>query_rewriter</strong></td>
 <td><strong>all arms</strong></td>
+<td>both</td>
 <td><strong>98.8%</strong></td>
 <td><strong>0.936</strong></td>
 <td>0.889</td>
@@ -1381,6 +1405,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>chunk_summarizer</td>
 <td><code>claude_baseline</code></td>
+<td><strong>Claude Sonnet 5</strong></td>
 <td>99.0%</td>
 <td>0.954</td>
 <td>0.880</td>
@@ -1390,6 +1415,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>chunk_summarizer</td>
 <td><code>gemini_naive</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>98.9%</td>
 <td>0.946</td>
 <td>0.875</td>
@@ -1399,6 +1425,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>chunk_summarizer</td>
 <td><code>gemini_tuned_v1</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>99.0%</td>
 <td>0.942</td>
 <td>0.900</td>
@@ -1408,6 +1435,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td><strong>chunk_summarizer</strong></td>
 <td><strong>all arms</strong></td>
+<td>both</td>
 <td><strong>99.0%</strong></td>
 <td><strong>0.948</strong></td>
 <td>0.885</td>
@@ -1417,6 +1445,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>feature_extractor</td>
 <td><code>claude_baseline</code></td>
+<td><strong>Claude Sonnet 5</strong></td>
 <td>93.0%</td>
 <td>0.678</td>
 <td>0.897</td>
@@ -1426,6 +1455,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>feature_extractor</td>
 <td><code>gemini_naive</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>92.6%</td>
 <td>0.763</td>
 <td>0.823</td>
@@ -1435,6 +1465,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td>feature_extractor</td>
 <td><code>gemini_tuned_v1</code></td>
+<td><strong>Gemini 2.5 Flash</strong></td>
 <td>93.0%</td>
 <td>0.797</td>
 <td>0.795</td>
@@ -1444,6 +1475,7 @@ outputs re-scored were recorded 10 Aug 2026, 12:07 AM → 10 Aug 2026, 10:45 AM 
 <tr>
 <td><strong>feature_extractor</strong></td>
 <td><strong>all arms</strong></td>
+<td>both</td>
 <td><strong>92.9%</strong></td>
 <td><strong>0.758</strong></td>
 <td>0.838</td>
@@ -1487,8 +1519,9 @@ perovskite material system named in the claims.</p>
 direction on both vendors' outputs — which is exactly why it does not overturn the
 ranking.</p>
 <p>The cross-check also reproduces the finding that matters most: on Feature
-Extractor the Claude judge <em>also</em> ranks <code>claude_baseline</code> above <code>gemini_naive</code>
-above <code>gemini_tuned_v1</code>. The contested result is not an artefact of one judge.</p>
+Extractor the Claude judge <em>also</em> ranks <code>claude_baseline</code> (Claude Sonnet 5) above
+<code>gemini_naive</code> above <code>gemini_tuned_v1</code> (both Gemini 2.5 Flash). The contested
+result is not an artefact of one judge.</p>
 <p><a class="md-button" href="../../results/crosscheck/">Read the full cross-check report</a></p>
 <hr />
 <p><strong>Next:</strong> <a href="../07-shadow-and-adjudication/">Module 07 — Shadow &amp; adjudication</a></p>

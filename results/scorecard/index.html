@@ -1452,7 +1452,7 @@ model call.</p>
 <thead>
 <tr>
 <th>Subagent</th>
-<th>Baseline</th>
+<th>Incumbent</th>
 <th>Candidate</th>
 <th>Gates evaluated</th>
 <th>Verdict</th>
@@ -1462,24 +1462,24 @@ model call.</p>
 <tbody>
 <tr>
 <td>Chunk Summarizer</td>
-<td><code>claude_baseline</code></td>
-<td><code>gemini_tuned_v1</code></td>
+<td>Claude Sonnet 5<br><small><code>claude_baseline</code></small></td>
+<td>Gemini 3.6 Flash (capped thinking)<br><small><code>gemini_tuned_v1</code></small></td>
 <td>6 of 6</td>
 <td><strong>UNDETERMINED</strong></td>
 <td>gate(s) latency_p95, quality_delta_pp failed. That pattern matches no verdict rule in gates.yaml — they are neither quality gates nor blocking gates — so no verdict is issued and the gates file needs a rule for it.</td>
 </tr>
 <tr>
 <td>Feature Extractor</td>
-<td><code>claude_baseline</code></td>
-<td><code>gemini_optimizer_v1</code></td>
+<td>Claude Sonnet 5<br><small><code>claude_baseline</code></small></td>
+<td>Gemini 3.6 Flash (capped thinking)<br><small><code>gemini_optimizer_v1</code></small></td>
 <td>6 of 6</td>
 <td><strong>UNDETERMINED</strong></td>
 <td>gate(s) latency_p95, quality_delta_pp failed. That pattern matches no verdict rule in gates.yaml — they are neither quality gates nor blocking gates — so no verdict is issued and the gates file needs a rule for it. shadow_agreement missed its confidence-range bound (ci_lower = 0.8857 vs 0.9) and cleared on the alt clause pre-registered in gates.yaml ("on disagreements, judge-adjudicated wins &gt;= losses"), measured at 31W/16L overall; 28W/16L excluding structurally malformed <code>claude_baseline</code> emissions; passes on either figure.</td>
 </tr>
 <tr>
 <td>Query Rewriter</td>
-<td><code>claude_baseline</code></td>
-<td><code>gemini_targeted_v1</code></td>
+<td>Claude Sonnet 5<br><small><code>claude_baseline</code></small></td>
+<td>Gemini 3.6 Flash (capped thinking)<br><small><code>gemini_targeted_v1</code></small></td>
 <td>5 of 6</td>
 <td><strong>INCOMPLETE</strong> (provisional: MIGRATE)</td>
 <td>5 of 6 pre-agreed gates were measured; groundedness_delta_pp were not. A verdict over a subset of the gates is not the verdict that was agreed, so none is issued. Were every unmeasured gate to pass, it would be MIGRATE. shadow_agreement missed its confidence-range bound (ci_lower = 0.4714 vs 0.9) and cleared on the alt clause pre-registered in gates.yaml ("on disagreements, judge-adjudicated wins &gt;= losses"), measured at 16W/2L overall; 10W/2L excluding structurally malformed <code>claude_baseline</code> emissions; passes on either figure.</td>
@@ -1487,6 +1487,7 @@ model call.</p>
 </tbody>
 </table>
 <h2 id="chunk-summarizer">Chunk Summarizer<a class="headerlink" href="#chunk-summarizer" title="Permanent link">&para;</a></h2>
+<p><strong>Gemini 3.6 Flash (capped thinking)</strong> (<code>gemini_tuned_v1</code>) measured against <strong>Claude Sonnet 5</strong> (<code>claude_baseline</code>).</p>
 <table>
 <thead>
 <tr>
@@ -1553,19 +1554,19 @@ model call.</p>
 </thead>
 <tbody>
 <tr>
-<td>Claude <code>json_schema_validity</code> (<code>claude_baseline</code>)</td>
+<td>Claude Sonnet 5 <code>json_schema_validity</code> (<code>claude_baseline</code>)</td>
 <td>0.971 [0.929, 1.000] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling.</td>
 </tr>
 <tr>
-<td>Gemini <code>json_schema_validity</code> (<code>gemini_tuned_v1</code>)</td>
+<td>Gemini 3.6 Flash (capped thinking) <code>json_schema_validity</code> (<code>gemini_tuned_v1</code>)</td>
 <td>1.000 [1.000, 1.000]</td>
 </tr>
 <tr>
-<td>Judge score — Claude</td>
+<td>Judge score — Claude Sonnet 5 (incumbent)</td>
 <td>0.918 [0.879, 0.954] (judged n=70, split=all)</td>
 </tr>
 <tr>
-<td>Judge score — Gemini</td>
+<td>Judge score — Gemini 3.6 Flash (capped thinking) (candidate)</td>
 <td>0.893 [0.857, 0.925] (judged n=70, split=all)</td>
 </tr>
 <tr>
@@ -1585,7 +1586,7 @@ model call.</p>
 <td>not measured</td>
 </tr>
 <tr>
-<td>Cost savings vs Claude</td>
+<td>Cost savings vs Claude Sonnet 5</td>
 <td>56.1% [54.5%, 57.5%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis</td>
 </tr>
 </tbody>
@@ -1596,6 +1597,7 @@ model call.</p>
 <li>shadow_agreement counts <strong>structured fields only</strong> — the fields with a defined right answer. Prose fields are excluded here and adjudicated separately in the disagreement triage; this figure is not a claim that the prose matched.</li>
 </ul>
 <h2 id="feature-extractor">Feature Extractor<a class="headerlink" href="#feature-extractor" title="Permanent link">&para;</a></h2>
+<p><strong>Gemini 3.6 Flash (capped thinking)</strong> (<code>gemini_optimizer_v1</code>) measured against <strong>Claude Sonnet 5</strong> (<code>claude_baseline</code>).</p>
 <table>
 <thead>
 <tr>
@@ -1663,19 +1665,19 @@ model call.</p>
 </thead>
 <tbody>
 <tr>
-<td>Claude <code>json_schema_validity</code> (<code>claude_baseline</code>)</td>
+<td>Claude Sonnet 5 <code>json_schema_validity</code> (<code>claude_baseline</code>)</td>
 <td>0.957 [0.900, 1.000] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling.</td>
 </tr>
 <tr>
-<td>Gemini <code>json_schema_validity</code> (<code>gemini_optimizer_v1</code>)</td>
+<td>Gemini 3.6 Flash (capped thinking) <code>json_schema_validity</code> (<code>gemini_optimizer_v1</code>)</td>
 <td>1.000 [1.000, 1.000]</td>
 </tr>
 <tr>
-<td>Judge score — Claude</td>
+<td>Judge score — Claude Sonnet 5 (incumbent)</td>
 <td>0.900 [0.868, 0.929] (judged n=70, split=all)</td>
 </tr>
 <tr>
-<td>Judge score — Gemini</td>
+<td>Judge score — Gemini 3.6 Flash (capped thinking) (candidate)</td>
 <td>0.903 [0.880, 0.924] (judged n=70, split=all)</td>
 </tr>
 <tr>
@@ -1695,7 +1697,7 @@ model call.</p>
 <td>not measured</td>
 </tr>
 <tr>
-<td>Cost savings vs Claude</td>
+<td>Cost savings vs Claude Sonnet 5</td>
 <td>64.8% [63.8%, 65.7%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis</td>
 </tr>
 </tbody>
@@ -1706,6 +1708,7 @@ model call.</p>
 <li>shadow_agreement counts <strong>structured fields only</strong> — the fields with a defined right answer. Prose fields are excluded here and adjudicated separately in the disagreement triage; this figure is not a claim that the prose matched.</li>
 </ul>
 <h2 id="query-rewriter">Query Rewriter<a class="headerlink" href="#query-rewriter" title="Permanent link">&para;</a></h2>
+<p><strong>Gemini 3.6 Flash (capped thinking)</strong> (<code>gemini_targeted_v1</code>) measured against <strong>Claude Sonnet 5</strong> (<code>claude_baseline</code>).</p>
 <table>
 <thead>
 <tr>
@@ -1772,19 +1775,19 @@ model call.</p>
 </thead>
 <tbody>
 <tr>
-<td>Claude <code>json_schema_validity</code> (<code>claude_baseline</code>)</td>
+<td>Claude Sonnet 5 <code>json_schema_validity</code> (<code>claude_baseline</code>)</td>
 <td>0.814 [0.714, 0.900] — tool-use JSON; native structured outputs unavailable under this org's policy — not the model's ceiling.</td>
 </tr>
 <tr>
-<td>Gemini <code>json_schema_validity</code> (<code>gemini_targeted_v1</code>)</td>
+<td>Gemini 3.6 Flash (capped thinking) <code>json_schema_validity</code> (<code>gemini_targeted_v1</code>)</td>
 <td>1.000 [1.000, 1.000]</td>
 </tr>
 <tr>
-<td>Judge score — Claude</td>
+<td>Judge score — Claude Sonnet 5 (incumbent)</td>
 <td>0.886 [0.838, 0.932] (judged n=70, split=all)</td>
 </tr>
 <tr>
-<td>Judge score — Gemini</td>
+<td>Judge score — Gemini 3.6 Flash (capped thinking) (candidate)</td>
 <td>0.959 [0.934, 0.982] (judged n=70, split=all)</td>
 </tr>
 <tr>
@@ -1804,7 +1807,7 @@ model call.</p>
 <td>not measured</td>
 </tr>
 <tr>
-<td>Cost savings vs Claude</td>
+<td>Cost savings vs Claude Sonnet 5</td>
 <td>42.7% [40.3%, 45.3%] — measured per-call tokens over this corpus at list prices, not the registered profile-volume basis</td>
 </tr>
 </tbody>

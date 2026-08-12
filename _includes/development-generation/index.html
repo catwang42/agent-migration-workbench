@@ -1100,17 +1100,21 @@
 
 <div class="admonition info">
 <p class="admonition-title">Which model these figures are from</p>
-<p>The arm labelled "Gemini" on this page is <strong>Gemini 2.5 Flash</strong> — the
-<em>development generation</em>, where the adaptation ladder and the prompt-optimizer
-work were done. It is not what the scorecard recommends deploying.</p>
-<p>The prompts tuned here were then run <strong>unchanged</strong> on the deployment
-generation — Gemini 3.6 Flash, with Gemini 3.5 Flash as a second candidate
-column — and the instruction rules kept working across the generation gap.
-That portability is a finding in its own right: the adaptation work is an
-asset that survives a model upgrade, not a tax you pay again on every new
-model. It is also why both generations appear on this site rather than only
-the newest one — deleting the development generation would delete the
-evidence that the rules transfer.</p>
+<p>Unless a table says otherwise, the Gemini arm on this page is <strong>Gemini 2.5
+Flash</strong> — the <em>development generation</em>, where the adaptation ladder, the
+prompt-optimizer work and the judge cross-check were done. It is <strong>not</strong> what
+the scorecard recommends deploying.</p>
+<p>The recommendation is <strong>Gemini 3.6 Flash with the reasoning budget minimised</strong>,
+and its measured results lead
+<a href="../../modules/04-the-naive-swap/">module 04</a>,
+<a href="../../modules/05-adaptation-ladder/">module 05</a>,
+<a href="../../modules/07-shadow-and-adjudication/">module 07</a> and the
+<a href="../../results/scorecard/">Results headline</a>.</p>
+<p>The prompts tuned on the development generation were run <strong>unchanged</strong> on the
+deployment generation and the instruction rules kept working. That portability
+is a finding in its own right — the adaptation work is an asset that survives a
+model upgrade, not a tax you pay again on every new model — and it is why both
+generations stay on this site.</p>
 <p>Every model, its provider ID, its region and the window its calls were
 recorded in: <a href="../../models-in-this-study/">Models in this study</a>.</p>
 </div>

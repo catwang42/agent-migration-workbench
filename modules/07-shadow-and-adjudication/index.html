@@ -832,6 +832,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#what-the-scorecard-reads-the-deployment-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the scorecard reads: the deployment generation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the scorecard reads: the deployment generation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#two-agreement-numbers-and-why-they-differ-so-much" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -841,24 +853,12 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#adjudication-two-arms-same-subagent-opposite-verdicts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adjudication: two arms, same subagent, opposite verdicts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Adjudication: two arms, same subagent, opposite verdicts">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#the-other-two-subagents-for-completeness" class="md-nav__link">
+  <a href="#the-adjudication-deployment-generation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The other two subagents, for completeness
+        The adjudication, deployment generation
       
     </span>
   </a>
@@ -867,6 +867,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-rules-were-found-the-development-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the rules were found: the development generation
+      
+    </span>
+  </a>
   
 </li>
       
@@ -882,10 +893,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#latency-and-why-this-run-has-no-number" class="md-nav__link">
+  <a href="#latency-and-why-the-shadow-run-has-no-number" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Latency, and why this run has no number
+        Latency, and why the shadow run has no number
       
     </span>
   </a>
@@ -1214,6 +1225,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#what-the-scorecard-reads-the-deployment-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the scorecard reads: the deployment generation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the scorecard reads: the deployment generation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#two-agreement-numbers-and-why-they-differ-so-much" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1223,24 +1246,12 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#adjudication-two-arms-same-subagent-opposite-verdicts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adjudication: two arms, same subagent, opposite verdicts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Adjudication: two arms, same subagent, opposite verdicts">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#the-other-two-subagents-for-completeness" class="md-nav__link">
+  <a href="#the-adjudication-deployment-generation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The other two subagents, for completeness
+        The adjudication, deployment generation
       
     </span>
   </a>
@@ -1249,6 +1260,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-rules-were-found-the-development-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the rules were found: the development generation
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1264,10 +1286,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#latency-and-why-this-run-has-no-number" class="md-nav__link">
+  <a href="#latency-and-why-the-shadow-run-has-no-number" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Latency, and why this run has no number
+        Latency, and why the shadow run has no number
       
     </span>
   </a>
@@ -1295,17 +1317,16 @@
 <p><em>~6 min read · <a href="../06-the-second-judge/">06 The second judge</a> → </em><em>07</em><em> → <a href="../08-the-scorecard/">08 The scorecard</a></em></p>
 <hr />
 <div class="admonition info">
-<p class="admonition-title">Which model these figures are from</p>
-<p>The arm labelled "Gemini" on this page is <strong>Gemini 2.5 Flash</strong> — the
-<em>development generation</em>, where the adaptation ladder and the prompt-optimizer
-work were done. It is not what the scorecard recommends deploying.</p>
-<p>The prompts tuned here were then run <strong>unchanged</strong> on the deployment
-generation — Gemini 3.6 Flash, with Gemini 3.5 Flash as a second candidate
-column — and the instruction rules kept working across the generation gap.
-That portability is a finding in its own right: the adaptation work is an
-asset that survives a model upgrade, not a tax you pay again on every new
-model. It is also why both generations appear on this site rather than only
-the newest one — deleting the development generation would delete the
+<p class="admonition-title">Two model generations on this page — the deployment one leads</p>
+<p>The <strong>deployment generation</strong> is what the scorecard recommends and what every
+dollar figure on this site is summed from: <strong>Gemini 3.6 Flash with the
+reasoning budget minimised</strong> (<code>gemini-flash-current-capped</code>). Its figures come
+first in every table below.</p>
+<p>The <strong>development generation</strong> — Gemini 2.5 Flash — is where the adaptation
+ladder and the prompt-optimizer work were done. Those prompts were then run
+<strong>unchanged</strong> on the deployment generation and the instruction rules kept
+working. That portability is a finding in its own right, and it is why both
+generations stay on this page: deleting the older one would delete the
 evidence that the rules transfer.</p>
 <p>Every model, its provider ID, its region and the window its calls were
 recorded in: <a href="../../models-in-this-study/">Models in this study</a>.</p>
@@ -1315,13 +1336,30 @@ the eval does: <strong>where do these two models actually produce different answ
 when they differ, who is right?</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>cli.py<span class="w"> </span>shadow<span class="w"> </span>--mode<span class="w"> </span>replay<span class="w">      </span><span class="c1"># shadow run + disagreement triage</span>
 </code></pre></div>
-<h2 id="two-agreement-numbers-and-why-they-differ-so-much">Two agreement numbers, and why they differ so much<a class="headerlink" href="#two-agreement-numbers-and-why-they-differ-so-much" title="Permanent link">&para;</a></h2>
+<h2 id="what-the-scorecard-reads-the-deployment-generation">What the scorecard reads: the deployment generation<a class="headerlink" href="#what-the-scorecard-reads-the-deployment-generation" title="Permanent link">&para;</a></h2>
+<p>These are the <code>shadow_agreement</code> figures the
+<a href="../../results/scorecard/">scorecard</a> gates on: <strong>Claude Sonnet 5</strong>
+(<code>claude_baseline</code>) against <strong>Gemini 3.6 Flash</strong>, n=70, adjudicated in full.</p>
+<div class="admonition warning">
+<p class="admonition-title">One thing on this page is carried, not re-measured</p>
+<p>The shadow campaign ran on Gemini 3.6 Flash at its <strong>default</strong> reasoning
+budget. The recommended deployment configuration caps that budget. Same model
+ID, same prompt bytes, same shadow slice — different <code>thinking_budget</code>. The
+scorecard carries these numbers onto the capped arms and
+<a href="../../results/scorecard/#footer">says so in its run notes</a>; every <em>other</em> gate
+on that card is measured on the capped configuration itself. It is carried
+because the campaign predates the capped arms and there was no time to re-run
+it before freeze, and it ships labeled rather than quietly.</p>
+</div>
+<h3 id="two-agreement-numbers-and-why-they-differ-so-much">Two agreement numbers, and why they differ so much<a class="headerlink" href="#two-agreement-numbers-and-why-they-differ-so-much" title="Permanent link">&para;</a></h3>
 <p>The same run yields two very different figures, and confusing them is the fastest
 way to misread this whole section.</p>
 <table>
 <thead>
 <tr>
 <th>Subagent</th>
+<th>Incumbent</th>
+<th>Candidate</th>
 <th>Item-level agreement (whole object)</th>
 <th>Structured-field agreement (gated)</th>
 </tr>
@@ -1329,22 +1367,28 @@ way to misread this whole section.</p>
 <tbody>
 <tr>
 <td>query_rewriter</td>
-<td>0.143 [0.071, 0.229]</td>
-<td><strong>0.557 [0.443, 0.671]</strong></td>
+<td><strong>Claude Sonnet 5</strong></td>
+<td><strong>Gemini 3.6 Flash</strong></td>
+<td>0.186 [0.100, 0.271]</td>
+<td><strong>0.586 [0.471, 0.700]</strong></td>
 </tr>
 <tr>
 <td>chunk_summarizer</td>
-<td>0.129 [0.057, 0.214]</td>
-<td><strong>0.957 [0.900, 1.000]</strong></td>
+<td><strong>Claude Sonnet 5</strong></td>
+<td><strong>Gemini 3.6 Flash</strong></td>
+<td>0.114 [0.043, 0.200]</td>
+<td><strong>0.971 [0.929, 1.000]</strong></td>
 </tr>
 <tr>
 <td>feature_extractor</td>
-<td>0.200 [0.114, 0.300]</td>
-<td><strong>0.971 [0.929, 1.000]</strong></td>
+<td><strong>Claude Sonnet 5</strong></td>
+<td><strong>Gemini 3.6 Flash</strong></td>
+<td>0.057 [0.014, 0.114]</td>
+<td><strong>0.943 [0.886, 0.986]</strong></td>
 </tr>
 </tbody>
 </table>
-<p><em>Candidate arm <code>gemini_tuned_v1</code>, n=70, <code>artifacts/results/shadow_widened.json</code>.</em></p>
+<p><em>n=70, <code>artifacts/results/shadow_current_{query_rewriter,chunk_summarizer,feature_extractor}.json</code>.</em></p>
 <p>Item-level agreement asks whether the <em>entire</em> emitted object matched, prose
 included. Two summaries that say the same thing in different words disagree at
 item level, and that is not a defect — it is what free text does.</p>
@@ -1369,23 +1413,23 @@ is not, and never claims to be, a statement that the prose matched.</p>
 <td><code>summary</code></td>
 <td>prose</td>
 <td>0.129</td>
-<td>0.464</td>
+<td>0.473</td>
 </tr>
 <tr>
 <td><code>key_points.text</code></td>
 <td>prose</td>
-<td>0.829</td>
-<td>0.709</td>
+<td>0.800</td>
+<td>0.671</td>
 </tr>
 <tr>
 <td><code>key_points.chunk_ids</code></td>
 <td>scalar set</td>
-<td><strong>0.957</strong></td>
+<td><strong>0.971</strong></td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
-<p>The chunk ids — the part that has a right answer — agree 67 times out of 70.
+<p>The chunk ids — the part that has a right answer — agree 68 times out of 70.
 The prose summary agrees 9 times out of 70. Both facts are true; only one of
 them is a quality signal.</p>
 </div>
@@ -1403,7 +1447,7 @@ them is a quality signal.</p>
 <tr>
 <td><code>title</code></td>
 <td>scalar</td>
-<td>0.971</td>
+<td>0.943</td>
 <td>—</td>
 </tr>
 <tr>
@@ -1439,19 +1483,21 @@ them is a quality signal.</p>
 <tr>
 <td><code>technical_field</code></td>
 <td>prose</td>
-<td>0.486</td>
-<td>0.535</td>
+<td>0.214</td>
+<td>0.384</td>
 </tr>
 <tr>
 <td><code>novelty_statement</code></td>
 <td>prose</td>
-<td>0.500</td>
-<td>0.552</td>
+<td>0.386</td>
+<td>0.529</td>
 </tr>
 </tbody>
 </table>
-<p>Six structured fields at 0.971; the two open-text fields at roughly a coin
-flip. Those two are exactly where the judge disagreement in module 04 lives.</p>
+<p>Six structured fields at 0.943–0.971; the two open-text fields far below.
+Those two are exactly where the judge disagreement in
+<a href="../04-the-naive-swap/#feature-extractor">module 04</a> lives — on both Gemini
+generations.</p>
 </div>
 <div class="tabbed-block">
 <table>
@@ -1467,13 +1513,13 @@ flip. Those two are exactly where the judge disagreement in module 04 lives.</p>
 <tr>
 <td><code>query</code></td>
 <td>prose</td>
-<td>0.243</td>
-<td>0.432</td>
+<td>0.286</td>
+<td>0.467</td>
 </tr>
 <tr>
 <td><code>intent</code></td>
 <td>scalar</td>
-<td><strong>0.686</strong></td>
+<td><strong>0.657</strong></td>
 <td>—</td>
 </tr>
 <tr>
@@ -1485,13 +1531,13 @@ flip. Those two are exactly where the judge disagreement in module 04 lives.</p>
 <tr>
 <td><code>filters.date_to</code></td>
 <td>scalar</td>
-<td>0.886</td>
+<td>0.929</td>
 <td>—</td>
 </tr>
 <tr>
 <td><code>filters.assignees</code></td>
 <td>scalar set</td>
-<td>0.814</td>
+<td>0.857</td>
 <td>—</td>
 </tr>
 <tr>
@@ -1508,53 +1554,72 @@ flip. Those two are exactly where the judge disagreement in module 04 lives.</p>
 </tr>
 </tbody>
 </table>
-<p><code>intent</code> at 0.686 is the outlier that drags the structured figure to 0.557,
+<p><code>intent</code> at 0.657 is the outlier that drags the structured figure to 0.586,
 and it is a field with exactly one right answer. This is a real disagreement,
 not a prose artefact.</p>
 </div>
 </div>
 </div>
-<h2 id="adjudication-two-arms-same-subagent-opposite-verdicts">Adjudication: two arms, same subagent, opposite verdicts<a class="headerlink" href="#adjudication-two-arms-same-subagent-opposite-verdicts" title="Permanent link">&para;</a></h2>
+<h3 id="the-adjudication-deployment-generation">The adjudication, deployment generation<a class="headerlink" href="#the-adjudication-deployment-generation" title="Permanent link">&para;</a></h3>
 <p>Where the two models gave different answers, a judge ruled on every
-disagreement: win, loss, or tie.</p>
-<p>Query Rewriter fails the primary <code>shadow_agreement</code> bound on both candidate arms.
-So the <a href="../03-gates-as-contract/#the-alt-clause-on-shadow_agreement"><code>alt</code> clause</a>
-applies: on the disagreements, adjudicated wins must be at least losses. Verdicts
-are from the <strong>candidate's</strong> point of view, and the scores are the recorded phase-2
-judge scores for those exact outputs, replayed — no judge call was made to build
-these tables.</p>
-<div class="amw-compare">
-<div class="amw-compare__card amw-compare__card--ships">
-<p class="amw-compare__title">gemini_targeted_v1 <span class="amw-compare__tag amw-compare__tag--ships">Ships</span></p>
-<p class="amw-compare__verdict amw-compare__verdict--pass">Passes the alt clause</p>
-<div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">51</span></div>
-<div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">15W</span><span class="amw-wl amw-wl--loss">3L</span><span class="amw-wl amw-wl--tie">33T</span></span></div>
-<div class="amw-compare__row"><span class="amw-compare__key">Excluding malformed baseline emissions</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">9W</span><span class="amw-wl amw-wl--loss">3L</span></span></div>
-<div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.643 [0.529, 0.757]</span></div>
-<div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Passes on either figure</span></div>
-</div>
-<div class="amw-compare__card amw-compare__card--replaced">
-<p class="amw-compare__title">gemini_tuned_v1 <span class="amw-compare__tag amw-compare__tag--replaced">Replaced — kept as the control</span></p>
-<p class="amw-compare__verdict amw-compare__verdict--fail">Fails the alt clause</p>
-<div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">60</span></div>
-<div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">14W</span><span class="amw-wl amw-wl--loss">20L</span><span class="amw-wl amw-wl--tie">26T</span></span></div>
-<div class="amw-compare__row"><span class="amw-compare__key">Excluding malformed baseline emissions</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">8W</span><span class="amw-wl amw-wl--loss">15L</span></span></div>
-<div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.557 [0.443, 0.671]</span></div>
-<div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Fails on either figure</span></div>
-</div>
-</div>
-<p class="amw-legend">Reading both cards: <strong>15W / 3L / 33T</strong> means 15 wins, 3 losses and 33 ties,
-judged from the new model's point of view — a win is an item where the judge
-scored the Gemini answer above the Claude one. Bracketed pairs are the 95%
-confidence range. The left card is the arm the scorecard ships; the right card is
-the arm it replaced, kept on the page as the control that makes the difference
-readable.</p>
-<p><strong>Same model, same data — three instruction rules written from the measured
-failures moved the adjudication from 14W/20L to 15W/3L.</strong> Both arms have
-<code>json_schema_validity</code> 1.000 [1.000, 1.000] and both are the same Gemini 2.5 Flash
-model on the same corpus. Nothing changed but the prompt, and the rules were not
-guessed: each one was written from a loss cluster counted in the n=70
-adjudication of the arm on the right.</p>
+disagreement: win, loss, or tie. Verdicts are from the <strong>candidate's</strong> point of
+view — a win is an item where the judge scored the Gemini answer above the Claude
+one.</p>
+<table>
+<thead>
+<tr>
+<th>Subagent</th>
+<th>Incumbent</th>
+<th>Candidate</th>
+<th>Disagreements</th>
+<th>W / L / T</th>
+<th>Excluding malformed baseline</th>
+<th>Gate outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>query_rewriter</td>
+<td><strong>Claude Sonnet 5</strong></td>
+<td><strong>Gemini 3.6 Flash</strong> <code>gemini_targeted_v1</code></td>
+<td>57</td>
+<td>16W / 2L / 39T</td>
+<td>10W / 2L</td>
+<td>0.586 misses the 0.9 bound → <strong>passes on the <code>alt</code> clause</strong></td>
+</tr>
+<tr>
+<td>chunk_summarizer</td>
+<td><strong>Claude Sonnet 5</strong></td>
+<td><strong>Gemini 3.6 Flash</strong> <code>gemini_tuned_v1</code></td>
+<td>62</td>
+<td>2W / 8L / 52T</td>
+<td>1W / 8L</td>
+<td>0.971 clears the primary bound</td>
+</tr>
+<tr>
+<td>feature_extractor</td>
+<td><strong>Claude Sonnet 5</strong></td>
+<td><strong>Gemini 3.6 Flash</strong> <code>gemini_optimizer_v1</code></td>
+<td>66</td>
+<td>31W / 16L / 19T</td>
+<td>28W / 16L</td>
+<td>0.943 misses on its lower bound (0.886) → <strong>passes on the <code>alt</code> clause</strong></td>
+</tr>
+</tbody>
+</table>
+<p class="amw-legend">W / L / T = wins / losses / ties. Bracketed pairs elsewhere on this page are the
+95% confidence range.</p>
+<p>Two rows here miss the primary <code>shadow_agreement</code> bound and clear the
+<a href="../03-gates-as-contract/#the-alt-clause-on-shadow_agreement"><code>alt</code> clause</a>: <em>on
+the disagreements, adjudicated wins must be at least losses.</em> That clause was
+written into <code>gates.yaml</code> before any of this was measured. Both pass on either
+figure — with the malformed-baseline items and without them.</p>
+<p>Chunk Summarizer is the row worth pausing on: it <strong>clears the gate outright at
+0.971</strong> and still loses the adjudication 2W/8L. A passing agreement gate is not a
+statement that the candidate answered better; it is a statement that the two arms
+rarely differ. When they did differ here, the incumbent was usually judged right.
+That is published because a passing gate is not a reason to stop showing the
+disagreements underneath it.</p>
 <div class="admonition note">
 <p class="admonition-title">Why 'excluding structurally malformed baseline emissions' is quoted too</p>
 <p>Under this demo organization's Vertex AI policy configuration
@@ -1567,10 +1632,52 @@ payload that fails <code>QueryPlan</code> validation outright.</p>
 the candidate. So the adjudication is reported <strong>both ways</strong>: with those items
 and without them (<code>amw/shadow/emission.py</code> identifies them). The excluded items
 are ones where the emission was structurally broken, <strong>not</strong> ones where the
-baseline merely answered worse. Neither arm's verdict changes between the two
-figures, which is the only reason a single verdict can be stated at all.</p>
+baseline merely answered worse. No verdict changes between the two figures,
+which is the only reason a single verdict can be stated at all.</p>
 </div>
-<h3 id="the-other-two-subagents-for-completeness">The other two subagents, for completeness<a class="headerlink" href="#the-other-two-subagents-for-completeness" title="Permanent link">&para;</a></h3>
+<hr />
+<h2 id="how-the-rules-were-found-the-development-generation">How the rules were found: the development generation<a class="headerlink" href="#how-the-rules-were-found-the-development-generation" title="Permanent link">&para;</a></h2>
+<p>Everything below ran on <strong>Gemini 2.5 Flash</strong>. It is where the three instruction
+rules in the shipping Query Rewriter prompt came from, and it is the cleanest
+demonstration on this site that a prompt change — not a model change — moved a
+result.</p>
+<p>Query Rewriter failed the primary <code>shadow_agreement</code> bound on both
+development-generation candidate arms, so the <code>alt</code> clause decided it. The scores
+are the recorded phase-2 judge scores for those exact outputs, replayed — no judge
+call was made to build these cards.</p>
+<div class="amw-compare">
+<div class="amw-compare__card amw-compare__card--ships">
+<p class="amw-compare__title">gemini_targeted_v1 <span class="amw-compare__tag amw-compare__tag--ships">Prompt that ships</span></p>
+<p class="amw-compare__verdict amw-compare__verdict--pass">Passes the alt clause</p>
+<div class="amw-compare__row"><span class="amw-compare__key">Model</span><span class="amw-compare__val">Gemini 2.5 Flash <em>vs</em> Claude Sonnet 5</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">51</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">15W</span><span class="amw-wl amw-wl--loss">3L</span><span class="amw-wl amw-wl--tie">33T</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Excluding malformed baseline emissions</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">9W</span><span class="amw-wl amw-wl--loss">3L</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.643 [0.529, 0.757]</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Passes on either figure</span></div>
+</div>
+<div class="amw-compare__card amw-compare__card--replaced">
+<p class="amw-compare__title">gemini_tuned_v1 <span class="amw-compare__tag amw-compare__tag--replaced">Replaced — kept as the control</span></p>
+<p class="amw-compare__verdict amw-compare__verdict--fail">Fails the alt clause</p>
+<div class="amw-compare__row"><span class="amw-compare__key">Model</span><span class="amw-compare__val">Gemini 2.5 Flash <em>vs</em> Claude Sonnet 5</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">60</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Wins / losses / ties, overall</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">14W</span><span class="amw-wl amw-wl--loss">20L</span><span class="amw-wl amw-wl--tie">26T</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Excluding malformed baseline emissions</span><span class="amw-compare__val"><span class="amw-wl amw-wl--win">8W</span><span class="amw-wl amw-wl--loss">15L</span></span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Structured agreement</span><span class="amw-compare__val">0.557 [0.443, 0.671]</span></div>
+<div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Fails on either figure</span></div>
+</div>
+</div>
+<p><strong>Same model, same data — three instruction rules written from the measured
+failures moved the adjudication from 14W/20L to 15W/3L.</strong> Both arms have
+<code>json_schema_validity</code> 1.000 [1.000, 1.000] and both are the same Gemini 2.5 Flash
+model on the same corpus. Nothing changed but the prompt, and the rules were not
+guessed: each one was written from a loss cluster counted in the n=70
+adjudication of the arm on the right.</p>
+<p>Then read the deployment row above: the same prompt, on Gemini 3.6 Flash, holds at
+16W/2L. <strong>The rules transferred across a model generation</strong> — which is the whole
+reason this development-generation card is still on the page.</p>
+<p>For completeness, the other two subagents on the development generation, both
+against <strong>Claude Sonnet 5</strong> with the candidate on <strong>Gemini 2.5 Flash</strong>:</p>
 <table>
 <thead>
 <tr>
@@ -1579,6 +1686,7 @@ figures, which is the only reason a single verdict can be stated at all.</p>
 <th>Disagreements</th>
 <th>W / L / T</th>
 <th>Excluding malformed</th>
+<th>Structured agreement</th>
 </tr>
 </thead>
 <tbody>
@@ -1588,6 +1696,7 @@ figures, which is the only reason a single verdict can be stated at all.</p>
 <td>61</td>
 <td>3W / 11L / 47T</td>
 <td>2W / 11L</td>
+<td>0.957 [0.900, 1.000]</td>
 </tr>
 <tr>
 <td>feature_extractor</td>
@@ -1595,19 +1704,21 @@ figures, which is the only reason a single verdict can be stated at all.</p>
 <td>56</td>
 <td>5W / 39L / 12T</td>
 <td>5W / 37L</td>
+<td>0.971 [0.929, 1.000]</td>
 </tr>
 </tbody>
 </table>
-<p class="amw-legend">W / L / T = wins / losses / ties, judged from the new model's point of view.</p>
-<p>Neither needs the <code>alt</code> clause — both clear the primary <code>shadow_agreement</code> bound
-(0.957 and 0.971). Their adjudication tables are published anyway, because a
-passing gate is not a reason to stop showing the disagreements underneath it.</p>
+<p>Feature Extractor's 5W/39L on the development generation against 31W/16L on the
+deployment generation is the largest single movement in this study, and it comes
+from a different shipping prompt (<code>gemini_optimizer_v1</code>) as well as a different
+model. Those two causes are <strong>not</strong> separated by this table, and no claim here
+attributes the movement to either one.</p>
 <h2 id="ties-are-not-not-adjudicated">Ties are not "not adjudicated"<a class="headerlink" href="#ties-are-not-not-adjudicated" title="Permanent link">&para;</a></h2>
 <p>A <strong>tie</strong> means the recorded judge scored both arms equally on that item. <strong>Not
 adjudicated</strong> means no recorded verdict exists for it, and adjudicating it would
-require new judge calls. On the widened n=70 run, <code>not_adjudicated</code> is 0 for all
+require new judge calls. On every run on this page, <code>not_adjudicated</code> is 0 for all
 three subagents — every disagreement has a recorded verdict behind it.</p>
-<h2 id="latency-and-why-this-run-has-no-number">Latency, and why this run has no number<a class="headerlink" href="#latency-and-why-this-run-has-no-number" title="Permanent link">&para;</a></h2>
+<h2 id="latency-and-why-the-shadow-run-has-no-number">Latency, and why the shadow run has no number<a class="headerlink" href="#latency-and-why-the-shadow-run-has-no-number" title="Permanent link">&para;</a></h2>
 <p>The shadow run does capture per-arm latency. It also captures why you cannot use
 it:</p>
 <blockquote>
@@ -1616,20 +1727,17 @@ it:</p>
 p95; the <code>gates.yaml</code> basis for <code>latency_p95</code> asks for same region, same load
 profile.</p>
 </blockquote>
-<p>So on <strong>this</strong> run — the development-generation arms above — <code>latency_p95</code>
-renders as <strong>not comparable — region split disclosed</strong>. Not evaluated, and
-specifically not passed.</p>
+<p>So on the shadow runs, <code>latency_p95</code> renders as <strong>not comparable — region split
+disclosed</strong>. Not evaluated, and specifically not passed.</p>
 <p>That is a property of how these particular calls were routed, not a permanent
-hole in the method. The deployment candidates were later probed with both arms
-pinned to the same region, which is the only input that can open the gate; the
-probe refuses to record itself at all if the two arms end up in different
-regions. Whether the gate then passes or fails is a separate question, and the
-answer for each subagent is in the scorecard — where a probe exists it is
-evaluated on the confidence-range upper bound like any other ceiling, and where
-none exists the gate stays unevaluated rather than borrowing one.</p>
+hole in the method. The deployment candidates were separately probed with both
+arms pinned to <code>global</code>, which is the only input that can open the gate; the probe
+refuses to record itself at all if the two arms end up in different regions. The
+per-subagent results are on the <a href="../../results/scorecard/">scorecard</a> — and they
+are directional, at n=10 per arm, with the caveat printed beside them.</p>
 <hr />
 <p><strong>Next:</strong> <a href="../08-the-scorecard/">Module 08 — The scorecard</a></p>
-<p><em>Source: <code>artifacts/results/shadow_widened.json</code>, <code>artifacts/results/shadow_qr_targeted.json</code>, <code>artifacts/results/shadow_triage_widened.md</code>, <code>artifacts/results/shadow_triage_qr_targeted.md</code>. Mode <code>replay</code>, similarity metric <code>token_jaccard_lexical_proxy</code>, prose threshold 0.6, bootstrap seed <code>20260812</code>.</em></p>
+<p><em>Source: deployment generation — <code>artifacts/results/shadow_current_{query_rewriter,chunk_summarizer,feature_extractor}.json</code> and <code>artifacts/results/shadow_triage_current_*.md</code>, candidate model <code>gemini-flash-current</code> (Gemini 3.6 Flash). Development generation — <code>artifacts/results/shadow_widened.json</code>, <code>artifacts/results/shadow_qr_targeted.json</code>, <code>artifacts/results/shadow_triage_widened.md</code>, <code>artifacts/results/shadow_triage_qr_targeted.md</code>, candidate model <code>gemini-flash</code> (Gemini 2.5 Flash). Incumbent <code>claude-sonnet</code> (Claude Sonnet 5) throughout. Mode <code>replay</code>, similarity metric <code>token_jaccard_lexical_proxy</code>, prose threshold 0.6, bootstrap seed <code>20260812</code>.</em></p>
 
 
 

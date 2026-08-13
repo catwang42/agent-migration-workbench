@@ -224,8 +224,9 @@ EXCLUDED_CHARTS: tuple[tuple[str, int, str], ...] = (
         "artifacts/notebooks/01_baseline_and_tuning.out.ipynb",
         1,
         "Judge score interval chart — rendered on the core-28 split before the "
-        "2026-08-11 widening (it shows query_rewriter/claude_baseline at ~0.911, the "
-        "core-28 incumbent, where the shipping full-70 figure is 0.886). Publishing it "
+        "2026-08-11 widening (it shows Query Rewriter on **Claude Sonnet 5** "
+        "<small><code>claude_baseline</code></small> at ~0.911, the core-28 incumbent, "
+        "where the shipping full-70 figure is 0.886). Publishing it "
         "beside the full-70 tables would invite exactly the cross-split comparison the "
         "selection table forbids. Re-execute notebook 01 to make it publishable.",
     ),

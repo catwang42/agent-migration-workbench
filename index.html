@@ -1260,7 +1260,7 @@
 <div class="amw-hero__grid">
 <div class="amw-hero__intro">
 <h1 id="agent-migration-workbench">Agent Migration Workbench<a class="headerlink" href="#agent-migration-workbench" title="Permanent link">&para;</a></h1>
-<p class="amw-hero__lead">Migrate agent workloads on evidence, not assertions. Pre-register the gates, run both models over the same corpus, read the confidence-interval bounds, and publish the verdict the numbers give you — including the ones that say <em>no</em>.</p>
+<p class="amw-hero__lead">Migrate agent workloads on evidence, not assertions. Pre-register the gates, run both models over the same corpus, read the confidence-range bounds, and publish the verdict the numbers give you — including the ones that say <em>no</em>.</p>
 <div class="amw-hero__cta">
 <a class="md-button md-button--primary" href="setup/">Start the walkthrough</a>
 <a class="md-button" href="results/">Browse the results</a>
@@ -1280,15 +1280,16 @@
 </div>
 </div>
 </section>
-<div class="admonition warning">
-<p class="admonition-title">Draft — refreshes at freeze-v1</p>
-<p>Every figure on this site is measured, but the run behind it is the
-pre-freeze run, recorded 10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM
-(SGT, Singapore time).
-The final run replaces these pages via one command
-(<code>python scripts/build_site.py</code>) at content freeze; nothing here is a
-placeholder waiting for a value.</p>
-<p class="amw-provenance">UTC: <code>2026-08-09T16:07:15+00:00</code> → <code>2026-08-11T06:20:37+00:00</code></p>
+<div class="admonition note">
+<p class="admonition-title">freeze-v1 — this is the frozen run</p>
+<p>Every figure on this site is measured. The calls behind them were executed
+and recorded 10 Aug 2026, 12:07 AM → 12 Aug 2026, 8:58 PM (SGT, Singapore
+time). Nothing here is a placeholder waiting for a value.</p>
+<p>The recommendation throughout is <strong>Gemini 3.6 Flash (capped thinking)</strong> —
+the reasoning budget minimised. <strong>Gemini 2.5 Flash (development
+generation)</strong> is the model the adaptation ladder was built on and is kept
+as evidence, never as the answer.</p>
+<p class="amw-provenance">UTC: <code>2026-08-09T16:07:15+00:00</code> → <code>2026-08-12T12:58:33+00:00</code></p>
 </div>
 <div class="amw-stats amw-stats--5 amw-stats--band">
 <div class="amw-card amw-stat">
@@ -1303,17 +1304,17 @@ placeholder waiting for a value.</p>
 </div>
 <div class="amw-card amw-stat">
 <div class="amw-stat__icon"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8m0 5a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3"/></svg></span></div>
-<div class="amw-stat__num">5,193</div>
+<div class="amw-stat__num">7,370</div>
 <div class="amw-stat__label">Recorded model calls</div>
 </div>
 <div class="amw-card amw-stat">
 <div class="amw-stat__icon"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m23 12-2.4-2.8.3-3.7-3.6-.8-1.9-3.2L12 3 8.6 1.5 6.7 4.7l-3.6.8.3 3.7L1 12l2.4 2.8-.3 3.7 3.6.8 1.9 3.2L12 21l3.4 1.5 1.9-3.2 3.6-.8-.3-3.7zm-4.3 4.9-2.7.6-1.4 2.4-2.6-1.1-2.6 1.1L8 17.5l-2.7-.6.2-2.8L3.7 12l1.8-2.1-.2-2.8L8 6.5l1.4-2.4L12 5.2l2.6-1.1L16 6.5l2.7.6-.2 2.8 1.8 2.1-1.8 2.1zm-2.1-9.3L18 9l-8 8-4-4 1.4-1.4 2.6 2.6z"/></svg></span></div>
-<div class="amw-stat__num">1,046</div>
+<div class="amw-stat__num">1,049</div>
 <div class="amw-stat__label">Tests passing</div>
 </div>
 <div class="amw-card amw-stat">
 <div class="amw-stat__icon"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-5v2h5v13l-5-6v9h5a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m-9 15H5l5-6m0-9H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h5v2h2V1h-2z"/></svg></span></div>
-<div class="amw-stat__num">210</div>
+<div class="amw-stat__num">700</div>
 <div class="amw-stat__label">Judged shadow pairs</div>
 </div>
 </div>
@@ -1339,19 +1340,19 @@ placeholder waiting for a value.</p>
 <td><code>wc -l datasets/*.jsonl</code></td>
 </tr>
 <tr>
-<td>5,193 recorded calls</td>
-<td>5,186 <code>ok</code> / 7 <code>error</code>; every one replayable with no credentials</td>
+<td>7,370 recorded calls</td>
+<td>7,357 <code>ok</code> / 13 <code>error</code>; every one replayable with no credentials</td>
 <td><code>artifacts/replay/*.jsonl</code></td>
 </tr>
 <tr>
-<td>1,046 tests passing</td>
-<td>2 skipped, 0 failing</td>
+<td>1,049 tests passing</td>
+<td>3 skipped, 0 failing</td>
 <td><code>pytest tests/</code></td>
 </tr>
 <tr>
-<td>210 judged pairs</td>
-<td>Full corpus, <code>split=all</code>; 177 pairs disagreed and went to adjudication</td>
-<td><code>artifacts/results/shadow_widened.json</code></td>
+<td>700 judged pairs</td>
+<td>Full corpus, <code>split=all</code>, 70 per subagent per arm. 210 on the deployment generation — <strong>Gemini 3.6 Flash</strong> <small><code>gemini-flash-current</code></small>; 280 on the development generation — <strong>Gemini 2.5 Flash</strong> <small><code>gemini-flash</code></small>; 210 on <strong>Gemini 3.5 Flash</strong> <small><code>gemini-flash-35</code></small></td>
+<td><code>artifacts/results/shadow_current_*.json</code>, <code>shadow_widened.json</code>, <code>shadow_qr_targeted.json</code>, <code>shadow_35_*.json</code></td>
 </tr>
 </tbody>
 </table>
@@ -1380,16 +1381,10 @@ recorded model call or computed over recorded model calls.</p>
 </div>
 <div class="amw-card amw-diff">
 <h3 id="the-verdict-is-allowed-to-say-no">The verdict is allowed to say no<a class="headerlink" href="#the-verdict-is-allowed-to-say-no" title="Permanent link">&para;</a></h3>
-<p>This run produced no MIGRATE verdict. One subagent is on HOLD for a failed blocking gate, and two are INCOMPLETE because part of the agreed evidence is still missing.</p>
+<p>No subagent was handed an unconditional MIGRATE. On the deployment generation two rows read UNDETERMINED because the gates file has no rule for the pair that failed, and one is INCOMPLETE; on the development generation one was HOLD for a failed blocking gate.</p>
 <p><a class="amw-diff__more" href="modules/08-the-scorecard/">Read more →</a></p>
 </div>
 </div>
-<!-- GENERATED by scripts/build_site.py — do not edit by hand. -->
-<!-- source: artifacts/results/crosscheck.json via amw/reporting/charts.py -->
-
-
-<p class="amw-chart__caption">Two judges, same ranking of the three subagents. Full numbers in module 06.</p>
-<p class="amw-chart__source">Generated at site-build time from <code>artifacts/results/crosscheck.json</code>.</p>
 <h2 class="amw-section-title">The eight modules</h2>
 <p class="amw-section-sub">Roughly five minutes each, in the order the workshop runs them. Each one assumes the last.</p>
 
@@ -1493,7 +1488,7 @@ recorded model call or computed over recorded model calls.</p>
 </div>
 <div class="amw-card amw-note">
 <div class="amw-note__head"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.1 12.5 1.4 1.41-6.53 6.59L12.5 17l1.4-1.41 2.07 2.08zM11 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2m0 7c.68 0 1.5.09 2.41.26l-1.67 1.67-.74-.03c-2.97 0-6.1 1.46-6.1 2.1v1.1h6.2L13 20H3v-3c0-2.66 5.33-4 8-4"/></svg></span> Who it's for</div>
-<p>Engineers and architects who have to defend a model-migration decision to someone who will push back on it: platform teams costing a high-volume RAG stack, ML engineers who own the eval harness, and the person who signs the change. No statistics beyond a bootstrap confidence interval, and module 03 explains that one.</p>
+<p>Engineers and architects who have to defend a model-migration decision to someone who will push back on it: platform teams costing a high-volume RAG stack, ML engineers who own the eval harness, and the person who signs the change. No statistics beyond a bootstrap confidence range, and module 03 explains that one.</p>
 </div>
 <div class="amw-card amw-note">
 <div class="amw-note__head"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-18C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m2.59 6L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41z"/></svg></span> What this is not</div>

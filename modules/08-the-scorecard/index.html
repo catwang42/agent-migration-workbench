@@ -1528,25 +1528,25 @@ budget minimised</strong> — the configuration a deployment would pin.</p>
 <tbody>
 <tr>
 <td>Query Rewriter</td>
-<td>Claude Sonnet 5</td>
-<td><strong>Gemini 3.6 Flash</strong> (capped thinking)</td>
-<td><code>gemini_targeted_v1</code></td>
+<td><strong>Claude Sonnet 5</strong><br><small>via Vertex partner models</small></td>
+<td><strong>Gemini 3.6 Flash (capped thinking)</strong></td>
+<td><small><code>gemini_targeted_v1</code></small></td>
 <td>5 of 6</td>
 <td><strong>INCOMPLETE</strong> (provisional: MIGRATE)</td>
 </tr>
 <tr>
 <td>Chunk Summarizer</td>
-<td>Claude Sonnet 5</td>
-<td><strong>Gemini 3.6 Flash</strong> (capped thinking)</td>
-<td><code>gemini_tuned_v1</code></td>
+<td><strong>Claude Sonnet 5</strong><br><small>via Vertex partner models</small></td>
+<td><strong>Gemini 3.6 Flash (capped thinking)</strong></td>
+<td><small><code>gemini_tuned_v1</code></small></td>
 <td>6 of 6</td>
 <td><strong>UNDETERMINED</strong></td>
 </tr>
 <tr>
 <td>Feature Extractor</td>
-<td>Claude Sonnet 5</td>
-<td><strong>Gemini 3.6 Flash</strong> (capped thinking)</td>
-<td><code>gemini_optimizer_v1</code></td>
+<td><strong>Claude Sonnet 5</strong><br><small>via Vertex partner models</small></td>
+<td><strong>Gemini 3.6 Flash (capped thinking)</strong></td>
+<td><small><code>gemini_optimizer_v1</code></small></td>
 <td>6 of 6</td>
 <td><strong>UNDETERMINED</strong></td>
 </tr>
@@ -1669,11 +1669,17 @@ output tokens; the capped arms emit 0.31x to 0.55x.</p>
 Volumes remain unconfirmed, so every run-rate cell is still an em dash.</p>
 <h3 id="latency-is-the-weakest-measurement-here">Latency is the weakest measurement here<a class="headerlink" href="#latency-is-the-weakest-measurement-here" title="Permanent link">&para;</a></h3>
 <p>Both arms were pinned to <code>global</code>, which is the only thing that opens the gate.
-But it is <strong>n=10 per arm</strong>, and the incumbent's own p95 moved from 3,471 ms to
-6,893 ms between two probes of the same model in the same region three hours
-apart. Latency requires measurement on production infrastructure; demo-window
-figures are directional, and the two FAILs above should be read as "not
-demonstrated here", not "known slower".</p>
+Query Rewriter <strong>PASSES</strong> — 6,471 ms [4,024, 6,602] against the incumbent's
+measured 6,893 ms, and the gate is tested on the <em>upper</em> bound, 6,602 ms. Chunk
+Summarizer (7,388 ms against 5,355 ms) and Feature Extractor (8,906 ms against
+6,063 ms) <strong>FAIL</strong>.</p>
+<p>But it is <strong>n=10 per arm</strong>, and the incumbent's own p95 moved from 3,471 ms to
+6,893 ms on Query Rewriter between two probes of the same model in the same
+region three hours apart — which is larger than the margin the Query Rewriter
+PASS was won by. Latency requires measurement on production infrastructure;
+<strong>demo-window figures are directional</strong>, the two FAILs should be read as "not
+demonstrated here" rather than "known slower", and the one PASS should be read
+the same way in the other direction.</p>
 <hr />
 <h2 id="how-we-got-here-the-development-generation">How we got here: the development generation<a class="headerlink" href="#how-we-got-here-the-development-generation" title="Permanent link">&para;</a></h2>
 <p>Everything above runs prompts that were written and tuned on <strong>Gemini 2.5
@@ -1694,33 +1700,37 @@ generation is itself the finding.</p>
 <tbody>
 <tr>
 <td>Chunk Summarizer</td>
-<td>Claude Sonnet 5</td>
-<td><strong>Gemini 2.5 Flash</strong></td>
-<td><code>gemini_tuned_v1</code></td>
+<td><strong>Claude Sonnet 5</strong><br><small>via Vertex partner models</small></td>
+<td><strong>Gemini 2.5 Flash (development generation)</strong></td>
+<td><small><code>gemini_tuned_v1</code></small></td>
 <td>4 of 6</td>
 <td><strong>INCOMPLETE</strong> (provisional: TUNE_FIRST)</td>
 </tr>
 <tr>
 <td>Feature Extractor</td>
-<td>Claude Sonnet 5</td>
-<td><strong>Gemini 2.5 Flash</strong></td>
-<td><code>gemini_tuned_v1</code></td>
+<td><strong>Claude Sonnet 5</strong><br><small>via Vertex partner models</small></td>
+<td><strong>Gemini 2.5 Flash (development generation)</strong></td>
+<td><small><code>gemini_tuned_v1</code></small></td>
 <td>3 of 6</td>
 <td><strong>INCOMPLETE</strong> (provisional: TUNE_FIRST)</td>
 </tr>
 <tr>
 <td>Query Rewriter</td>
-<td>Claude Sonnet 5</td>
-<td><strong>Gemini 2.5 Flash</strong></td>
-<td><code>gemini_tuned_v1</code></td>
+<td><strong>Claude Sonnet 5</strong><br><small>via Vertex partner models</small></td>
+<td><strong>Gemini 2.5 Flash (development generation)</strong></td>
+<td><small><code>gemini_tuned_v1</code></small></td>
 <td>3 of 6</td>
 <td><strong>HOLD</strong></td>
 </tr>
 </tbody>
 </table>
-<p>No MIGRATE on Gemini 2.5 Flash. That is the honest output of this corpus under
-these gates, and it is the strongest evidence available that the instrument is
-not decorative.</p>
+<p><strong>On the development generation, no row reached MIGRATE</strong> — one HOLD and two
+INCOMPLETE on Gemini 2.5 Flash. That was the honest output of this corpus under
+these gates at the time, and it is the strongest evidence available that the
+instrument is not decorative. It is a historical statement about that run, not
+the verdict this site ships: the deployment card above is what the recommendation
+rests on, and even there the strongest row is a <em>provisional</em> MIGRATE, printed
+as conditional because a gate went unmeasured.</p>
 <h3 id="why-two-rows-say-incomplete-rather-than-tune_first">Why two rows say INCOMPLETE rather than TUNE_FIRST<a class="headerlink" href="#why-two-rows-say-incomplete-rather-than-tune_first" title="Permanent link">&para;</a></h3>
 <p>Chunk Summarizer measured 4 of its 6 pre-agreed gates; <code>cost_savings_pct</code> and
 <code>latency_p95</code> were not measured. Feature Extractor measured 3 of 6;

@@ -1180,10 +1180,10 @@ Singapore time).</p>
 <p class="amw-provenance">UTC: <code>2026-08-09T16:07:15+00:00</code> → <code>2026-08-12T12:58:33+00:00</code></p>
 </div>
 <h2 id="which-models-are-in-which-artifact">Which models are in which artifact<a class="headerlink" href="#which-models-are-in-which-artifact" title="Permanent link">&para;</a></h2>
-<p>Every result on this site belongs to one of these arms. A prompt-variant name
-(<code>gemini_tuned_v1</code>, <code>gemini_targeted_v1</code>, <code>gemini_optimizer_v1</code>) is a <strong>prompt</strong>
-identity, not a model identity — the same variant was run against three different
-models in this study — so read the model column, never the variant alone.</p>
+<p>Every result on this site belongs to one of these arms, and every table names the
+model against the figure. Prompt-variant names are carried underneath in small
+type as annotations only: they are <strong>prompt</strong> identities, not model identities —
+the same prompt bytes were run against four different models in this study.</p>
 <table>
 <thead>
 <tr>
@@ -1286,12 +1286,6 @@ Full registry, with provider IDs, regions and recording windows:
 <li><strong>Every figure came from an executed call.</strong> No number in any artifact is a
   placeholder, an estimate or a projection. Where a value could not be measured,
   the cell says so and names the reason.</li>
-<li><strong>Read the model, not the variant.</strong> <code>gemini_tuned_v1</code> names a set of prompt
-  bytes, and those exact bytes were run against Gemini 2.5 Flash, Gemini 3.5
-  Flash, Gemini 3.6 Flash and Gemini 3.6 Flash with the reasoning budget
-  minimised. Every table on this site now carries a model column or a model
-  header for exactly that reason; a figure quoted by variant alone is
-  unattributed.</li>
 <li><strong>Every gate is a 95% confidence range bound, not a point estimate.</strong> 10,000
   resamples, seed <code>20260812</code>. Lower bound for <code>min</code> gates, upper for <code>max</code>.</li>
 <li><strong>Every judge score carries its n and its split.</strong> Two judge scores at

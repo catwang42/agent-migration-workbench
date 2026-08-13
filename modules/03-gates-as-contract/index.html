@@ -1422,7 +1422,7 @@ off; everywhere this site writes in its own voice, it says <em>confidence range<
 </tbody>
 </table>
 <h2 id="why-confidence-range-bounds-and-not-point-estimates">Why confidence-range bounds and not point estimates<a class="headerlink" href="#why-confidence-range-bounds-and-not-point-estimates" title="Permanent link">&para;</a></h2>
-<p>Every gate is tested against the 95% bootstrap confidence-interval bound — the
+<p>Every gate is tested against the 95% bootstrap confidence-range bound — the
 lower bound for <code>min</code> gates, the upper bound for <code>max</code> gates. 10,000 resamples,
 seed <code>20260812</code>.</p>
 <p>This is a strictly harder bar than the point estimate, and it is deliberately the
@@ -1488,8 +1488,37 @@ MIGRATE; it just does not by itself force HOLD.</p>
 <p>A <code>min</code> or <code>max</code> may be a sentinel instead of a number, resolved at scorecard time
 against measured baseline statistics. <strong>An unresolved sentinel is a hard error,
 never a skipped gate.</strong></p>
-<p>That rule is what produces the most-misread cell on the scorecard. On the
-development-generation runs, Claude ran in region <code>global</code> (the <code>us-central1</code>
+<p>On the <strong>deployment generation</strong> the sentinel resolves, because <strong>Claude Sonnet
+5 (via Vertex partner models)</strong> and <strong>Gemini 3.6 Flash (capped thinking)</strong> were
+probed with both arms pinned to <code>global</code>. The cell on the shipping scorecard
+reads, verbatim:</p>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Bound (gates.yaml)</th>
+<th>Measured (95% confidence range)</th>
+<th>Bound tested</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>latency_p95</code></td>
+<td><code>&lt;= claude_baseline_p95</code></td>
+<td>6,471 ms [4,024 ms, 6,602 ms] (same-region probe, global)</td>
+<td>ci_upper = 6602</td>
+<td>PASS</td>
+</tr>
+</tbody>
+</table>
+<p>That is a resolved sentinel: <code>claude_baseline_p95</code> became the incumbent's
+measured 6,893 ms, and the candidate's <em>upper</em> bound is tested against it. The
+probe carries a validator that refuses to produce a record at all if the two arms
+landed in different regions, which is what stops "same region" from being an
+assertion somebody typed.</p>
+<p>The same rule produces the most-misread cell on the other card. On the
+<strong>development-generation</strong> runs, Claude ran in region <code>global</code> (the <code>us-central1</code>
 partner quota was exhausted) while Gemini and the judge ran in <code>us-central1</code>. The
 <code>claude_baseline_p95</code> sentinel resolves only from a same-region probe, so on
 those runs <code>latency_p95</code> renders as:</p>
@@ -1499,11 +1528,6 @@ those runs <code>latency_p95</code> renders as:</p>
 <p>That is <strong>not evaluated</strong>. It is emphatically not <em>passed</em>. Quality and cost gates
 are unaffected by the region split; the latency gate simply has no measurement
 behind it and says so.</p>
-<p>The deployment candidates were probed later with both arms pinned to <code>global</code>, so
-their scorecards do resolve the sentinel and do evaluate the gate. The probe
-carries a validator that refuses to produce a record if the two arms landed in
-different regions, which is what stops "same region" from being an assertion
-somebody typed.</p>
 <h2 id="the-gate-with-two-human-cleared-preconditions">The gate with two human-cleared preconditions<a class="headerlink" href="#the-gate-with-two-human-cleared-preconditions" title="Permanent link">&para;</a></h2>
 <p><code>cost_savings_pct</code> has two independent preconditions that no measurement can
 open. One has cleared since this workshop was written; one has not.</p>
@@ -1543,7 +1567,7 @@ assumption.</p>
 </code></pre></div>
 <hr />
 <p><strong>Next:</strong> <a href="../04-the-naive-swap/">Module 04 — The naive swap</a></p>
-<p><em>Source: <code>config/gates.yaml</code> (version 1, hash <code>92f9d018432f</code>), <code>artifacts/results/scorecard_widened.md</code>.</em></p>
+<p><em>Source: <code>config/gates.yaml</code> (version 1, hash <code>92f9d018432f</code>); the resolved latency cell from <code>artifacts/results/scorecard_current-capped.md</code> (deployment generation — Gemini 3.6 Flash, capped thinking); the unresolved one from <code>artifacts/results/scorecard_widened.md</code> (development generation — Gemini 2.5 Flash).</em></p>
 
 
 

@@ -1464,16 +1464,16 @@ model call.</p>
 <td>Claude Sonnet 5<br><small><code>claude_baseline</code></small></td>
 <td>Gemini 3.6 Flash (capped thinking)<br><small><code>gemini_tuned_v1</code></small></td>
 <td>6 of 6</td>
-<td><strong>UNDETERMINED</strong></td>
-<td>gate(s) latency_p95, quality_delta_pp failed. That pattern matches no verdict rule in gates.yaml — they are neither quality gates nor blocking gates — so no verdict is issued and the gates file needs a rule for it.</td>
+<td><strong>INCOMPLETE</strong> (provisional: MIGRATE)</td>
+<td>missing gate(s) latency_p95,  — so no verdict is issued and the gates file needs a rule for it.</td>
 </tr>
 <tr>
 <td>Feature Extractor</td>
 <td>Claude Sonnet 5<br><small><code>claude_baseline</code></small></td>
 <td>Gemini 3.6 Flash (capped thinking)<br><small><code>gemini_optimizer_v1</code></small></td>
 <td>6 of 6</td>
-<td><strong>UNDETERMINED</strong></td>
-<td>gate(s) latency_p95, quality_delta_pp failed. That pattern matches no verdict rule in gates.yaml — they are neither quality gates nor blocking gates — so no verdict is issued and the gates file needs a rule for it. shadow_agreement missed its confidence-range bound (ci_lower = 0.8857 vs 0.9) and cleared on the alt clause pre-registered in gates.yaml ("on disagreements, judge-adjudicated wins &gt;= losses"), measured at 31W/16L overall; 28W/16L excluding structurally malformed <code>claude_baseline</code> emissions; passes on either figure.</td>
+<td><strong>INCOMPLETE</strong> (provisional: MIGRATE)</td>
+<td>missing gate(s) latency_p95, so no verdict is issued and the gates file needs a rule for it. shadow_agreement missed its confidence-range bound (ci_lower = 0.8857 vs 0.9) and cleared on the alt clause pre-registered in gates.yaml ("on disagreements, judge-adjudicated wins &gt;= losses"), measured at 31W/16L overall; 28W/16L excluding structurally malformed <code>claude_baseline</code> emissions; passes on either figure.</td>
 </tr>
 <tr>
 <td>Query Rewriter</td>

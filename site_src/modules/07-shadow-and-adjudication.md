@@ -162,7 +162,7 @@ call was made to build these cards.
 
 <div class="amw-compare" markdown="1">
 <div class="amw-compare__card amw-compare__card--ships" markdown="1">
-<p class="amw-compare__title">gemini_targeted_v1 <span class="amw-compare__tag amw-compare__tag--ships">Prompt that ships</span></p>
+<p class="amw-compare__title">Gemini 2.5 Flash (development generation) <span class="amw-compare__tag amw-compare__tag--ships">Prompt that ships</span><br><small><code>gemini_targeted_v1</code></small></p>
 <p class="amw-compare__verdict amw-compare__verdict--pass">Passes the alt clause</p>
 <div class="amw-compare__row"><span class="amw-compare__key">Model</span><span class="amw-compare__val">Gemini 2.5 Flash <em>vs</em> Claude Sonnet 5</span></div>
 <div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">51</span></div>
@@ -172,7 +172,7 @@ call was made to build these cards.
 <div class="amw-compare__row"><span class="amw-compare__key">Verdict</span><span class="amw-compare__val">Passes on either figure</span></div>
 </div>
 <div class="amw-compare__card amw-compare__card--replaced" markdown="1">
-<p class="amw-compare__title">gemini_tuned_v1 <span class="amw-compare__tag amw-compare__tag--replaced">Replaced — kept as the control</span></p>
+<p class="amw-compare__title">Gemini 2.5 Flash (development generation) <span class="amw-compare__tag amw-compare__tag--replaced">Replaced — kept as the control</span><br><small><code>gemini_tuned_v1</code></small></p>
 <p class="amw-compare__verdict amw-compare__verdict--fail">Fails the alt clause</p>
 <div class="amw-compare__row"><span class="amw-compare__key">Model</span><span class="amw-compare__val">Gemini 2.5 Flash <em>vs</em> Claude Sonnet 5</span></div>
 <div class="amw-compare__row"><span class="amw-compare__key">Disagreements</span><span class="amw-compare__val">60</span></div>
@@ -215,25 +215,34 @@ adjudicated** means no recorded verdict exists for it, and adjudicating it would
 require new judge calls. On every run on this page, `not_adjudicated` is 0 for all
 three subagents — every disagreement has a recorded verdict behind it.
 
-## Latency, and why the shadow run has no number
+## Latency, and why the development-generation shadow runs have no number
 
-The shadow run does capture per-arm latency. It also captures why you cannot use
-it:
+The **development-generation** shadow runs — **Claude Sonnet 5 (via Vertex
+partner models)** <small><code>claude_baseline</code></small> against **Gemini
+2.5 Flash (development generation)** <small><code>gemini-flash</code></small> —
+do capture per-arm latency. They also capture why you cannot use it:
 
 > **CROSS-REGION:** `claude-sonnet` ran in `global`, `gemini-flash` in
 > `us-central1`. Latency here compares two regions and is not a like-for-like
 > p95; the `gates.yaml` basis for `latency_p95` asks for same region, same load
 > profile.
 
-So on the shadow runs, `latency_p95` renders as **not comparable — region split
-disclosed**. Not evaluated, and specifically not passed.
+So on those runs — and only those — `latency_p95` renders as **not comparable —
+region split disclosed**. Not evaluated, and specifically not passed. It is a
+property of how those particular calls were routed, not a permanent hole in the
+method.
 
-That is a property of how these particular calls were routed, not a permanent
-hole in the method. The deployment candidates were separately probed with both
-arms pinned to `global`, which is the only input that can open the gate; the probe
-refuses to record itself at all if the two arms end up in different regions. The
-per-subagent results are on the [scorecard](../results/scorecard.md) — and they
-are directional, at n=10 per arm, with the caveat printed beside them.
+**The deployment generation does have a number.** **Gemini 3.6 Flash (capped
+thinking)** was probed separately against the incumbent with both arms pinned to
+`global` — the only input that can open the gate — and the probe refuses to
+record itself at all if the two arms end up in different regions. Query Rewriter
+**PASSES** at 6,471 ms against the incumbent's 6,893 ms; Chunk Summarizer (7,388
+ms) and Feature Extractor (8,906 ms) **FAIL**. Those probes are n=10 per arm, and
+the incumbent's own p95 moved from 3,471 ms to 6,893 ms between two probes of the
+same model in the same region three hours apart. Latency requires measurement on
+production infrastructure; **demo-window figures are directional**, and the two
+FAILs should be read as "not demonstrated here", not "known slower". Per-subagent
+rows are on the [scorecard](../results/scorecard.md).
 
 ---
 

@@ -58,7 +58,7 @@ Then run the metric tests:
 pytest tests/ -q
 ```
 
-1,012 tests collected; 1,010 pass and 2 skip on the offline path.
+1,052 tests collected; 1,049 pass and 3 skip on the offline path.
 
 !!! note "What replay mode is, precisely"
 

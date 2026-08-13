@@ -40,7 +40,7 @@ instrument, and the instrument decides whether a verdict is available today.
 
 | Subagent pattern | Autonomy level | What the model actually decides | Instrument | Status here |
 |---|---|---|---|---|
-| **Prompt-based** | **Level 1 — transform** | Output content only. One call in, one structured object out. | Bench harness: gold references, deterministic metrics, rubric-anchored judge, bootstrap CIs | **Measured in full. Verdict-capable.** |
+| **Prompt-based** | **Level 1 — transform** | Output content only. One call in, one structured object out. | Bench harness: gold references, deterministic metrics, rubric-anchored judge, bootstrap confidence ranges | **Measured in full. Verdict-capable.** |
 | **Tool-calling** | **Level 2 — tool decider** | *Which* tool to call, and with what arguments | Tool-call quality scoring: selection accuracy, argument validity, call-sequence sanity | **Partial.** Argument and schema formatting are measured on recorded calls; *selection* accuracy is follow-on. |
 | **Retrieval-augmented** | **Level 2/3** | What to retrieve, and whether the answer is supported by it | Retrieval + groundedness trajectory evaluation: recall@k, citation faithfulness across the chain | **Follow-on.** Citation coverage is measured for the summarizer; end-to-end retrieval quality is not. |
 | **Orchestration** | **Level 3 — looping** | When to loop, when to delegate, when to stop | Trajectory evaluation in the runtime: step-level traces, task completion, cost-per-resolution | **Follow-on. No verdict on this scorecard.** |

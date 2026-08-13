@@ -17,10 +17,10 @@ procedure.
 
 ## Which models are in which artifact
 
-Every result on this site belongs to one of these arms. A prompt-variant name
-(`gemini_tuned_v1`, `gemini_targeted_v1`, `gemini_optimizer_v1`) is a **prompt**
-identity, not a model identity — the same variant was run against three different
-models in this study — so read the model column, never the variant alone.
+Every result on this site belongs to one of these arms, and every table names the
+model against the figure. Prompt-variant names are carried underneath in small
+type as annotations only: they are **prompt** identities, not model identities —
+the same prompt bytes were run against four different models in this study.
 
 | Artifact | Incumbent | Candidate | Recommended? |
 |---|---|---|---|
@@ -92,12 +92,6 @@ Full registry, with provider IDs, regions and recording windows:
 - **Every figure came from an executed call.** No number in any artifact is a
   placeholder, an estimate or a projection. Where a value could not be measured,
   the cell says so and names the reason.
-- **Read the model, not the variant.** `gemini_tuned_v1` names a set of prompt
-  bytes, and those exact bytes were run against Gemini 2.5 Flash, Gemini 3.5
-  Flash, Gemini 3.6 Flash and Gemini 3.6 Flash with the reasoning budget
-  minimised. Every table on this site now carries a model column or a model
-  header for exactly that reason; a figure quoted by variant alone is
-  unattributed.
 - **Every gate is a 95% confidence range bound, not a point estimate.** 10,000
   resamples, seed `20260812`. Lower bound for `min` gates, upper for `max`.
 - **Every judge score carries its n and its split.** Two judge scores at

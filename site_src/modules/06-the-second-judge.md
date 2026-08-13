@@ -18,7 +18,7 @@ the bound, and let a second vendor's judge check the work.
   model runs, and asked criterion by criterion. Judge prompts are versioned text
   files in `amw/eval/judge_prompts/` — they are shown to customers, so read them.
 - **Blind to the arm.** The judge does not know which model produced the text.
-- **k=2 repeats, bootstrap CIs.** Self-preference that is not stable across
+- **k=2 repeats, bootstrap confidence ranges.** Self-preference that is not stable across
   repeats shows up as a wide interval rather than as a point estimate.
 - **Registered before results.** Gemini 2.5 Pro, prompt `v1`, is the gated
   instrument, fixed before the run.

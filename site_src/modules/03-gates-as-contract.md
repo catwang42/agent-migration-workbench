@@ -47,7 +47,7 @@ off; everywhere this site writes in its own voice, it says *confidence range*.
 
 ## Why confidence-range bounds and not point estimates
 
-Every gate is tested against the 95% bootstrap confidence-interval bound — the
+Every gate is tested against the 95% bootstrap confidence-range bound — the
 lower bound for `min` gates, the upper bound for `max` gates. 10,000 resamples,
 seed `20260812`.
 
@@ -128,8 +128,23 @@ A `min` or `max` may be a sentinel instead of a number, resolved at scorecard ti
 against measured baseline statistics. **An unresolved sentinel is a hard error,
 never a skipped gate.**
 
-That rule is what produces the most-misread cell on the scorecard. On the
-development-generation runs, Claude ran in region `global` (the `us-central1`
+On the **deployment generation** the sentinel resolves, because **Claude Sonnet
+5 (via Vertex partner models)** and **Gemini 3.6 Flash (capped thinking)** were
+probed with both arms pinned to `global`. The cell on the shipping scorecard
+reads, verbatim:
+
+| Gate | Bound (gates.yaml) | Measured (95% confidence range) | Bound tested | Result |
+| --- | --- | --- | --- | --- |
+| `latency_p95` | `<= claude_baseline_p95` | 6,471 ms [4,024 ms, 6,602 ms] (same-region probe, global) | ci_upper = 6602 | PASS |
+
+That is a resolved sentinel: `claude_baseline_p95` became the incumbent's
+measured 6,893 ms, and the candidate's *upper* bound is tested against it. The
+probe carries a validator that refuses to produce a record at all if the two arms
+landed in different regions, which is what stops "same region" from being an
+assertion somebody typed.
+
+The same rule produces the most-misread cell on the other card. On the
+**development-generation** runs, Claude ran in region `global` (the `us-central1`
 partner quota was exhausted) while Gemini and the judge ran in `us-central1`. The
 `claude_baseline_p95` sentinel resolves only from a same-region probe, so on
 those runs `latency_p95` renders as:
@@ -139,12 +154,6 @@ those runs `latency_p95` renders as:
 That is **not evaluated**. It is emphatically not *passed*. Quality and cost gates
 are unaffected by the region split; the latency gate simply has no measurement
 behind it and says so.
-
-The deployment candidates were probed later with both arms pinned to `global`, so
-their scorecards do resolve the sentinel and do evaluate the gate. The probe
-carries a validator that refuses to produce a record if the two arms landed in
-different regions, which is what stops "same region" from being an assertion
-somebody typed.
 
 ## The gate with two human-cleared preconditions
 
@@ -178,4 +187,4 @@ python cli.py scorecard        # gates → verdicts → markdown report
 
 **Next:** [Module 04 — The naive swap](04-the-naive-swap.md)
 
-*Source: `config/gates.yaml` (version 1, hash `92f9d018432f`), `artifacts/results/scorecard_widened.md`.*
+*Source: `config/gates.yaml` (version 1, hash `92f9d018432f`); the resolved latency cell from `artifacts/results/scorecard_current-capped.md` (deployment generation — Gemini 3.6 Flash, capped thinking); the unresolved one from `artifacts/results/scorecard_widened.md` (development generation — Gemini 2.5 Flash).*

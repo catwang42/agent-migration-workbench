@@ -3,7 +3,16 @@
 
 # Charts
 
-<span class="amw-draft">Draft — refreshes at freeze-v1</span>
+Every chart on this page plots the **development generation**: incumbent
+**Claude Sonnet 5 (via Vertex partner models)**
+<small><code>claude_baseline</code></small> against
+**Gemini 2.5 Flash (development generation)**
+<small><code>gemini_naive</code></small> and
+<small><code>gemini_tuned_v1</code></small>. The deployment generation —
+**Gemini 3.6 Flash (capped thinking)** — is tabulated in
+[module 05](../modules/05-adaptation-ladder.md#what-ships-the-deployment-generation)
+and gated on the [Migration Readiness Scorecard](scorecard.md); the notebooks
+were not re-executed against it before freeze, so it is not plotted here.
 
 Interval charts exported from the two executed notebooks. Each shows point
 estimates with 95% bootstrap confidence ranges (10,000 resamples, seed
@@ -15,13 +24,13 @@ on the point estimate.
 
 ![`json_schema_validity` — 95% confidence range, gate bound marked](charts/json_schema_validity.png)
 
-All nine gated arms at n=70. The 0.99 gate bound is the dashed line. Claude's `query_rewriter` point at 0.814 [0.714, 0.900] is a **mechanism** finding, not a model finding — see module 04.
+All nine gated arms at n=70 — **Claude Sonnet 5 (via Vertex partner models)** <small><code>claude_baseline</code></small> against **Gemini 2.5 Flash (development generation)** <small><code>gemini_naive</code></small> and <small><code>gemini_tuned_v1</code></small>. The 0.99 gate bound is the dashed line. Claude Sonnet 5's `query_rewriter` point at 0.814 [0.714, 0.900] is a **mechanism** finding, not a model finding — see module 04.
 
 ## `shadow_agreement` (structured) — 95% confidence range, gate bound marked
 
 ![`shadow_agreement` (structured) — 95% confidence range, gate bound marked](charts/shadow_agreement_structured.png)
 
-Structured-field agreement between `claude_baseline` and `gemini_tuned_v1`, n=70, with the 0.90 gate bound marked. Structured fields only; prose is adjudicated separately.
+Structured-field agreement between **Claude Sonnet 5 (via Vertex partner models)** <small><code>claude_baseline</code></small> and **Gemini 2.5 Flash (development generation)** <small><code>gemini_tuned_v1</code></small>, n=70, with the 0.90 gate bound marked. Structured fields only; prose is adjudicated separately.
 
 ## Charts deliberately not published
 

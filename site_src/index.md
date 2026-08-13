@@ -10,7 +10,7 @@ hide:
 
 # Agent Migration Workbench
 
-<p class="amw-hero__lead">Migrate agent workloads on evidence, not assertions. Pre-register the gates, run both models over the same corpus, read the confidence-interval bounds, and publish the verdict the numbers give you — including the ones that say <em>no</em>.</p>
+<p class="amw-hero__lead">Migrate agent workloads on evidence, not assertions. Pre-register the gates, run both models over the same corpus, read the confidence-range bounds, and publish the verdict the numbers give you — including the ones that say <em>no</em>.</p>
 
 <div class="amw-hero__cta" markdown="span">
 [Start the walkthrough](setup.md){ .md-button .md-button--primary }
@@ -33,16 +33,18 @@ hide:
 </div>
 </section>
 
-!!! warning "Draft — refreshes at freeze-v1"
+!!! note "freeze-v1 — this is the frozen run"
 
-    Every figure on this site is measured, but the run behind it is the
-    pre-freeze run, recorded 10 Aug 2026, 12:07 AM → 11 Aug 2026, 2:20 PM
-    (SGT, Singapore time).
-    The final run replaces these pages via one command
-    (`python scripts/build_site.py`) at content freeze; nothing here is a
-    placeholder waiting for a value.
+    Every figure on this site is measured. The calls behind them were executed
+    and recorded 10 Aug 2026, 12:07 AM → 12 Aug 2026, 8:58 PM (SGT, Singapore
+    time). Nothing here is a placeholder waiting for a value.
 
-    UTC: `2026-08-09T16:07:15+00:00` → `2026-08-11T06:20:37+00:00`
+    The recommendation throughout is **Gemini 3.6 Flash (capped thinking)** —
+    the reasoning budget minimised. **Gemini 2.5 Flash (development
+    generation)** is the model the adaptation ladder was built on and is kept
+    as evidence, never as the answer.
+
+    UTC: `2026-08-09T16:07:15+00:00` → `2026-08-12T12:58:33+00:00`
     { .amw-provenance }
 
 <div class="amw-stats amw-stats--5 amw-stats--band" markdown="1">
@@ -58,17 +60,17 @@ hide:
 </div>
 <div class="amw-card amw-stat" markdown="1">
 <div class="amw-stat__icon" markdown="span">:material-record-circle-outline:</div>
-<div class="amw-stat__num">5,193</div>
+<div class="amw-stat__num">7,370</div>
 <div class="amw-stat__label">Recorded model calls</div>
 </div>
 <div class="amw-card amw-stat" markdown="1">
 <div class="amw-stat__icon" markdown="span">:material-check-decagram-outline:</div>
-<div class="amw-stat__num">1,046</div>
+<div class="amw-stat__num">1,049</div>
 <div class="amw-stat__label">Tests passing</div>
 </div>
 <div class="amw-card amw-stat" markdown="1">
 <div class="amw-stat__icon" markdown="span">:material-compare:</div>
-<div class="amw-stat__num">210</div>
+<div class="amw-stat__num">700</div>
 <div class="amw-stat__label">Judged shadow pairs</div>
 </div>
 </div>
@@ -80,9 +82,9 @@ hide:
 | --- | --- | --- |
 | 3 subagents | Query Rewriter, Chunk Summarizer, Feature Extractor | `config/customers/demo_patents.yaml` |
 | 210 corpus items | 70 per subagent; synthetic, seed `20260812`, generator `t06.1` | `wc -l datasets/*.jsonl` |
-| 5,193 recorded calls | 5,186 `ok` / 7 `error`; every one replayable with no credentials | `artifacts/replay/*.jsonl` |
-| 1,046 tests passing | 2 skipped, 0 failing | `pytest tests/` |
-| 210 judged pairs | Full corpus, `split=all`; 177 pairs disagreed and went to adjudication | `artifacts/results/shadow_widened.json` |
+| 7,370 recorded calls | 7,357 `ok` / 13 `error`; every one replayable with no credentials | `artifacts/replay/*.jsonl` |
+| 1,049 tests passing | 3 skipped, 0 failing | `pytest tests/` |
+| 700 judged pairs | Full corpus, `split=all`, 70 per subagent per arm. 210 on the deployment generation — **Gemini 3.6 Flash** <small><code>gemini-flash-current</code></small>; 280 on the development generation — **Gemini 2.5 Flash** <small><code>gemini-flash</code></small>; 210 on **Gemini 3.5 Flash** <small><code>gemini-flash-35</code></small> | `artifacts/results/shadow_current_*.json`, `shadow_widened.json`, `shadow_qr_targeted.json`, `shadow_35_*.json` |
 
 Every corpus item is labelled `provenance: synthetic` and carries its generator
 seed. No figure on this site is typed in by hand: each one is read from a
@@ -114,13 +116,11 @@ Two independent judges — one from each vendor — graded the same answers and 
 </div>
 <div class="amw-card amw-diff" markdown="1">
 ### The verdict is allowed to say no
-This run produced no MIGRATE verdict. One subagent is on HOLD for a failed blocking gate, and two are INCOMPLETE because part of the agreed evidence is still missing.
+No subagent was handed an unconditional MIGRATE. On the deployment generation two rows read UNDETERMINED because the gates file has no rule for the pair that failed, and one is INCOMPLETE; on the development generation one was HOLD for a failed blocking gate.
 
 [Read more →](modules/08-the-scorecard.md){ .amw-diff__more }
 </div>
 </div>
-
---8<-- "charts/two-judges.md"
 
 <h2 class="amw-section-title">The eight modules</h2>
 <p class="amw-section-sub">Roughly five minutes each, in the order the workshop runs them. Each one assumes the last.</p>
@@ -233,7 +233,7 @@ This run produced no MIGRATE verdict. One subagent is on HOLD for a failed block
 </div>
 <div class="amw-card amw-note" markdown="1">
 <div class="amw-note__head" markdown="span">:material-account-check-outline: Who it's for</div>
-<p>Engineers and architects who have to defend a model-migration decision to someone who will push back on it: platform teams costing a high-volume RAG stack, ML engineers who own the eval harness, and the person who signs the change. No statistics beyond a bootstrap confidence interval, and module 03 explains that one.</p>
+<p>Engineers and architects who have to defend a model-migration decision to someone who will push back on it: platform teams costing a high-volume RAG stack, ML engineers who own the eval harness, and the person who signs the change. No statistics beyond a bootstrap confidence range, and module 03 explains that one.</p>
 </div>
 <div class="amw-card amw-note" markdown="1">
 <div class="amw-note__head" markdown="span">:material-close-circle-outline: What this is not</div>

@@ -22,9 +22,9 @@ budget minimised** — the configuration a deployment would pin.
 
 | Subagent | Incumbent | Candidate model | Candidate prompt | Gates | Verdict |
 |---|---|---|---|---|---|
-| Query Rewriter | Claude Sonnet 5 | **Gemini 3.6 Flash** (capped thinking) | `gemini_targeted_v1` | 5 of 6 | **INCOMPLETE** (provisional: MIGRATE) |
-| Chunk Summarizer | Claude Sonnet 5 | **Gemini 3.6 Flash** (capped thinking) | `gemini_tuned_v1` | 6 of 6 | **UNDETERMINED** |
-| Feature Extractor | Claude Sonnet 5 | **Gemini 3.6 Flash** (capped thinking) | `gemini_optimizer_v1` | 6 of 6 | **UNDETERMINED** |
+| Query Rewriter | **Claude Sonnet 5**<br><small>via Vertex partner models</small> | **Gemini 3.6 Flash (capped thinking)** | <small><code>gemini_targeted_v1</code></small> | 5 of 6 | **INCOMPLETE** (provisional: MIGRATE) |
+| Chunk Summarizer | **Claude Sonnet 5**<br><small>via Vertex partner models</small> | **Gemini 3.6 Flash (capped thinking)** | <small><code>gemini_tuned_v1</code></small> | 6 of 6 | **UNDETERMINED** |
+| Feature Extractor | **Claude Sonnet 5**<br><small>via Vertex partner models</small> | **Gemini 3.6 Flash (capped thinking)** | <small><code>gemini_optimizer_v1</code></small> | 6 of 6 | **UNDETERMINED** |
 
 Gates version 1, hash `92f9d018432f` — the same file signed off before any of
 this was measured.
@@ -100,11 +100,18 @@ Volumes remain unconfirmed, so every run-rate cell is still an em dash.
 ### Latency is the weakest measurement here
 
 Both arms were pinned to `global`, which is the only thing that opens the gate.
+Query Rewriter **PASSES** — 6,471 ms [4,024, 6,602] against the incumbent's
+measured 6,893 ms, and the gate is tested on the *upper* bound, 6,602 ms. Chunk
+Summarizer (7,388 ms against 5,355 ms) and Feature Extractor (8,906 ms against
+6,063 ms) **FAIL**.
+
 But it is **n=10 per arm**, and the incumbent's own p95 moved from 3,471 ms to
-6,893 ms between two probes of the same model in the same region three hours
-apart. Latency requires measurement on production infrastructure; demo-window
-figures are directional, and the two FAILs above should be read as "not
-demonstrated here", not "known slower".
+6,893 ms on Query Rewriter between two probes of the same model in the same
+region three hours apart — which is larger than the margin the Query Rewriter
+PASS was won by. Latency requires measurement on production infrastructure;
+**demo-window figures are directional**, the two FAILs should be read as "not
+demonstrated here" rather than "known slower", and the one PASS should be read
+the same way in the other direction.
 
 ---
 
@@ -117,13 +124,17 @@ generation is itself the finding.
 
 | Subagent | Incumbent | Candidate model | Candidate prompt | Gates | Verdict |
 |---|---|---|---|---|---|
-| Chunk Summarizer | Claude Sonnet 5 | **Gemini 2.5 Flash** | `gemini_tuned_v1` | 4 of 6 | **INCOMPLETE** (provisional: TUNE_FIRST) |
-| Feature Extractor | Claude Sonnet 5 | **Gemini 2.5 Flash** | `gemini_tuned_v1` | 3 of 6 | **INCOMPLETE** (provisional: TUNE_FIRST) |
-| Query Rewriter | Claude Sonnet 5 | **Gemini 2.5 Flash** | `gemini_tuned_v1` | 3 of 6 | **HOLD** |
+| Chunk Summarizer | **Claude Sonnet 5**<br><small>via Vertex partner models</small> | **Gemini 2.5 Flash (development generation)** | <small><code>gemini_tuned_v1</code></small> | 4 of 6 | **INCOMPLETE** (provisional: TUNE_FIRST) |
+| Feature Extractor | **Claude Sonnet 5**<br><small>via Vertex partner models</small> | **Gemini 2.5 Flash (development generation)** | <small><code>gemini_tuned_v1</code></small> | 3 of 6 | **INCOMPLETE** (provisional: TUNE_FIRST) |
+| Query Rewriter | **Claude Sonnet 5**<br><small>via Vertex partner models</small> | **Gemini 2.5 Flash (development generation)** | <small><code>gemini_tuned_v1</code></small> | 3 of 6 | **HOLD** |
 
-No MIGRATE on Gemini 2.5 Flash. That is the honest output of this corpus under
-these gates, and it is the strongest evidence available that the instrument is
-not decorative.
+**On the development generation, no row reached MIGRATE** — one HOLD and two
+INCOMPLETE on Gemini 2.5 Flash. That was the honest output of this corpus under
+these gates at the time, and it is the strongest evidence available that the
+instrument is not decorative. It is a historical statement about that run, not
+the verdict this site ships: the deployment card above is what the recommendation
+rests on, and even there the strongest row is a *provisional* MIGRATE, printed
+as conditional because a gate went unmeasured.
 
 ### Why two rows say INCOMPLETE rather than TUNE_FIRST
 

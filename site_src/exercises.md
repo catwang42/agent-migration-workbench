@@ -51,7 +51,7 @@ response.
 pytest tests/ -q
 ```
 
-1,012 collected, 1,010 pass, 2 skip.
+1,052 collected, 1,049 pass, 3 skip.
 
 ---
 
@@ -61,9 +61,36 @@ pytest tests/ -q
 `config/gates.yaml`, and watch a threshold change propagate.
 
 ```bash
-python cli.py scorecard --out /tmp/scorecard_mine.md
+# The development-generation card — Claude Sonnet 5 against Gemini 2.5 Flash.
+python cli.py scorecard \
+  --results artifacts/results/phase2_n70_widened.json \
+  --shadow  artifacts/results/shadow_widened.json \
+  --crosscheck artifacts/results/crosscheck.json \
+  --out /tmp/scorecard_mine.md
 diff /tmp/scorecard_mine.md artifacts/results/scorecard_widened.md
 ```
+
+The frozen artifact was rendered on 2026-08-11, so that `diff` is **not** empty,
+and reading it is the exercise. Three kinds of change appear, and telling them
+apart is the skill:
+
+- **Presentation.** The renderer now prints the model name beside every arm
+  (`Judge score — Claude` became `Judge score — Claude Sonnet 5 (incumbent)`),
+  and writes *confidence range* where it used to write *CI*.
+- **New measurements since the freeze.** Prices cleared on 2026-08-12, so the
+  pricing precondition no longer blocks the cost cells. Feature Extractor's
+  `groundedness_delta_pp` now resolves against a supported-claim-rate instrument
+  that did not exist on 11 Aug, taking it from 3 of 6 gates to 4 of 6. The
+  ablation ladders have gained the deployment-generation rungs measured on
+  12 Aug.
+- **Changed findings.** There are none. Every gate figure and every confidence
+  range on a row present in both renders is identical, digit for digit.
+
+That last line is the claim worth not taking on trust — check it.
+
+The published card is the 11 Aug render, left frozen on purpose: re-rendering it
+would silently move a verdict row that a customer may already have screenshotted.
+New measurements go in new files.
 
 **Then experiment — on a copy of the config, never on the committed one.**
 
@@ -74,10 +101,12 @@ Try each of these and re-render:
 |---|---|
 | Raise `quality_delta_pp.min` from `-2.0` to `-6.0` | Chunk Summarizer and Query Rewriter stop failing that gate; the gates version **hash in the footer changes**, which is the whole point of printing it |
 | Lower `shadow_agreement.min` below 0.443 | Query Rewriter's HOLD disappears — and you have just demonstrated why the hash is in the footer |
-| Confirm volumes with `--volume query_rewriter:250000` | The volume gate moves, but the **pricing** gate is independent and still closed, so cost cells stay em dashes |
+| Confirm volumes with `--volume query_rewriter:250000` | Run-rate cells unlock on this card only because prices cleared on 2026-08-12; drop a `VERIFY` back into `config/pricing.yaml` and they return to em dashes even with volumes confirmed |
 
 That last row is the one worth sitting with. Two independent human-cleared gates
-protect every cost cell, and clearing one of them changes nothing.
+protect every cost cell. Pricing cleared on 2026-08-12; volumes have not, which
+is why the shipping cards carry measured corpus costs and still print an em dash
+in every monthly and annual run-rate cell.
 
 **Restore the real config before moving on:**
 

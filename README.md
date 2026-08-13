@@ -1,219 +1,414 @@
 # Agent Migration Workbench
 
-A customer-workshop toolkit for deciding — with measurements, not vibes — whether
-high-volume RAG subagents should migrate from Claude to Gemini.
+**Make model-migration decisions with measured evidence—not endpoint-swap intuition.**
 
-It runs a four-stage pipeline over three subagents (Query Rewriter, Chunk
-Summarizer, Feature Extractor):
+Agent Migration Workbench (AMW) is a reproducible decision system for determining whether individual high-volume agent workloads are ready to migrate from one foundation model to another.
 
+This repository demonstrates the method by evaluating three RAG subagents migrating from **Claude Sonnet 5** to **Gemini**:
+
+- **Query Rewriter** — transforms a user request into a retrieval plan.
+- **Chunk Summarizer** — produces a grounded summary from retrieved chunks.
+- **Feature Extractor** — returns structured features from source documents.
+
+The workbench runs the incumbent and candidate over the same corpus, adapts prompts through an explicit ablation ladder, examines shadow disagreements, evaluates pre-registered confidence-bound gates, and produces a per-subagent **Migration Readiness Scorecard**.
+
+> AMW is not an automatic code converter and not a general claim that one model is better than another. It is a method for deciding whether one behavior, on one workload, under one agreed acceptance contract, is ready to migrate.
+
+## Why this exists
+
+“Can we replace Claude with Gemini in our agent?” is usually the wrong unit of analysis.
+
+An agent system contains behaviors with different failure modes:
+
+| Behavior class | What the model decides | Appropriate evaluation |
+|---|---|---|
+| Single-call transformation | The content and structure of one response | Gold references, schemas, groundedness and rubric scoring |
+| Tool selection | Which tool to call and with which arguments | Tool-choice and argument-correctness evaluation |
+| Retrieval | What evidence enters the context | Recall, precision and ranking evaluation |
+| Multi-step orchestration | What to do next across a trajectory | Trajectory, state-transition and task-completion evaluation |
+
+This reference implementation measures the first category in full. Tool selection, retrieval quality and multi-step orchestration require their own instruments and receive no migration verdict from this scorecard.
+
+## The decision flow
+
+```mermaid
+flowchart LR
+    A[Classify workload] --> B[Pre-register gates]
+    B --> C[Measure baseline]
+    C --> D[Adapt prompts]
+    D --> E[Shadow compare]
+    E --> F[Evaluate economics]
+    F --> G[Issue verdict]
 ```
-baseline eval  ->  prompt adaptation  ->  shadow comparison  ->  Migration
-                   (A0-A4 ablation)                             Readiness
-                                                                Scorecard
+
+1. **Classify the workload.** Define the behavior being migrated and select the matching evaluation instrument.
+2. **Pre-register the gates.** Agree what “safe to migrate” means before seeing any result.
+3. **Measure the baseline.** Run the incumbent, a naive candidate swap and adapted candidates over the same corpus.
+4. **Adapt prompts.** Use an A0–A4 ladder to isolate which changes improve or damage performance.
+5. **Shadow compare.** Measure structured agreement and adjudicate meaningful disagreements.
+6. **Evaluate economics.** Add measured token cost, latency and caching analysis without mixing projections into measurements.
+7. **Issue a verdict.** Produce a separate decision for each applicable subagent behavior.
+
+## Reference architecture
+
+```mermaid
+flowchart TB
+    UI[CLI / Notebooks] --> PIPE[Migration evaluation pipeline]
+    CFG[Models · Gates · Pricing · Customer] --> PIPE
+
+    PIPE --> DATA[Dataset generation]
+    DATA --> PROMPTS[Prompt packs]
+    PROMPTS --> ROUTER[Adapter Router]
+
+    ROUTER --> CLAUDE[Claude]
+    ROUTER --> GEMINI[Gemini on Vertex AI]
+    CLAUDE --> STORE[Canonical Trace Store]
+    GEMINI --> STORE
+    STORE -. replay .-> ROUTER
+
+    STORE --> EVAL[Metrics · Judge · 95% CI]
+    EVAL --> TUNE[Prompt ablation]
+    TUNE --> SHADOW[Shadow comparison]
+    SHADOW --> GATES[Pre-agreed gates]
+    ECON[Cost · Latency · Caching] --> CARD[Migration Readiness Scorecard]
+    GATES --> CARD
 ```
 
-The scorecard is the deliverable. It applies pre-agreed gates from
-`config/gates.yaml` and returns one of three verdicts per subagent —
-**MIGRATE**, **TUNE_FIRST**, or **HOLD** — with the evidence behind each.
+Three architectural rules keep the evidence reproducible:
 
+- **Mode resolution happens once.** `amw/adapters/__init__.py` is the only layer that decides between replay, hybrid and live execution.
+- **Every live call is recorded.** Live adapters are always wrapped in `RecordingAdapter`; successful and failed calls are written to the canonical trace store.
+- **Replay and live share one trace interface.** Evaluation code consumes the same trace schema regardless of how the response was obtained.
 
----
+See [Architecture and toolchain](https://catwang42.github.io/agent-migration-workbench/architecture/) for the detailed component walkthrough.
 
-## Status
+## What the reference study found
 
-Day 0 is complete; Day 1 (`T06`) is the next task.
+The reference corpus contains 70 synthetic, provenance-labelled patent-domain cases for each of the three subagents. The latest deployment-candidate scorecard compares Claude Sonnet 5 with Gemini 3.6 Flash using a minimised reasoning budget.
 
-| Built | Not built yet |
-|---|---|
-| Config system with validation (`amw/config.py`) | Dataset generator (`T06`) |
-| Canonical trace schema + replay store (`amw/traces/`) | Judge + eval pipeline (`T07`–`T09`) |
-| Gemini adapter (`amw/adapters/gemini.py`) | Ablation ladder (`T10`) |
-| Claude adapters, Vertex + direct (`amw/adapters/claude_*.py`) | Shadow runner + triage (`T11`) |
-| Mode resolution + record-on-live (`amw/adapters/__init__.py`) | Gates, scorecard, economics (`T12`) |
-| Day-0 platform spikes, all GREEN (`SPIKES.md`) | Notebooks (`T13`), smoke check (`T16`) |
+| Subagent | Current scorecard status | Evidence summary |
+|---|---|---|
+| Query Rewriter | **INCOMPLETE** — provisional `MIGRATE` | Applicable quality, schema, shadow, cost and latency evidence clears its routes; the globally configured groundedness gate is not applicable to a search-plan output. |
+| Chunk Summarizer | **UNDETERMINED** | Schema, groundedness, shadow and cost pass; quality parity is not demonstrated at the registered confidence bound and the directional latency gate fails. |
+| Feature Extractor | **UNDETERMINED** | Schema, groundedness, shadow alternative and cost pass; quality precision and directional latency do not clear the registered gates. |
 
-179 tests pass. **Most `cli.py` subcommands are deliberate stubs** — they exit
-non-zero naming the task that will deliver them, rather than pretending to have
-run. That is by design; see ground rule 1.
+These are useful findings, not failed demo choreography:
 
-Two things are known-outstanding and affect any live run:
+- The same candidate can be appropriate for one subagent and inappropriate for another.
+- Prompt adaptation materially changes migration outcomes.
+- Cost improvement does not override a quality or latency failure.
+- Missing or inapplicable evidence is reported explicitly rather than silently converted into a pass.
 
-- **`config/pricing.yaml` is 13 × `VERIFY`.** No price or savings figure can be
-  printed until `scripts/refresh_pricing.py` has been run against real
-  published rates.
-- **Claude and Gemini currently run in different regions.** Model Garden quota
-  for `anthropic-claude-sonnet-5` is exhausted in `us-central1`, so Claude runs
-  in `global`. This makes the `latency_p95` gate a cross-region comparison that
-  the scorecard must disclose. Details and the fix in `SPIKES.md`.
+The current `INCOMPLETE` and `UNDETERMINED` statuses also expose two decision-policy gaps: gate applicability must be defined per behavior class, and every possible non-blocking failure pattern needs a configured disposition. Until those policies are updated, AMW refuses to invent a decision.
 
----
+Read the full [Migration Readiness Scorecard](https://catwang42.github.io/agent-migration-workbench/results/scorecard/) or browse the [results overview](https://catwang42.github.io/agent-migration-workbench/results/).
 
-## Setup
+## Quickstart: verify everything offline
 
-Requires Python 3.11.
+Replay mode uses previously executed model calls committed as canonical JSONL traces. It requires no cloud project, credentials or network access.
+
+### 1. Create the environment
 
 ```bash
-python3.11 -m venv .venv && source .venv/bin/activate
+git clone https://github.com/catwang42/agent-migration-workbench.git
+cd agent-migration-workbench
+
+python3.11 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env          # then fill in PROJECT_ID, REGION
+cp .env.example .env
 ```
 
-For live runs you also need Google Cloud Application Default Credentials:
+Python 3.11 is required.
+
+### 2. Run the offline integrity gate
+
+```bash
+python cli.py e2e --mode replay
+pytest tests/ -q
+```
+
+`e2e` is a small committed-fixture integrity check. It exercises the normal phase-two evaluation path in replay mode and verifies that a scorecard can be rendered. It is not the full 210-case study and does not regenerate every frozen research artifact.
+
+### 3. Re-render the canonical deployment scorecard
+
+```bash
+python scripts/render_candidate_scorecard.py \
+  --candidate gemini-flash-current-capped \
+  --out artifacts/results/scorecard.md
+```
+
+This assembles the frozen incumbent arms, deployment-candidate arms, shadow evidence, measured token-cost evidence and eligible same-region latency probes. All model generations are replayed from recorded calls; no new provider request is made.
+
+### 4. Browse the workshop site locally
+
+```bash
+pip install -r requirements-docs.txt
+python scripts/build_site.py
+mkdocs serve
+```
+
+Open the local URL printed by MkDocs.
+
+## Execution modes
+
+All principal commands accept `--mode`. The default is `replay`.
+
+| Mode | Gemini | Claude | Credentials | Intended use |
+|---|---|---|---|---|
+| `replay` | Recorded | Recorded | None | Reproduction, CI and offline workshops |
+| `hybrid` | Live | Recorded | Google Cloud ADC | Default customer workshop mode |
+| `live` | Live | Live | Google Cloud ADC; optional Anthropic key for direct access | New measurement campaigns |
+
+Mode selection is resolved centrally by `AdapterRouter`. Call sites do not branch on provider or execution mode.
+
+### Replay
+
+```bash
+python cli.py phase2 --mode replay -n 10
+python cli.py shadow --mode replay
+python cli.py scorecard
+```
+
+Replay lookup is keyed by `(subagent, model, input_sha)`. A missing trace raises a replay miss; the system never substitutes a nearby response or fabricates a result.
+
+### Hybrid
+
+Hybrid keeps the incumbent baseline stable while measuring the migration candidate live:
 
 ```bash
 gcloud auth application-default login
+python cli.py smoke --mode live -n 2
+python cli.py phase2 --mode hybrid -n 10
 ```
 
-On a GCE VM with a suitably scoped service account this is already provided by
-the metadata server and the login step can be skipped.
+Set `PROJECT_ID`, `REGION`, `CLAUDE_REGION` and `CLAUDE_PATH` in `.env` before using a live endpoint.
 
-**You do not need any of the above to run the test suite or replay mode.** That
-is a hard requirement, not a convenience — see ground rule 4.
+### Live
 
----
-
-## Running it
+Use live mode to create a new evidence campaign:
 
 ```bash
-python cli.py gen --customer demo_patents -n 70   # synthetic dataset + rubrics
-python cli.py phase2 --mode hybrid -n 10          # baseline eval (subset)
-python cli.py ablate --subagent query_rewriter    # A0-A4 prompt ladder
-python cli.py shadow --mode hybrid                # shadow run + triage
-python cli.py scorecard                           # gates -> verdicts -> report
-python cli.py e2e --mode replay                   # full offline pipeline
-python cli.py smoke --mode live -n 2              # pre-demo health check
-pytest tests/                                     # 179 tests, no credentials
+python cli.py phase2 --mode live -n 70
 ```
 
-### Execution modes
+Every live call—including errors—is appended to `artifacts/replay/`. Review and intentionally commit new trace data only when it is safe and appropriate to preserve it.
 
-Every subcommand takes `--mode`, defaulting to `replay`.
+## Run the migration workflow
 
-| Mode | Gemini | Claude | Credentials |
-|---|---|---|---|
-| `replay` | replayed | replayed | **none** |
-| `hybrid` | live | replayed | GCP ADC |
-| `live` | live | live | GCP ADC (+ API key if `CLAUDE_PATH=anthropic`) |
+### Generate a deterministic reference corpus
 
-`hybrid` is the workshop default. The Claude baseline was recorded once;
-replaying it keeps the comparison stable and avoids re-billing a measurement
-that should not move.
-
-Mode is resolved in exactly one place — `amw/adapters/__init__.py::resolve` —
-and never at a call site. Per-callsite mode checks are how a "replay" run ends
-up making one real call from some forgotten branch.
-
-### Recording is not optional
-
-Every live call appends a canonical trace to `artifacts/replay/`. There is no
-flag to disable it, and adding one would be a bug. `resolve()` wraps every live
-adapter in `RecordingAdapter` on the way out, so recording is a property of how
-adapters are obtained rather than something an adapter could forget to do.
-
-Today's live run is tomorrow's offline demo. Error traces are recorded too — a
-dropped failure silently shrinks an eval's denominator and flatters whichever
-model failed.
-
-**Commit the corpus.** `artifacts/replay/` is tracked in git on purpose —
-`.gitignore` excludes `artifacts/*` and then re-includes it. It is the demo's
-insurance policy: if the network, a quota, or a region fails mid-workshop, the
-replay corpus is what keeps the session running. Insurance that exists on one
-laptop is not insurance. After any live run, check `git status` and commit what
-landed.
-
-### Claude access paths
-
-`CLAUDE_PATH` in `.env` selects one of three:
-
-- `vertex` — Vertex AI Model Garden, authenticated by GCP ADC, no API key.
-  **The documented default**: traffic stays inside GCP.
-- `anthropic` — direct Anthropic API. Needs `ANTHROPIC_API_KEY`.
-- `replay` — no Claude calls at all; the baseline is served from
-  `artifacts/replay/`.
-
-Set `CLAUDE_REGION` when Claude needs a different region from Gemini, as it
-currently does here. It falls back to `REGION` when unset.
-
----
-
-## Ground rules
-
-These are non-negotiable and are enforced in code where possible. The full list
-is in `CLAUDE.md`; these four shape almost every design decision in the repo.
-
-**1. No fabricated results, ever.** Every number a customer sees comes from an
-executed model call or an explicit calculation over recorded calls. Replay mode
-replays *previously recorded real calls* and labels itself on screen with the
-recording date. A model output that was supposed to be JSON and isn't gets
-recorded as text with `json: null`, never repaired — downstream scores a real
-schema miss.
-
-**2. Provenance everywhere.** Every dataset item carries
-`provenance: synthetic|customer` and a generator seed. Every report footer
-prints provenance, run date, region, and the gates version hash.
-
-**3. Prices only from `config/pricing.yaml`.** Never hardcode a price or a
-savings percentage anywhere else.
-
-**4. Replay mode must work with zero credentials.** Any feature that only works
-live is incomplete. Provider SDKs are imported lazily inside adapters so
-`import amw.adapters` succeeds with nothing installed and nothing configured;
-tests assert this.
-
-One more worth internalising because it shows up in customer-facing text:
-reports say **"quality parity within measurement under pre-agreed gates"**,
-never "zero quality drop." Gates check **CI lower bounds**, not point estimates.
-
----
-
-## Repo map
-
+```bash
+python cli.py gen \
+  --customer demo_patents \
+  -n 70 \
+  --no-naturalise
 ```
-cli.py                    entry point; every subcommand names its owning task
+
+Remove `--no-naturalise` and select a live-capable mode to enable the guarded surface-realism pass.
+
+### Measure the baseline and candidate arms
+
+```bash
+python cli.py phase2 \
+  --mode hybrid \
+  --customer demo_patents \
+  -n 70
+```
+
+Phase two compares the Claude baseline, naive Gemini swap and tuned Gemini prompt over the same corpus. It computes deterministic metrics, optional rubric-judge results and bootstrap confidence ranges.
+
+### Run the prompt-ablation ladder
+
+```bash
+python cli.py ablate \
+  --mode hybrid \
+  --subagent query_rewriter
+```
+
+The ladder reuses the same arm runner and scoring implementation as phase two, keeping rung results comparable with the baseline.
+
+### Compare shadow behavior
+
+```bash
+python cli.py shadow \
+  --mode hybrid \
+  --baseline-arm claude_baseline \
+  --candidate-arm gemini_tuned_v1
+```
+
+Shadow analysis measures structured agreement and creates a disagreement-triage artifact instead of hiding meaningful differences behind one aggregate score.
+
+### Render a scorecard
+
+```bash
+python cli.py scorecard \
+  --results artifacts/results/phase2_n70.json \
+  --shadow artifacts/results/shadow.json \
+  --out artifacts/results/scorecard_development.md
+```
+
+For the current deployment candidate, use `scripts/render_candidate_scorecard.py` as shown in the quickstart.
+
+## The ADK reference application
+
+The repository includes a Gemini-backed Google ADK reference application that demonstrates what the migrated application could look like:
+
+```mermaid
+flowchart LR
+    U[User query] --> ROOT[ADK Root Orchestrator]
+    ROOT --> QR[Query Rewriter]
+    QR --> RET[Patent Corpus Retrieval]
+    RET --> CS[Chunk Summarizer]
+    RET --> FE[Feature Extractor]
+    CS --> ROOT
+    FE --> ROOT
+    ROOT --> R[Final response]
+```
+
+Run it with:
+
+```bash
+python cli.py adk-demo --mode live
+```
+
+The ADK application and migration evidence harness are deliberately separate:
+
+- The **evidence harness** determines whether migration gates pass.
+- The **ADK application** demonstrates the deployment architecture.
+- The application reads the same shipping prompt files as the measured candidate.
+- The app uses its own `adk_demo` model role, so changing the demo backend cannot alter a measured arm.
+- The ADK demo does not create, change or approve a migration verdict.
+
+## Decision contract
+
+All thresholds and verdict rules live in [`config/gates.yaml`](config/gates.yaml). They are not duplicated in code.
+
+The current contract considers:
+
+| Gate | Question |
+|---|---|
+| `quality_delta_pp` | Does the candidate remain within the agreed quality margin? |
+| `json_schema_validity` | Does it reliably satisfy the output contract? |
+| `groundedness_delta_pp` | Does source support remain within the agreed margin where groundedness applies? |
+| `shadow_agreement` | Does candidate behavior agree sufficiently with the incumbent, or clear the pre-agreed adjudication route? |
+| `cost_savings_pct` | Does measured or confirmed-volume economics clear the agreed threshold? |
+| `latency_p95` | Does candidate tail latency remain within the baseline bound on comparable infrastructure? |
+
+Minimum gates are checked against the lower confidence bound; maximum gates are checked against the upper confidence bound. AMW therefore reports:
+
+> Quality parity within measurement under pre-agreed gates.
+
+It never claims “zero quality drop.”
+
+### Verdict semantics
+
+The workbench distinguishes five states:
+
+| State | Meaning |
+|---|---|
+| `MIGRATE` | Every applicable pre-agreed gate passes. |
+| `TUNE_FIRST` | Blocking structural gates pass, but one or more remediable gates fail. |
+| `HOLD` | A blocking schema, safety or behavioral-control gate fails. |
+| `INCOMPLETE` | Evidence required by the contract was not measured. |
+| `UNDETERMINED` | The measured failure pattern has no configured decision rule. |
+
+`INCOMPLETE` and `UNDETERMINED` are not softened passes. They are explicit signals that the evidence contract or decision policy must be completed before migration approval.
+
+## Credibility contract
+
+The following rules are enforced in code wherever possible:
+
+1. **No fabricated results.** Every reported measurement comes from an executed model call or an explicit calculation over recorded calls.
+2. **Provenance everywhere.** Dataset items carry provenance and generator metadata; reports carry model, region, run-window and gate-version evidence.
+3. **Pre-registered gates.** Acceptance thresholds are agreed before results are inspected.
+4. **Prices have one source.** Model rates live only in `config/pricing.yaml` and carry verification metadata.
+5. **Replay works without credentials.** Provider SDKs are imported lazily and the offline integrity path is tested.
+6. **Record-on-live is mandatory.** Successful and failed calls are preserved in the canonical trace schema.
+7. **Missing evidence never becomes a pass.** A gate that cannot be evaluated remains visible in the report.
+8. **Notebooks stay thin.** Logic lives in `amw/`; notebooks import, execute and display.
+
+## Repository map
+
+```text
+cli.py                          Unified command-line entry point
 config/
-  models.yaml             model IDs per access path; no IDs in code
-  pricing.yaml            all prices; VERIFY until refresh_pricing.py runs
-  gates.yaml              thresholds + verdict rules; no thresholds in code
-  customers/*.yaml        per-customer seed, domain, volumes, region
+  models.yaml                  Logical model registry, IDs and regions
+  gates.yaml                   Acceptance thresholds and verdict policy
+  pricing.yaml                 Verified rates and sources
+  customers/                   Domain, seed, region and volume profiles
 amw/
-  config.py               pydantic loaders; the enforcement point
-  adapters/               base contract, Gemini, Claude x2, replay, resolution
-  traces/                 canonical Trace schema + ReplayStore
-  datasets/ eval/ tuning/ shadow/ economics/ reporting/    (T06+)
-artifacts/replay/         recorded traces, keyed (subagent, model, input_sha)
-scripts/
-  refresh_pricing.py      interactive price updater; stamps verified_on
-  spike_s2_*, spike_s3_*  Day-0 platform probes (evidence for SPIKES.md)
-tests/                    179 tests, all offline
+  adapters/                    Claude, Gemini, replay and mode resolution
+  agents/                      Prompt packs, schemas and ADK reference app
+  datasets/                    Synthetic corpus and rubric generation
+  traces/                      Canonical trace schema and replay store
+  eval/                        Metrics, judges, statistics and cross-checks
+  tuning/                      Ablation, translation and optimisation
+  shadow/                      Agreement, emission analysis and triage
+  economics/                   Cost, measured savings and cache breakeven
+  reporting/                   Evidence assembly, charts and scorecards
+artifacts/
+  replay/                      Recorded model calls
+  results/                     Frozen measurements and scorecards
+notebooks/                     Thin workshop notebooks
+site_src/                      Public workshop companion source
+scripts/                       Measurement, audit, rendering and site tools
+tests/                         Offline unit, integration and replay tests
 ```
 
-### Where to read next
+## Use AMW for another workload
 
-- **`CLAUDE.md`** — ground rules, conventions, definition of done. Read first.
-- **`TASKS.md`** — the work order. Tasks are executed strictly in order.
-- **`act1_build_plan.md`** — scope tiers (P0/P1/P2), gate rationale, fallbacks.
-- **`SPIKES.md`** — Day-0 platform verdicts and the caveats they carry forward.
-- **`docs/master_plan.md`** — full-system architecture including Act 2.
-  **Reference only** — nothing in it enters the build unless it appears in
-  `TASKS.md`.
+A new migration assessment normally requires:
+
+1. Add a customer or workload profile under `config/customers/`.
+2. Select incumbent, candidate and judge roles in `config/models.yaml`.
+3. Review gate applicability and thresholds in `config/gates.yaml` before running the campaign.
+4. Create or import representative workload items with explicit provenance.
+5. Add prompt packs and typed output schemas for the new subagent behaviors.
+6. Record incumbent and candidate calls.
+7. Run baseline, adaptation, shadow and scorecard stages.
+8. Review the evidence and decision with the system owner.
+
+The included patent corpus is synthetic and exists to make the complete method inspectable. A production migration decision should be repeated using representative customer workloads and production-like infrastructure.
+
+## Documentation
+
+- [Workshop companion](https://catwang42.github.io/agent-migration-workbench/)
+- [Setup](https://catwang42.github.io/agent-migration-workbench/setup/)
+- [Models in this study](https://catwang42.github.io/agent-migration-workbench/models-in-this-study/)
+- [Architecture and toolchain](https://catwang42.github.io/agent-migration-workbench/architecture/)
+- [Method modules](https://catwang42.github.io/agent-migration-workbench/#the-eight-modules)
+- [Results](https://catwang42.github.io/agent-migration-workbench/results/)
+- [Migration Readiness Scorecard](https://catwang42.github.io/agent-migration-workbench/results/scorecard/)
+- [`WORKSHOP_RUNBOOK.md`](WORKSHOP_RUNBOOK.md) — facilitator-only run-of-show and fallback plan
+
+## Current scope and limitations
+
+- The reference corpus is synthetic, although every model output and reported measurement is real and replayable.
+- Current migration verdicts cover Level-1 single-call transformations only.
+- The same-region latency probes are small and directional; production latency must be measured on production infrastructure.
+- Volume-based monthly and annual economics remain unavailable until a real customer confirms their workload volumes.
+- The committed `docs/master_plan.md` is design history and future-state context; it does not describe only the currently shipped surface.
+- BYOT trace converters described in future-state planning are not part of the current reference workflow unless corresponding implementation and tests are present.
+
+## For contributors
+
+Before every change:
+
+```bash
+pytest tests/ -q
+python cli.py e2e --mode replay
+```
+
+When changing public workshop content:
+
+```bash
+python scripts/build_site.py
+mkdocs build --strict
+```
+
+Do not hard-code model IDs, prices or gate thresholds in Python. Do not add a switch that disables live-call recording. Do not repair malformed model output before scoring it; schema failure is evidence.
 
 ---
 
-## Conventions
-
-- Python 3.11, pydantic v2 with `extra="forbid"` on every schema.
-- Model IDs from `config/models.yaml`, thresholds from `config/gates.yaml`,
-  prices from `config/pricing.yaml`. No literals in code.
-- Adapters implement `amw/adapters/base.py::ModelAdapter`.
-- Traces are JSONL, one per line; the replay store is keyed on
-  `(subagent, model, input_sha)`.
-- Judge prompts live in `amw/eval/judge_prompts/` as versioned text files —
-  they get shown to customers.
-- Deterministic seeds everywhere.
-- Live call errors: retry ×2 with backoff, then record a `status:"error"` trace
-  and continue. One flaky call must not kill an eval run.
-- Notebooks stay thin: all logic lives in `amw/`, notebooks import and display.
-
-**Definition of done for any task:** its verify command passes, **and**
-`pytest tests/ && python cli.py e2e --mode replay` still pass. One commit per
-task, task ID first in the message.
+**Agent Migration Workbench demonstrates a migration decision, not a preferred model.** The result is allowed to be `MIGRATE`, `TUNE_FIRST`, `HOLD`, `INCOMPLETE` or `UNDETERMINED`—because a system that cannot say “not yet” cannot protect a production migration.
